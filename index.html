@@ -4000,6 +4000,22 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
   .pe-stage{padding:10px}
   .pe-props{flex-wrap:nowrap}
 }
+.pe-paper{transform-origin:50% 0;transition:box-shadow .2s}
+.pe-ghost{position:fixed;z-index:120;width:92px;height:120px;margin:-60px 0 0 -46px;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 18px 40px -8px #0007,0 0 0 3px #6366f1;pointer-events:none;transform:rotate(-4deg) scale(1.04);display:flex;align-items:center;justify-content:center}
+.pe-ghost img{max-width:100%;max-height:100%}
+.pe-ghost b{position:absolute;top:-2px;right:-2px;min-width:24px;height:24px;border-radius:12px;background:#e11d48;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;padding:0 6px}
+.pe-card .th{-webkit-touch-callout:none}
+.pe-saved{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:#10b98118;color:#059669;font-weight:800;font-size:10.5px;white-space:nowrap}
+.pe-saved.flash{animation:peSaved .9s ease}
+@keyframes peSaved{0%{background:#10b98155}100%{background:#10b98118}}
+.dark .pe-saved{color:#34d399}
+.pe-draft{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;border-radius:14px;border:1px solid #c7d2fe;background:#eef2ff;animation:peZoom .25s ease both}
+.dark .pe-draft{background:#1e2752;border-color:#3b4a7a}
+.pe-draft>i{font-size:20px;color:#4f46e5}
+.pe-draft span{flex:1;min-width:0;text-align:left}
+.pe-draft b{display:block;font-weight:800}
+.pe-draft small{display:block;color:var(--pe-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:899px){.pe-saved .tx{display:none}.pe-draft{flex-wrap:wrap}.pe-draft span{flex-basis:calc(100% - 40px)}}
 </style>
 <script id="addon_v14">
 /* ===================== STARLITE v14 · Split & Edit PDF =====================
@@ -4061,8 +4077,8 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
   var THUMB = {}, JS = {}, LIB = {}, IMGS = {}, IMGN = 0;
   // ---------- gambar sisipan (stempel / TTD / foto) ----------
   function loadImgEl(url) { return new Promise(function (ok, no) { var im = new Image(); im.onload = function () { ok(im); }; im.onerror = function () { no(new Error("Gambar tidak bisa dibaca")); }; im.src = url; }); }
-  async function regImage(bytes, mime) {
-    var url = URL.createObjectURL(new Blob([bytes], { type: mime })), el = await loadImgEl(url), id = "i" + (++IMGN);
+  async function regImage(bytes, mime, fixedId) {
+    var url = URL.createObjectURL(new Blob([bytes], { type: mime })), el = await loadImgEl(url), id = fixedId || "i" + (++IMGN);
     IMGS[id] = { bytes: bytes, mime: mime, url: url, el: el, w: el.naturalWidth, h: el.naturalHeight };
     return id;
   }
@@ -4091,7 +4107,38 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
 
   function snap() { return JSON.stringify({ p: PE.pages, c: Array.from(PE.cuts), n: PE.names, a: PE.pairs }); }
   function restore(s) { var o = JSON.parse(s); PE.pages = o.p; PE.cuts = new Set(o.c); PE.names = o.n; PE.pairs = o.a; PE.sel = new Set(Array.from(PE.sel).filter(function (id) { return PE.pages.some(function (p) { return p.id === id; }); })); }
-  function pushUndo() { PE.undo.push(snap()); if (PE.undo.length > 60) PE.undo.shift(); PE.redo = []; syncUndo(); }
+  function pushUndo() { PE.undo.push(snap()); if (PE.undo.length > 60) PE.undo.shift(); PE.redo = []; syncUndo(); autosave(); }
+  // ---------- simpan otomatis di perangkat (IndexedDB) — pekerjaan tidak hilang bila tab tertutup ----------
+  var DBP = null, SAVED = { docs: -1, imgs: -1 }, SAVE_T = null, DRAFT_DAYS = 7;
+  function idb() { if (!DBP) DBP = new Promise(function (ok, no) { var r = indexedDB.open("starlite-pe", 1); r.onupgradeneeded = function () { r.result.createObjectStore("kv"); }; r.onsuccess = function () { ok(r.result); }; r.onerror = function () { DBP = null; no(r.error); }; }); return DBP; }
+  function kv(mode, k, v) { return idb().then(function (db) { return new Promise(function (ok, no) { var t = db.transaction("kv", mode === "get" ? "readonly" : "readwrite"), st = t.objectStore("kv"), rq = mode === "get" ? st.get(k) : mode === "del" ? st.delete(k) : st.put(v, k); t.oncomplete = function () { ok(rq.result); }; t.onerror = function () { no(t.error); }; t.onabort = function () { no(t.error); }; }); }); }
+  function autosave() { if (!PE.open || !window.indexedDB) return; clearTimeout(SAVE_T); SAVE_T = setTimeout(saveDraft, 1500); }
+  async function saveDraft() {
+    if (!PE.open || !PE.pages.length) return;
+    try {
+      if (SAVED.docs !== PE.docs.length) { await kv("put", "docs", PE.docs.map(function (d) { return { name: d.name, bytes: d.bytes }; })); SAVED.docs = PE.docs.length; }
+      var ik = Object.keys(IMGS);
+      if (SAVED.imgs !== ik.length) { var o = {}; ik.forEach(function (k) { var m = IMGS[k]; o[k] = { bytes: m.bytes, mime: m.mime, orig: m.orig || "", clean: m.clean || "" }; }); await kv("put", "imgs", o); SAVED.imgs = ik.length; }
+      await kv("put", "draft", { at: Date.now(), base: PE.base, origin: PE.origin, lock: PE.lock, pattern: PE.pattern, state: snap(), uid: PE.uid, imgn: IMGN, title: ($("pe-ttl") || {}).textContent || "", n: PE.pages.length, files: segs().length });
+      var b = $("pe-saved"); if (b) { b.classList.remove("hidden"); b.classList.remove("flash"); void b.offsetWidth; b.classList.add("flash"); }
+    } catch (e) { console.warn("Simpan otomatis gagal:", e && e.message); }
+  }
+  async function clearDraft() { clearTimeout(SAVE_T); SAVED = { docs: -1, imgs: -1 }; try { await kv("del", "draft"); await kv("del", "docs"); await kv("del", "imgs"); } catch (e) { } }
+  async function getDraft() { try { var d = await kv("get", "draft"); if (d && Date.now() - d.at < DRAFT_DAYS * 864e5) return d; if (d) clearDraft(); } catch (e) { } return null; }
+  async function restoreDraft(d) {
+    busy("Memulihkan pekerjaan terakhir…", 15, "read");
+    try {
+      var docs = await kv("get", "docs") || [], imgs = await kv("get", "imgs") || {};
+      reset();
+      PE.docs = docs.map(function (x) { return { bytes: x.bytes, name: x.name }; });
+      var ids = Object.keys(imgs);
+      for (var i = 0; i < ids.length; i++) { var m = imgs[ids[i]]; try { await regImage(m.bytes, m.mime, ids[i]); IMGS[ids[i]].orig = m.orig || undefined; IMGS[ids[i]].clean = m.clean || undefined; } catch (e) { } busy("Memulihkan gambar…", 20 + 30 * (i + 1) / ids.length, "read"); }
+      restore(d.state); PE.base = d.base; PE.origin = d.origin || { kind: "tab" }; PE.lock = !!d.lock; PE.pattern = d.pattern || ""; PE.uid = d.uid || PE.uid; IMGN = Math.max(IMGN, d.imgn || 0);
+      $("pe-ttl").textContent = d.title || "Split & Edit PDF";
+      SAVED = { docs: PE.docs.length, imgs: ids.length }; SEEN = new Set();
+      busy(null); render(); toast("Pekerjaan terakhir dipulihkan (" + d.n + " halaman)", "success");
+    } catch (e) { busy(null); toast("Gagal memulihkan: " + e.message, "error"); }
+  }
   function undo() { if (!PE.undo.length) return; PE.redo.push(snap()); restore(PE.undo.pop()); afterChange(); }
   function redo() { if (!PE.redo.length) return; PE.undo.push(snap()); restore(PE.redo.pop()); afterChange(); }
   function syncUndo() { ["pe-undo", "pe-ed-undo"].forEach(function (id) { var b = $(id); if (b) b.disabled = !PE.undo.length; }); ["pe-redo", "pe-ed-redo"].forEach(function (id) { var b = $(id); if (b) b.disabled = !PE.redo.length; }); }
@@ -4123,7 +4170,11 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
     var d = PE.docs.length;
     PE.docs.push({ bytes: bytes, name: name });
     var doc;
-    try { doc = await jsDoc(d); } catch (e) { PE.docs[d] = { bytes: new Uint8Array(0), name: name, bad: true }; delete JS[d]; throw new Error("\"" + name + "\" bukan PDF yang valid atau terkunci password"); }
+    try { doc = await jsDoc(d); } catch (e) {
+      PE.docs[d] = { bytes: new Uint8Array(0), name: name, bad: true }; delete JS[d];
+      if (e && (e.name === "PasswordException" || /password/i.test(e.message || ""))) throw new Error("\"" + name + "\" dikunci password — buka kuncinya dulu (mis. cetak ulang ke PDF), lalu unggah lagi");
+      throw new Error("\"" + name + "\" bukan PDF yang valid atau file rusak");
+    }
     if (PE.pages.length + doc.numPages > MAX_PAGES) throw new Error("Maksimal " + MAX_PAGES + " halaman per sesi");
     var out = [];
     for (var i = 1; i <= doc.numPages; i++) {
@@ -4270,11 +4321,21 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
   var checkPts = function (o) { return [[o.x + o.w * 0.08, o.y + o.w * 0.55], [o.x + o.w * 0.4, o.y + o.w * 0.86], [o.x + o.w * 0.94, o.y + o.w * 0.12]]; };
 
   // ---------- susun PDF hasil ----------
-  async function rasterErase(p) {
-    var D = dims(p), sc = Math.min(DPI / 72, 3200 / Math.max(D.w, D.h));
+  async function rasterErase(p, dpi, q) {
+    var D = dims(p), sc = Math.min((dpi || DPI) / 72, 3200 / Math.max(D.w, D.h));
     var c = await renderBase(p, D.w * sc, 1);
     drawOps(c.getContext("2d"), p.ops, c.width / D.w, { onlyErase: true });
-    return canvasJpg(c, 0.9);
+    var b = await canvasJpg(c, q || 0.9); c.width = c.height = 0; return b;
+  }
+  var tick = function () { return new Promise(function (r) { setTimeout(r, 0); }); };
+  var hasErase = function (list) { return list.some(function (p) { return p.ops.some(function (o) { return o.t === "erase"; }); }); };
+  var MB = function (n) { return (n / 1048576).toFixed(1).replace(".", ",") + " MB"; };
+  // susun PDF; bila melebihi batas & ada halaman "hapus area" → susun ulang dengan kualitas hemat
+  async function buildSized(list, title, limitMB, onp) {
+    var b = await buildPdf(list, title, onp);
+    if (limitMB && b.length > limitMB * 1048576 && hasErase(list)) b = await buildPdf(list, title, onp, { dpi: 130, q: 0.72 });
+    if (limitMB && b.length > limitMB * 1048576) throw new Error("Ukuran " + MB(b.length) + " melebihi batas " + limitMB + " MB — pecah menjadi file yang lebih kecil");
+    return b;
   }
   function rgbOf(L, h) { h = String(h || "#000").replace("#", ""); if (h.length === 3) h = h.replace(/./g, "$&$&"); var n = parseInt(h, 16); return L.rgb((n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255); }
   async function pdfFont(L, out, cache, o) {
@@ -4332,7 +4393,8 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
     else if (o.t === "ellipse") page.drawEllipse({ x: o.x + o.w / 2, y: y(o.y + o.h / 2), xScale: Math.abs(o.w / 2), yScale: Math.abs(o.h / 2), borderColor: col, borderWidth: o.lw, borderOpacity: al });
     else if (o.t === "check") page.drawSvgPath(path(checkPts(o)), Object.assign({ x: 0, y: Dh }, common, { borderWidth: o.w * 0.14 }));
   }
-  async function buildPdf(list, title, onp) {
+  async function buildPdf(list, title, onp, opt) {
+    opt = opt || {};
     var L = await loadPdfLib(), out = await L.PDFDocument.create(), cache = {}, plain = {}, copied = {};
     list.forEach(function (p) { if (!p.ops.length) (plain[p.d] = plain[p.d] || []).push(p.i); });
     for (var dk in plain) copied[dk] = await out.copyPages(await libDoc(+dk), plain[dk]);
@@ -4342,7 +4404,7 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
       if (!p.ops.length) { var u = used[p.d] = (used[p.d] || 0); var cp = copied[p.d][u]; used[p.d] = u + 1; cp.setRotation(L.degrees(D.t)); out.addPage(cp); }
       else {
         var src = await libDoc(p.d), np = out.addPage([D.w, D.h]);
-        if (p.ops.some(function (o) { return o.t === "erase"; })) { var img = await out.embedJpg(await rasterErase(p)); np.drawImage(img, { x: 0, y: 0, width: D.w, height: D.h }); }
+        if (p.ops.some(function (o) { return o.t === "erase"; })) { var img = await out.embedJpg(await rasterErase(p, opt.dpi, opt.q)); np.drawImage(img, { x: 0, y: 0, width: D.w, height: D.h }); }
         else {
           var sp = src.getPage(p.i), cb = sp.getCropBox(), W = cb.width, H = cb.height;
           var emb = await out.embedPage(sp, { left: cb.x, bottom: cb.y, right: cb.x + W, top: cb.y + H });
@@ -4352,6 +4414,7 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
         for (var j = 0; j < p.ops.length; j++) if (p.ops[j].t !== "erase") await drawOpPdf(L, out, np, p.ops[j], D.h, cache);
       }
       if (onp) onp(n + 1, list.length);
+      if (n % 4 === 3 || p.ops.length) await tick();   // beri napas ke layar (HP tidak macet)
     }
     try { out.setTitle(title || "Dokumen"); out.setProducer("STARLITE VM · Split & Edit PDF"); out.setCreator("STARLITE VM"); } catch (e) { }
     return new Uint8Array(await out.save());
@@ -4432,6 +4495,7 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
     el.innerHTML = '<div class="pe-top" id="pe-top">'
       + '<button class="pe-b ic" id="pe-close" title="Tutup"><i class="fa-solid fa-xmark"></i></button>'
       + '<div class="pe-title"><b id="pe-ttl">Split &amp; Edit PDF</b><small id="pe-sub">Pecah, rapikan, dan kirim PDF tanpa keluar aplikasi</small></div>'
+      + '<span class="pe-saved hidden" id="pe-saved" title="Pekerjaan tersimpan otomatis di perangkat ini — aman bila tab tertutup"><i class="fa-solid fa-cloud-arrow-down"></i><span class="tx">Tersimpan di perangkat</span></span>'
       + '<span class="pe-lock hidden" id="pe-lock"><i class="fa-solid fa-lock mr-1"></i>Mode Split saja</span>'
       + '<button class="pe-b ic" id="pe-undo" title="Urungkan (Ctrl+Z)" disabled><i class="fa-solid fa-rotate-left"></i></button>'
       + '<button class="pe-b ic" id="pe-redo" title="Ulangi (Ctrl+Y)" disabled><i class="fa-solid fa-rotate-right"></i></button>'
@@ -4484,7 +4548,7 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
     $("pe-sub").textContent = has ? PE.base + " · " + PE.pages.length + " halaman → " + S.length + " file" : "Pecah, rapikan, dan kirim PDF tanpa keluar aplikasi";
     $("pe-mt-f").innerHTML = '<i class="fa-solid fa-scissors"></i>File hasil (' + S.length + ")";
     try { el.style.setProperty("--pe-topH", $("pe-top").offsetHeight + "px"); } catch (e) { }
-    renderBar(); renderGrid(S); renderFiles(S); syncUndo();
+    renderBar(); renderGrid(S); renderFiles(S); syncUndo(); autosave();
   }
 
   function renderBar() {
@@ -4528,7 +4592,13 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
         + '<b class="pe-drop-t">Tarik &amp; lepas PDF atau gambar di sini</b><span class="pe-drop-s">atau</span>'
         + '<span class="pe-b pri pe-drop-btn"><i class="fa-solid fa-folder-open"></i>Pilih file dari perangkat</span>'
         + '<span class="pe-chips"><span>PDF</span><span>JPG</span><span>PNG</span><span>bisa beberapa file</span><span>maks ' + MAX_MB + " MB · " + MAX_PAGES + ' hal</span></span></label>'
-        + '<p class="pe-safe"><i class="fa-solid fa-shield-halved"></i>Semua proses berjalan di perangkat ini. File tidak diunggah sebelum Anda menekan Kirim / Simpan.</p></div>';
+        + '<p class="pe-safe"><i class="fa-solid fa-shield-halved"></i>Semua proses berjalan di perangkat ini. File tidak diunggah sebelum Anda menekan Kirim / Simpan.</p><div id="pe-draft"></div></div>';
+      if (PE.origin.kind === "tab") getDraft().then(function (d) {
+        var box = $("pe-draft"); if (!box || !d || PE.pages.length) return;
+        box.innerHTML = '<div class="pe-draft"><i class="fa-solid fa-clock-rotate-left"></i><span><b>Lanjutkan pekerjaan terakhir?</b><small>' + E(d.base) + " · " + d.n + " halaman → " + d.files + " file · " + new Date(d.at).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) + '</small></span><button class="pe-b pri" data-r>Lanjutkan</button><button class="pe-b" data-d>Buang</button></div>';
+        box.querySelector("[data-r]").onclick = function () { restoreDraft(d); };
+        box.querySelector("[data-d]").onclick = function () { clearDraft(); box.innerHTML = ""; };
+      });
       var dz = $("pe-drop");
       dz.ondragover = function (e) { e.preventDefault(); dz.classList.add("over"); };
       dz.ondragleave = function () { dz.classList.remove("over"); };
@@ -4553,6 +4623,7 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
         + '<div class="ft">Hal ' + (ix + 1) + "<span>· " + (PE.docs.length > 1 ? E(String(PE.docs[p.d].name).slice(0, 14)) + " h" + (p.i + 1) : "asli " + (p.i + 1)) + (p.rot ? " · ↻" + p.rot + "°" : "") + "</span></div>";
       var img = card.querySelector("img"); img.style.aspectRatio = D.w + "/" + D.h;
       card.querySelector(".th").onclick = function (e) {
+        if (PE.suppressClick && Date.now() - PE.suppressClick < 500) return;
         var a = e.target.closest("[data-a]");
         if (a) { e.stopPropagation(); if (a.dataset.a === "ed") edOpen(p.id); else viewPage(p.id); return; }
         if (e.shiftKey && PE.last >= 0) { var a0 = Math.min(PE.last, ix), b0 = Math.max(PE.last, ix); for (var q = a0; q <= b0; q++) PE.sel.add(PE.pages[q].id); }
@@ -4562,6 +4633,7 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
       card.querySelector(".th").ondblclick = function () { if (!PE.lock) edOpen(p.id); };
       var cut = card.querySelector(".cut");
       if (cut) cut.onclick = function (e) { e.stopPropagation(); pushUndo(); if (PE.cuts.has(p.id)) PE.cuts.delete(p.id); else PE.cuts.add(p.id); render(); };
+      if (!PE.lock) touchDrag(card, p);
       if (!PE.lock) {
         card.draggable = true;
         card.ondragstart = function (e) { PE.drag = PE.sel.has(p.id) ? PE.pages.filter(function (x) { return PE.sel.has(x.id); }).map(function (x) { return x.id; }) : [p.id]; card.classList.add("drag"); try { e.dataTransfer.setData("text/plain", p.id); e.dataTransfer.effectAllowed = "move"; } catch (er) { } };
@@ -4589,6 +4661,54 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
       grid.appendChild(add);
     }
   }
+
+  // HP / layar sentuh: tekan lama ±0,35 detik pada halaman lalu geser
+  var TD = null;
+  function touchDrag(card, p) {
+    card.addEventListener("touchstart", function (e) {
+      if (e.touches.length !== 1 || e.target.closest("button")) return;
+      var t0 = e.touches[0], sx = t0.clientX, sy = t0.clientY;
+      TD = { p: p, card: card, sx: sx, sy: sy, on: false, timer: setTimeout(function () {
+        if (!TD) return; TD.on = true; try { navigator.vibrate && navigator.vibrate(12); } catch (er) { }
+        TD.ids = PE.sel.has(p.id) ? PE.pages.filter(function (x) { return PE.sel.has(x.id); }).map(function (x) { return x.id; }) : [p.id];
+        card.classList.add("drag");
+        var g = document.createElement("div"); g.className = "pe-ghost"; var im = card.querySelector("img"); g.innerHTML = (im && im.src ? '<img src="' + im.src + '">' : "") + (TD.ids.length > 1 ? "<b>" + TD.ids.length + "</b>" : ""); document.body.appendChild(g); TD.ghost = g; moveGhost(sx, sy);
+      }, 350) };
+    }, { passive: true });
+  }
+  function moveGhost(x, y) { if (TD && TD.ghost) { TD.ghost.style.left = x + "px"; TD.ghost.style.top = y + "px"; } }
+  function tdTarget(x, y) { var el = document.elementFromPoint(x, y); return el && el.closest ? el.closest(".pe-card") : null; }
+  document.addEventListener("touchmove", function (e) {
+    if (!TD) return;
+    var t = e.touches[0];
+    if (!TD.on) { if (Math.abs(t.clientX - TD.sx) + Math.abs(t.clientY - TD.sy) > 10) { clearTimeout(TD.timer); TD = null; } return; }
+    e.preventDefault();
+    if (TD.ghost) TD.ghost.style.display = "none";
+    var tg = tdTarget(t.clientX, t.clientY); if (TD.ghost) TD.ghost.style.display = "";
+    moveGhost(t.clientX, t.clientY);
+    document.querySelectorAll(".pe-card.dropL").forEach(function (c) { if (c !== tg) c.classList.remove("dropL"); });
+    if (tg && tg !== TD.card) tg.classList.add("dropL");
+    TD.tg = tg;
+    var grid = $("pe-grid"), r = grid.getBoundingClientRect();   // gulir otomatis di tepi
+    TD.vy = t.clientY < r.top + 60 ? -12 : t.clientY > r.bottom - 60 ? 12 : 0;
+    if (TD.vy && !TD.scr) TD.scr = setInterval(function () { if (!TD || !TD.vy) return; grid.scrollTop += TD.vy; }, 16);
+  }, { passive: false });
+  function tdEnd() {
+    if (!TD) return; var d = TD; TD = null; clearTimeout(d.timer); clearInterval(d.scr);
+    if (!d.on) return;
+    if (d.ghost) d.ghost.remove(); d.card.classList.remove("drag");
+    document.querySelectorAll(".pe-card.dropL").forEach(function (c) { c.classList.remove("dropL"); });
+    var tg = d.tg; if (!tg) return;
+    var tid = tg.dataset.id, ids = d.ids;
+    if (tid && ids.indexOf(tid) >= 0) return;
+    pushUndo();
+    var moving = PE.pages.filter(function (x) { return ids.indexOf(x.id) >= 0; });
+    PE.pages = PE.pages.filter(function (x) { return ids.indexOf(x.id) < 0; });
+    var at = tid ? PE.pages.findIndex(function (x) { return x.id === tid; }) : PE.pages.length;
+    PE.pages.splice.apply(PE.pages, [at < 0 ? PE.pages.length : at, 0].concat(moving));
+    PE.suppressClick = Date.now(); render();
+  }
+  document.addEventListener("touchend", tdEnd); document.addEventListener("touchcancel", tdEnd);
 
   function renderFiles(S) {
     var box = $("pe-files");
@@ -4836,18 +4956,24 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
       var bad = T.filter(function (r) { return !r.done && (!PE.pairs[r.s.key] || !r.type || !pairRows(PE.pairs[r.s.key]).length); });
       if (bad.length) return toast("Lengkapi pasangan data & jenis dokumen untuk semua file (" + bad.length + " belum)", "error", 6000);
       var go = this; go.disabled = true; m.dataset.busy = 1;
-      var ok = 0, fail = 0;
+      var ok = 0, fail = 0, lim = (typeof BACKEND !== "undefined" && BACKEND.MAX_MB) || 20, inflight = [];
+      var stOf = function (i) { return function (h) { T[i].st = h; var el = m.querySelector('[data-st="' + i + '"]'); if (el) el.innerHTML = h; }; };
+      var failed = function (i, e) { fail++; T[i].err = e.message; stOf(i)('<span style="color:#e11d48" title="' + E(e.message) + '"><i class="fa-solid fa-circle-xmark"></i> gagal</span><br><small style="color:#e11d48;font-weight:600">' + E(e.message).slice(0, 90) + "</small>"); };
       for (var i = 0; i < T.length; i++) {
         var r = T[i]; if (r.done) { ok++; continue; }
-        var st = function (h) { r.st = h; var el = m.querySelector('[data-st="' + i + '"]'); if (el) el.innerHTML = h; };
+        var st = stOf(i); r.err = "";
         st('<i class="fa-solid fa-circle-notch fa-spin"></i> menyusun');
-        try {
-          var bytes = await buildPdf(r.s.pages, r.name);
-          st('<i class="fa-solid fa-circle-notch fa-spin"></i> mengirim');
-          var res = await uploadOne(PE.pairs[r.s.key], r.type, r.name + ".pdf", bytes);
-          r.done = true; ok++; st('<a href="' + E(res.url) + '" target="_blank" rel="noopener" style="color:#059669"><i class="fa-solid fa-circle-check"></i> terkirim</a>');
-        } catch (e) { fail++; st('<span style="color:#e11d48" title="' + E(e.message) + '"><i class="fa-solid fa-circle-xmark"></i> gagal</span>'); r.err = e.message; }
+        var bytes;
+        try { bytes = await buildSized(r.s.pages, r.name, lim); } catch (e) { failed(i, e); continue; }
+        while (inflight.length >= 2) await Promise.race(inflight);   // maksimal 2 unggahan bersamaan
+        st('<i class="fa-solid fa-circle-notch fa-spin"></i> mengirim · ' + MB(bytes.length));
+        (function (i, r, bytes) {
+          var job = uploadOne(PE.pairs[r.s.key], r.type, r.name + ".pdf", bytes).then(function (res) { r.done = true; ok++; stOf(i)('<a href="' + E(res.url) + '" target="_blank" rel="noopener" style="color:#059669"><i class="fa-solid fa-circle-check"></i> terkirim</a>'); }, function (e) { failed(i, e); })
+            .then(function () { var k = inflight.indexOf(job); if (k >= 0) inflight.splice(k, 1); });
+          inflight.push(job);
+        })(i, r, bytes);
       }
+      await Promise.all(inflight);
       delete m.dataset.busy; go.disabled = false;
       try { renderDashboard(); saveSnapshot(); applyDocFilters(false); applyTakeoverFilters(false); } catch (e) { }
       if (fail) { go.innerHTML = '<i class="fa-solid fa-rotate"></i>Ulangi yang gagal (' + fail + ")"; toast(ok + " terkirim, " + fail + " gagal: " + (T.filter(function (r) { return r.err && !r.done; })[0] || {}).err, "error", 9000); }
@@ -4893,6 +5019,8 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
       var go = this; go.disabled = true; m.dataset.busy = 1;
       try {
         var files = await buildAll("Menyusun file hasil pecah");
+        var big = files.filter(function (f) { return f.bytes.length > 45 * 1048576; })[0];
+        if (big) throw new Error(big.name + " " + MB(big.bytes.length) + " — terlalu besar (maks 45 MB per file)");
         var r = await saveSplit(PE.origin.id, files);
         busy(null);
         try { if (r.doc && typeof sgUpsert === "function") sgUpsert(r.doc); } catch (e) { }
@@ -4923,8 +5051,12 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
     busy("Menyimpan ke Google Drive…", 75);
     var body = { id: id, files: list.map(function (f, i) { return via === "supabase" ? { name: f.name, path: f.path } : { name: f.name, b64: bytesToB64(files[i].bytes) }; }) };
     if (via === "supabase") body.ticket = ticket;
-    var r = await callApi("sign.split", body, 36e4);
-    if (!r || !r.ok) throw new Error((r && r.error) || "Gagal menyimpan");
+    var r;
+    try { r = await callApi("sign.split", body, 36e4); if (!r || !r.ok) throw new Error((r && r.error) || "Gagal menyimpan"); }
+    catch (e) {
+      if (via === "supabase") { try { var hd = { apikey: SB.key, "Content-Type": "application/json" }; if (/^eyJ/.test(SB.key)) hd.Authorization = "Bearer " + SB.key; fetch(SB.url + "/storage/v1/object/sg-split", { method: "DELETE", headers: hd, body: JSON.stringify({ prefixes: list.map(function (f) { return ticket + "/" + f.path; }) }) }); } catch (er) { } }
+      throw e;
+    }
     r.via = via;
     return r;
   }
@@ -5034,7 +5166,7 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
     } else if (t === "erase") {
       var f = v("fill", st.fill);
       h = '<label>Isi area</label>' + [["#ffffff", "Putih"], ["#000000", "Hitam (redaksi)"], ["auto", "Warna latar otomatis"]].map(function (x) { return '<button class="pe-b ' + (f === x[0] ? "on" : "") + '" data-fill="' + x[0] + '" style="height:28px">' + x[1] + "</button>"; }).join("")
-        + '<span style="color:var(--pe-mute);font-size:11px"><i class="fa-solid fa-shield-halved mr-1"></i>Permanen: isi di bawah kotak dihapus dari file.</span>';
+        + '<span style="color:var(--pe-mute);font-size:11px"><i class="fa-solid fa-shield-halved mr-1"></i>Permanen: isi di bawah kotak dihapus dari file. Halaman ini disimpan sebagai gambar (teksnya tidak bisa dicari).</span>';
     } else if (t === "sel" || t === "rub") {
       h = '<span style="color:var(--pe-mute)">' + (t === "sel" ? "Pilih objek untuk mengubah gaya, warna, ukuran, atau menghapusnya." : "Klik coretan / bentuk yang ingin dihapus.") + "</span>";
     } else {
@@ -5135,9 +5267,19 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
     } catch (e) { return "#ffffff"; }
   }
 
+  var PTR = new Map();
+  function pinchDist() { var a = Array.from(PTR.values()); return Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); }
   function edDown(e) {
     var p = edPage(); if (!p || e.button > 0) return;
     e.preventDefault();   // cegah fokus pindah dari kotak teks
+    PTR.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (PTR.size === 2) {   // mulai cubit: batalkan goresan / geseran yang sedang berjalan
+      if (ED.drag && ED.drag.o0 && ED.drag.moved && ED.sel) { Object.keys(ED.drag.o0).forEach(function (k) { ED.sel[k] = clone(ED.drag.o0[k]); }); PE.undo.pop(); syncUndo(); }
+      ED.temp = null; ED.drag = null;
+      var st0 = $("pe-ed-stage"); ED.pinch = { d0: pinchDist(), z0: ED.zoom, sl: st0.scrollLeft, stp: st0.scrollTop };
+      edDraw(); return;
+    }
+    if (PTR.size > 2 || ED.pinch) return;
     if (ED.edit) { edCommitText(); return; }
     var pt = edPt(e), st = ED.st, t = ED.tool;
     e.target.setPointerCapture(e.pointerId);
@@ -5147,6 +5289,7 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
       if (o && resizable(o)) { var hp = handlePt(o); if (Math.hypot(pt.x - hp[0], pt.y - hp[1]) < 10 / ED.k) { ED.drag.mode = "resize"; ED.drag.o0 = clone(o); return; } }
       var h = hit(pt); ED.sel = h; edProps(); edDraw();
       if (h) { ED.drag.mode = "move"; ED.drag.o0 = clone(h); }
+      else if (e.pointerType === "touch") { var sg = $("pe-ed-stage"); ED.drag.mode = "pan"; ED.drag.cx = e.clientX; ED.drag.cy = e.clientY; ED.drag.sl = sg.scrollLeft; ED.drag.st = sg.scrollTop; }
       return;
     }
     if (t === "rub") { ED.drag.mode = "rub"; edRub(pt); return; }
@@ -5164,7 +5307,10 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
     if (t === "rect" || t === "ellipse" || t === "erase") { ED.temp = t === "erase" ? { t: "erase", x: pt.x, y: pt.y, w: 0, h: 0, fill: st.fill, col: st.fill === "auto" ? "#e2e8f0" : st.fill } : { t: t, x: pt.x, y: pt.y, w: 0, h: 0, c: st.c, lw: st.lw, op: st.op }; ED.drag.mode = "draw"; return; }
   }
   function edMove(e) {
+    if (PTR.has(e.pointerId)) PTR.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (ED.pinch) { if (PTR.size === 2) { var sc = pinchDist() / ED.pinch.d0, z = Math.max(0.4, Math.min(4, ED.pinch.z0 * sc)); ED.pinch.z = z; $("pe-ed-paper").style.transform = "scale(" + (z / ED.pinch.z0) + ")"; } return; }
     var d = ED.drag; if (!d) return;
+    if (d.mode === "pan") { var sg = $("pe-ed-stage"); sg.scrollLeft = d.sl - (e.clientX - d.cx); sg.scrollTop = d.st - (e.clientY - d.cy); return; }
     var pt = edPt(e), p = edPage(), dx = pt.x - d.x, dy = pt.y - d.y;
     if (Math.abs(dx) + Math.abs(dy) > 1.5 / ED.k) { if (!d.moved && (d.mode === "move" || d.mode === "resize")) pushUndo(); d.moved = true; }
     if (d.mode === "move" && d.moved) { var o = ED.sel, o0 = d.o0; Object.keys(o0).forEach(function (k) { o[k] = clone(o0[k]); }); moveOp(o, dx, dy); edDraw(); }
@@ -5192,6 +5338,8 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
     }
   }
   function edUp(e) {
+    PTR.delete(e.pointerId);
+    if (ED.pinch) { if (PTR.size < 2) { var z = ED.pinch.z; ED.pinch = null; ED.drag = null; $("pe-ed-paper").style.transform = ""; if (z) { ED.zoom = z; edLoad(); } } return; }
     var d = ED.drag; ED.drag = null; if (!d) return;
     var p = edPage();
     if (d.mode === "draw" && ED.temp) {
@@ -5244,16 +5392,17 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
     if (opt.file) await addFiles([opt.file]);
     if (opt.bytes) { busy("Membuka dokumen…", 40); try { var pages = await addBytes(opt.bytes, opt.name || "Dokumen.pdf"); PE.pages = pages; PE.base = safeName(opt.name) || "Dokumen"; } catch (e) { toast(e.message, "error"); } busy(null); render(); }
   }
-  function reset() { PE.docs = []; PE.pages = []; PE.cuts = new Set(); PE.names = {}; PE.pairs = {}; PE.sel = new Set(); PE.undo = []; PE.redo = []; PE.pattern = ""; PE.base = "Dokumen"; PE.mf = false; JS = {}; LIB = {}; ED.baseKey = null; Object.keys(IMGS).forEach(function (k) { try { URL.revokeObjectURL(IMGS[k].url); } catch (e) { } }); IMGS = {}; THUMB = {}; }
+  function reset() { PE.docs = []; PE.pages = []; PE.cuts = new Set(); PE.names = {}; PE.pairs = {}; PE.sel = new Set(); PE.undo = []; PE.redo = []; PE.pattern = ""; PE.base = "Dokumen"; PE.mf = false; JS = {}; LIB = {}; ED.baseKey = null; SAVED = { docs: -1, imgs: -1 }; Object.keys(IMGS).forEach(function (k) { try { URL.revokeObjectURL(IMGS[k].url); } catch (e) { } }); IMGS = {}; THUMB = {}; }
   function peClose(force) {
-    if (!force && PE.undo.length && PE.pages.length && !confirm("Tutup Split & Edit PDF? Perubahan yang belum diunduh / dikirim akan hilang.")) return;
+    if (!force && PE.undo.length && PE.pages.length && !confirm("Tutup Split & Edit PDF? Pekerjaan ini akan dibuang (yang sudah diunduh / dikirim tetap aman).")) return;
     if (ED.on) { edCommitText(); ED.on = false; var ed = $("pe-ed"); if (ed) ed.classList.add("hidden"); }
     closeMenus(); busy(null);
     $("pe").classList.add("hidden"); document.documentElement.style.overflow = ""; PE.open = false;
+    clearDraft();
     try { JS && Object.keys(JS).forEach(function (k) { JS[k].then(function (d) { d.destroy(); }).catch(function () { }); }); } catch (e) { }
     reset();
   }
-  window.__peT = { PE: PE, ED: ED, segs: segs, buildPdf: buildPdf, finalNames: finalNames };
+  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__peT = { PE: PE, ED: ED, segs: segs, buildPdf: buildPdf, finalNames: finalNames, IMGS: function () { return IMGS; } };
   window.peOpen = function () { peOpen({ kind: "tab" }); };
   window.peClose = peClose;
 
