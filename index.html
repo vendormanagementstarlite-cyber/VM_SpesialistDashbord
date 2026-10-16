@@ -3599,5 +3599,26 @@ function rnExportCsv(){const t=RN.tab,hd=(STATE.headers[t]||[]).map(String),rows
   };
 })();
 </script>
+<script>
+/* STARLITE v12 · perbaikan notif "Gagal terhubung ke Google Sheets: … reading 'title'"
+   Server (changes.since) bisa meminta muat ulang sheet Refund / Hibank / dll. yang bukan sheet Google API langsung
+   → dulu ikut dikirim ke autoSyncGoogleSheets lalu error saat menulis notifikasi. Sekarang dipisah. */
+(function () {
+  "use strict";
+  if (typeof autoSyncGoogleSheets !== "function") return;
+  var orig = autoSyncGoogleSheets, RNK = { refund: 1, hibank: 1 };
+  window.autoSyncGoogleSheets = autoSyncGoogleSheets = function (o) {
+    if (!o || !o.keys) return orig.apply(this, arguments);
+    var keys = [].concat(o.keys);
+    var sheet = keys.filter(function (k) { return CONFIG.SHEETS[k]; });
+    keys.filter(function (k) { return RNK[k] && typeof rnLoad === "function"; }).forEach(function (k) {
+      var have = (STATE[k] || []).length || (typeof RN !== "undefined" && RN.have && RN.have[k]);
+      if (have && !(RN.loading && RN.loading[k])) rnLoad(k, true).catch(function (e) { console.warn("Muat ulang " + k + " gagal:", e.message); });
+    });
+    if (!sheet.length) return Promise.resolve();
+    return orig.call(this, Object.assign({}, o, { keys: sheet }));
+  };
+})();
+</script>
 </body>
 </html>
