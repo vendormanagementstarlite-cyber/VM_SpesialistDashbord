@@ -3817,5 +3817,1359 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
   fitTables(); update();
 })();
 </script>
+<style id="v14-pdf">
+/* ===================== STARLITE v14 · Split & Edit PDF ===================== */
+#pe{--pe-bg:#eef2f7;--pe-card:#fff;--pe-line:#d8dee8;--pe-ink:#0f172a;--pe-mute:#64748b;--pe-acc:#e11d48;--pe-acc2:#4f46e5;--pe-soft:#f1f5f9;
+  position:fixed;inset:0;z-index:97;display:flex;flex-direction:column;background:var(--pe-bg);color:var(--pe-ink);font-size:12px}
+.dark #pe{--pe-bg:#0b1220;--pe-card:#111a2c;--pe-line:#24314a;--pe-ink:#e2e8f0;--pe-mute:#94a3b8;--pe-soft:#16213a}
+#pe.hidden,#pe .hidden{display:none!important}
+#pe button{font:inherit;color:inherit}
+#pe input,#pe select,#pe textarea{font:inherit;color:var(--pe-ink);background:var(--pe-card);border:1px solid var(--pe-line);border-radius:8px;padding:5px 8px;min-width:0}
+#pe input[type=color]{padding:0;width:30px;height:28px;border-radius:8px;cursor:pointer}
+#pe input[type=range]{padding:0;border:0;background:none;accent-color:var(--pe-acc2)}
+.pe-top{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--pe-card);border-bottom:1px solid var(--pe-line);flex-wrap:wrap}
+.pe-title{display:flex;flex-direction:column;min-width:0;flex:1}
+.pe-title b{font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pe-title small{color:var(--pe-mute);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pe-b{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:32px;padding:0 11px;border-radius:9px;border:1px solid var(--pe-line);background:var(--pe-card);font-weight:700;cursor:pointer;white-space:nowrap}
+.pe-b:hover{background:var(--pe-soft)}
+.pe-b:disabled{opacity:.45;cursor:not-allowed}
+.pe-b.pri{background:var(--pe-acc2);border-color:var(--pe-acc2);color:#fff}
+.pe-b.pri:hover{filter:brightness(1.08)}
+.pe-b.red{color:#e11d48}
+.pe-b.ic{width:32px;padding:0}
+.pe-b.on{background:var(--pe-acc2);border-color:var(--pe-acc2);color:#fff}
+.pe-lock{padding:3px 9px;border-radius:999px;background:#f59e0b22;color:#b45309;font-weight:800;font-size:10.5px;white-space:nowrap}
+.dark .pe-lock{color:#fbbf24}
+.pe-body{flex:1;display:flex;min-height:0}
+.pe-files{width:340px;flex-shrink:0;border-right:1px solid var(--pe-line);background:var(--pe-card);display:flex;flex-direction:column;min-height:0}
+.pe-files-h{padding:10px 12px;border-bottom:1px solid var(--pe-line);display:flex;flex-direction:column;gap:7px}
+.pe-files-l{flex:1;overflow:auto;padding:8px 10px 20px;display:flex;flex-direction:column;gap:8px}
+.pe-file{border:1px solid var(--pe-line);border-left:4px solid var(--c);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;background:var(--pe-card)}
+.pe-file-h{display:flex;align-items:center;gap:6px}
+.pe-file-h b{font-weight:800}
+.pe-file-h small{color:var(--pe-mute)}
+.pe-file .pe-nm{display:flex;align-items:center;gap:4px}
+.pe-file .pe-nm input{flex:1}
+.pe-file .pe-nm span{color:var(--pe-mute);font-weight:700}
+.pe-file.dup{border-color:#f59e0b;border-left-color:#f59e0b}
+.pe-pair{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:8px;background:var(--pe-soft);font-size:11px}
+.pe-pair b{font-family:ui-monospace,monospace}
+.pe-pair .x{margin-left:auto;cursor:pointer;color:var(--pe-mute);background:none;border:0}
+.pe-sug{position:relative}
+.pe-sug-l{position:absolute;left:0;right:0;top:100%;z-index:5;max-height:220px;overflow:auto;background:var(--pe-card);border:1px solid var(--pe-line);border-radius:10px;box-shadow:0 10px 30px #0003;margin-top:3px}
+.pe-sug-l button{display:block;width:100%;text-align:left;padding:7px 9px;border:0;background:none;border-bottom:1px solid var(--pe-line);cursor:pointer}
+.pe-sug-l button:hover{background:var(--pe-soft)}
+.pe-sug-l small{display:block;color:var(--pe-mute);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pe-tag{display:inline-block;padding:1px 6px;border-radius:5px;font-size:9.5px;font-weight:800;background:#6366f122;color:#4f46e5}
+.pe-vars{display:flex;flex-wrap:wrap;gap:4px}
+.pe-vars button{border:1px dashed var(--pe-line);background:none;border-radius:6px;padding:1px 6px;font-size:10.5px;cursor:pointer;color:var(--pe-mute);font-family:ui-monospace,monospace}
+.pe-main{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+.pe-bar{display:flex;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid var(--pe-line);background:var(--pe-card);flex-wrap:wrap}
+.pe-bar .sep{width:1px;height:22px;background:var(--pe-line);margin:0 2px}
+.pe-bar label{color:var(--pe-mute);font-weight:700}
+.pe-grid{flex:1;overflow:auto;padding:16px 16px 90px;display:flex;flex-wrap:wrap;align-content:flex-start;gap:18px 22px}
+.pe-card{position:relative;width:150px;user-select:none}
+.pe-card .th{position:relative;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 1px 3px #0002,0 0 0 1px var(--pe-line);cursor:pointer;display:flex;align-items:center;justify-content:center;height:200px}
+.pe-card .th img{max-width:100%;max-height:100%;display:block}
+.pe-card.sel .th{box-shadow:0 0 0 3px var(--pe-acc2)}
+.pe-card.drag{opacity:.4}
+.pe-card.dropL::before{content:"";position:absolute;left:-13px;top:0;bottom:22px;width:4px;border-radius:2px;background:var(--pe-acc2)}
+.pe-card .ft{display:flex;align-items:center;gap:4px;margin-top:5px;font-size:11px;font-weight:700;border-top:3px solid var(--c);padding-top:4px}
+.pe-card .ft span{color:var(--pe-mute);font-weight:600}
+.pe-card .ck{position:absolute;top:6px;left:6px;width:20px;height:20px;border-radius:6px;background:#fffd;border:1px solid #cbd5e1;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px}
+.pe-card.sel .ck{background:var(--pe-acc2);border-color:var(--pe-acc2)}
+.pe-card .tools{position:absolute;top:6px;right:6px;display:flex;gap:4px;opacity:0;transition:opacity .15s}
+.pe-card:hover .tools,.pe-card.sel .tools{opacity:1}
+.pe-card .tools button{width:26px;height:26px;border-radius:7px;border:0;background:#0f172acc;color:#fff;cursor:pointer;font-size:11px}
+.pe-card .mk{position:absolute;bottom:30px;right:6px;padding:1px 6px;border-radius:5px;background:#e11d48;color:#fff;font-size:9.5px;font-weight:800}
+.pe-card .cut{position:absolute;left:-19px;top:84px;width:16px;height:30px;border-radius:6px;border:1px dashed var(--pe-line);background:var(--pe-bg);cursor:pointer;color:var(--pe-mute);font-size:10px;display:flex;align-items:center;justify-content:center;padding:0;z-index:2}
+.pe-card .cut:hover{border-color:var(--pe-acc);color:var(--pe-acc)}
+.pe-card.cutOn .cut{background:var(--pe-acc);border:0;color:#fff}
+.pe-card .fl{position:absolute;top:-14px;left:0;font-size:9.5px;font-weight:800;color:var(--c);white-space:nowrap}
+.pe-empty{margin:auto;text-align:center;max-width:460px;padding:40px 20px}
+.pe-drop{border:2px dashed var(--pe-line);border-radius:16px;padding:34px 20px;cursor:pointer;background:var(--pe-card)}
+.pe-drop.over{border-color:var(--pe-acc2);background:#6366f110}
+.pe-mtab{display:none}
+.pe-menu{position:fixed;z-index:99;background:var(--pe-card);border:1px solid var(--pe-line);border-radius:12px;box-shadow:0 14px 40px #0004;padding:5px;min-width:230px;color:var(--pe-ink)}
+.pe-menu button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:8px 10px;border:0;background:none;border-radius:8px;cursor:pointer;font-weight:600}
+.pe-menu button:hover{background:var(--pe-soft)}
+.pe-menu button i{width:16px;text-align:center;color:var(--pe-acc2)}
+.pe-menu button:disabled{opacity:.4}
+.pe-menu small{display:block;color:var(--pe-mute);font-weight:500;font-size:10.5px}
+/* modal & proses */
+.pe-modal{position:fixed;inset:0;z-index:99;background:#0f172a99;display:flex;align-items:center;justify-content:center;padding:16px}
+.pe-modal .box{background:var(--pe-card,#fff);color:var(--pe-ink,#0f172a);border-radius:16px;width:min(760px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;box-shadow:0 20px 60px #0006}
+.pe-modal .hd{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--pe-line)}
+.pe-modal .hd b{flex:1;font-size:14px;font-weight:800}
+.pe-modal .bd{padding:14px 16px;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.pe-modal .fo{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--pe-line)}
+.pe-row{display:grid;grid-template-columns:1fr 1.2fr 150px 70px;gap:8px;align-items:start;padding:8px;border:1px solid var(--pe-line);border-radius:10px}
+.pe-row .st{font-weight:800;font-size:11px}
+.pe-opt{display:flex;gap:10px;padding:12px;border:1px solid var(--pe-line);border-radius:12px;cursor:pointer}
+.pe-opt.on{border-color:var(--pe-acc2);box-shadow:0 0 0 2px #6366f133}
+.pe-opt .ot{display:block;font-weight:800}
+.pe-opt small{display:block}
+.pe-opt small{color:var(--pe-mute)}
+.pe-busy{position:fixed;inset:0;z-index:100;background:#0f172a8c;display:flex;align-items:center;justify-content:center}
+.pe-busy .bx{background:var(--pe-card,#fff);color:var(--pe-ink,#0f172a);border-radius:14px;padding:18px 20px;width:min(360px,92vw);box-shadow:0 20px 50px #0006}
+.pe-busy .bar{height:7px;border-radius:9px;background:var(--pe-soft,#e2e8f0);overflow:hidden;margin-top:10px}
+.pe-busy .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6366f1,#10b981);transition:width .25s}
+.pe-res a{color:var(--pe-acc2);font-weight:700;text-decoration:underline}
+/* editor halaman */
+#pe-ed{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;background:var(--pe-bg)}
+.pe-tools{display:flex;gap:4px;padding:6px 10px;background:var(--pe-card);border-bottom:1px solid var(--pe-line);overflow-x:auto;scrollbar-width:thin}
+.pe-tools .pe-b{flex-shrink:0;height:34px}
+.pe-tools .pe-b span{font-size:11px}
+.pe-props{display:flex;align-items:center;gap:7px;padding:6px 10px;background:var(--pe-card);border-bottom:1px solid var(--pe-line);overflow-x:auto;min-height:44px;flex-wrap:wrap;scrollbar-width:thin}
+.pe-props>*{flex-shrink:0}
+.pe-props label{color:var(--pe-mute);font-weight:700;font-size:11px}
+.pe-sw{width:22px;height:22px;border-radius:50%;border:2px solid var(--pe-card);box-shadow:0 0 0 1px var(--pe-line);cursor:pointer;padding:0}
+.pe-sw.on{box-shadow:0 0 0 2px var(--pe-acc2)}
+.pe-stage{flex:1;overflow:auto;padding:18px;display:flex;justify-content:flex-start;align-items:flex-start;touch-action:pan-x pan-y}
+.pe-paper{position:relative;margin:0 auto;box-shadow:0 4px 24px #0003;background:#fff;flex-shrink:0}
+.pe-paper canvas{position:absolute;left:0;top:0;width:100%;height:100%}
+.pe-paper canvas.ov{touch-action:none}
+.pe-ta{position:absolute;z-index:3;border:1px dashed #4f46e5!important;background:#ffffffcc!important;border-radius:0!important;padding:0!important;resize:none;overflow:hidden;outline:none;line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
+.pe-hint{font-size:11px;color:var(--pe-mute);padding:0 10px 8px;text-align:center}
+@media (max-width:899px){
+  .pe-files{position:absolute;width:auto;border:0;display:none;z-index:3}
+  #pe.mf .pe-files{display:flex;top:0;bottom:52px;left:0;right:0}
+  #pe.mf .pe-main{visibility:hidden}
+  .pe-body{position:relative}
+  .pe-mtab{display:flex;position:absolute;left:0;right:0;bottom:0;height:52px;background:var(--pe-card);border-top:1px solid var(--pe-line);z-index:4}
+  .pe-mtab button{flex:1;border:0;background:none;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;color:var(--pe-mute)}
+  .pe-mtab button.on{color:var(--pe-acc2);box-shadow:inset 0 3px 0 var(--pe-acc2)}
+  .pe-grid{padding:16px 12px 70px 22px;gap:16px 20px}
+  .pe-card{width:calc(50% - 12px)}
+  .pe-card .th{height:180px}
+  .pe-card .tools{opacity:1}
+  .pe-top .pe-b span.tx{display:none}
+  .pe-row{grid-template-columns:1fr}
+  .pe-stage{padding:10px}
+  .pe-props{flex-wrap:nowrap}
+}
+</style>
+<script id="addon_v14">
+/* ===================== STARLITE v14 · Split & Edit PDF =====================
+   Satu editor di dalam aplikasi (tanpa pindah web, tanpa database baru):
+   - Split: rentang / tiap N / per halaman / pilih visual, nama custom per file + pola nama, pasangan PO/BAP/SPK
+   - Edit: susun, putar, hapus, gabung (PDF/JPG/PNG), hapus area permanen, teks lengkap, menggambar, undo/redo
+   - Hasil: unduh / ZIP, Submit PDF massal, kembali ke form (Rapikan PDF), Signing Selesai → simpan hasil pecah ke Drive
+   Diproses di browser (pdf.js + pdf-lib). Simpan ke Drive dibantu Supabase Storage (sementara). */
+(function () {
+  "use strict";
+  if (typeof loadPdfLib !== "function" || typeof loadPdfJs !== "function") return;
+  var $ = function (x) { return document.getElementById(x); };
+  var E = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var toast = function (m, t, ms) { try { showToast(m, t || "info", ms); } catch (e) { console.log(m); } };
+  var emp = function (v) { return typeof isEmpty === "function" ? isEmpty(v) : !String(v || "").trim(); };
+  var N = function (v) { return String(v == null ? "" : v).toUpperCase().replace(/\s+/g, ""); };
+  var loadJs = function (u) { return typeof loadScriptOnce === "function" ? loadScriptOnce(u) : new Promise(function (ok, no) { var s = document.createElement("script"); s.src = u; s.onload = ok; s.onerror = function () { no(new Error("Gagal memuat pustaka")); }; document.head.appendChild(s); }); };
+  var MAX_MB = 50, MAX_PAGES = 300, DPI = 200;
+  var COLORS = ["#4f46e5", "#e11d48", "#059669", "#d97706", "#0891b2", "#7c3aed", "#db2777", "#65a30d"];
+  var PAL = ["#111827", "#dc2626", "#2563eb", "#16a34a", "#f59e0b", "#ffffff"];
+  var FS = "https://cdn.jsdelivr.net/npm/@fontsource/", FSV = "5.1.1";
+  var FONTS = [
+    { k: "Helvetica", label: "Helvetica / Arial", css: "Helvetica, Arial, sans-serif", std: ["Helvetica", "HelveticaBold", "HelveticaOblique", "HelveticaBoldOblique"] },
+    { k: "Times", label: "Times New Roman", css: '"Times New Roman", Times, serif', std: ["TimesRoman", "TimesRomanBold", "TimesRomanItalic", "TimesRomanBoldItalic"] },
+    { k: "Courier", label: "Courier", css: '"Courier New", Courier, monospace', std: ["Courier", "CourierBold", "CourierOblique", "CourierBoldOblique"] },
+    { k: "Roboto", label: "Roboto", fs: "roboto" },
+    { k: "Open Sans", label: "Open Sans", fs: "open-sans" },
+    { k: "Poppins", label: "Poppins", fs: "poppins" },
+    { k: "Arimo", label: "Arimo (mirip Arial)", fs: "arimo" },
+    { k: "Carlito", label: "Carlito (mirip Calibri)", fs: "carlito" }
+  ];
+  var fontOf = function (k) { return FONTS.filter(function (f) { return f.k === k; })[0] || FONTS[0]; };
+  var fontCss = function (f) { return f.fs ? '"PE ' + f.k + '"' : f.css; };
+  var fontUrl = function (f, b, i) { return FS + f.fs + "@" + FSV + "/files/" + f.fs + "-latin-" + (b ? 700 : 400) + "-" + (i ? "italic" : "normal") + ".woff"; };
+  var WF = {};
+  function webFont(f, b, i) {
+    if (!f.fs || typeof FontFace === "undefined") return Promise.resolve();
+    var key = f.k + b + i;
+    if (!WF[key]) WF[key] = new FontFace("PE " + f.k, "url(" + fontUrl(f, b, i) + ")", { weight: b ? "700" : "400", style: i ? "italic" : "normal" }).load().then(function (ff) { document.fonts.add(ff); }).catch(function () { });
+    return WF[key];
+  }
+  var FB = {};
+  function fontBytes(f, b, i) { var u = fontUrl(f, b, i); if (!FB[u]) FB[u] = fetch(u).then(function (r) { if (!r.ok) throw new Error("Font gagal dimuat"); return r.arrayBuffer(); }).catch(function (e) { delete FB[u]; throw e; }); return FB[u]; }
+
+  // ---------- hak akses ----------
+  try {
+    if (typeof PERMS !== "undefined" && !PERMS.some(function (p) { return p.key === "pdf"; })) PERMS.push({ key: "pdf", group: "Aksi", label: "Split & Edit PDF (tidak berlaku untuk Viewer)", icon: "fa-scissors" });
+    if (typeof DEFAULT_ROLE_PERMS !== "undefined") { DEFAULT_ROLE_PERMS.operator.pdf = true; DEFAULT_ROLE_PERMS.viewer.pdf = false; }
+  } catch (e) { }
+  if (typeof can === "function") {
+    var origCan = can;
+    window.can = can = function (k) { if (k === "pdf" && currentUser && currentUser.role === "viewer") return false; return origCan.apply(this, arguments); };
+  }
+  var canPdf = function () { try { return !!currentUser && currentUser.role !== "viewer" && can("pdf"); } catch (e) { return false; } };
+  window.peCan = canPdf;
+
+  // ---------- state ----------
+  var PE = { docs: [], pages: [], cuts: new Set(), names: {}, pairs: {}, sel: new Set(), undo: [], redo: [], origin: { kind: "tab" }, lock: false, base: "Dokumen", pattern: "", uid: 0, mf: false, open: false, last: -1 };
+  var THUMB = {}, JS = {}, LIB = {};
+  var dims = function (p) { var t = (p.r0 + p.rot) % 360; return t % 180 ? { w: p.h, h: p.w, t: t } : { w: p.w, h: p.h, t: t }; };
+  var clone = function (o) { return JSON.parse(JSON.stringify(o)); };
+  var safeName = function (s) { return String(s || "").replace(/\.pdf$/i, "").replace(/[\\/:*?"<>|\u0000-\u001f]+/g, "-").replace(/\s+/g, " ").trim().slice(0, 150); };
+
+  function snap() { return JSON.stringify({ p: PE.pages, c: Array.from(PE.cuts), n: PE.names, a: PE.pairs }); }
+  function restore(s) { var o = JSON.parse(s); PE.pages = o.p; PE.cuts = new Set(o.c); PE.names = o.n; PE.pairs = o.a; PE.sel = new Set(Array.from(PE.sel).filter(function (id) { return PE.pages.some(function (p) { return p.id === id; }); })); }
+  function pushUndo() { PE.undo.push(snap()); if (PE.undo.length > 60) PE.undo.shift(); PE.redo = []; syncUndo(); }
+  function undo() { if (!PE.undo.length) return; PE.redo.push(snap()); restore(PE.undo.pop()); afterChange(); }
+  function redo() { if (!PE.redo.length) return; PE.undo.push(snap()); restore(PE.redo.pop()); afterChange(); }
+  function syncUndo() { ["pe-undo", "pe-ed-undo"].forEach(function (id) { var b = $(id); if (b) b.disabled = !PE.undo.length; }); ["pe-redo", "pe-ed-redo"].forEach(function (id) { var b = $(id); if (b) b.disabled = !PE.redo.length; }); }
+  function afterChange() { syncUndo(); render(); if (ED.on) { var p = edPage(); if (!p) edClose(); else { ED.sel = null; edLoad(); } } }
+
+  // ---------- dokumen sumber ----------
+  function jsDoc(d) { if (!JS[d]) JS[d] = loadPdfJs().then(function (L) { return L.getDocument({ data: PE.docs[d].bytes.slice(0) }).promise; }); return JS[d]; }
+  function libDoc(d) { if (!LIB[d]) LIB[d] = loadPdfLib().then(function (L) { return L.PDFDocument.load(PE.docs[d].bytes, { ignoreEncryption: true }); }); return LIB[d]; }
+  var readBuf = function (f) { return new Promise(function (ok, no) { var r = new FileReader(); r.onload = function () { ok(new Uint8Array(r.result)); }; r.onerror = function () { no(r.error); }; r.readAsArrayBuffer(f); }); };
+
+  async function imageToPdf(file) {
+    var L = await loadPdfLib(), doc = await L.PDFDocument.create(), bytes = await readBuf(file), img;
+    try {
+      if (/jpe?g$/i.test(file.type) || /\.jpe?g$/i.test(file.name)) img = await doc.embedJpg(bytes);
+      else if (/png$/i.test(file.type) || /\.png$/i.test(file.name)) img = await doc.embedPng(bytes);
+    } catch (e) { img = null; }
+    if (!img) {
+      var url = URL.createObjectURL(file), im = await new Promise(function (ok, no) { var x = new Image(); x.onload = function () { ok(x); }; x.onerror = function () { no(new Error("Gambar tidak bisa dibaca")); }; x.src = url; });
+      var c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight; var g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0); URL.revokeObjectURL(url);
+      img = await doc.embedJpg(await canvasJpg(c, 0.9));
+    }
+    var land = img.width > img.height, W = land ? 842 : 595, H = W * img.height / img.width;
+    doc.addPage([W, H]).drawImage(img, { x: 0, y: 0, width: W, height: H });
+    return new Uint8Array(await doc.save());
+  }
+  function canvasJpg(c, q) { return new Promise(function (ok, no) { c.toBlob(function (b) { if (!b) return no(new Error("Gagal membuat gambar")); b.arrayBuffer().then(function (a) { ok(new Uint8Array(a)); }); }, "image/jpeg", q || 0.9); }); }
+
+  async function addBytes(bytes, name) {
+    var d = PE.docs.length;
+    PE.docs.push({ bytes: bytes, name: name });
+    var doc;
+    try { doc = await jsDoc(d); } catch (e) { PE.docs[d] = { bytes: new Uint8Array(0), name: name, bad: true }; delete JS[d]; throw new Error("\"" + name + "\" bukan PDF yang valid atau terkunci password"); }
+    if (PE.pages.length + doc.numPages > MAX_PAGES) throw new Error("Maksimal " + MAX_PAGES + " halaman per sesi");
+    var out = [];
+    for (var i = 1; i <= doc.numPages; i++) {
+      var pg = await doc.getPage(i), v = pg.view;
+      out.push({ id: "p" + (++PE.uid), d: d, i: i - 1, r0: ((pg.rotate || 0) % 360 + 360) % 360, rot: 0, w: Math.abs(v[2] - v[0]), h: Math.abs(v[3] - v[1]), ops: [] });
+    }
+    return out;
+  }
+
+  async function addFiles(files, at) {
+    files = Array.from(files || []).filter(Boolean);
+    if (!files.length) return;
+    var size = files.reduce(function (a, f) { return a + f.size; }, 0) + PE.docs.reduce(function (a, d) { return a + (d.bytes ? d.bytes.length : 0); }, 0);
+    if (size > MAX_MB * 1048576) return toast("Total file maksimal " + MAX_MB + " MB", "error", 6000);
+    busy("Membaca file…", 5);
+    try {
+      var first = !PE.pages.length, add = [];
+      for (var k = 0; k < files.length; k++) {
+        var f = files[k], isPdf = /pdf$/i.test(f.type) || /\.pdf$/i.test(f.name), isImg = /^image\//.test(f.type) || /\.(jpe?g|png|webp|gif|bmp)$/i.test(f.name);
+        if (!isPdf && !isImg) { toast("\"" + f.name + "\" dilewati — hanya PDF / JPG / PNG", "error", 5000); continue; }
+        busy("Membaca " + f.name + "…", 10 + 80 * k / files.length);
+        var bytes = isPdf ? await readBuf(f) : await imageToPdf(f);
+        var pages = await addBytes(bytes, f.name);
+        add = add.concat(pages);
+        if (first && k === 0) PE.base = safeName(f.name) || "Dokumen";
+      }
+      if (add.length) {
+        pushUndo();
+        var pos = at == null ? PE.pages.length : at;
+        PE.pages.splice.apply(PE.pages, [pos, 0].concat(add));
+      }
+    } catch (e) { toast(e.message, "error", 7000); }
+    busy(null);
+    render();
+  }
+
+  // ---------- render halaman (pdf.js) ----------
+  async function renderBase(p, cssW, dpr) {
+    var doc = await jsDoc(p.d), pg = await doc.getPage(p.i + 1), D = dims(p);
+    var vp = pg.getViewport({ scale: cssW / D.w * (dpr || 1), rotation: D.t });
+    var c = document.createElement("canvas"); c.width = Math.max(1, Math.round(vp.width)); c.height = Math.max(1, Math.round(vp.height));
+    var g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height);
+    await pg.render({ canvasContext: g, viewport: vp }).promise;
+    return c;
+  }
+  var TQ = [], TBUSY = 0;
+  function thumbKey(p) { return p.d + ":" + p.i + ":" + dims(p).t + ":" + (p.ops.length ? JSON.stringify(p.ops).length + ":" + hashStr(JSON.stringify(p.ops)) : 0); }
+  function hashStr(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return h; }
+  function thumb(p, img) {
+    var k = thumbKey(p);
+    if (THUMB[k]) { img.src = THUMB[k]; return; }
+    TQ.push({ p: p, img: img, k: k }); pumpThumbs();
+  }
+  function pumpThumbs() {
+    while (TBUSY < 2 && TQ.length) {
+      var job = TQ.shift();
+      if (THUMB[job.k]) { job.img.src = THUMB[job.k]; continue; }
+      if (!job.img.isConnected) continue;
+      TBUSY++;
+      (async function (j) {
+        try {
+          var c = await renderBase(j.p, 150, 1.6);
+          if (j.p.ops.length) drawOps(c.getContext("2d"), j.p.ops, c.width / dims(j.p).w);
+          THUMB[j.k] = c.toDataURL("image/jpeg", 0.8);
+        } catch (e) { THUMB[j.k] = ""; }
+        if (j.img.isConnected) j.img.src = THUMB[j.k];
+        TBUSY--; pumpThumbs();
+      })(job);
+    }
+  }
+
+  // ---------- teks ----------
+  var MC = document.createElement("canvas").getContext("2d");
+  function cssFont(o, scale) { var f = fontOf(o.font); return (o.i ? "italic " : "") + (o.b ? "700 " : "400 ") + (o.size * (scale || 1)) + "px " + fontCss(f); }
+  function wrap(text, maxW, measure) {
+    var out = [];
+    String(text || "").split("\n").forEach(function (para) {
+      var tokens = para.match(/\S+|\s+/g) || [""], line = "";
+      tokens.forEach(function (tk) {
+        var cand = line + tk;
+        if (measure(cand.replace(/\s+$/, "")) <= maxW) { line = cand; return; }
+        if (/^\s+$/.test(tk)) { out.push(line.replace(/\s+$/, "")); line = ""; return; }
+        if (line.trim()) { out.push(line.replace(/\s+$/, "")); line = ""; }
+        if (measure(tk) <= maxW) { line = tk; return; }
+        var cur = "";
+        Array.from(tk).forEach(function (ch) { if (cur && measure(cur + ch) > maxW) { out.push(cur); cur = ch; } else cur += ch; });
+        line = cur;
+      });
+      out.push(line.replace(/\s+$/, ""));
+    });
+    return out;
+  }
+  function textLines(o) { MC.font = cssFont(o, 1); return wrap(o.text, Math.max(4, o.w - 4), function (s) { return MC.measureText(s).width; }); }
+  var LH = 1.25, PAD = 2;
+  function textH(o, lines) { return Math.max(1, (lines || textLines(o)).length) * o.size * LH + PAD * 2; }
+  var baseY = function (o, k) { return PAD + k * o.size * LH + o.size * 0.82 + (o.size * LH - o.size) / 2; };
+
+  // ---------- gambar objek ke canvas (pratinjau, gambar mini, raster) ----------
+  function hexA(h, a) { h = String(h || "#000").replace("#", ""); if (h.length === 3) h = h.replace(/./g, "$&$&"); var n = parseInt(h, 16); return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + (a == null ? 1 : a) + ")"; }
+  function drawOps(g, ops, k, opt) {
+    ops.forEach(function (o) {
+      if (opt && opt.skipErase && o.t === "erase") return;
+      if (opt && opt.onlyErase && o.t !== "erase") return;
+      if (opt && opt.hide === o) return;
+      g.save(); g.scale(k, k);
+      var al = o.op == null ? 1 : o.op;
+      if (o.t === "erase") { g.fillStyle = o.col || "#fff"; g.fillRect(o.x, o.y, o.w, o.h); }
+      else if (o.t === "text") {
+        var lines = textLines(o), cx = o.x + o.w / 2, cy = o.y + o.h / 2;
+        g.translate(cx, cy); g.rotate((o.a || 0) * Math.PI / 180); g.translate(-o.w / 2, -o.h / 2);
+        if (o.bg) { g.fillStyle = hexA(o.bg, al); g.fillRect(0, 0, o.w, o.h); }
+        g.font = cssFont(o, 1); g.fillStyle = hexA(o.c, al); g.textBaseline = "alphabetic";
+        lines.forEach(function (ln, i) {
+          var lw = g.measureText(ln).width, x = o.al === "c" ? (o.w - lw) / 2 : o.al === "r" ? o.w - PAD - lw : PAD, y = baseY(o, i);
+          g.fillText(ln, x, y);
+          if (o.u && ln) { g.fillRect(x, y + o.size * 0.12, lw, Math.max(0.5, o.size * 0.06)); }
+        });
+      } else {
+        g.globalAlpha = al; g.strokeStyle = o.c; g.fillStyle = o.c; g.lineWidth = o.lw; g.lineCap = "round"; g.lineJoin = "round";
+        if (o.t === "hl") g.globalCompositeOperation = "multiply";
+        if (o.t === "pen" || o.t === "hl") { g.beginPath(); o.pts.forEach(function (q, i) { i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); if (o.pts.length === 1) g.lineTo(o.pts[0][0] + 0.1, o.pts[0][1]); g.stroke(); }
+        else if (o.t === "line" || o.t === "arrow") {
+          g.beginPath(); g.moveTo(o.x1, o.y1); g.lineTo(o.x2, o.y2); g.stroke();
+          if (o.t === "arrow") { var hd = arrowHead(o); g.beginPath(); g.moveTo(hd[0][0], hd[0][1]); g.lineTo(hd[1][0], hd[1][1]); g.lineTo(hd[2][0], hd[2][1]); g.closePath(); g.fill(); }
+        }
+        else if (o.t === "rect") g.strokeRect(o.x, o.y, o.w, o.h);
+        else if (o.t === "ellipse") { g.beginPath(); g.ellipse(o.x + o.w / 2, o.y + o.h / 2, Math.abs(o.w / 2), Math.abs(o.h / 2), 0, 0, Math.PI * 2); g.stroke(); }
+        else if (o.t === "check") { var c = checkPts(o); g.lineWidth = o.w * 0.14; g.beginPath(); g.moveTo(c[0][0], c[0][1]); g.lineTo(c[1][0], c[1][1]); g.lineTo(c[2][0], c[2][1]); g.stroke(); }
+      }
+      g.restore();
+    });
+  }
+  function arrowHead(o) {
+    var L = Math.max(8, o.lw * 4), a = Math.atan2(o.y2 - o.y1, o.x2 - o.x1), s = 0.45;
+    return [[o.x2, o.y2], [o.x2 - L * Math.cos(a - s), o.y2 - L * Math.sin(a - s)], [o.x2 - L * Math.cos(a + s), o.y2 - L * Math.sin(a + s)]];
+  }
+  var checkPts = function (o) { return [[o.x + o.w * 0.08, o.y + o.w * 0.55], [o.x + o.w * 0.4, o.y + o.w * 0.86], [o.x + o.w * 0.94, o.y + o.w * 0.12]]; };
+
+  // ---------- susun PDF hasil ----------
+  async function rasterErase(p) {
+    var D = dims(p), sc = Math.min(DPI / 72, 3200 / Math.max(D.w, D.h));
+    var c = await renderBase(p, D.w * sc, 1);
+    drawOps(c.getContext("2d"), p.ops, c.width / D.w, { onlyErase: true });
+    return canvasJpg(c, 0.9);
+  }
+  function rgbOf(L, h) { h = String(h || "#000").replace("#", ""); if (h.length === 3) h = h.replace(/./g, "$&$&"); var n = parseInt(h, 16); return L.rgb((n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255); }
+  async function pdfFont(L, out, cache, o) {
+    var f = fontOf(o.font), b = !!o.b, it = !!o.i, key = f.k + b + it;
+    if (!cache[key]) {
+      if (f.std) cache[key] = await out.embedFont(L.StandardFonts[f.std[(b ? 1 : 0) + (it ? 2 : 0)]]);
+      else {
+        if (!cache._fk) { await loadJs("https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"); out.registerFontkit(window.fontkit); cache._fk = 1; }
+        cache[key] = await out.embedFont(await fontBytes(f, b, it), { subset: true });
+      }
+    }
+    return cache[key];
+  }
+  function stdSafe(font, s, isStd) {
+    if (!isStd) return s;
+    var set = font.__cs || (font.__cs = new Set(font.getCharacterSet ? font.getCharacterSet() : []));
+    var map = { "‘": "'", "’": "'", "“": '"', "”": '"', "–": "-", "—": "-", "…": "...", " ": " " };
+    return Array.from(s).map(function (ch) { if (set.size && set.has(ch.codePointAt(0))) return ch; if (map[ch]) return map[ch]; return set.size ? "?" : ch; }).join("");
+  }
+  async function drawOpPdf(L, out, page, o, Dh, cache) {
+    var al = o.op == null ? 1 : o.op, y = function (v) { return Dh - v; };
+    if (o.t === "text") {
+      if (!String(o.text || "").trim() && !o.bg) return;
+      var font = await pdfFont(L, out, cache, o), isStd = !!fontOf(o.font).std;
+      var lines = textLines(o), a = (o.a || 0) * Math.PI / 180, cs = Math.cos(a), sn = Math.sin(a), cx = o.x + o.w / 2, cy = o.y + o.h / 2;
+      var tp = function (u, v) { var dx = u - o.w / 2, dy = v - o.h / 2; return [cx + dx * cs - dy * sn, cy + dx * sn + dy * cs]; };
+      var rot = L.degrees(-(o.a || 0));
+      if (o.bg) { var bl = tp(0, o.h); page.drawRectangle({ x: bl[0], y: y(bl[1]), width: o.w, height: o.h, color: rgbOf(L, o.bg), opacity: al, rotate: rot }); }
+      lines.forEach(function (ln, i) {
+        var t = stdSafe(font, ln, isStd); if (!t) return;
+        var lw = font.widthOfTextAtSize(t, o.size), u = o.al === "c" ? (o.w - lw) / 2 : o.al === "r" ? o.w - PAD - lw : PAD, v = baseY(o, i), p0 = tp(u, v);
+        page.drawText(t, { x: p0[0], y: y(p0[1]), size: o.size, font: font, color: rgbOf(L, o.c), opacity: al, rotate: rot });
+        if (o.u) { var th = Math.max(0.5, o.size * 0.06), q = tp(u, v + o.size * 0.12 + th); page.drawRectangle({ x: q[0], y: y(q[1]), width: lw, height: th, color: rgbOf(L, o.c), opacity: al, rotate: rot }); }
+      });
+      return;
+    }
+    var col = rgbOf(L, o.c), common = { borderColor: col, borderWidth: o.lw, borderOpacity: al };
+    if (L.LineCapStyle) common.borderLineCap = L.LineCapStyle.Round;
+    if (o.t === "hl" && L.BlendMode) common.blendMode = L.BlendMode.Multiply;
+    var path = function (pts) { return pts.map(function (q, i) { return (i ? "L" : "M") + q[0].toFixed(2) + " " + q[1].toFixed(2); }).join(" "); };
+    if (o.t === "pen" || o.t === "hl") { var pts = o.pts.length === 1 ? [o.pts[0], [o.pts[0][0] + 0.1, o.pts[0][1]]] : o.pts; page.drawSvgPath(path(pts), Object.assign({ x: 0, y: Dh }, common)); }
+    else if (o.t === "line" || o.t === "arrow") {
+      page.drawSvgPath(path([[o.x1, o.y1], [o.x2, o.y2]]), Object.assign({ x: 0, y: Dh }, common));
+      if (o.t === "arrow") page.drawSvgPath(path(arrowHead(o)) + " Z", { x: 0, y: Dh, color: col, opacity: al });
+    }
+    else if (o.t === "rect") page.drawRectangle({ x: Math.min(o.x, o.x + o.w), y: y(Math.max(o.y, o.y + o.h)), width: Math.abs(o.w), height: Math.abs(o.h), borderColor: col, borderWidth: o.lw, borderOpacity: al });
+    else if (o.t === "ellipse") page.drawEllipse({ x: o.x + o.w / 2, y: y(o.y + o.h / 2), xScale: Math.abs(o.w / 2), yScale: Math.abs(o.h / 2), borderColor: col, borderWidth: o.lw, borderOpacity: al });
+    else if (o.t === "check") page.drawSvgPath(path(checkPts(o)), Object.assign({ x: 0, y: Dh }, common, { borderWidth: o.w * 0.14 }));
+  }
+  async function buildPdf(list, title, onp) {
+    var L = await loadPdfLib(), out = await L.PDFDocument.create(), cache = {}, plain = {}, copied = {};
+    list.forEach(function (p) { if (!p.ops.length) (plain[p.d] = plain[p.d] || []).push(p.i); });
+    for (var dk in plain) copied[dk] = await out.copyPages(await libDoc(+dk), plain[dk]);
+    var used = {};
+    for (var n = 0; n < list.length; n++) {
+      var p = list[n], D = dims(p);
+      if (!p.ops.length) { var u = used[p.d] = (used[p.d] || 0); var cp = copied[p.d][u]; used[p.d] = u + 1; cp.setRotation(L.degrees(D.t)); out.addPage(cp); }
+      else {
+        var src = await libDoc(p.d), np = out.addPage([D.w, D.h]);
+        if (p.ops.some(function (o) { return o.t === "erase"; })) { var img = await out.embedJpg(await rasterErase(p)); np.drawImage(img, { x: 0, y: 0, width: D.w, height: D.h }); }
+        else {
+          var sp = src.getPage(p.i), cb = sp.getCropBox(), W = cb.width, H = cb.height;
+          var emb = await out.embedPage(sp, { left: cb.x, bottom: cb.y, right: cb.x + W, top: cb.y + H });
+          var pos = { 0: [0, 0], 90: [0, W], 180: [W, H], 270: [H, 0] }[D.t];
+          np.drawPage(emb, { x: pos[0], y: pos[1], width: W, height: H, rotate: L.degrees(-D.t) });
+        }
+        for (var j = 0; j < p.ops.length; j++) if (p.ops[j].t !== "erase") await drawOpPdf(L, out, np, p.ops[j], D.h, cache);
+      }
+      if (onp) onp(n + 1, list.length);
+    }
+    try { out.setTitle(title || "Dokumen"); out.setProducer("STARLITE VM · Split & Edit PDF"); out.setCreator("STARLITE VM"); } catch (e) { }
+    return new Uint8Array(await out.save());
+  }
+
+  // ---------- file hasil (segmen) ----------
+  function segs() {
+    var out = [], cur = null;
+    PE.pages.forEach(function (p, ix) { if (!cur || PE.cuts.has(p.id)) { cur = { key: p.id, pages: [], start: ix }; out.push(cur); } cur.pages.push(p); });
+    out.forEach(function (s, i) { s.no = i + 1; s.color = COLORS[i % COLORS.length]; });
+    return out;
+  }
+  var fmtD = function () { var d = new Date(), z = function (n) { return ("0" + n).slice(-2); }; return z(d.getDate()) + "-" + z(d.getMonth() + 1) + "-" + d.getFullYear(); };
+  function pairRows(pr) {
+    if (!pr) return [];
+    var k = N(pr.key), L = (typeof STATE !== "undefined" && STATE.takeover) || [];
+    if (pr.mode === "spk") return L.filter(function (t) { return N(t.att_spk) === k; });
+    if (pr.mode === "bap") return L.filter(function (t) { return emp(t.att_spk) && N(t.bap_no) === k; });
+    return L.filter(function (t) { return emp(t.att_spk) && emp(t.bap_no) && N(t.po) === k; });
+  }
+  function uniq(a) { return a.filter(function (v, i) { return !emp(v) && a.indexOf(v) === i; }); }
+  function vars(s, total) {
+    var rows = pairRows(PE.pairs[s.key]), a = rows[0] || {};
+    var pad = String(s.no); if (total >= 10 && s.no < 10) pad = "0" + pad;
+    return { no: pad, nama: PE.base, tanggal: fmtD(), PO: uniq(rows.map(function (r) { return r.po; })).join("_"), BAP: uniq(rows.map(function (r) { return r.bap_no; })).join("_"), SPK: a.att_spk && !/^https?:/i.test(a.att_spk) ? a.att_spk : "", Stasiun: a.stasiun || "", Mitra: a.after || "", hal: s.pages.length };
+  }
+  function defPattern(n) { return PE.pattern || (n > 1 ? (PE.lock ? "{nama} - bagian {no}" : "{nama} - {no}") : "{nama}"); }
+  function applyPattern(pat, s, total) {
+    var v = vars(s, total);
+    var t = String(pat).replace(/\{(\w+)\}/g, function (m, k) { var key = Object.keys(v).filter(function (x) { return x.toLowerCase() === k.toLowerCase(); })[0]; return key ? v[key] : m; });
+    return safeName(t.replace(/\s*-\s*-\s*/g, " - ").replace(/^\s*-\s*|\s*-\s*$/g, "")) || (PE.base + " - " + s.no);
+  }
+  function nameOf(s, total) { return PE.names[s.key] != null ? PE.names[s.key] : applyPattern(defPattern(total), s, total); }
+  function finalNames(list) {
+    var seen = {}, all = list || segs();
+    return all.map(function (s) { var n = safeName(nameOf(s, all.length)) || PE.base, k = n.toLowerCase(), i = 1; while (seen[k]) { k = (n + " (" + (++i) + ")").toLowerCase(); } seen[k] = 1; return i > 1 ? n + " (" + i + ")" : n; });
+  }
+
+  // ---------- cari data takeover ----------
+  function groupOf(t) { if (!emp(t.att_spk) && !/^https?:/i.test(t.att_spk)) return { mode: "spk", key: String(t.att_spk).trim() }; if (!emp(t.bap_no)) return { mode: "bap", key: String(t.bap_no).trim() }; return { mode: "po", key: String(t.po).trim() }; }
+  function findGroups(q) {
+    var nq = N(q), lq = String(q || "").trim().toLowerCase(), G = new Map();
+    if (lq.length < 2) return [];
+    ((typeof STATE !== "undefined" && STATE.takeover) || []).forEach(function (t) {
+      var ids = [t.att_spk, t.bap_no, t.po], txt = [t.stasiun, t.before, t.after, t.region];
+      var exact = ids.some(function (v) { return !emp(v) && N(v) === nq; });
+      if (!(exact || ids.some(function (v) { return !emp(v) && N(v).indexOf(nq) >= 0; }) || txt.some(function (v) { return String(v || "").toLowerCase().indexOf(lq) >= 0; }))) return;
+      var g = groupOf(t), id = g.mode + ":" + N(g.key), o = G.get(id);
+      if (!o) G.set(id, o = { mode: g.mode, key: g.key, exact: false });
+      if (exact) o.exact = true;
+    });
+    return Array.from(G.values()).sort(function (a, b) { return (b.exact - a.exact) || String(a.key).localeCompare(String(b.key)); }).slice(0, 25);
+  }
+  var MODE = { spk: "SPK", bap: "BAP", po: "PO" };
+  function pairLabel(pr) { var r = pairRows(pr), pos = uniq(r.map(function (x) { return x.po; })); return '<span class="pe-tag">' + MODE[pr.mode] + "</span> <b>" + E(pr.key) + "</b> <span style=\"color:var(--pe-mute)\">· " + pos.length + " PO" + (r[0] && r[0].stasiun ? " · " + E(r[0].stasiun) : "") + "</span>"; }
+  function sugHtml(list) {
+    if (!list.length) return '<div style="padding:8px;color:var(--pe-mute)">Tidak ada data yang cocok</div>';
+    return list.map(function (g, i) { var r = pairRows(g), a = r[0] || {}, pos = uniq(r.map(function (x) { return x.po; })); return '<button type="button" data-g="' + i + '"><span class="pe-tag">' + MODE[g.mode] + "</span> <b>" + E(g.key) + "</b><small>" + E([a.stasiun, a.region, a.after].filter(function (v) { return !emp(v); }).join(" · ")) + "</small><small>PO " + E(pos.slice(0, 4).join(", ") + (pos.length > 4 ? " +" + (pos.length - 4) : "")) + "</small></button>"; }).join("");
+  }
+  function bindSearch(input, box, onPick) {
+    var list = [], t = null;
+    input.addEventListener("input", function () {
+      clearTimeout(t); t = setTimeout(function () {
+        list = findGroups(input.value);
+        if (!input.value.trim()) { box.classList.add("hidden"); return; }
+        box.innerHTML = sugHtml(list); box.classList.remove("hidden");
+        box.querySelectorAll("[data-g]").forEach(function (b) { b.onmousedown = function (e) { e.preventDefault(); onPick(list[+b.dataset.g]); }; });
+      }, 120);
+    });
+    input.addEventListener("blur", function () { setTimeout(function () { box.classList.add("hidden"); }, 150); });
+  }
+
+  // ---------- kerangka tampilan ----------
+  function shell() {
+    var el = $("pe");
+    if (el) return el;
+    el = document.createElement("div"); el.id = "pe"; el.className = "hidden";
+    el.innerHTML = '<div class="pe-top" id="pe-top">'
+      + '<button class="pe-b ic" id="pe-close" title="Tutup"><i class="fa-solid fa-xmark"></i></button>'
+      + '<div class="pe-title"><b id="pe-ttl">Split &amp; Edit PDF</b><small id="pe-sub">Pecah, rapikan, dan kirim PDF tanpa keluar aplikasi</small></div>'
+      + '<span class="pe-lock hidden" id="pe-lock"><i class="fa-solid fa-lock mr-1"></i>Mode Split saja</span>'
+      + '<button class="pe-b ic" id="pe-undo" title="Urungkan (Ctrl+Z)" disabled><i class="fa-solid fa-rotate-left"></i></button>'
+      + '<button class="pe-b ic" id="pe-redo" title="Ulangi (Ctrl+Y)" disabled><i class="fa-solid fa-rotate-right"></i></button>'
+      + '<button class="pe-b" id="pe-add" title="Tambah PDF / gambar"><i class="fa-solid fa-plus"></i><span class="tx">Tambah file</span></button>'
+      + '<button class="pe-b" id="pe-dl"><i class="fa-solid fa-download"></i><span class="tx">Unduh</span></button>'
+      + '<button class="pe-b pri" id="pe-send"><i class="fa-solid fa-paper-plane"></i><span class="tx">Kirim / Simpan</span><i class="fa-solid fa-chevron-down" style="font-size:9px"></i></button>'
+      + "</div>"
+      + '<div class="pe-body"><aside class="pe-files" id="pe-files"></aside><main class="pe-main"><div class="pe-bar" id="pe-bar"></div><div class="pe-grid" id="pe-grid"></div></main>'
+      + '<div class="pe-mtab"><button id="pe-mt-p" class="on"><i class="fa-regular fa-copy"></i>Halaman</button><button id="pe-mt-f"><i class="fa-solid fa-scissors"></i>File hasil</button></div></div>'
+      + '<input type="file" id="pe-in" class="hidden" multiple accept="application/pdf,.pdf,image/png,image/jpeg,.jpg,.jpeg,.png">';
+    document.body.appendChild(el);
+    $("pe-close").onclick = peClose;
+    $("pe-undo").onclick = undo; $("pe-redo").onclick = redo;
+    $("pe-add").onclick = function () { PE.insAt = null; $("pe-in").click(); };
+    $("pe-in").onchange = function () { var f = this.files; addFiles(f, PE.insAt); this.value = ""; };
+    $("pe-dl").onclick = function (e) { dlMenu(e.currentTarget); };
+    $("pe-send").onclick = function (e) { sendMenu(e.currentTarget); };
+    $("pe-mt-p").onclick = function () { PE.mf = false; render(); };
+    $("pe-mt-f").onclick = function () { PE.mf = true; render(); };
+    var grid = $("pe-grid");
+    grid.addEventListener("dragover", function (e) { if (e.dataTransfer && Array.from(e.dataTransfer.types || []).indexOf("Files") >= 0 && !PE.lock) { e.preventDefault(); } });
+    grid.addEventListener("drop", function (e) { if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length && !PE.lock) { e.preventDefault(); addFiles(e.dataTransfer.files); } });
+    document.addEventListener("keydown", function (e) {
+      if (!PE.open || ED.edit) return;
+      var tag = (e.target.tagName || "").toLowerCase(); if (tag === "input" || tag === "textarea" || tag === "select") return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); e.shiftKey ? redo() : undo(); }
+      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") { e.preventDefault(); redo(); }
+      else if (e.key === "Delete" || e.key === "Backspace") { if (ED.on) { if (ED.sel) { e.preventDefault(); edDelSel(); } } else if (PE.sel.size) { e.preventDefault(); delPages(); } }
+      else if (e.key === "Escape") { if (document.querySelector(".pe-menu")) closeMenus(); else if (ED.on) edClose(); }
+    });
+    return el;
+  }
+
+  function render() {
+    if (!PE.open) return;
+    var el = $("pe");
+    el.classList.toggle("mf", !!PE.mf);
+    $("pe-mt-p").classList.toggle("on", !PE.mf); $("pe-mt-f").classList.toggle("on", !!PE.mf);
+    $("pe-lock").classList.toggle("hidden", !PE.lock);
+    $("pe-add").classList.toggle("hidden", PE.lock);
+    var has = PE.pages.length > 0;
+    $("pe-dl").disabled = !has; $("pe-send").disabled = !has;
+    var S = segs();
+    $("pe-sub").textContent = has ? PE.base + " · " + PE.pages.length + " halaman → " + S.length + " file" : "Pecah, rapikan, dan kirim PDF tanpa keluar aplikasi";
+    $("pe-mt-f").innerHTML = '<i class="fa-solid fa-scissors"></i>File hasil (' + S.length + ")";
+    try { el.style.setProperty("--pe-topH", $("pe-top").offsetHeight + "px"); } catch (e) { }
+    renderBar(); renderGrid(S); renderFiles(S); syncUndo();
+  }
+
+  function renderBar() {
+    var bar = $("pe-bar"), n = PE.sel.size, has = PE.pages.length > 0;
+    if (!has) { bar.innerHTML = '<span style="color:var(--pe-mute)">Belum ada file.</span>'; return; }
+    var L = PE.lock;
+    bar.innerHTML = '<button class="pe-b" id="pe-b-all"><i class="fa-regular fa-square-check"></i>' + (n === PE.pages.length ? "Batal pilih" : "Pilih semua") + "</button>"
+      + (n ? '<span style="font-weight:800">' + n + " dipilih</span>" : "")
+      + (L ? "" : '<button class="pe-b ic" id="pe-b-rl" title="Putar kiri" ' + (n ? "" : "disabled") + '><i class="fa-solid fa-rotate-left"></i></button><button class="pe-b ic" id="pe-b-rr" title="Putar kanan" ' + (n ? "" : "disabled") + '><i class="fa-solid fa-rotate-right"></i></button>'
+        + '<button class="pe-b ic" id="pe-b-dup" title="Duplikat" ' + (n ? "" : "disabled") + '><i class="fa-regular fa-clone"></i></button>'
+        + '<button class="pe-b ic" id="pe-b-ml" title="Geser ke kiri" ' + (n ? "" : "disabled") + '><i class="fa-solid fa-arrow-left"></i></button><button class="pe-b ic" id="pe-b-mr" title="Geser ke kanan" ' + (n ? "" : "disabled") + '><i class="fa-solid fa-arrow-right"></i></button>')
+      + '<button class="pe-b ic red" id="pe-b-del" title="Hapus halaman" ' + (n && n < PE.pages.length ? "" : "disabled") + '><i class="fa-regular fa-trash-can"></i></button>'
+      + (L ? "" : '<button class="pe-b" id="pe-b-ed" ' + (PE.pages.length ? "" : "disabled") + '><i class="fa-solid fa-pen-ruler"></i>Edit halaman</button>')
+      + '<span class="sep"></span><label>Pecah</label>'
+      + '<input id="pe-rg" placeholder="mis. 1-3, 4, 5-8" style="width:140px" title="Rentang halaman per file">'
+      + '<button class="pe-b" id="pe-b-rg">Terapkan</button>'
+      + '<button class="pe-b" id="pe-b-n" title="Pecah tiap N halaman">Tiap <input id="pe-nn" type="number" min="1" value="2" style="width:48px;height:24px;padding:2px 4px" onclick="event.stopPropagation()"> hal</button>'
+      + '<button class="pe-b" id="pe-b-1">Per halaman</button>'
+      + '<button class="pe-b" id="pe-b-0" ' + (PE.cuts.size ? "" : "disabled") + '>Satukan</button>';
+    var on = function (id, f) { var b = $(id); if (b) b.onclick = f; };
+    on("pe-b-all", function () { if (PE.sel.size === PE.pages.length) PE.sel.clear(); else PE.pages.forEach(function (p) { PE.sel.add(p.id); }); render(); });
+    on("pe-b-rl", function () { rotatePages(-90); }); on("pe-b-rr", function () { rotatePages(90); });
+    on("pe-b-dup", dupPages); on("pe-b-del", delPages);
+    on("pe-b-ml", function () { movePages(-1); }); on("pe-b-mr", function () { movePages(1); });
+    on("pe-b-ed", function () { var id = PE.sel.size ? PE.pages.filter(function (p) { return PE.sel.has(p.id); })[0].id : PE.pages[0].id; edOpen(id); });
+    on("pe-b-rg", function () { splitRanges($("pe-rg").value); });
+    $("pe-rg").onkeydown = function (e) { if (e.key === "Enter") splitRanges(this.value); };
+    on("pe-b-n", function () { var n = Math.max(1, parseInt($("pe-nn").value, 10) || 1); pushUndo(); PE.cuts = new Set(PE.pages.filter(function (p, i) { return i && i % n === 0; }).map(function (p) { return p.id; })); render(); });
+    on("pe-b-1", function () { pushUndo(); PE.cuts = new Set(PE.pages.slice(1).map(function (p) { return p.id; })); render(); });
+    on("pe-b-0", function () { pushUndo(); PE.cuts.clear(); render(); });
+  }
+
+  function renderGrid(S) {
+    var grid = $("pe-grid");
+    if (!PE.pages.length) {
+      grid.innerHTML = '<div class="pe-empty"><label class="pe-drop" id="pe-drop" for="pe-in"><i class="fa-solid fa-file-pdf" style="font-size:34px;color:#e11d48"></i>'
+        + '<p style="font-weight:800;font-size:14px;margin-top:10px">Tarik &amp; lepas PDF atau gambar di sini</p><p style="color:var(--pe-mute);margin-top:3px">atau klik untuk memilih · bisa beberapa file sekaligus (maks ' + MAX_MB + " MB / " + MAX_PAGES + ' halaman)</p></label>'
+        + '<p style="color:var(--pe-mute);margin-top:14px;font-size:11px"><i class="fa-solid fa-shield-halved mr-1"></i>Semua proses berjalan di perangkat ini. File tidak diunggah sebelum Anda menekan Kirim / Simpan.</p></div>';
+      var dz = $("pe-drop");
+      dz.ondragover = function (e) { e.preventDefault(); dz.classList.add("over"); };
+      dz.ondragleave = function () { dz.classList.remove("over"); };
+      dz.ondrop = function (e) { e.preventDefault(); dz.classList.remove("over"); addFiles(e.dataTransfer.files); };
+      return;
+    }
+    var segOf = {}; S.forEach(function (s) { s.pages.forEach(function (p) { segOf[p.id] = s; }); });
+    grid.innerHTML = "";
+    PE.pages.forEach(function (p, ix) {
+      var s = segOf[p.id], first = s.pages[0] === p, D = dims(p);
+      var card = document.createElement("div");
+      card.className = "pe-card" + (PE.sel.has(p.id) ? " sel" : "") + (first && ix ? " cutOn" : "");
+      card.style.setProperty("--c", s.color);
+      card.dataset.id = p.id;
+      card.innerHTML = (first ? '<span class="fl">File ' + s.no + "</span>" : "")
+        + (ix ? '<button class="cut" title="' + (first ? "Gabungkan dengan file sebelumnya" : "Mulai file baru dari halaman ini") + '"><i class="fa-solid fa-scissors"></i></button>' : "")
+        + '<div class="th"><img alt="" draggable="false"><span class="ck"><i class="fa-solid fa-check"></i></span>'
+        + '<span class="tools">' + (PE.lock ? "" : '<button data-a="ed" title="Edit halaman"><i class="fa-solid fa-pen"></i></button>') + '<button data-a="vw" title="Lihat besar"><i class="fa-solid fa-magnifying-glass-plus"></i></button></span>'
+        + (p.ops.length ? '<span class="mk">diedit</span>' : "") + "</div>"
+        + '<div class="ft">Hal ' + (ix + 1) + "<span>· " + (PE.docs.length > 1 ? E(String(PE.docs[p.d].name).slice(0, 14)) + " h" + (p.i + 1) : "asli " + (p.i + 1)) + (p.rot ? " · ↻" + p.rot + "°" : "") + "</span></div>";
+      var img = card.querySelector("img"); img.style.aspectRatio = D.w + "/" + D.h;
+      card.querySelector(".th").onclick = function (e) {
+        var a = e.target.closest("[data-a]");
+        if (a) { e.stopPropagation(); if (a.dataset.a === "ed") edOpen(p.id); else viewPage(p.id); return; }
+        if (e.shiftKey && PE.last >= 0) { var a0 = Math.min(PE.last, ix), b0 = Math.max(PE.last, ix); for (var q = a0; q <= b0; q++) PE.sel.add(PE.pages[q].id); }
+        else if (PE.sel.has(p.id)) PE.sel.delete(p.id); else PE.sel.add(p.id);
+        PE.last = ix; render();
+      };
+      card.querySelector(".th").ondblclick = function () { if (!PE.lock) edOpen(p.id); };
+      var cut = card.querySelector(".cut");
+      if (cut) cut.onclick = function (e) { e.stopPropagation(); pushUndo(); if (PE.cuts.has(p.id)) PE.cuts.delete(p.id); else PE.cuts.add(p.id); render(); };
+      if (!PE.lock) {
+        card.draggable = true;
+        card.ondragstart = function (e) { PE.drag = PE.sel.has(p.id) ? PE.pages.filter(function (x) { return PE.sel.has(x.id); }).map(function (x) { return x.id; }) : [p.id]; card.classList.add("drag"); try { e.dataTransfer.setData("text/plain", p.id); e.dataTransfer.effectAllowed = "move"; } catch (er) { } };
+        card.ondragend = function () { card.classList.remove("drag"); PE.drag = null; document.querySelectorAll(".pe-card.dropL").forEach(function (c) { c.classList.remove("dropL"); }); };
+        card.ondragover = function (e) { if (!PE.drag) return; e.preventDefault(); document.querySelectorAll(".pe-card.dropL").forEach(function (c) { if (c !== card) c.classList.remove("dropL"); }); card.classList.add("dropL"); };
+        card.ondrop = function (e) {
+          if (!PE.drag) return; e.preventDefault(); e.stopPropagation();
+          var ids = PE.drag; if (ids.indexOf(p.id) >= 0) return;
+          pushUndo();
+          var moving = PE.pages.filter(function (x) { return ids.indexOf(x.id) >= 0; });
+          PE.pages = PE.pages.filter(function (x) { return ids.indexOf(x.id) < 0; });
+          var at = PE.pages.indexOf(p); PE.pages.splice.apply(PE.pages, [at, 0].concat(moving));
+          PE.drag = null; render();
+        };
+      }
+      grid.appendChild(card);
+      thumb(p, img);
+    });
+    if (!PE.lock) {
+      var add = document.createElement("div"); add.className = "pe-card";
+      add.innerHTML = '<label class="th" for="pe-in" style="border:2px dashed var(--pe-line);box-shadow:none;background:none;flex-direction:column;gap:6px;color:var(--pe-mute)"><i class="fa-solid fa-plus" style="font-size:22px"></i><b style="font-size:11px">Tambah PDF / gambar</b></label>';
+      add.querySelector("label").onclick = function () { PE.insAt = null; };
+      grid.appendChild(add);
+    }
+  }
+
+  function renderFiles(S) {
+    var box = $("pe-files");
+    if (!PE.pages.length) { box.innerHTML = '<div style="padding:16px;color:var(--pe-mute)">File hasil akan muncul di sini.</div>'; return; }
+    var focusId = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.k : null, focusT = focusId ? document.activeElement.dataset.t : null;
+    var names = finalNames(S), dup = {};
+    S.forEach(function (s) { var k = safeName(nameOf(s, S.length)).toLowerCase(); dup[k] = (dup[k] || 0) + 1; });
+    box.innerHTML = '<div class="pe-files-h"><div style="display:flex;align-items:center;gap:6px"><b style="font-size:13px;font-weight:800;flex:1">File hasil (' + S.length + ")</b>"
+      + (S.length > 1 ? '<button class="pe-b" id="pe-zip" style="height:28px"><i class="fa-solid fa-file-zipper"></i>ZIP</button>' : "") + "</div>"
+      + '<label style="font-weight:700;color:var(--pe-mute);font-size:11px">Pola nama (bebas, bisa pakai variabel)</label>'
+      + '<div style="display:flex;gap:6px"><input id="pe-pat" value="' + E(defPattern(S.length)) + '" style="flex:1"><button class="pe-b" id="pe-pat-go" style="height:30px">Terapkan</button></div>'
+      + '<div class="pe-vars">' + ["{nama}", "{no}", "{tanggal}", "{PO}", "{BAP}", "{SPK}", "{Stasiun}", "{Mitra}"].map(function (v) { return "<button data-v=\"" + v + "\">" + v + "</button>"; }).join("") + "</div></div>"
+      + '<div class="pe-files-l">' + S.map(function (s, i) {
+        var a = s.start + 1, b = s.start + s.pages.length, pr = PE.pairs[s.key], k = safeName(nameOf(s, S.length)).toLowerCase();
+        return '<div class="pe-file' + (dup[k] > 1 ? " dup" : "") + '" style="--c:' + s.color + '" data-key="' + s.key + '">'
+          + '<div class="pe-file-h"><b>File ' + s.no + "</b><small>" + s.pages.length + " hal · " + (a === b ? "hal " + a : "hal " + a + "–" + b) + '</small><span style="flex:1"></span><button class="pe-b ic" data-dl="' + i + '" title="Unduh file ini" style="height:26px;width:26px"><i class="fa-solid fa-download"></i></button></div>'
+          + '<div class="pe-nm"><input data-k="' + s.key + '" data-t="nm" value="' + E(nameOf(s, S.length)) + '" placeholder="Nama file"><span>.pdf</span></div>'
+          + (dup[k] > 1 ? '<small style="color:#d97706;font-weight:700"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Nama sama dengan file lain — akan diberi akhiran (2)</small>' : "")
+          + (pr ? '<div class="pe-pair">' + pairLabel(pr) + '<button class="x" data-unpair="' + s.key + '" title="Lepas"><i class="fa-solid fa-xmark"></i></button></div>'
+            : '<div class="pe-sug"><input data-k="' + s.key + '" data-t="pr" placeholder="Pasangkan data: PO / No BAP / No SPK / stasiun…" style="width:100%"><div class="pe-sug-l hidden"></div></div>')
+          + "</div>";
+      }).join("") + "</div>";
+    box.querySelectorAll('input[data-t="nm"]').forEach(function (inp) {
+      inp.oninput = function () { PE.names[inp.dataset.k] = inp.value; };
+      inp.onchange = function () { pushUndo(); PE.names[inp.dataset.k] = safeName(inp.value); render(); };
+    });
+    box.querySelectorAll('input[data-t="pr"]').forEach(function (inp) {
+      bindSearch(inp, inp.nextElementSibling, function (g) {
+        pushUndo(); PE.pairs[inp.dataset.k] = { mode: g.mode, key: g.key };
+        if (PE.names[inp.dataset.k] == null && /\{(PO|BAP|SPK|Stasiun|Mitra)\}/i.test(defPattern(S.length))) { }
+        render();
+      });
+    });
+    box.querySelectorAll("[data-unpair]").forEach(function (b) { b.onclick = function () { pushUndo(); delete PE.pairs[b.dataset.unpair]; render(); }; });
+    box.querySelectorAll("[data-dl]").forEach(function (b) { b.onclick = function () { dlOne(+b.dataset.dl); }; });
+    box.querySelectorAll("[data-v]").forEach(function (b) { b.onclick = function () { var p = $("pe-pat"), s0 = p.selectionStart == null ? p.value.length : p.selectionStart; p.value = p.value.slice(0, s0) + b.dataset.v + p.value.slice(p.selectionEnd == null ? s0 : p.selectionEnd); p.focus(); }; });
+    var go = function () { pushUndo(); PE.pattern = $("pe-pat").value.trim() || ""; S.forEach(function (s) { delete PE.names[s.key]; }); render(); toast("Pola nama diterapkan ke " + S.length + " file", "success"); };
+    $("pe-pat-go").onclick = go; $("pe-pat").onkeydown = function (e) { if (e.key === "Enter") go(); };
+    var z = $("pe-zip"); if (z) z.onclick = dlZip;
+    if (focusId && focusT === "nm") { var f = box.querySelector('input[data-t="nm"][data-k="' + focusId + '"]'); if (f) { f.focus(); var l = f.value.length; f.setSelectionRange(l, l); } }
+  }
+
+  // ---------- aksi halaman ----------
+  var selected = function () { return PE.pages.filter(function (p) { return PE.sel.has(p.id); }); };
+  function rotOps(p, delta) {
+    var steps = ((delta / 90) % 4 + 4) % 4;
+    for (var s = 0; s < steps; s++) {
+      var H = dims(p).h, f = function (x, y) { return [H - y, x]; };
+      p.ops.forEach(function (o) {
+        if (o.pts) o.pts = o.pts.map(function (q) { return f(q[0], q[1]); });
+        if (o.x1 != null) { var a = f(o.x1, o.y1), b = f(o.x2, o.y2); o.x1 = a[0]; o.y1 = a[1]; o.x2 = b[0]; o.y2 = b[1]; }
+        if (o.x != null && o.t !== "check") {
+          if (o.t === "text") { var c = f(o.x + o.w / 2, o.y + o.h / 2); o.x = c[0] - o.w / 2; o.y = c[1] - o.h / 2; o.a = ((o.a || 0) + 90) % 360; }
+          else { var p1 = f(o.x, o.y), p2 = f(o.x + o.w, o.y + o.h); o.x = Math.min(p1[0], p2[0]); o.y = Math.min(p1[1], p2[1]); o.w = Math.abs(p2[0] - p1[0]); o.h = Math.abs(p2[1] - p1[1]); }
+        }
+        if (o.t === "check") { var cc = f(o.x + o.w / 2, o.y + o.w / 2); o.x = cc[0] - o.w / 2; o.y = cc[1] - o.w / 2; }
+      });
+      p.rot = (p.rot + 90) % 360;
+    }
+  }
+  function rotatePages(delta) { var L = selected(); if (!L.length) return; pushUndo(); L.forEach(function (p) { rotOps(p, delta); }); render(); }
+  function dupPages() {
+    var L = selected(); if (!L.length) return; pushUndo();
+    var last = PE.pages.indexOf(L[L.length - 1]) + 1, cp = L.map(function (p) { var c = clone(p); c.id = "p" + (++PE.uid); return c; });
+    PE.pages.splice.apply(PE.pages, [last, 0].concat(cp)); PE.sel = new Set(cp.map(function (p) { return p.id; })); render();
+  }
+  function delPages() {
+    var L = selected(); if (!L.length) return;
+    if (L.length >= PE.pages.length) return toast("Minimal 1 halaman harus tersisa", "error");
+    pushUndo();
+    L.forEach(function (p) {
+      var i = PE.pages.indexOf(p);
+      if (PE.cuts.has(p.id)) { PE.cuts.delete(p.id); var nx = PE.pages[i + 1]; if (nx && !PE.sel.has(nx.id)) PE.cuts.add(nx.id); }
+      if (i === 0) { var nx2 = PE.pages[1]; if (nx2) { if (PE.names[p.id] != null && PE.names[nx2.id] == null) PE.names[nx2.id] = PE.names[p.id]; if (PE.pairs[p.id] && !PE.pairs[nx2.id]) PE.pairs[nx2.id] = PE.pairs[p.id]; PE.cuts.delete(nx2.id); } }
+      PE.pages.splice(i, 1);
+    });
+    PE.sel.clear(); render();
+  }
+  function movePages(dir) {
+    var L = selected(); if (!L.length) return; pushUndo();
+    var arr = PE.pages.slice();
+    if (dir < 0) { for (var i = 1; i < arr.length; i++) if (PE.sel.has(arr[i].id) && !PE.sel.has(arr[i - 1].id)) { var t = arr[i - 1]; arr[i - 1] = arr[i]; arr[i] = t; } }
+    else { for (var j = arr.length - 2; j >= 0; j--) if (PE.sel.has(arr[j].id) && !PE.sel.has(arr[j + 1].id)) { var u = arr[j + 1]; arr[j + 1] = arr[j]; arr[j] = u; } }
+    PE.pages = arr; render();
+  }
+  function splitRanges(txt) {
+    var n = PE.pages.length, parts = String(txt || "").split(/[,;]+/).map(function (s) { return s.trim(); }).filter(Boolean), starts = [];
+    if (!parts.length) return toast("Isi rentang halaman, mis. 1-3, 4, 5-8", "error");
+    var used = [];
+    for (var i = 0; i < parts.length; i++) {
+      var m = parts[i].match(/^(\d+)\s*(?:-\s*(\d+))?$/);
+      if (!m) return toast("Format salah: \"" + parts[i] + "\"", "error");
+      var a = +m[1], b = m[2] ? +m[2] : a;
+      if (a < 1 || b > n || a > b) return toast("Rentang \"" + parts[i] + "\" di luar 1–" + n, "error");
+      for (var q = a; q <= b; q++) { if (used[q]) return toast("Halaman " + q + " dipakai dua kali", "error"); used[q] = 1; }
+      starts.push({ a: a, b: b });
+    }
+    pushUndo();
+    var keep = [];
+    starts.forEach(function (r) { for (var q = r.a; q <= r.b; q++) keep.push(PE.pages[q - 1]); });
+    var rest = PE.pages.filter(function (p) { return keep.indexOf(p) < 0; });
+    PE.cuts = new Set(); var idx = 0;
+    starts.forEach(function (r, k) { if (k) PE.cuts.add(keep[idx].id); idx += r.b - r.a + 1; });
+    if (rest.length) {
+      PE.pages = keep.concat(rest); PE.cuts.add(rest[0].id);
+      toast(rest.length + " halaman di luar rentang dijadikan file terakhir — hapus bila tidak perlu", "info", 7000);
+    } else PE.pages = keep;
+    render();
+  }
+  async function viewPage(id) {
+    var p = PE.pages.filter(function (x) { return x.id === id; })[0]; if (!p) return;
+    var m = modal('<i class="fa-regular fa-file"></i> Halaman ' + (PE.pages.indexOf(p) + 1), '<div style="display:flex;justify-content:center"><i class="fa-solid fa-circle-notch fa-spin"></i></div>', "", 900);
+    try { var w = Math.min(860, innerWidth - 60), c = await renderBase(p, w, Math.min(2, devicePixelRatio || 1)); drawOps(c.getContext("2d"), p.ops, c.width / dims(p).w); c.style.width = "100%"; c.style.maxWidth = w + "px"; c.style.boxShadow = "0 2px 12px #0003"; var bd = m.querySelector(".bd > div"); bd.innerHTML = ""; bd.appendChild(c); } catch (e) { m.querySelector(".bd").textContent = e.message; }
+  }
+
+  // ---------- menu, modal, proses ----------
+  function closeMenus() { document.querySelectorAll(".pe-menu").forEach(function (m) { m.remove(); }); }
+  function menu(anchor, items) {
+    closeMenus();
+    var m = document.createElement("div"); m.className = "pe-menu";
+    m.innerHTML = items.filter(Boolean).map(function (it, i) { return '<button data-i="' + i + '" ' + (it.dis ? "disabled" : "") + '><i class="fa-solid ' + it.ic + '"></i><span>' + it.t + (it.s ? "<small>" + it.s + "</small>" : "") + "</span></button>"; }).join("");
+    document.body.appendChild(m);
+    var L = items.filter(Boolean);
+    m.querySelectorAll("[data-i]").forEach(function (b) { b.onclick = function () { closeMenus(); L[+b.dataset.i].fn(); }; });
+    var r = anchor.getBoundingClientRect();
+    m.style.top = Math.min(innerHeight - m.offsetHeight - 8, r.bottom + 4) + "px";
+    m.style.left = Math.max(8, Math.min(innerWidth - m.offsetWidth - 8, r.right - m.offsetWidth)) + "px";
+    setTimeout(function () { document.addEventListener("click", function h(e) { if (!m.contains(e.target)) { m.remove(); document.removeEventListener("click", h, true); } }, true); }, 0);
+  }
+  function modal(title, body, foot, w) {
+    var m = document.createElement("div"); m.className = "pe-modal";
+    m.innerHTML = '<div class="box" style="' + (w ? "width:min(" + w + "px,100%)" : "") + '"><div class="hd"><b>' + title + '</b><button class="pe-b ic" data-x><i class="fa-solid fa-xmark"></i></button></div><div class="bd">' + body + "</div>" + (foot ? '<div class="fo">' + foot + "</div>" : "") + "</div>";
+    ($("pe") || document.body).appendChild(m);
+    m.querySelector("[data-x]").onclick = function () { if (!m.dataset.busy) m.remove(); };
+    m.onclick = function (e) { if (e.target === m && !m.dataset.busy) m.remove(); };
+    return m;
+  }
+  var BUSY = null;
+  function busy(text, pct) {
+    if (text == null) { if (BUSY) BUSY.remove(); BUSY = null; return; }
+    if (!BUSY) { BUSY = document.createElement("div"); BUSY.className = "pe-busy"; BUSY.innerHTML = '<div class="bx"><p style="font-weight:800"><i class="fa-solid fa-circle-notch fa-spin mr-1" style="color:#4f46e5"></i><span></span></p><div class="bar"><i></i></div></div>'; (PE.open && $("pe") ? $("pe") : document.body).appendChild(BUSY); }
+    BUSY.querySelector("span").textContent = text;
+    if (pct != null) BUSY.querySelector(".bar i").style.width = Math.max(2, Math.min(100, pct)) + "%";
+  }
+  function saveBlob(bytes, name, type) { var u = URL.createObjectURL(new Blob([bytes], { type: type || "application/pdf" })), a = document.createElement("a"); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 30000); }
+
+  async function buildAll(prefix) {
+    var S = segs(), names = finalNames(S), out = [], total = PE.pages.length, done = 0;
+    for (var i = 0; i < S.length; i++) {
+      out.push({ seg: S[i], name: names[i] + ".pdf", bytes: await buildPdf(S[i].pages, names[i], function () { done++; busy((prefix || "Menyusun PDF") + "… " + done + "/" + total + " hal", done / total * 100); }) });
+    }
+    return out;
+  }
+  async function dlOne(i) {
+    var S = segs(), s = S[i], nm = finalNames(S)[i];
+    busy("Menyusun " + nm + "…", 10);
+    try { saveBlob(await buildPdf(s.pages, nm, function (a, b) { busy("Menyusun " + nm + "… " + a + "/" + b, a / b * 100); }), nm + ".pdf"); } catch (e) { toast("Gagal: " + e.message, "error", 8000); }
+    busy(null);
+  }
+  async function dlZip() {
+    busy("Menyusun PDF…", 3);
+    try {
+      var files = await buildAll();
+      if (files.length === 1) { saveBlob(files[0].bytes, files[0].name); }
+      else {
+        busy("Membuat ZIP…", 96);
+        await loadJs("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
+        var z = new window.JSZip(); files.forEach(function (f) { z.file(f.name, f.bytes); });
+        saveBlob(await z.generateAsync({ type: "uint8array" }), safeName(PE.base) + " (" + files.length + " file).zip", "application/zip");
+      }
+    } catch (e) { toast("Gagal: " + e.message, "error", 8000); }
+    busy(null);
+  }
+  async function dlMerged() {
+    busy("Menyusun PDF…", 5);
+    try { saveBlob(await buildPdf(PE.pages, PE.base, function (a, b) { busy("Menyusun PDF… " + a + "/" + b, a / b * 100); }), safeName(PE.base) + ".pdf"); } catch (e) { toast("Gagal: " + e.message, "error", 8000); }
+    busy(null);
+  }
+  function dlMenu(a) {
+    var S = segs();
+    menu(a, [
+      S.length > 1 ? { ic: "fa-file-zipper", t: "Unduh semua (ZIP)", s: S.length + " file hasil pecah", fn: dlZip } : null,
+      S.length > 1 ? null : { ic: "fa-file-pdf", t: "Unduh PDF", s: finalNames(S)[0] + ".pdf", fn: function () { dlOne(0); } },
+      S.length > 1 ? { ic: "fa-file-pdf", t: "Unduh digabung jadi 1 PDF", s: "semua halaman, tanpa pecahan", fn: dlMerged } : null
+    ]);
+  }
+  function sendMenu(a) {
+    var o = PE.origin;
+    menu(a, [
+      o.kind === "submit" ? { ic: "fa-arrow-turn-down", t: "Pakai di form Submit PDF", s: "semua halaman digabung jadi 1 file", fn: backToForm } : null,
+      o.kind === "sgw" ? { ic: "fa-arrow-turn-down", t: "Pakai di Signing Document", s: "semua halaman digabung jadi 1 file", fn: backToForm } : null,
+      o.kind === "signing" ? { ic: "fa-brands fa-google-drive", t: "Simpan ke Drive…", s: "pilih: file utuh atau file hasil pecah", fn: driveSave } : null,
+      { ic: "fa-cloud-arrow-up", t: "Submit PDF massal…", s: "tiap file → PO / BAP / SPK + jenis dokumen", fn: submitMass, dis: !(typeof canUpload === "function" ? canUpload() : true) }
+    ]);
+  }
+
+  // ---------- kembali ke form (Rapikan PDF) ----------
+  async function backToForm() {
+    var nm = safeName(PE.base) || "Dokumen";
+    busy("Menyusun PDF…", 5);
+    try {
+      var bytes = await buildPdf(PE.pages, nm, function (a, b) { busy("Menyusun PDF… " + a + "/" + b, a / b * 100); });
+      var file = new File([bytes], nm + ".pdf", { type: "application/pdf" });
+      busy(null);
+      var k = PE.origin.kind; peClose(true);
+      if (k === "submit") { if (typeof onUpFile === "function") onUpFile([file]); toast("PDF hasil rapikan dipakai di form Submit", "success"); }
+      else if (k === "sgw") { if (typeof sgPickPdf === "function") sgPickPdf(file); toast("PDF hasil rapikan dipakai di Signing Document", "success"); }
+    } catch (e) { busy(null); toast("Gagal: " + e.message, "error", 8000); }
+  }
+
+  // ---------- Submit PDF massal ----------
+  function upTypes() { return ((typeof DOC_TYPES !== "undefined" && DOC_TYPES) || []).filter(function (t) { try { return can("up_" + t.key); } catch (e) { return true; } }); }
+  function submitMass() {
+    var S = segs(), names = finalNames(S), types = upTypes();
+    if (!types.length) return toast("Akun Anda tidak memiliki akses Submit PDF", "error");
+    var guess = function (nm) { var n = String(nm).toUpperCase(); return /BASTM|SERAH TERIMA/.test(n) ? "BASTM" : /CANCEL/.test(n) && !/BAP/.test(n) ? "BA_CANCEL" : /BAP/.test(n) ? "BAP_PO" : ""; };
+    var T = S.map(function (s, i) { return { s: s, name: names[i], type: guess(names[i]), st: "" }; });
+    var m = modal('<i class="fa-solid fa-cloud-arrow-up" style="color:#059669"></i> Submit PDF massal · ' + S.length + " file",
+      '<p style="color:var(--pe-mute);font-size:11.5px">Setiap file diunggah ke Google Drive (folder per No SPK / No BAP / PO) dan link-nya masuk ke kolom jenis dokumen di Data Mitra Takeover; status otomatis Done.</p><div id="pe-sm-l" style="display:flex;flex-direction:column;gap:8px"></div>',
+      '<button class="pe-b" data-c>Batal</button><button class="pe-b pri" id="pe-sm-go"><i class="fa-solid fa-paper-plane"></i>Kirim semua</button>', 860);
+    m.querySelector("[data-c]").onclick = function () { if (!m.dataset.busy) m.remove(); };
+    var draw = function () {
+      var L = m.querySelector("#pe-sm-l");
+      L.innerHTML = T.map(function (r, i) {
+        var pr = PE.pairs[r.s.key];
+        return '<div class="pe-row" style="border-left:4px solid ' + r.s.color + '"><div><b style="font-weight:800">' + E(r.name) + '.pdf</b><br><small style="color:var(--pe-mute)">' + r.s.pages.length + " halaman</small></div>"
+          + "<div>" + (pr ? '<div class="pe-pair">' + pairLabel(pr) + '<button class="x" data-up="' + i + '"><i class="fa-solid fa-xmark"></i></button></div>' : '<div class="pe-sug"><input data-q="' + i + '" placeholder="Cari PO / No BAP / No SPK…" style="width:100%"><div class="pe-sug-l hidden"></div></div>') + "</div>"
+          + '<select data-ty="' + i + '"><option value="">Jenis dokumen…</option>' + types.map(function (t) { return '<option value="' + t.key + '" ' + (r.type === t.key ? "selected" : "") + ">" + E(t.label) + "</option>"; }).join("") + "</select>"
+          + '<div class="st" data-st="' + i + '">' + (r.st || "") + "</div></div>";
+      }).join("");
+      L.querySelectorAll("[data-q]").forEach(function (inp) { bindSearch(inp, inp.nextElementSibling, function (g) { PE.pairs[T[+inp.dataset.q].s.key] = { mode: g.mode, key: g.key }; draw(); render(); }); });
+      L.querySelectorAll("[data-up]").forEach(function (b) { b.onclick = function () { delete PE.pairs[T[+b.dataset.up].s.key]; draw(); render(); }; });
+      L.querySelectorAll("[data-ty]").forEach(function (s) { s.onchange = function () { T[+s.dataset.ty].type = s.value; }; });
+    };
+    draw();
+    m.querySelector("#pe-sm-go").onclick = async function () {
+      var bad = T.filter(function (r) { return !r.done && (!PE.pairs[r.s.key] || !r.type || !pairRows(PE.pairs[r.s.key]).length); });
+      if (bad.length) return toast("Lengkapi pasangan data & jenis dokumen untuk semua file (" + bad.length + " belum)", "error", 6000);
+      var go = this; go.disabled = true; m.dataset.busy = 1;
+      var ok = 0, fail = 0;
+      for (var i = 0; i < T.length; i++) {
+        var r = T[i]; if (r.done) { ok++; continue; }
+        var st = function (h) { r.st = h; var el = m.querySelector('[data-st="' + i + '"]'); if (el) el.innerHTML = h; };
+        st('<i class="fa-solid fa-circle-notch fa-spin"></i> menyusun');
+        try {
+          var bytes = await buildPdf(r.s.pages, r.name);
+          st('<i class="fa-solid fa-circle-notch fa-spin"></i> mengirim');
+          var res = await uploadOne(PE.pairs[r.s.key], r.type, r.name + ".pdf", bytes);
+          r.done = true; ok++; st('<a href="' + E(res.url) + '" target="_blank" rel="noopener" style="color:#059669"><i class="fa-solid fa-circle-check"></i> terkirim</a>');
+        } catch (e) { fail++; st('<span style="color:#e11d48" title="' + E(e.message) + '"><i class="fa-solid fa-circle-xmark"></i> gagal</span>'); r.err = e.message; }
+      }
+      delete m.dataset.busy; go.disabled = false;
+      try { renderDashboard(); saveSnapshot(); applyDocFilters(false); applyTakeoverFilters(false); } catch (e) { }
+      if (fail) { go.innerHTML = '<i class="fa-solid fa-rotate"></i>Ulangi yang gagal (' + fail + ")"; toast(ok + " terkirim, " + fail + " gagal: " + (T.filter(function (r) { return r.err && !r.done; })[0] || {}).err, "error", 9000); }
+      else { go.outerHTML = '<button class="pe-b pri" data-ok><i class="fa-solid fa-check"></i>Selesai</button>'; m.querySelector("[data-ok]").onclick = function () { m.remove(); }; toast("Semua " + ok + " file terkirim ke Submit PDF", "success", 7000); }
+    };
+  }
+  async function uploadOne(pr, type, fileName, bytes) {
+    var rows = pairRows(pr), t = rows[0], D = DOC[type];
+    if (!t || !D) throw new Error("Data tidak ditemukan");
+    var body = { noSpk: pr.mode === "spk" ? t.att_spk : "", noBap: pr.mode === "bap" ? t.bap_no : "", poKey: pr.mode === "po" ? t.po : "", docType: type, po: t.po, stasiun: t.stasiun, mitra: t.after, fileName: fileName, fileBase64: bytesToB64(bytes), uploader: currentUser ? currentUser.name : "-" };
+    var r;
+    try { r = await callApi("upload", body, 3e5); } catch (e) { if (/login|akses|dinonaktifkan/i.test(e.message)) throw e; r = await callApi("upload", body, 3e5); }
+    if (!r || !r.ok) throw new Error((r && r.error) || "Upload gagal");
+    rows.forEach(function (e) {
+      try {
+        e.links || (e.links = []); e.links[D.col - CONFIG.LINK_COLS.startIndex] = r.url;
+        if (emp(e[D.field])) e[D.field] = r.cellText || r.fileName;
+        if (D.statusField && r.statusValue && !isDone(e[D.statusField]) && !isCancel(e[D.statusField])) e[D.statusField] = r.statusValue;
+        e.st = computeStatus(e.k, e.l, e.m, e.status_to);
+      } catch (er) { }
+    });
+    try { UP.history.unshift({ time: new Date(), spk: MODE[pr.mode] + " " + pr.key, type: D.label, name: r.fileName, url: r.url, folder: r.folderUrl, rows: r.rows }); } catch (e) { }
+    return r;
+  }
+
+  // ---------- Signing Selesai → simpan ke Drive ----------
+  function driveSave() {
+    var S = segs(), names = finalNames(S), choice = S.length > 1 ? "split" : "whole";
+    var m = modal('<i class="fa-brands fa-google-drive" style="color:#0f9d58"></i> Simpan ke Drive',
+      '<p style="color:var(--pe-mute);font-size:11.5px">Dokumen: <b>' + E(PE.base) + "</b> · " + PE.pages.length + " halaman → " + S.length + " file</p>"
+      + '<label class="pe-opt" data-o="whole"><input type="radio" name="pe-o" value="whole"><span><b class="ot">File utuh</b><small>Drive tidak berubah. Hasil pecah cukup diunduh atau di-Submit.</small></span></label>'
+      + '<label class="pe-opt" data-o="split"><input type="radio" name="pe-o" value="split"><span><b class="ot">File hasil pecah</b><small>' + S.length + ' file disimpan ke folder <b>Hasil Split</b> di Drive dengan nama custom. File utuh tidak dihapus, dipindah ke subfolder <b>Asli</b> sebagai bukti TTD.</small></span></label>'
+      + '<div id="pe-ds-names" style="font-size:11px;color:var(--pe-mute)">' + names.map(function (n, i) { return '<div><span style="color:' + S[i].color + '">●</span> ' + E(n) + ".pdf · " + S[i].pages.length + " hal</div>"; }).join("") + "</div>"
+      + '<div id="pe-ds-res" class="pe-res"></div>',
+      '<button class="pe-b" data-c>Batal</button><button class="pe-b pri" id="pe-ds-go"><i class="fa-solid fa-floppy-disk"></i>Simpan</button>', 560);
+    var set = function (v) { choice = v; m.querySelectorAll(".pe-opt").forEach(function (o) { o.classList.toggle("on", o.dataset.o === v); o.querySelector("input").checked = o.dataset.o === v; }); m.querySelector("#pe-ds-names").style.display = v === "split" ? "" : "none"; };
+    m.querySelectorAll(".pe-opt").forEach(function (o) { o.onclick = function () { set(o.dataset.o); }; });
+    set(choice);
+    m.querySelector("[data-c]").onclick = function () { if (!m.dataset.busy) m.remove(); };
+    m.querySelector("#pe-ds-go").onclick = async function () {
+      if (choice === "whole") { m.remove(); toast("File utuh tetap di Drive tanpa perubahan", "info"); return; }
+      if (S.length < 2) return toast("Pecah dokumen dulu menjadi 2 file atau lebih", "error");
+      var go = this; go.disabled = true; m.dataset.busy = 1;
+      try {
+        var files = await buildAll("Menyusun file hasil pecah");
+        var r = await saveSplit(PE.origin.id, files);
+        busy(null);
+        try { if (r.doc && typeof sgUpsert === "function") sgUpsert(r.doc); } catch (e) { }
+        m.querySelector("#pe-ds-res").innerHTML = '<div style="padding:10px;border-radius:10px;background:#10b98118"><b style="color:#059669"><i class="fa-solid fa-circle-check"></i> ' + (r.splits || []).length + ' file tersimpan di Drive</b>' + (r.via === "supabase" ? ' <small style="color:var(--pe-mute)">· dibantu Supabase</small>' : "") + '<br><a href="' + E(r.folderUrl) + '" target="_blank" rel="noopener">Buka folder hasil split</a> · file utuh ada di subfolder <b>Asli</b></div>';
+        go.outerHTML = '<button class="pe-b pri" data-ok><i class="fa-solid fa-check"></i>Selesai</button>';
+        m.querySelector("[data-ok]").onclick = function () { m.remove(); };
+        toast("Hasil split tersimpan di Drive", "success", 7000);
+      } catch (e) { busy(null); go.disabled = false; toast("Gagal menyimpan: " + e.message, "error", 9000); }
+      delete m.dataset.busy;
+    };
+  }
+  async function saveSplit(id, files) {
+    var list = files.map(function (f, i) { return { name: f.name, path: (i + 1) + ".pdf" }; }), ticket = "", via = "direct";
+    // 1) unggah paralel ke Supabase Storage (sementara) → Apps Script menarik ke Drive server-ke-server
+    try {
+      if (typeof sbOn === "function" && sbOn() && typeof sbOwner === "function") {
+        busy("Menyiapkan unggahan…", 5);
+        var tk = await sbOwner("sg_split_ticket", {}, 3e4); ticket = tk.ticket;
+        var done = 0, total = files.length, base = SB.url + "/storage/v1/object/sg-split/" + encodeURIComponent(ticket) + "/";
+        var h = { apikey: SB.key, "Content-Type": "application/pdf", "x-upsert": "true" }; if (/^eyJ/.test(SB.key)) h.Authorization = "Bearer " + SB.key;
+        var put = async function (i) { var res = await fetch(base + list[i].path, { method: "POST", headers: h, body: files[i].bytes }); if (!res.ok) { var t = ""; try { t = (await res.json()).message || ""; } catch (e) { } throw new Error("Storage " + res.status + " " + t); } done++; busy("Mengunggah ke Supabase… " + done + "/" + total, 10 + 60 * done / total); };
+        var q = files.map(function (f, i) { return i; }), workers = [];
+        for (var w = 0; w < Math.min(4, q.length); w++) workers.push((async function () { while (q.length) await put(q.shift()); })());
+        await Promise.all(workers);
+        via = "supabase";
+      }
+    } catch (e) { console.warn("Supabase Storage tidak dipakai:", e.message); ticket = ""; via = "direct"; }
+    busy("Menyimpan ke Google Drive…", 75);
+    var body = { id: id, files: list.map(function (f, i) { return via === "supabase" ? { name: f.name, path: f.path } : { name: f.name, b64: bytesToB64(files[i].bytes) }; }) };
+    if (via === "supabase") body.ticket = ticket;
+    var r = await callApi("sign.split", body, 36e4);
+    if (!r || !r.ok) throw new Error((r && r.error) || "Gagal menyimpan");
+    r.via = via;
+    return r;
+  }
+
+  // ===================== editor halaman =====================
+  var ED = { on: false, id: null, tool: "sel", sel: null, k: 1, zoom: 1, base: null, drag: null, edit: null,
+    st: { c: "#111827", lw: 2.5, op: 1, hlc: "#facc15", hlw: 14, fill: "#ffffff", font: "Helvetica", size: 12, b: false, i: false, u: false, al: "l", tc: "#111827", bg: "", top: 1, a: 0 } };
+  var TOOLS = [
+    ["sel", "fa-arrow-pointer", "Pilih"], ["text", "fa-font", "Teks"], ["erase", "fa-eraser", "Hapus area"], ["pen", "fa-pen", "Pena"], ["hl", "fa-highlighter", "Stabilo"],
+    ["line", "fa-minus", "Garis"], ["arrow", "fa-arrow-right-long", "Panah"], ["rect", "fa-regular fa-square", "Kotak"], ["ellipse", "fa-regular fa-circle", "Lingkaran"], ["check", "fa-check", "Centang"], ["rub", "fa-delete-left", "Hapus coretan"]
+  ];
+  var edPage = function () { return PE.pages.filter(function (p) { return p.id === ED.id; })[0]; };
+  function edShell() {
+    var el = $("pe-ed"); if (el) return el;
+    el = document.createElement("div"); el.id = "pe-ed"; el.className = "hidden";
+    el.innerHTML = '<div class="pe-top"><button class="pe-b" id="pe-ed-back"><i class="fa-solid fa-arrow-left"></i><span class="tx">Kembali</span></button>'
+      + '<div class="pe-title"><b id="pe-ed-t">Edit halaman</b><small id="pe-ed-s"></small></div>'
+      + '<button class="pe-b ic" id="pe-ed-prev" title="Halaman sebelumnya"><i class="fa-solid fa-chevron-left"></i></button><button class="pe-b ic" id="pe-ed-next" title="Halaman berikutnya"><i class="fa-solid fa-chevron-right"></i></button>'
+      + '<button class="pe-b ic" id="pe-ed-undo" title="Urungkan"><i class="fa-solid fa-rotate-left"></i></button><button class="pe-b ic" id="pe-ed-redo" title="Ulangi"><i class="fa-solid fa-rotate-right"></i></button>'
+      + '<button class="pe-b ic" id="pe-ed-zo" title="Perkecil"><i class="fa-solid fa-magnifying-glass-minus"></i></button><button class="pe-b ic" id="pe-ed-zi" title="Perbesar"><i class="fa-solid fa-magnifying-glass-plus"></i></button>'
+      + '<button class="pe-b pri" id="pe-ed-done"><i class="fa-solid fa-check"></i><span class="tx">Selesai</span></button></div>'
+      + '<div class="pe-tools" id="pe-ed-tools">' + TOOLS.map(function (t) { return '<button class="pe-b" data-tool="' + t[0] + '" title="' + t[2] + '"><i class="' + (t[1].indexOf("fa-regular") === 0 ? t[1] : "fa-solid " + t[1]) + '"></i><span>' + t[2] + "</span></button>"; }).join("") + "</div>"
+      + '<div class="pe-props" id="pe-ed-props"></div>'
+      + '<div class="pe-stage" id="pe-ed-stage"><div class="pe-paper" id="pe-ed-paper"><canvas class="bs"></canvas><canvas class="ov"></canvas></div></div>'
+      + '<div class="pe-hint" id="pe-ed-hint"></div>';
+    $("pe").appendChild(el);
+    $("pe-ed-back").onclick = edClose; $("pe-ed-done").onclick = edClose;
+    $("pe-ed-prev").onclick = function () { edGo(-1); }; $("pe-ed-next").onclick = function () { edGo(1); };
+    $("pe-ed-undo").onclick = function () { edCommitText(); undo(); }; $("pe-ed-redo").onclick = function () { edCommitText(); redo(); };
+    $("pe-ed-zi").onclick = function () { ED.zoom = Math.min(3, ED.zoom * 1.25); edLoad(); }; $("pe-ed-zo").onclick = function () { ED.zoom = Math.max(0.4, ED.zoom / 1.25); edLoad(); };
+    el.querySelectorAll("[data-tool]").forEach(function (b) { b.onclick = function () { edCommitText(); ED.tool = b.dataset.tool; ED.sel = null; edTools(); edProps(); edDraw(); }; });
+    var ov = el.querySelector("canvas.ov");
+    ov.addEventListener("pointerdown", edDown); ov.addEventListener("pointermove", edMove); ov.addEventListener("pointerup", edUp); ov.addEventListener("pointercancel", edUp);
+    ov.addEventListener("dblclick", function (e) { var pt = edPt(e), o = hit(pt); if (o && o.t === "text") { ED.sel = o; edText(o); } });
+    var rt; addEventListener("resize", function () { if (!ED.on) return; clearTimeout(rt); rt = setTimeout(edLoad, 150); });
+    return el;
+  }
+  function edOpen(id) { if (PE.lock) return; edShell(); ED.on = true; ED.id = id; ED.sel = null; ED.zoom = 1; $("pe-ed").classList.remove("hidden"); edTools(); edProps(); edLoad(); }
+  function edClose() { edCommitText(); ED.on = false; ED.sel = null; var el = $("pe-ed"); if (el) el.classList.add("hidden"); render(); }
+  function edGo(d) { edCommitText(); var i = PE.pages.indexOf(edPage()) + d; if (i < 0 || i >= PE.pages.length) return; ED.id = PE.pages[i].id; ED.sel = null; edLoad(); }
+  async function edLoad() {
+    var p = edPage(); if (!p) return;
+    var D = dims(p), i = PE.pages.indexOf(p), stage = $("pe-ed-stage");
+    $("pe-ed-t").textContent = "Edit halaman " + (i + 1) + " / " + PE.pages.length;
+    $("pe-ed-s").textContent = Math.round(D.w * 0.3528) + " × " + Math.round(D.h * 0.3528) + " mm · " + (p.ops.length ? p.ops.length + " objek" : "belum ada perubahan");
+    $("pe-ed-prev").disabled = i <= 0; $("pe-ed-next").disabled = i >= PE.pages.length - 1;
+    var avail = Math.max(240, stage.clientWidth - 36), fitH = Math.max(300, stage.clientHeight - 36);
+    var cssW = Math.min(avail, Math.max(320, Math.min(1000, fitH * D.w / D.h))) * ED.zoom;
+    if (innerWidth < 900) cssW = avail * ED.zoom;
+    var paper = $("pe-ed-paper"), dpr = Math.min(2, devicePixelRatio || 1), key = thumbKey({ d: p.d, i: p.i, r0: p.r0, rot: p.rot, ops: [] }) + ":" + Math.round(cssW);
+    paper.style.width = cssW + "px"; paper.style.height = cssW * D.h / D.w + "px";
+    ED.k = cssW / D.w;
+    var bs = paper.querySelector("canvas.bs"), ov = paper.querySelector("canvas.ov");
+    ov.width = Math.round(cssW * dpr); ov.height = Math.round(cssW * D.h / D.w * dpr); ED.dpr = dpr;
+    edDraw();
+    if (ED.baseKey !== key) {
+      var my = ED.loadSeq = (ED.loadSeq || 0) + 1;
+      try { var c = await renderBase(p, cssW, dpr); if (my !== ED.loadSeq) return; bs.width = c.width; bs.height = c.height; bs.getContext("2d").drawImage(c, 0, 0); ED.base = c; ED.baseKey = key; } catch (e) { toast("Gagal menampilkan halaman: " + e.message, "error"); }
+    }
+    edDraw(); syncUndo();
+  }
+  function edTools() { document.querySelectorAll("#pe-ed-tools [data-tool]").forEach(function (b) { b.classList.toggle("on", b.dataset.tool === ED.tool); }); var H = { sel: "Klik objek untuk memilih, geser untuk memindah, tarik sudut kanan bawah untuk mengubah ukuran. Klik dua kali teks untuk mengedit.", text: "Klik di halaman untuk menulis teks.", erase: "Tarik kotak di area yang ingin dihapus permanen (termasuk PDF berisi gambar / JPG).", pen: "Tarik untuk menggambar bebas.", hl: "Tarik untuk menandai dengan stabilo.", line: "Tarik untuk membuat garis.", arrow: "Tarik untuk membuat panah.", rect: "Tarik untuk membuat kotak.", ellipse: "Tarik untuk membuat lingkaran / elips.", check: "Klik untuk menaruh tanda centang.", rub: "Klik atau sapukan pada coretan / bentuk untuk menghapusnya." }; $("pe-ed-hint").textContent = H[ED.tool] || ""; }
+
+  function swatches(cur, key) { return PAL.map(function (c) { return '<button class="pe-sw ' + (String(cur).toLowerCase() === c ? "on" : "") + '" data-sw="' + key + '" data-c="' + c + '" style="background:' + c + '"></button>'; }).join("") + '<input type="color" data-col="' + key + '" value="' + (cur && cur[0] === "#" && cur.length === 7 ? cur : "#111827") + '">'; }
+  function edProps() {
+    var P = $("pe-ed-props"), o = ED.sel, t = o ? o.t : ED.tool, st = ED.st, h = "";
+    var v = function (k, d) { return o ? (o[k] == null ? d : o[k]) : d; };
+    if (t === "text") {
+      var font = v("font", st.font), size = v("size", st.size), c = v("c", st.tc), bg = v("bg", st.bg), opv = v("op", st.top), a = v("a", st.a);
+      h = '<label>Font</label><select data-p="font">' + FONTS.map(function (f) { return '<option value="' + f.k + '" ' + (f.k === font ? "selected" : "") + ">" + E(f.label) + "</option>"; }).join("") + "</select>"
+        + '<label>Ukuran</label><input type="number" data-p="size" min="5" max="120" step="1" value="' + size + '" style="width:58px">'
+        + '<button class="pe-b ic ' + (v("b", st.b) ? "on" : "") + '" data-tg="b" title="Tebal"><b>B</b></button><button class="pe-b ic ' + (v("i", st.i) ? "on" : "") + '" data-tg="i" title="Miring"><i style="font-family:serif">I</i></button><button class="pe-b ic ' + (v("u", st.u) ? "on" : "") + '" data-tg="u" title="Garis bawah"><u>U</u></button>'
+        + ["l", "c", "r"].map(function (x) { return '<button class="pe-b ic ' + (v("al", st.al) === x ? "on" : "") + '" data-al="' + x + '" title="Rata ' + { l: "kiri", c: "tengah", r: "kanan" }[x] + '"><i class="fa-solid fa-align-' + { l: "left", c: "center", r: "right" }[x] + '"></i></button>'; }).join("")
+        + '<label>Warna</label>' + swatches(c, "c")
+        + '<label>Latar</label><button class="pe-b ' + (bg ? "" : "on") + '" data-nobg style="height:28px">Tanpa</button><input type="color" data-col="bg" value="' + (bg || "#fff59d") + '">'
+        + '<label>Transparansi</label><input type="range" data-p="op" min="0.1" max="1" step="0.05" value="' + opv + '" style="width:80px">'
+        + '<label>Putar</label><input type="number" data-p="a" min="-180" max="360" step="5" value="' + a + '" style="width:58px"><button class="pe-b ic" data-rot="90" title="Putar 90°"><i class="fa-solid fa-rotate-right"></i></button>';
+    } else if (t === "erase") {
+      var f = v("fill", st.fill);
+      h = '<label>Isi area</label>' + [["#ffffff", "Putih"], ["#000000", "Hitam (redaksi)"], ["auto", "Warna latar otomatis"]].map(function (x) { return '<button class="pe-b ' + (f === x[0] ? "on" : "") + '" data-fill="' + x[0] + '" style="height:28px">' + x[1] + "</button>"; }).join("")
+        + '<span style="color:var(--pe-mute);font-size:11px"><i class="fa-solid fa-shield-halved mr-1"></i>Permanen: isi di bawah kotak dihapus dari file.</span>';
+    } else if (t === "sel" || t === "rub") {
+      h = '<span style="color:var(--pe-mute)">' + (t === "sel" ? "Pilih objek untuk mengubah gaya, warna, ukuran, atau menghapusnya." : "Klik coretan / bentuk yang ingin dihapus.") + "</span>";
+    } else {
+      var isHl = t === "hl", col = v("c", isHl ? st.hlc : st.c), lw = v("lw", isHl ? st.hlw : st.lw), opv2 = v("op", isHl ? 0.4 : st.op);
+      h = '<label>Warna</label>' + swatches(col, "c")
+        + (t === "check" ? '<label>Ukuran</label><input type="range" data-p="w" min="8" max="60" step="1" value="' + v("w", 18) + '" style="width:100px">' : '<label>Tebal</label><input type="range" data-p="lw" min="0.5" max="' + (isHl ? 40 : 16) + '" step="0.5" value="' + lw + '" style="width:100px">')
+        + (isHl ? "" : '<label>Transparansi</label><input type="range" data-p="op" min="0.1" max="1" step="0.05" value="' + opv2 + '" style="width:80px">');
+    }
+    if (o) h += '<span style="flex:1"></span><button class="pe-b ic" data-dupo title="Duplikat objek"><i class="fa-regular fa-clone"></i></button><button class="pe-b red" data-delo style="height:30px"><i class="fa-regular fa-trash-can"></i>Hapus objek</button>';
+    P.innerHTML = h;
+    var setv = function (k, val, live) {
+      var map = { c: t === "text" ? "tc" : t === "hl" ? "hlc" : "c", lw: t === "hl" ? "hlw" : "lw", op: t === "text" ? "top" : "op" };
+      if (t !== "hl" || k !== "op") ED.st[map[k] || k] = val;
+      if (o) { if (!live && !ED.propUndo) { pushUndo(); } ED.propUndo = !!live; o[k] = val; if (o.t === "text") { o.h = textH(o); if (k === "font") webFont(fontOf(val), o.b, o.i).then(function () { o.h = textH(o); edDraw(); if (ED.edit) edTextStyle(); }); } edDraw(); if (ED.edit) edTextStyle(); }
+    };
+    P.querySelectorAll("[data-p]").forEach(function (inp) {
+      var num = inp.type !== "select-one";
+      inp.oninput = function () { setv(inp.dataset.p, num ? parseFloat(inp.value) : inp.value, true); };
+      inp.onchange = function () { ED.propUndo = false; setv(inp.dataset.p, num ? parseFloat(inp.value) : inp.value, false); ED.propUndo = false; renderSoon(); };
+    });
+    P.querySelectorAll("[data-sw]").forEach(function (b) { b.onclick = function () { setv("c", b.dataset.c); renderSoon(); edProps(); }; });
+    P.querySelectorAll("[data-col]").forEach(function (inp) { inp.oninput = function () { setv(inp.dataset.col, inp.value, true); }; inp.onchange = function () { ED.propUndo = false; setv(inp.dataset.col, inp.value); ED.propUndo = false; renderSoon(); edProps(); }; });
+    P.querySelectorAll("[data-tg]").forEach(function (b) { b.onclick = function () { var k = b.dataset.tg, cur = o ? !!o[k] : !!ED.st[k]; setv(k, !cur); if (k !== "u") webFont(fontOf(o ? o.font : ED.st.font), o ? o.b : ED.st.b, o ? o.i : ED.st.i).then(function () { if (o) o.h = textH(o); edDraw(); if (ED.edit) edTextStyle(); }); renderSoon(); edProps(); }; });
+    P.querySelectorAll("[data-al]").forEach(function (b) { b.onclick = function () { setv("al", b.dataset.al); renderSoon(); edProps(); }; });
+    P.querySelectorAll("[data-fill]").forEach(function (b) { b.onclick = function () { if (o) { pushUndo(); o.fill = b.dataset.fill; o.col = b.dataset.fill === "auto" ? sampleBg(o) : b.dataset.fill; edDraw(); renderSoon(); } ED.st.fill = b.dataset.fill; edProps(); }; });
+    var nb = P.querySelector("[data-nobg]"); if (nb) nb.onclick = function () { setv("bg", ""); renderSoon(); edProps(); };
+    var rb = P.querySelector("[data-rot]"); if (rb) rb.onclick = function () { var cur = o ? (o.a || 0) : ED.st.a; setv("a", (cur + 90) % 360); renderSoon(); edProps(); };
+    var dl = P.querySelector("[data-delo]"); if (dl) dl.onclick = edDelSel;
+    var du = P.querySelector("[data-dupo]"); if (du) du.onclick = function () { var p = edPage(); pushUndo(); var c = clone(o); moveOp(c, 12, 12); p.ops.push(c); ED.sel = c; edDraw(); renderSoon(); edProps(); };
+  }
+  var rs = null; function renderSoon() { clearTimeout(rs); rs = setTimeout(function () { var p = edPage(); if (p) $("pe-ed-s").textContent = $("pe-ed-s").textContent.replace(/·.*$/, "· " + (p.ops.length ? p.ops.length + " objek" : "belum ada perubahan")); }, 50); }
+  function edDelSel() { var p = edPage(); if (!p || !ED.sel) return; pushUndo(); p.ops.splice(p.ops.indexOf(ED.sel), 1); ED.sel = null; edDraw(); edProps(); renderSoon(); }
+
+  // gambar overlay editor
+  function edDraw() {
+    var p = edPage(), ov = document.querySelector("#pe-ed-paper canvas.ov"); if (!p || !ov) return;
+    var g = ov.getContext("2d"), k = ED.k * ED.dpr;
+    g.clearRect(0, 0, ov.width, ov.height);
+    drawOps(g, p.ops, k, { hide: ED.edit ? ED.edit.o : null });
+    if (ED.temp) drawOps(g, [ED.temp], k);
+    var o = ED.sel;
+    if (o && p.ops.indexOf(o) >= 0) {
+      var b = bbox(o); g.save(); g.scale(k, k); g.lineWidth = 1 / ED.k; g.setLineDash([4 / ED.k, 3 / ED.k]); g.strokeStyle = "#4f46e5";
+      if (o.t === "text" && o.a) { g.translate(o.x + o.w / 2, o.y + o.h / 2); g.rotate(o.a * Math.PI / 180); g.strokeRect(-o.w / 2 - 2, -o.h / 2 - 2, o.w + 4, o.h + 4); }
+      else g.strokeRect(b.x - 2, b.y - 2, b.w + 4, b.h + 4);
+      g.restore();
+      if (resizable(o)) { var hp = handlePt(o); g.save(); g.scale(k, k); g.fillStyle = "#4f46e5"; var s = 9 / ED.k; g.fillRect(hp[0] - s / 2, hp[1] - s / 2, s, s); g.restore(); }
+    }
+  }
+  function bbox(o) {
+    if (o.pts) { var xs = o.pts.map(function (q) { return q[0]; }), ys = o.pts.map(function (q) { return q[1]; }), pad = o.lw / 2; return { x: Math.min.apply(null, xs) - pad, y: Math.min.apply(null, ys) - pad, w: Math.max.apply(null, xs) - Math.min.apply(null, xs) + 2 * pad, h: Math.max.apply(null, ys) - Math.min.apply(null, ys) + 2 * pad }; }
+    if (o.x1 != null) return { x: Math.min(o.x1, o.x2) - o.lw, y: Math.min(o.y1, o.y2) - o.lw, w: Math.abs(o.x2 - o.x1) + 2 * o.lw, h: Math.abs(o.y2 - o.y1) + 2 * o.lw };
+    if (o.t === "check") return { x: o.x, y: o.y, w: o.w, h: o.w };
+    return { x: o.x, y: o.y, w: o.w, h: o.h };
+  }
+  var resizable = function (o) { return o.t === "text" || o.t === "rect" || o.t === "ellipse" || o.t === "erase" || o.t === "check"; };
+  function handlePt(o) { if (o.t === "check") return [o.x + o.w, o.y + o.w]; if (o.t === "text" && o.a) { var a = o.a * Math.PI / 180, dx = o.w / 2, dy = o.h / 2; return [o.x + o.w / 2 + dx * Math.cos(a) - dy * Math.sin(a), o.y + o.h / 2 + dx * Math.sin(a) + dy * Math.cos(a)]; } return [o.x + o.w, o.y + o.h]; }
+  function distSeg(p, a, b) { var dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy, t = l ? Math.max(0, Math.min(1, ((p.x - a[0]) * dx + (p.y - a[1]) * dy) / l)) : 0; return Math.hypot(p.x - a[0] - t * dx, p.y - a[1] - t * dy); }
+  function hitOp(o, pt, tol) {
+    if (o.pts) { if (o.pts.length === 1) return Math.hypot(pt.x - o.pts[0][0], pt.y - o.pts[0][1]) <= o.lw / 2 + tol; for (var i = 1; i < o.pts.length; i++) if (distSeg(pt, o.pts[i - 1], o.pts[i]) <= o.lw / 2 + tol) return true; return false; }
+    if (o.x1 != null) return distSeg(pt, [o.x1, o.y1], [o.x2, o.y2]) <= o.lw / 2 + tol || (o.t === "arrow" && Math.hypot(pt.x - o.x2, pt.y - o.y2) < o.lw * 4 + tol);
+    if (o.t === "text" && o.a) { var a = -o.a * Math.PI / 180, cx = o.x + o.w / 2, cy = o.y + o.h / 2, dx = pt.x - cx, dy = pt.y - cy, ux = dx * Math.cos(a) - dy * Math.sin(a), uy = dx * Math.sin(a) + dy * Math.cos(a); return Math.abs(ux) <= o.w / 2 + tol && Math.abs(uy) <= o.h / 2 + tol; }
+    if (o.t === "rect" || o.t === "ellipse") { var b = bbox(o), inside = pt.x >= b.x - tol && pt.x <= b.x + b.w + tol && pt.y >= b.y - tol && pt.y <= b.y + b.h + tol; if (!inside) return false; if (o.t === "rect") return pt.x <= b.x + o.lw + tol * 1.5 || pt.x >= b.x + b.w - o.lw - tol * 1.5 || pt.y <= b.y + o.lw + tol * 1.5 || pt.y >= b.y + b.h - o.lw - tol * 1.5 || ED.tool === "sel"; return true; }
+    var bb = bbox(o); return pt.x >= bb.x - tol && pt.x <= bb.x + bb.w + tol && pt.y >= bb.y - tol && pt.y <= bb.y + bb.h + tol;
+  }
+  function hit(pt, filter) { var p = edPage(), tol = 5 / ED.k; for (var i = p.ops.length - 1; i >= 0; i--) { var o = p.ops[i]; if (filter && !filter(o)) continue; if (hitOp(o, pt, tol)) return o; } return null; }
+  function moveOp(o, dx, dy) { if (o.pts) o.pts = o.pts.map(function (q) { return [q[0] + dx, q[1] + dy]; }); if (o.x1 != null) { o.x1 += dx; o.x2 += dx; o.y1 += dy; o.y2 += dy; } if (o.x != null) { o.x += dx; o.y += dy; } }
+  function edPt(e) { var r = e.target.getBoundingClientRect(); return { x: (e.clientX - r.left) / ED.k, y: (e.clientY - r.top) / ED.k }; }
+  function sampleBg(o) {
+    var c = ED.base; if (!c) return "#ffffff";
+    try {
+      var g = c.getContext("2d"), s = c.width / dims(edPage()).w, x0 = Math.max(0, Math.floor(o.x * s) - 3), y0 = Math.max(0, Math.floor(o.y * s) - 3), x1 = Math.min(c.width - 1, Math.ceil((o.x + o.w) * s) + 3), y1 = Math.min(c.height - 1, Math.ceil((o.y + o.h) * s) + 3);
+      var acc = [0, 0, 0], n = 0, add = function (x, y, w, h) { if (w <= 0 || h <= 0) return; var d = g.getImageData(x, y, w, h).data; for (var i = 0; i < d.length; i += 4) { acc[0] += d[i]; acc[1] += d[i + 1]; acc[2] += d[i + 2]; n++; } };
+      add(x0, y0, x1 - x0, 3); add(x0, y1 - 3, x1 - x0, 3); add(x0, y0, 3, y1 - y0); add(x1 - 3, y0, 3, y1 - y0);
+      if (!n) return "#ffffff";
+      return "#" + acc.map(function (v) { return ("0" + Math.round(v / n).toString(16)).slice(-2); }).join("");
+    } catch (e) { return "#ffffff"; }
+  }
+
+  function edDown(e) {
+    var p = edPage(); if (!p || e.button > 0) return;
+    e.preventDefault();   // cegah fokus pindah dari kotak teks
+    if (ED.edit) { edCommitText(); return; }
+    var pt = edPt(e), st = ED.st, t = ED.tool;
+    e.target.setPointerCapture(e.pointerId);
+    ED.drag = { x: pt.x, y: pt.y, moved: false };
+    if (t === "sel") {
+      var o = ED.sel;
+      if (o && resizable(o)) { var hp = handlePt(o); if (Math.hypot(pt.x - hp[0], pt.y - hp[1]) < 10 / ED.k) { ED.drag.mode = "resize"; ED.drag.o0 = clone(o); return; } }
+      var h = hit(pt); ED.sel = h; edProps(); edDraw();
+      if (h) { ED.drag.mode = "move"; ED.drag.o0 = clone(h); }
+      return;
+    }
+    if (t === "rub") { ED.drag.mode = "rub"; edRub(pt); return; }
+    if (t === "text") {
+      var ht = hit(pt, function (o) { return o.t === "text"; });
+      if (ht) { ED.sel = ht; edProps(); edText(ht); ED.drag = null; return; }
+      pushUndo();
+      var nt = { t: "text", x: pt.x, y: pt.y - st.size * 0.8, w: Math.min(260, dims(p).w - pt.x - 6), text: "", font: st.font, size: st.size, b: st.b, i: st.i, u: st.u, al: st.al, c: st.tc, bg: st.bg, op: st.top, a: st.a };
+      nt.w = Math.max(60, nt.w); if (nt.x + nt.w > dims(p).w) nt.x = Math.max(0, dims(p).w - nt.w - 4);
+      nt.h = textH(nt); p.ops.push(nt); ED.sel = nt; edProps(); edText(nt, true); ED.drag = null; return;
+    }
+    if (t === "check") { pushUndo(); var ck = { t: "check", x: pt.x - 9, y: pt.y - 12, w: 18, c: st.c, lw: 2, op: st.op }; p.ops.push(ck); ED.sel = ck; ED.tool = "sel"; edTools(); edProps(); edDraw(); renderSoon(); ED.drag = null; return; }
+    if (t === "pen" || t === "hl") { ED.temp = { t: t, pts: [[pt.x, pt.y]], c: t === "hl" ? st.hlc : st.c, lw: t === "hl" ? st.hlw : st.lw, op: t === "hl" ? 0.4 : st.op }; ED.drag.mode = "draw"; edDraw(); return; }
+    if (t === "line" || t === "arrow") { ED.temp = { t: t, x1: pt.x, y1: pt.y, x2: pt.x, y2: pt.y, c: st.c, lw: st.lw, op: st.op }; ED.drag.mode = "draw"; return; }
+    if (t === "rect" || t === "ellipse" || t === "erase") { ED.temp = t === "erase" ? { t: "erase", x: pt.x, y: pt.y, w: 0, h: 0, fill: st.fill, col: st.fill === "auto" ? "#e2e8f0" : st.fill } : { t: t, x: pt.x, y: pt.y, w: 0, h: 0, c: st.c, lw: st.lw, op: st.op }; ED.drag.mode = "draw"; return; }
+  }
+  function edMove(e) {
+    var d = ED.drag; if (!d) return;
+    var pt = edPt(e), p = edPage(), dx = pt.x - d.x, dy = pt.y - d.y;
+    if (Math.abs(dx) + Math.abs(dy) > 1.5 / ED.k) { if (!d.moved && (d.mode === "move" || d.mode === "resize")) pushUndo(); d.moved = true; }
+    if (d.mode === "move" && d.moved) { var o = ED.sel, o0 = d.o0; Object.keys(o0).forEach(function (k) { o[k] = clone(o0[k]); }); moveOp(o, dx, dy); edDraw(); }
+    else if (d.mode === "resize" && d.moved) {
+      var s = ED.sel, b0 = d.o0;
+      if (s.t === "check") s.w = Math.max(6, b0.w + Math.max(dx, dy));
+      else if (s.t === "text") { var a = -(s.a || 0) * Math.PI / 180, ux = dx * Math.cos(a) - dy * Math.sin(a); s.w = Math.max(24, b0.w + ux); s.h = textH(s); }
+      else { s.w = Math.max(3, b0.w + dx); s.h = Math.max(3, b0.h + dy); if (s.t === "erase" && s.fill === "auto") s.col = sampleBg(s); }
+      edDraw(); if (ED.edit) edTextStyle();
+    }
+    else if (d.mode === "rub") edRub(pt);
+    else if (d.mode === "draw" && ED.temp) {
+      var tp = ED.temp;
+      if (tp.pts) { var last = tp.pts[tp.pts.length - 1]; if (Math.hypot(pt.x - last[0], pt.y - last[1]) > 1.2 / ED.k) tp.pts.push([+pt.x.toFixed(2), +pt.y.toFixed(2)]); }
+      else if (tp.x1 != null) { tp.x2 = pt.x; tp.y2 = pt.y; if (e.shiftKey) { var ang = Math.round(Math.atan2(tp.y2 - tp.y1, tp.x2 - tp.x1) / (Math.PI / 4)) * Math.PI / 4, len = Math.hypot(tp.x2 - tp.x1, tp.y2 - tp.y1); tp.x2 = tp.x1 + len * Math.cos(ang); tp.y2 = tp.y1 + len * Math.sin(ang); } }
+      else { tp.x = Math.min(d.x, pt.x); tp.y = Math.min(d.y, pt.y); tp.w = Math.abs(pt.x - d.x); tp.h = Math.abs(pt.y - d.y); if (e.shiftKey && tp.t !== "erase") { var m = Math.max(tp.w, tp.h); tp.w = tp.h = m; } }
+      edDraw();
+    }
+  }
+  function edUp(e) {
+    var d = ED.drag; ED.drag = null; if (!d) return;
+    var p = edPage();
+    if (d.mode === "draw" && ED.temp) {
+      var tp = ED.temp, ok = tp.pts ? true : tp.x1 != null ? Math.hypot(tp.x2 - tp.x1, tp.y2 - tp.y1) > 3 : tp.w > 3 && tp.h > 3;
+      ED.temp = null;
+      if (ok) { pushUndo(); if (tp.t === "erase" && tp.fill === "auto") tp.col = sampleBg(tp); p.ops.push(tp); if (tp.t === "erase" || tp.t === "rect" || tp.t === "ellipse") ED.sel = tp; if (tp.t === "erase") edProps(); }
+      edDraw(); renderSoon();
+    } else if (d.mode === "move" || d.mode === "resize") { if (d.moved) renderSoon(); }
+  }
+  function edRub(pt) { var p = edPage(), o = hit(pt, function (o) { return o.t !== "text" && o.t !== "erase"; }); if (o) { if (!ED.rubbed) { pushUndo(); ED.rubbed = true; setTimeout(function () { ED.rubbed = false; }, 400); } p.ops.splice(p.ops.indexOf(o), 1); edDraw(); renderSoon(); } }
+
+  // kotak teks
+  function edText(o, fresh) {
+    edCommitText();
+    var paper = $("pe-ed-paper"), ta = document.createElement("textarea");
+    ta.className = "pe-ta"; ta.value = o.text || ""; ta.spellcheck = false; ta.placeholder = "Ketik teks…";
+    paper.appendChild(ta);
+    ED.edit = { o: o, ta: ta, fresh: !!fresh, before: JSON.stringify(o) };
+    if (!fresh) pushUndo();
+    edTextStyle(); edDraw();
+    webFont(fontOf(o.font), o.b, o.i).then(function () { o.h = textH(o); edTextStyle(); });
+    ta.addEventListener("input", function () { o.text = ta.value; o.h = textH(o); edTextStyle(); });
+    ta.addEventListener("keydown", function (e) { if (e.key === "Escape") { e.preventDefault(); edCommitText(); } e.stopPropagation(); });
+    ta.addEventListener("pointerdown", function (e) { e.stopPropagation(); });
+    ta.focus();
+    setTimeout(function () { if (document.activeElement !== ta) ta.focus(); var l = ta.value.length; ta.setSelectionRange(l, l); }, 0);
+  }
+  function edTextStyle() {
+    var ed = ED.edit; if (!ed) return; var o = ed.o, ta = ed.ta, k = ED.k;
+    Object.assign(ta.style, { left: o.x * k + "px", top: o.y * k + "px", width: o.w * k + "px", height: Math.max(o.h, o.size * LH + PAD * 2) * k + 2 + "px", font: cssFont(o, k), color: o.c, textAlign: { l: "left", c: "center", r: "right" }[o.al || "l"], textDecoration: o.u ? "underline" : "none", padding: PAD * k + "px", lineHeight: o.size * LH * k + "px", background: o.bg || "#ffffffcc", opacity: o.op == null ? 1 : Math.max(0.35, o.op), transform: o.a ? "rotate(" + o.a + "deg)" : "none" });
+  }
+  function edCommitText() {
+    var ed = ED.edit; if (!ed) return; ED.edit = null;
+    var o = ed.o, p = edPage();
+    o.text = ed.ta.value.replace(/\s+$/, ""); ed.ta.remove();
+    if (!o.text && !o.bg && p) { var i = p.ops.indexOf(o); if (i >= 0) p.ops.splice(i, 1); if (ED.sel === o) ED.sel = null; if (ed.fresh) { PE.undo.pop(); syncUndo(); } }
+    else { o.h = textH(o); if (!ed.fresh && JSON.stringify(o) === ed.before) { PE.undo.pop(); syncUndo(); } }
+    edDraw(); edProps(); renderSoon();
+  }
+
+  // ===================== buka / tutup =====================
+  async function peOpen(opt) {
+    opt = opt || {};
+    if (!canPdf()) return toast("Akun Anda tidak memiliki akses Split & Edit PDF", "error");
+    shell(); reset();
+    PE.origin = { kind: opt.kind || "tab", id: opt.id || "" }; PE.lock = !!opt.lock;
+    PE.open = true; $("pe").classList.remove("hidden"); document.documentElement.style.overflow = "hidden";
+    $("pe-ttl").textContent = opt.title || "Split & Edit PDF";
+    render();
+    if (opt.file) await addFiles([opt.file]);
+    if (opt.bytes) { busy("Membuka dokumen…", 40); try { var pages = await addBytes(opt.bytes, opt.name || "Dokumen.pdf"); PE.pages = pages; PE.base = safeName(opt.name) || "Dokumen"; } catch (e) { toast(e.message, "error"); } busy(null); render(); }
+  }
+  function reset() { PE.docs = []; PE.pages = []; PE.cuts = new Set(); PE.names = {}; PE.pairs = {}; PE.sel = new Set(); PE.undo = []; PE.redo = []; PE.pattern = ""; PE.base = "Dokumen"; PE.mf = false; JS = {}; LIB = {}; ED.baseKey = null; }
+  function peClose(force) {
+    if (!force && PE.undo.length && PE.pages.length && !confirm("Tutup Split & Edit PDF? Perubahan yang belum diunduh / dikirim akan hilang.")) return;
+    if (ED.on) { edCommitText(); ED.on = false; var ed = $("pe-ed"); if (ed) ed.classList.add("hidden"); }
+    closeMenus(); busy(null);
+    $("pe").classList.add("hidden"); document.documentElement.style.overflow = ""; PE.open = false;
+    try { JS && Object.keys(JS).forEach(function (k) { JS[k].then(function (d) { d.destroy(); }).catch(function () { }); }); } catch (e) { }
+    reset();
+  }
+  window.__peT = { PE: PE, ED: ED, segs: segs, buildPdf: buildPdf, finalNames: finalNames };
+  window.peOpen = function () { peOpen({ kind: "tab" }); };
+  window.peClose = peClose;
+
+  // Rapikan PDF dari form Submit / langkah unggah Signing
+  window.peRapikan = function (where) {
+    var file = where === "sgw" ? (typeof SGW !== "undefined" && SGW.file) : (typeof UP !== "undefined" && UP.file);
+    peOpen({ kind: where, file: file || null, title: "Rapikan PDF" + (where === "sgw" ? " · Signing Document" : " · Submit PDF") });
+  };
+  // Split PDF dari Signing (khusus status Selesai)
+  window.peFromSigning = async function (id) {
+    var d = typeof sgDoc === "function" ? sgDoc(id) : null;
+    if (!d) return toast("Dokumen tidak ditemukan", "error");
+    if (d.status !== "selesai") return toast("Split PDF hanya untuk dokumen yang sudah Selesai ditandatangani", "error");
+    if (!canPdf()) return toast("Akun Anda tidak memiliki akses Split & Edit PDF", "error");
+    busy("Mengambil PDF final…", 20);
+    try {
+      var bytes = null; try { bytes = typeof SGC !== "undefined" ? await SGC.get("final_" + id) : null; } catch (e) { }
+      if (!bytes) { var r = await callApi("sign.file", { id: id }, 18e4); bytes = b64ToBytes(r.pdf); try { SGC.put("final_" + id, bytes); } catch (e) { } }
+      busy(null);
+      await peOpen({ kind: "signing", id: id, lock: true, bytes: bytes, name: d.name, title: "Split PDF · Signing Document" });
+      toast("Mode Split saja: isi dokumen bertanda tangan dikunci", "info", 5000);
+    } catch (e) { busy(null); toast("Gagal mengambil PDF final: " + e.message, "error", 8000); }
+  };
+
+  // ===================== kaitan ke aplikasi =====================
+  function hook() {
+    var ok = canPdf();
+    var bar = $("gs-toolbar");
+    if (bar && !$("docs-tab-pdf")) {
+      var b = document.createElement("button"); b.id = "docs-tab-pdf"; b.title = "Split & Edit PDF — pecah, rapikan, tulis & gambar di PDF"; b.onclick = function () { peOpen({ kind: "tab" }); };
+      b.innerHTML = '<span class="gs-ic" style="--c:#e11d48"><i class="fa-solid fa-scissors"></i></span><span class="gs-tx"><b>Split/Edit</b><small>Pecah &amp; rapikan PDF</small></span>';
+      var up = $("docs-tab-upload"); up && up.nextSibling ? bar.insertBefore(b, up.nextSibling) : bar.appendChild(b);
+    }
+    var tb = $("docs-tab-pdf"); if (tb) tb.classList.toggle("hidden", !ok);
+    var drop = $("up-drop");
+    if (drop && !$("pe-up-btn")) {
+      var r = document.createElement("button"); r.type = "button"; r.id = "pe-up-btn"; r.className = "btn btn-ghost w-full"; r.style.marginTop = "6px";
+      r.innerHTML = '<i class="fa-solid fa-scissors"></i>Rapikan PDF dulu (susun, hapus area, tulis, gabung)';
+      r.onclick = function () { window.peRapikan("submit"); };
+      var fi = $("up-file") || drop; fi.parentNode.insertBefore(r, fi.nextSibling);
+    }
+    var ub = $("pe-up-btn"); if (ub) ub.classList.toggle("hidden", !ok);
+    var sd = $("sgw-drop");
+    if (sd && !$("pe-sgw-btn")) {
+      var s = document.createElement("button"); s.type = "button"; s.id = "pe-sgw-btn"; s.className = "btn btn-ghost w-full";
+      s.innerHTML = '<i class="fa-solid fa-scissors"></i>Rapikan PDF dulu (susun, hapus halaman, hapus area, tulis)';
+      s.onclick = function () { window.peRapikan("sgw"); };
+      sd.parentNode.insertBefore(s, sd.nextSibling);
+    }
+    var sb = $("pe-sgw-btn"); if (sb) sb.classList.toggle("hidden", !ok);
+  }
+  var ht = null;
+  new MutationObserver(function () { clearTimeout(ht); ht = setTimeout(hook, 80); }).observe(document.body, { childList: true, subtree: true });
+  hook();
+
+  // menu ⋯ Signing: tambah "Split PDF" untuk dokumen Selesai
+  if (typeof sgMenu === "function") {
+    var origMenu = sgMenu;
+    window.sgMenu = sgMenu = function (ev, id) {
+      var rect = ev && ev.currentTarget ? ev.currentTarget.getBoundingClientRect() : null;
+      var r = origMenu.apply(this, arguments);
+      try {
+        var d = sgDoc(id), m = $("sgr-menu");
+        if (m && d && d.status === "selesai" && canPdf()) {
+          var b = document.createElement("button"); b.innerHTML = '<i class="fa-solid fa-scissors"></i>Split PDF (pecah dokumen final)';
+          b.onclick = function () { sgMenuClose(); window.peFromSigning(id); };
+          m.insertBefore(b, m.children[1] || null);
+          if (d.splitFolderUrl) { var f = document.createElement("button"); f.innerHTML = '<i class="fa-solid fa-folder-open"></i>Buka folder hasil split'; f.onclick = function () { sgMenuClose(); window.open(d.splitFolderUrl, "_blank", "noopener"); }; m.insertBefore(f, b.nextSibling); }
+          if (rect) { var l = m.offsetWidth, c = m.offsetHeight; m.style.left = Math.max(8, Math.min(innerWidth - l - 8, rect.right - l)) + "px"; m.style.top = (rect.bottom + c + 8 > innerHeight ? Math.max(8, rect.top - c - 4) : rect.bottom + 4) + "px"; }
+        }
+      } catch (e) { }
+      return r;
+    };
+  }
+  // rincian Signing: daftar file hasil split
+  if (typeof sgRowDetail === "function") {
+    var origDet = sgRowDetail;
+    window.sgRowDetail = sgRowDetail = function (d) {
+      var h = origDet.apply(this, arguments);
+      try {
+        if (d && d.splits && d.splits.length) {
+          var add = '<div class="sgr-auto" style="display:block"><i class="fa-solid fa-scissors"></i> Hasil split (' + d.splits.length + ' file)' + (d.splitFolderUrl ? ' · <a href="' + E(d.splitFolderUrl) + '" target="_blank" rel="noopener" class="underline font-bold">folder</a>' : "") + ":<br>" + d.splits.map(function (s) { return '<a href="' + E(s.url) + '" target="_blank" rel="noopener" class="underline">' + E(s.name) + "</a>"; }).join(" · ") + "</div>";
+          h = h.replace(/<\/div>\s*$/, add + "</div>");
+        }
+      } catch (e) { }
+      return h;
+    };
+  }
+})();
+</script>
 </body>
 </html>
