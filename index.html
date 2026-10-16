@@ -3522,5 +3522,65 @@ function rnExportCsv(){const t=RN.tab,hd=(STATE.headers[t]||[]).map(String),rows
   #desk-top-slot #sg-toolbar .btn-primary>i{font-size:13px}
 }
 </style>
+<script>
+/* ===================== STARLITE v12 · Signing: dokumen Selesai hanya bisa dihapus Akun Utama sistem =====================
+   Akun Utama sistem = akun owner yang dibuat sistem (createdBy "system"); ditentukan server (login / me → primary).
+   Server (Code.gs sign.delete & Supabase sg_delete) tetap menolak — di sini tombolnya disembunyikan & dicegah. */
+(function () {
+  "use strict";
+  if (typeof callApi !== "function") return;
+  var KEY = "vm_primary_owner";
+  var PRI = { v: null, name: "" };
+  try { var c = JSON.parse(localStorage.getItem(KEY) || "null"); if (c) { PRI.v = c.id; PRI.name = c.name || ""; } } catch (e) { }
+  window.isPrimaryOwner = function () { return !!currentUser && currentUser.role === "owner" && PRI.v === currentUser.id; };
+  var LOCK = { selesai: 1, lengkap: 1 };
+  var docOf = function (id) { try { return typeof sgDoc === "function" ? sgDoc(id) : null; } catch (e) { return null; } };
+  var locked = function (id) { var d = docOf(id); return !!d && !!LOCK[d.status]; };
+  var msg = function () { return "Dokumen yang sudah Selesai hanya bisa dihapus oleh Akun Utama sistem" + (PRI.name ? " (" + PRI.name + ")" : ""); };
+
+  // status akun sistem dari server
+  var inner = callApi;
+  window.callApi = callApi = async function (a) {
+    var r = await inner.apply(this, arguments);
+    if ((a === "login" || a === "me") && r && "primary" in r) {
+      PRI.name = r.primaryName || "";
+      var id = r.id || (currentUser && currentUser.id) || "";
+      PRI.v = r.primary ? id : (PRI.v === id ? null : PRI.v);
+      if (r.primary && !id) setTimeout(function () { if (currentUser) { PRI.v = currentUser.id; save(); scan(); } }, 0);
+      save(); setTimeout(scan, 0);
+    }
+    return r;
+  };
+  function save() { try { localStorage.setItem(KEY, JSON.stringify({ id: PRI.v, name: PRI.name })); } catch (e) { } }
+
+  // cegah hapus dokumen Selesai oleh akun lain
+  if (typeof sgDelete === "function") {
+    var origDel = sgDelete;
+    window.sgDelete = sgDelete = function (ids) {
+      ids = [].concat(ids || []);
+      if (window.isPrimaryOwner()) return origDel.call(this, ids);
+      var ok = ids.filter(function (id) { return !locked(id); });
+      if (ok.length < ids.length) { try { showToast(msg(), "error", 7000); } catch (e) { } }
+      return ok.length ? origDel.call(this, ok) : undefined;
+    };
+  }
+
+  // sembunyikan tombol hapus untuk dokumen Selesai (kartu, menu ⋯, "Hapus semua yang selesai")
+  function scan() {
+    var pri = window.isPrimaryOwner();
+    document.querySelectorAll('[onclick*="sgDelete"]').forEach(function (b) {
+      var on = b.getAttribute("onclick") || "", hide = false;
+      if (/status\s*===\s*'(selesai|lengkap)'/.test(on)) hide = !pri;
+      else { var m = on.match(/sgDelete\(\[\s*'([^']+)'\s*\]\)/); if (m) hide = !pri && locked(m[1]); }
+      b.classList.toggle("hidden", hide);
+      if (hide) b.setAttribute("data-po-lock", "1"); else b.removeAttribute("data-po-lock");
+    });
+  }
+  window.sgPrimaryScan = scan;
+  var t = null;
+  new MutationObserver(function () { clearTimeout(t); t = setTimeout(scan, 30); }).observe(document.body, { childList: true, subtree: true });
+  scan();
+})();
+</script>
 </body>
 </html>
