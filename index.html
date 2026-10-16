@@ -3582,5 +3582,22 @@ function rnExportCsv(){const t=RN.tab,hd=(STATE.headers[t]||[]).map(String),rows
   scan();
 })();
 </script>
+<script>
+/* STARLITE v12 · Signing: tombol Muat ulang berputar selama memuat (sama seperti Sync menu lain) */
+(function () {
+  "use strict";
+  if (typeof sgLoad !== "function" || typeof busyBtnOn !== "function") return;
+  var orig = sgLoad;
+  window.sgLoad = sgLoad = function (force) {
+    if (!force) return orig.apply(this, arguments);
+    var bs = [].slice.call(document.querySelectorAll('[onclick^="sgLoad(true)"]')).map(function (b) { return busyBtnOn(b, "Sync"); }).filter(Boolean);
+    var t0 = Date.now(), p;
+    try { p = Promise.resolve(orig.apply(this, arguments)); } catch (e) { p = Promise.reject(e); }
+    var done = function (ok) { setTimeout(function () { bs.forEach(function (b) { busyBtnOff(b, ok); }); }, Math.max(0, 600 - (Date.now() - t0))); };
+    p.then(function () { done(!(typeof SG !== "undefined" && SG.err)); }, function () { done(false); });
+    return p;
+  };
+})();
+</script>
 </body>
 </html>
