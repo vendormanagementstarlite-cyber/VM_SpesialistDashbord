@@ -3779,7 +3779,7 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
     fab.querySelector('[data-d="up"]').classList.toggle("off", y < 300);
     fab.querySelector('[data-d="down"]').classList.toggle("off", y > max - 300);
   }
-  var kick = function () { if (!raf) raf = requestAnimationFrame(update); };
+  var kick = function () { if (raf) return; raf = 1; var done = false, f = function () { if (!done) { done = true; update(); } }; requestAnimationFrame(f); setTimeout(f, 80); };   // cadangan bila animasi frame ditahan
   addEventListener("scroll", kick, { passive: true });
   addEventListener("resize", function () { fitTables(); kick(); });
   var mt = null;
@@ -3796,7 +3796,7 @@ html.dark #vm-fab button{background:rgba(14,22,41,.95);color:#93a8ff;border-colo
       if (to && to !== from) {
         var y = POS[to] || 0, n = 0;
         var go = function () { window.scrollTo({ top: Math.min(y, document.documentElement.scrollHeight), behavior: "instant" }); if (++n < 4 && Math.abs(scrollY - y) > 4) setTimeout(go, 120); };
-        requestAnimationFrame(function () { requestAnimationFrame(go); });
+        setTimeout(go, 30);
       }
       setTimeout(function () { fitTables(); kick(); }, 50);
       return r;
