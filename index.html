@@ -4351,6 +4351,76 @@ body>.pe-menu{z-index:120}
 #pe .pe-sgfonts button{font-size:30px;color:inherit}
 #pe .pe-find .pe-red,#pe .pe-find .pe-red i{color:#fff}
 @media (max-width:899px){.pe-find{top:auto;bottom:72px;max-height:56%}.pe-find .list{max-height:none}}
+/* ===================== v17 · OCR, formulir, catatan, kompres, password, konversi, bandingkan ===================== */
+.pe-mp{margin:0 0 10px;color:var(--pe-ink);font-size:12px;line-height:1.55}
+.pe-mp.mute,.pe-mp .mute{color:var(--pe-mute);font-size:11px}
+.pe-seg3 label span{display:flex;flex-direction:column}
+.pe-seg3 label span b{font-weight:800}
+.pe-seg3 label span small{color:var(--pe-mute);font-size:10.5px}
+.pe-seg3 label:has(input:checked){border-color:var(--pe-acc2);background:color-mix(in srgb,var(--pe-acc2) 7%,transparent)}
+.pe-badges{display:inline-flex;gap:5px}
+.pe-bdg{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:999px;border:1px solid #c4b5fd;background:#f5f3ff;font-size:10.5px;font-weight:800;cursor:pointer}
+#pe .pe-bdg{color:#6d28d9}
+#pe .pe-bdg.am{color:#b45309;border-color:#fcd34d;background:#fffbeb}
+.dark .pe-bdg{background:#2e106566}.dark .pe-bdg.am{background:#78350f55}
+/* lapisan formulir */
+.pe-formL{position:absolute;inset:0;z-index:2;pointer-events:none}
+.pe-formL>*{position:absolute;box-sizing:border-box;margin:0;border-radius:2px;pointer-events:none}
+#pe .pe-formL input,#pe .pe-formL textarea,#pe .pe-formL select{padding:0 3px!important;border:1px solid transparent!important;background:rgba(124,58,237,.06)!important;color:#0f172a!important;font-family:Helvetica,Arial,sans-serif;line-height:1.1;resize:none;border-radius:2px!important;min-width:0}
+.pe-formL .ck{display:flex;align-items:center;justify-content:center;background:rgba(124,58,237,.06);border:1px solid transparent;color:#0f172a;cursor:pointer}
+.pe-formL .ck input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.pe-formL .ck i{opacity:0;font-size:80%;transition:opacity .15s,transform .2s var(--pe-ease);transform:scale(.4)}
+.pe-formL .ck.rd i{font-size:55%}
+.pe-formL .ck:has(input:checked) i{opacity:1;transform:none}
+.pe-formL.on>*{pointer-events:auto}
+#pe .pe-formL.on input,#pe .pe-formL.on textarea,#pe .pe-formL.on select{border-color:#a78bfa!important;background:rgba(237,233,254,.55)!important}
+.pe-formL.on .ck{border-color:#a78bfa;background:rgba(237,233,254,.55)}
+#pe .pe-formL.on input:focus,#pe .pe-formL.on textarea:focus,#pe .pe-formL.on select:focus{outline:2px solid #7c3aed;background:#fff!important;box-shadow:0 4px 12px -4px #7c3aed88}
+.pe-formL .ro{background:repeating-linear-gradient(45deg,transparent 0 4px,rgba(100,116,139,.12) 4px 8px)}
+/* catatan */
+.pe-nta{width:100%;min-height:84px;resize:vertical;font-size:12.5px;line-height:1.45;background:#fffbeb!important;border-color:#fde68a!important}
+.dark .pe-nta{background:#422006!important;border-color:#854d0e!important}
+.pe-ntc{display:flex;align-items:center;gap:5px;margin-top:6px}
+.pe-ntc>button[data-nc]{width:20px;height:20px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--pe-line);cursor:pointer;padding:0}
+.pe-ntc>button[data-nc].on{box-shadow:0 0 0 2px var(--pe-acc2)}
+.pe-mpop .pe-fseg button{height:26px;font-size:11px}
+.pe-nlist{display:flex;flex-direction:column;gap:4px;max-height:60vh;overflow:auto}
+.pe-nlist button{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:10px;border:1px solid var(--pe-line);background:var(--pe-card);cursor:pointer;text-align:left}
+.pe-nlist button:hover{border-color:#fbbf24}
+.pe-nlist .pg{flex-shrink:0;padding:1px 6px;border-radius:6px;background:var(--pe-soft);font-weight:800;font-size:10px;color:var(--pe-mute)}
+.pe-nlist .tx{flex:1;min-width:0;font-size:12px;white-space:pre-wrap;word-break:break-word}
+.pe-nlist .tx b{display:block;font-size:10.5px;color:var(--pe-mute)}
+/* bandingkan */
+.pe-cmp .box{max-height:94vh}
+.pe-cmp-in{display:flex;align-items:center;gap:12px}
+.pe-cmp-slot{flex:1;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px dashed var(--pe-line);border-radius:12px}
+.pe-cmp-slot b{font-weight:800;white-space:nowrap}
+.pe-cmp-slot .nm{flex:1;min-width:0;color:var(--pe-mute);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pe-cmp-ar{color:var(--pe-mute)}
+.pe-cmp-sum{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 8px;font-size:12.5px}
+.pe-tog.sm{padding:6px 10px;margin-left:auto;position:relative}
+.pe-cmp-main{display:grid;grid-template-columns:110px 1fr 260px;gap:10px;min-height:0}
+.pe-cmp-pages{display:flex;flex-direction:column;gap:3px;max-height:62vh;overflow:auto}
+.pe-cmp-pages button{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 8px;border-radius:8px;border:1px solid var(--pe-line);background:var(--pe-card);font-weight:700;cursor:pointer;font-size:11.5px}
+#pe .pe-cmp-pages button.on{border-color:var(--pe-acc2);background:color-mix(in srgb,var(--pe-acc2) 10%,transparent)}
+.pe-cmp-pages em{font-style:normal;padding:0 6px;border-radius:999px;background:#fee2e2;color:#be123c;font-size:10px;font-weight:800}
+.pe-cmp-pages i{color:#10b981;font-size:10px}
+.pe-cmp-view{display:flex;gap:10px;justify-content:center;max-height:62vh;overflow:auto;padding:4px;background:var(--pe-desk);border-radius:12px}
+.pe-cmp-col{display:flex;flex-direction:column;align-items:center;gap:4px}
+.pe-cmp-col small{font-weight:800;color:var(--pe-mute);font-size:10.5px}
+.pe-cmp-col canvas{box-shadow:0 0 0 1px var(--pe-line),0 10px 24px -14px #0f172a88;border-radius:3px;background:#fff}
+.pe-cmp-list{display:flex;flex-direction:column;gap:5px;max-height:62vh;overflow:auto}
+.pe-cmp-list .it{padding:8px 10px;border-radius:10px;background:var(--pe-soft);font-size:12px;line-height:1.5;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.pe-cmp-list del{background:#fee2e2;color:#9f1239;border-radius:4px;padding:0 4px}
+.pe-cmp-list ins{background:#dcfce7;color:#166534;border-radius:4px;padding:0 4px;text-decoration:none}
+.pe-cmp-list .it i{color:var(--pe-mute);font-size:10px}
+.pe-cmp-list .mute{color:var(--pe-mute)}
+@media (max-width:899px){
+  .pe-cmp-in{flex-direction:column;align-items:stretch}.pe-cmp-ar{transform:rotate(90deg);align-self:center}
+  .pe-cmp-main{grid-template-columns:1fr}.pe-cmp-pages{flex-direction:row;overflow-x:auto}.pe-cmp-view{flex-direction:column;align-items:center}
+  .pe-badges .pe-bdg{padding:0 7px}
+}
+#pe .pe-ntc>button[data-nc]{flex:0 0 20px;width:20px;min-width:20px;height:20px}
 
 </style>
 <script id="addon_v14">
@@ -4444,8 +4514,8 @@ body>.pe-menu{z-index:120}
   var clone = function (o) { return JSON.parse(JSON.stringify(o)); };
   var safeName = function (s) { return String(s || "").replace(/\.pdf$/i, "").replace(/[\\/:*?"<>|\u0000-\u001f]+/g, "-").replace(/\s+/g, " ").trim().slice(0, 150); };
 
-  function snap() { return JSON.stringify({ p: PE.pages, c: Array.from(PE.cuts), n: PE.names, a: PE.pairs, m: PE.mfiles, o: PE.mopt }); }
-  function restore(s) { var o = JSON.parse(s); PE.pages = o.p; PE.cuts = new Set(o.c); PE.names = o.n; PE.pairs = o.a; if (o.m) PE.mfiles = o.m; if (o.o) PE.mopt = o.o; PE.sel = new Set(Array.from(PE.sel).filter(function (id) { return PE.pages.some(function (p) { return p.id === id; }); })); }
+  function snap() { return JSON.stringify({ p: PE.pages, c: Array.from(PE.cuts), n: PE.names, a: PE.pairs, m: PE.mfiles, o: PE.mopt, f: PE.form || {} }); }
+  function restore(s) { var o = JSON.parse(s); PE.pages = o.p; PE.cuts = new Set(o.c); PE.names = o.n; PE.pairs = o.a; if (o.m) PE.mfiles = o.m; if (o.o) PE.mopt = o.o; PE.form = o.f || {}; PE.sel = new Set(Array.from(PE.sel).filter(function (id) { return PE.pages.some(function (p) { return p.id === id; }); })); }
   function pushUndo() { PE.undo.push(snap()); if (PE.undo.length > 60) PE.undo.shift(); PE.redo = []; syncUndo(); autosave(); }
   // ---------- simpan otomatis di perangkat (IndexedDB) — pekerjaan tidak hilang bila tab tertutup ----------
   var DBP = null, SAVED = { docs: -1, imgs: -1 }, SAVE_T = null, DRAFT_DAYS = 7;
@@ -4458,17 +4528,18 @@ body>.pe-menu{z-index:120}
       if (SAVED.docs !== PE.docs.length) { await kv("put", "docs", PE.docs.map(function (d) { return { name: d.name, bytes: d.bytes }; })); SAVED.docs = PE.docs.length; }
       var ik = Object.keys(IMGS);
       if (SAVED.imgs !== ik.length) { var o = {}; ik.forEach(function (k) { var m = IMGS[k]; o[k] = { bytes: m.bytes, mime: m.mime, orig: m.orig || "", clean: m.clean || "" }; }); await kv("put", "imgs", o); SAVED.imgs = ik.length; }
+      if (SAVED.ocr !== Object.keys(OCR).length) { await kv("put", "ocr", OCR); SAVED.ocr = Object.keys(OCR).length; }
       await kv("put", "draft", { at: Date.now(), mode: PE.mode, base: PE.base, origin: PE.origin, lock: PE.lock, pattern: PE.pattern, state: snap(), uid: PE.uid, imgn: IMGN, title: ($("pe-ttl") || {}).textContent || "", n: PE.pages.length, files: segs().length });
       var b = $("pe-saved"); if (b) { b.classList.remove("hidden"); b.classList.remove("flash"); void b.offsetWidth; b.classList.add("flash"); }
     } catch (e) { console.warn("Simpan otomatis gagal:", e && e.message); }
   }
-  async function clearDraft() { clearTimeout(SAVE_T); SAVED = { docs: -1, imgs: -1 }; try { await kv("del", "draft"); await kv("del", "docs"); await kv("del", "imgs"); } catch (e) { } }
+  async function clearDraft() { clearTimeout(SAVE_T); SAVED = { docs: -1, imgs: -1 }; try { await kv("del", "draft"); await kv("del", "docs"); await kv("del", "imgs"); await kv("del", "ocr"); } catch (e) { } }
   async function getDraft() { try { var d = await kv("get", "draft"); if (d && Date.now() - d.at < DRAFT_DAYS * 864e5) return d; if (d) clearDraft(); } catch (e) { } return null; }
   async function restoreDraft(d) {
     busy("Memulihkan pekerjaan terakhir…", 15, "read");
     try {
-      var docs = await kv("get", "docs") || [], imgs = await kv("get", "imgs") || {};
-      reset();
+      var docs = await kv("get", "docs") || [], imgs = await kv("get", "imgs") || {}, ocr = await kv("get", "ocr") || {};
+      reset(); OCR = ocr;
       PE.docs = docs.map(function (x) { return { bytes: x.bytes, name: x.name }; });
       var ids = Object.keys(imgs);
       for (var i = 0; i < ids.length; i++) { var m = imgs[ids[i]]; try { await regImage(m.bytes, m.mime, ids[i]); IMGS[ids[i]].orig = m.orig || undefined; IMGS[ids[i]].clean = m.clean || undefined; } catch (e) { } busy("Memulihkan gambar…", 20 + 30 * (i + 1) / ids.length, "read"); }
@@ -4524,6 +4595,14 @@ body>.pe-menu{z-index:120}
     return out;
   }
 
+  // PDF terenkripsi: password pembuka → minta password; hanya kunci izin → dibuka otomatis agar bisa diedit
+  async function prepBytes(bytes, name) {
+    if (!hasEncrypt(bytes)) return bytes;
+    var needPw = false;
+    try { var Lj = await loadPdfJs(), t = await Lj.getDocument({ data: bytes.slice(0) }).promise; t.destroy(); } catch (e) { needPw = e && (e.name === "PasswordException" || /password/i.test(e.message || "")); if (!needPw) return bytes; }
+    if (needPw) return unlockBytes(bytes, name);
+    try { busy("Membuka kunci izin…", 30, "read"); return await qpdf(["--decrypt", "/in.pdf", "/out.pdf"], bytes); } catch (e) { console.warn("buka izin:", e.message); return bytes; }
+  }
   async function addFiles(files, at) {
     files = Array.from(files || []).filter(Boolean);
     if (!files.length) return;
@@ -4537,6 +4616,7 @@ body>.pe-menu{z-index:120}
         if (!isPdf && !isImg) { toast("\"" + f.name + "\" dilewati — hanya PDF / JPG / PNG", "error", 5000); continue; }
         busy("Membaca " + f.name + (files.length > 1 ? " (" + (k + 1) + "/" + files.length + ")" : "") + "…", 10 + 80 * k / files.length, "read");
         var bytes = isPdf ? await readBuf(f) : await imageToPdf(f);
+        if (isPdf) { bytes = await prepBytes(bytes, f.name); if (!bytes) { toast("\"" + f.name + "\" dilewati", "info"); continue; } busy("Membaca " + f.name + "…", 10 + 80 * k / files.length, "read"); }
         var pages = await addBytes(bytes, f.name);
         add = add.concat(pages);
         if (first && k === 0) PE.base = safeName(f.name) || "Dokumen";
@@ -4625,6 +4705,14 @@ body>.pe-menu{z-index:120}
       g.save(); g.scale(k, k);
       var al = o.op == null ? 1 : o.op;
       if (o.t === "erase" || o.t === "mask") { g.fillStyle = o.col || "#fff"; g.fillRect(o.x, o.y, o.w, o.h); }
+      else if (o.t === "note") {
+        var nx = o.x, ny = o.y, nw = o.w, nh = o.h, f = nw * 0.3;
+        g.shadowColor = "rgba(0,0,0,.25)"; g.shadowBlur = 3; g.shadowOffsetY = 1;
+        g.fillStyle = o.c || "#f59e0b"; g.beginPath(); g.moveTo(nx + 2, ny); g.lineTo(nx + nw - 2, ny); g.quadraticCurveTo(nx + nw, ny, nx + nw, ny + 2); g.lineTo(nx + nw, ny + nh - f); g.lineTo(nx + nw - f, ny + nh); g.lineTo(nx + 2, ny + nh); g.quadraticCurveTo(nx, ny + nh, nx, ny + nh - 2); g.lineTo(nx, ny + 2); g.quadraticCurveTo(nx, ny, nx + 2, ny); g.fill();
+        g.shadowBlur = 0; g.shadowOffsetY = 0; g.fillStyle = "rgba(255,255,255,.85)"; for (var li = 0; li < 3; li++) g.fillRect(nx + nw * 0.2, ny + nh * (0.28 + li * 0.18), nw * (li === 2 ? 0.4 : 0.6), Math.max(0.8, nh * 0.07));
+        g.fillStyle = "rgba(0,0,0,.18)"; g.beginPath(); g.moveTo(nx + nw, ny + nh - f); g.lineTo(nx + nw - f, ny + nh - f); g.lineTo(nx + nw - f, ny + nh); g.fill();
+      }
+      else if (o.t === "link") { if (opt && opt.ed) { g.fillStyle = "rgba(37,99,235,.08)"; g.fillRect(o.x, o.y, o.w, o.h); g.strokeStyle = "#2563eb"; g.lineWidth = 1.2 / k; g.setLineDash([4 / k, 3 / k]); g.strokeRect(o.x, o.y, o.w, o.h); g.setLineDash([]); g.font = "700 " + 10 / k + "px sans-serif"; g.fillStyle = "#2563eb"; g.fillText("🔗 " + (o.url ? o.url.replace(/^https?:\/\//, "").slice(0, 30) : "ke hal " + o.page), o.x + 3 / k, o.y - 3 / k); } }
       else if (o.t === "img") {
         var im = IMGS[o.ref];
         g.translate(o.x + o.w / 2, o.y + o.h / 2); g.rotate((o.a || 0) * Math.PI / 180); g.globalAlpha = al;
@@ -4675,6 +4763,7 @@ body>.pe-menu{z-index:120}
   async function buildSized(list, title, limitMB, onp) {
     var b = await buildPdf(list, title, onp);
     if (limitMB && b.length > limitMB * 1048576 && hasErase(list)) b = await buildPdf(list, title, onp, { dpi: 130, q: 0.72 });
+    if (limitMB && b.length > limitMB * 1048576 && (PE.comp || 0) < 2) { var b2 = await buildPdf(list, title, onp, { comp: 2 }); if (b2.length < b.length) b = b2; }   // terlalu besar → kompres otomatis
     if (limitMB && b.length > limitMB * 1048576) throw new Error("Ukuran " + MB(b.length) + " melebihi batas " + limitMB + " MB — pecah menjadi file yang lebih kecil");
     return b;
   }
@@ -4737,21 +4826,90 @@ body>.pe-menu{z-index:120}
   }
   var LIBF = {};
   function libFlat(d) { if (!LIBF[d]) LIBF[d] = loadPdfLib().then(async function (L) { var doc = await L.PDFDocument.load(PE.docs[d].bytes, { ignoreEncryption: true }); try { var fm = doc.getForm(); if (fm.getFields().length) { fm.updateFieldAppearances && fm.updateFieldAppearances(); fm.flatten(); } } catch (e) { console.warn("ratakan formulir:", e.message); } return doc; }); return LIBF[d]; }
+  // sumber halaman untuk dirakit: formulir yang diisi → diterapkan & diratakan; opsi ratakan (Gabung)
+  var LIBX = {};
+  function getSrc(d, flat) {
+    var fv = PE.form && PE.form[d], has = fv && Object.keys(fv).length;
+    if (!has) return flat ? libFlat(d) : libDoc(d);
+    var k = d + ":" + JSON.stringify(fv);
+    if (!LIBX[k]) LIBX[k] = loadPdfLib().then(async function (L) {
+      var doc = await L.PDFDocument.load(PE.docs[d].bytes, { ignoreEncryption: true }), fm = doc.getForm();
+      Object.keys(fv).forEach(function (nm) {
+        var v = fv[nm];
+        try {
+          var f = fm.getField(nm), T = f.constructor && f.constructor.name;
+          if (f instanceof L.PDFTextField) { f.setText(String(v == null ? "" : v)); }
+          else if (f instanceof L.PDFCheckBox) { v ? f.check() : f.uncheck(); }
+          else if (f instanceof L.PDFRadioGroup) { if (v) f.select(String(v)); else f.clear(); }
+          else if (f instanceof L.PDFDropdown) { if (v) f.select(String(v)); else f.clear(); }
+          else if (f instanceof L.PDFOptionList) { if (v) f.select(String(v)); }
+          void T;
+        } catch (e) { console.warn("isi kolom " + nm + ":", e.message); }
+      });
+      try { fm.updateFieldAppearances(await doc.embedFont(L.StandardFonts.Helvetica)); } catch (e) { }
+      try { fm.flatten(); } catch (e) { console.warn("ratakan:", e.message); }
+      return doc;
+    });
+    return LIBX[k];
+  }
+  var hasFormVals = function (d) { var fv = PE.form && PE.form[d]; return !!(fv && Object.keys(fv).length); };
+  // kata-kata dari satu baris (posisi tampilan) — untuk lapisan teks tak terlihat & sensor
+  function wordsOf(l) {
+    if (l.words) return l.words;
+    var f = fontOf(l.mf.font); MC.font = (l.mf.i ? "italic " : "") + (l.mf.b ? "700 " : "400 ") + l.size + "px " + fontCss(f);
+    var full = MC.measureText(l.str).width || 1, sc = l.w / full, out = [], re = /\S+/g, m;
+    while ((m = re.exec(l.str))) { var a = MC.measureText(l.str.slice(0, m.index)).width * sc, b = MC.measureText(l.str.slice(0, m.index + m[0].length)).width * sc; out.push({ s: m[0], cs: m.index, x: l.x + a, w: Math.max(1, b - a), top: l.top, h: l.h, base: l.base }); }
+    return out;
+  }
+  var ovl = function (a, b) { return Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y)); };
+  // teks tak terlihat di atas halaman gambar (scan / disensor / dikompres) → PDF tetap bisa dicari & disalin; kata yang disensor TIDAK ikut
+  async function drawInvisible(L, out, page, p, Dh, cache, lines) {
+    if (!lines || !lines.length) return;
+    var font = cache._hv || (cache._hv = await out.embedFont(L.StandardFonts.Helvetica));
+    var er = p.ops.filter(function (o) { return o.t === "erase"; }), done = {}; p.ops.forEach(function (o) { if (o.key) done[o.key] = 1; });
+    lines.forEach(function (l) {
+      if (done[l.key]) return;
+      wordsOf(l).forEach(function (w) {
+        var wb = { x: w.x, y: w.top, w: w.w, h: w.h };
+        if (er.some(function (e) { return ovl(e, wb) > wb.w * wb.h * 0.25; })) return;
+        var t = stdSafe(font, w.s, true); if (!t.trim()) return;
+        var fw = font.widthOfTextAtSize(t, 10) || 1, size = Math.max(1, Math.min(w.h * 1.6, 10 * w.w / fw));
+        try { page.drawText(t, { x: w.x, y: Dh - w.base, size: size, font: font, opacity: 0 }); } catch (e) { }
+      });
+    });
+  }
+  // halaman berisi gambar (scan / foto) → kandidat dikompres
+  var IMGQ = {};
+  async function hasImage(p) {
+    var k = pkey(p); if (IMGQ[k] != null) return IMGQ[k];
+    try { var Lj = await loadPdfJs(), doc = await jsDoc(p.d), pg = await doc.getPage(p.i + 1), ol = await pg.getOperatorList(), O = Lj.OPS, I = [O.paintImageXObject, O.paintInlineImageXObject, O.paintJpegXObject, O.paintImageXObjectRepeat].filter(function (x) { return x != null; }); IMGQ[k] = ol.fnArray.some(function (f) { return I.indexOf(f) >= 0; }); } catch (e) { IMGQ[k] = false; }
+    return IMGQ[k];
+  }
+  var COMP = { 1: { dpi: 150, q: 0.72, t: "Seimbang" }, 2: { dpi: 110, q: 0.55, t: "Maksimal" } };
   async function buildPdf(list, title, onp, opt) {
     opt = opt || {};
     if (!opt.raw && isMerge()) opt = Object.assign({ flatten: PE.mopt.flatten, a4: PE.mopt.a4, marks: list.__marks }, opt);
-    var src0 = opt.flatten ? libFlat : libDoc;
-    var L = await loadPdfLib(), out = await L.PDFDocument.create(), cache = {}, plain = {}, copied = {};
-    list.forEach(function (p) { if (!p.blank && !p.ops.length) (plain[p.d] = plain[p.d] || []).push(p.i); });
-    for (var dk in plain) copied[dk] = await out.copyPages(await src0(+dk), plain[dk]);
+    var comp = opt.comp != null ? opt.comp : (opt.raw ? 0 : PE.comp || 0);
+    if (comp && !opt.noCmp) {   // kompres: rakit 2 versi, pakai yang lebih kecil
+      var c1 = await buildPdf(list, title, onp, Object.assign({}, opt, { comp: comp, noCmp: 1 }));
+      var c0 = await buildPdf(list, title, null, Object.assign({}, opt, { comp: 0 }));
+      LASTCMP = { before: c0.length, after: Math.min(c0.length, c1.length) };
+      return c1.length < c0.length ? c1 : c0;
+    }
+    var flat = !!opt.flatten;
+    var L = await loadPdfLib(), out = await L.PDFDocument.create(), cache = {}, plain = {}, copied = {}, links = [];
+    var need = []; for (var z = 0; z < list.length; z++) { var pz = list[z]; need[z] = !pz.blank && (pz.ops.length || !!OCR[pkey(pz)] || (comp && await hasImage(pz))); }
+    list.forEach(function (p, ix) { if (!p.blank && !need[ix]) (plain[p.d] = plain[p.d] || []).push(p.i); });
+    for (var dk in plain) copied[dk] = await out.copyPages(await getSrc(+dk, flat || hasFormVals(+dk)), plain[dk]);
     var used = {};
     for (var n = 0; n < list.length; n++) {
       var p = list[n], D = dims(p);
       if (p.blank) { out.addPage([p.w, p.h]); if (onp) onp(n + 1, list.length); continue; }
-      if (!p.ops.length) { var u = used[p.d] = (used[p.d] || 0); var cp = copied[p.d][u]; used[p.d] = u + 1; cp.setRotation(L.degrees(D.t)); out.addPage(cp); }
+      if (!need[n]) { var u = used[p.d] = (used[p.d] || 0); var cp = copied[p.d][u]; used[p.d] = u + 1; cp.setRotation(L.degrees(D.t)); out.addPage(cp); }
       else {
-        var src = await src0(p.d), np = out.addPage([D.w, D.h]);
-        if (p.ops.some(function (o) { return o.t === "erase"; })) { var img = await out.embedJpg(await rasterErase(p, opt.dpi, opt.q)); np.drawImage(img, { x: 0, y: 0, width: D.w, height: D.h }); }
+        var src = await getSrc(p.d, flat || hasFormVals(p.d)), np = out.addPage([D.w, D.h]);
+        var raster = p.ops.some(function (o) { return o.t === "erase"; }) || (comp && await hasImage(p));
+        if (raster) { var cq = COMP[comp] || {}; var img = await out.embedJpg(await rasterErase(p, cq.dpi || opt.dpi, cq.q || opt.q)); np.drawImage(img, { x: 0, y: 0, width: D.w, height: D.h }); }
         else {
           var sp = src.getPage(p.i), cb = sp.getCropBox(), W = cb.width, H = cb.height;
           if (hasContents(sp)) {
@@ -4760,15 +4918,35 @@ body>.pe-menu{z-index:120}
             np.drawPage(emb, { x: pos[0], y: pos[1], width: W, height: H, rotate: L.degrees(-D.t) });
           }
         }
-        for (var j = 0; j < p.ops.length; j++) if (p.ops[j].t !== "erase") await drawOpPdf(L, out, np, p.ops[j], D.h, cache);
+        if (raster || OCR[pkey(p)]) { var ln = []; try { ln = await pageLines(p); } catch (e) { } if (raster || !TXT[pkey(p)] || !TXT[pkey(p)].length) await drawInvisible(L, out, np, p, D.h, cache, ln); }
+        for (var j = 0; j < p.ops.length; j++) {
+          var o = p.ops[j];
+          if (o.t === "erase") continue;
+          if (o.t === "note" || o.t === "link") { annotPdf(L, out, np, o, D.h, links, list.length); continue; }
+          await drawOpPdf(L, out, np, o, D.h, cache);
+        }
       }
       if (onp) onp(n + 1, list.length);
       if (n % 4 === 3 || p.ops.length) await tick();   // beri napas ke layar (HP tidak macet)
     }
+    if (links.length) { var pgs = out.getPages(); links.forEach(function (k) { var tp = pgs[Math.max(0, Math.min(pgs.length - 1, k.to - 1))]; k.dict.set(L.PDFName.of("Dest"), out.context.obj([tp.ref, L.PDFName.of("XYZ"), L.PDFNull, L.PDFNull, L.PDFNull])); }); }
     if (opt.a4) out = await toA4(L, out);
     if (opt.marks && opt.marks.length) { try { addOutline(L, out, opt.marks); } catch (e) { console.warn("bookmark:", e.message); } }
     try { out.setTitle(title || "Dokumen"); out.setProducer("STARLITE VM · PDF Tools"); out.setCreator("STARLITE VM"); } catch (e) { }
-    return new Uint8Array(await out.save());
+    return new Uint8Array(await out.save({ useObjectStreams: true }));
+  }
+  var LASTCMP = null;
+  // catatan (sticky note) & tautan → anotasi PDF asli
+  function annotPdf(L, out, page, o, Dh, links, total) {
+    var ctx = out.context, rect = [o.x, Dh - o.y - o.h, o.x + o.w, Dh - o.y], col = String(o.c || "#f59e0b").replace("#", ""), n = parseInt(col.length === 3 ? col.replace(/./g, "$&$&") : col, 16);
+    var C = [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255], d;
+    if (o.t === "note") d = ctx.obj({ Type: "Annot", Subtype: "Text", Rect: rect, Contents: L.PDFHexString.fromText(o.text || ""), T: L.PDFHexString.fromText(o.by || "STARLITE VM"), Name: "Comment", C: C, F: 4, Open: false });
+    else {
+      d = ctx.obj({ Type: "Annot", Subtype: "Link", Rect: rect, Border: [0, 0, 0], F: 4 });
+      if (o.url) d.set(L.PDFName.of("A"), ctx.obj({ S: "URI", URI: L.PDFString.of(o.url) }));
+      else if (o.page) links.push({ dict: d, to: Math.min(total, o.page) });
+    }
+    page.node.addAnnot(ctx.register(d));
   }
   function hasContents(pg) { try { var c = pg.node.Contents(); if (!c) return false; if (c.size && c.size() === 0) return false; return true; } catch (e) { return false; } }
   // samakan ukuran semua halaman ke A4 (potret / lanskap mengikuti halaman), isi diskalakan & ditengahkan
@@ -4938,6 +5116,7 @@ body>.pe-menu{z-index:120}
       + '<div class="pe-title"><b id="pe-ttl">Split &amp; Edit PDF</b><small id="pe-sub">Pecah, rapikan, dan kirim PDF tanpa keluar aplikasi</small></div>'
       + '<div class="pe-modes" id="pe-modes" role="tablist"><i class="pe-mode-ind"></i><button data-mode="split" role="tab"><i class="fa-solid fa-scissors"></i><span>Split</span></button><button data-mode="merge" role="tab"><i class="fa-solid fa-object-group"></i><span>Gabung</span></button><button data-mode="edit" role="tab"><i class="fa-solid fa-pen-to-square"></i><span>Edit</span></button></div>'
       + '<span class="pe-saved hidden" id="pe-saved" title="Pekerjaan tersimpan otomatis di perangkat ini — aman bila tab tertutup"><i class="fa-solid fa-cloud-arrow-down"></i><span class="tx">Tersimpan di perangkat</span></span>'
+      + '<span class="pe-badges" id="pe-badges"></span>'
       + '<span class="pe-lock hidden" id="pe-lock"><i class="fa-solid fa-lock mr-1"></i>Mode Split saja</span>'
       + '<button class="pe-b" id="pe-undo" title="Urungkan (Ctrl+Z)" disabled><i class="fa-solid fa-rotate-left"></i><span class="tx">Urungkan</span></button>'
       + '<button class="pe-b" id="pe-redo" title="Ulangi (Ctrl+Y)" disabled><i class="fa-solid fa-rotate-right"></i><span class="tx">Ulangi</span></button>'
@@ -4991,6 +5170,8 @@ body>.pe-menu{z-index:120}
     var md = $("pe-modes"); md.classList.toggle("hidden", PE.lock); md.dataset.m = PE.mode; md.querySelectorAll("[data-mode]").forEach(function (b) { b.classList.toggle("on", b.dataset.mode === PE.mode); b.setAttribute("aria-selected", b.dataset.mode === PE.mode); });
     $("pe-mt-p").classList.toggle("on", !PE.mf); $("pe-mt-f").classList.toggle("on", !!PE.mf);
     $("pe-lock").classList.toggle("hidden", !PE.lock);
+    $("pe-badges").innerHTML = (PE.comp ? '<button class="pe-bdg" data-bd="comp" title="Ubah kompres"><i class="fa-solid fa-compress"></i>Kompres ' + COMP[PE.comp].t + "</button>" : "") + (PE.pw ? '<button class="pe-bdg am" data-bd="pw" title="Ubah kunci"><i class="fa-solid fa-lock"></i>Terkunci</button>' : "");
+    $("pe-badges").querySelectorAll("[data-bd]").forEach(function (b) { b.onclick = function () { b.dataset.bd === "comp" ? compModal() : pwModal(); }; });
     $("pe-add").classList.toggle("hidden", PE.lock);
     var has = PE.pages.length > 0;
     $("pe-dl").disabled = !has; $("pe-send").disabled = !has;
@@ -5426,13 +5607,14 @@ body>.pe-menu{z-index:120}
   async function dlOne(i) {
     var S = segs(), s = S[i], nm = finalNames(S)[i];
     busy("Menyusun " + nm + "…", 10);
-    try { saveBlob(await buildPdf(s.pages, nm, function (a, b) { busy("Menyusun " + nm + "… " + a + "/" + b, a / b * 100); }), nm + ".pdf"); } catch (e) { toast("Gagal: " + e.message, "error", 8000); }
+    try { var b0 = await buildPdf(s.pages, nm, function (a, b) { busy("Menyusun " + nm + "… " + a + "/" + b, a / b * 100); }); if (PE.pw) busy("Mengunci dengan password…", 98); saveBlob(await finalPdf(b0), nm + ".pdf"); dlNote(); } catch (e) { toast("Gagal: " + e.message, "error", 8000); }
     busy(null);
   }
   async function dlZip() {
     busy("Menyusun PDF…", 3);
     try {
       var files = await buildAll();
+      if (PE.pw) { busy("Mengunci dengan password…", 95); for (var fi = 0; fi < files.length; fi++) files[fi].bytes = await finalPdf(files[fi].bytes); }
       if (files.length === 1) { saveBlob(files[0].bytes, files[0].name); }
       else {
         busy("Membuat ZIP…", 96);
@@ -5445,16 +5627,20 @@ body>.pe-menu{z-index:120}
   }
   async function dlMerged() {
     busy("Menyusun PDF…", 5);
-    try { saveBlob(await buildPdf(PE.pages, PE.base, function (a, b) { busy("Menyusun PDF… " + a + "/" + b, a / b * 100); }), safeName(PE.base) + ".pdf"); } catch (e) { toast("Gagal: " + e.message, "error", 8000); }
+    try { saveBlob(await finalPdf(await buildPdf(PE.pages, PE.base, function (a, b) { busy("Menyusun PDF… " + a + "/" + b, a / b * 100); })), safeName(PE.base) + ".pdf"); dlNote(); } catch (e) { toast("Gagal: " + e.message, "error", 8000); }
     busy(null);
   }
+  function dlNote() { if (LASTCMP && PE.comp && LASTCMP.after < LASTCMP.before) toast("Dikompres: " + MB(LASTCMP.before) + " → " + MB(LASTCMP.after) + (PE.pw ? " · dikunci password" : ""), "success", 5000); else if (PE.pw) toast("File diunduh terkunci password", "success"); LASTCMP = null; }
   function dlMenu(a) {
-    var S = segs();
-    if (isEdit() || isMerge()) return dlOne(0);
+    var S = segs(), one = isEdit() || isMerge() || S.length < 2;
     menu(a, [
-      S.length > 1 ? { ic: "fa-file-zipper", t: "Unduh semua (ZIP)", s: S.length + " file hasil pecah", fn: dlZip } : null,
-      S.length > 1 ? null : { ic: "fa-file-pdf", t: "Unduh PDF", s: finalNames(S)[0] + ".pdf", fn: function () { dlOne(0); } },
-      S.length > 1 ? { ic: "fa-file-pdf", t: "Unduh digabung jadi 1 PDF", s: "semua halaman, tanpa pecahan", fn: dlMerged } : null
+      one ? { ic: "fa-file-pdf", t: "Unduh PDF", s: finalNames(S)[0] + ".pdf", fn: function () { dlOne(0); } } : { ic: "fa-file-zipper", t: "Unduh semua (ZIP)", s: S.length + " file hasil pecah", fn: dlZip },
+      one ? null : { ic: "fa-file-pdf", t: "Unduh digabung jadi 1 PDF", s: "semua halaman, tanpa pecahan", fn: dlMerged },
+      { ic: "fa-compress", t: "Kompres PDF", s: PE.comp ? "aktif · " + COMP[PE.comp].t : "perkecil ukuran file", fn: compModal },
+      { ic: "fa-lock", t: "Kunci dengan password", s: PE.pw ? "aktif untuk unduhan" : "lindungi file yang diunduh", fn: pwModal },
+      { ic: "fa-file-image", t: "Unduh sebagai gambar", s: "JPG / PNG per halaman", fn: imgModal },
+      { ic: "fa-file-word", t: "Unduh sebagai Word (.docx)", s: "teks bisa diedit / tampilan persis", fn: docxModal },
+      { ic: "fa-file-excel", t: "Unduh sebagai Excel (.xlsx)", s: "tabel & angka per halaman", fn: exportXlsx }
     ]);
   }
   function sendMenu(a) {
@@ -5639,7 +5825,7 @@ body>.pe-menu{z-index:120}
   }
 
   // ===================== deteksi teks asli (seperti Nitro Pro) =====================
-  var TXT = {};
+  var TXT = {}, TXTI = {}, OCR = {};
   function mapFont(name, fam) {
     var n = String(name || "").replace(/^[A-Z]{6}\+/, ""), f = String(fam || "");
     var k = /courier|mono|consol|lucida ?console/i.test(n) || /monospace/i.test(f) ? "Courier"
@@ -5649,7 +5835,10 @@ body>.pe-menu{z-index:120}
       : /arimo|liberation ?sans/i.test(n) ? "Arimo" : "Helvetica";
     return { font: k, b: /bold|black|heavy|semibold|demi|,bold/i.test(n), i: /italic|oblique|,italic/i.test(n) };
   }
-  async function pageLines(p) {
+  var pkey = function (p) { return p.d + ":" + p.i + ":" + dims(p).t; };
+  // teks asli PDF; bila halaman hasil scan sudah di-OCR → pakai hasil OCR
+  async function pageLines(p) { var nat = await nativeLines(p), k = pkey(p); return !nat.length && OCR[k] ? OCR[k] : nat; }
+  async function nativeLines(p) {
     var D = dims(p), key = p.d + ":" + p.i + ":" + D.t;
     if (TXT[key]) return TXT[key];
     var L = await loadPdfJs(), doc = await jsDoc(p.d), pg = await doc.getPage(p.i + 1);
@@ -5664,6 +5853,7 @@ body>.pe-menu{z-index:120}
       items.push({ x: tx[4], base: tx[5], w: Math.max(1, it.width), size: size, asc: asc, desc: desc, str: it.str, mf: mf });
     });
     items.sort(function (a, b) { return Math.abs(a.base - b.base) > Math.min(a.size, b.size) * 0.3 ? a.base - b.base : a.x - b.x; });
+    TXTI[key] = items.map(function (it) { return { x: it.x, base: it.base, w: it.w, size: it.size, str: it.str }; });
     var lines = [], cur = null;
     items.forEach(function (it) {
       var gap = cur ? it.x - (cur.x + cur.w) : 0;
@@ -5934,11 +6124,13 @@ body>.pe-menu{z-index:120}
     st: { tmode: "cover", c: "#111827", lw: 2.5, op: 1, hlc: "#facc15", hlw: 14, fill: "#ffffff", font: "Helvetica", size: 12, b: false, i: false, u: false, al: "l", tc: "#111827", bg: "", top: 1, a: 0 } };
   // pita alat (ribbon) mendatar: tab berlabel → tombol ikon + teks. "@" = aksi sekali klik (bukan alat).
   var RIB = [
-    { k: "teks", t: "Teks", ic: "fa-font", it: [["tedit", "fa-i-cursor", "Edit teks asli", "E"], ["text", "fa-font", "Tambah teks", "T"], ["@find", "fa-magnifying-glass", "Cari & ganti", "F"]] },
+    { k: "teks", t: "Teks", ic: "fa-font", it: [["tedit", "fa-i-cursor", "Edit teks asli", "E"], ["text", "fa-font", "Tambah teks", "T"], ["@find", "fa-magnifying-glass", "Cari & ganti", "F"], "|", ["@ocr", "fa-glasses", "OCR scan → teks", ""], ["form", "fa-rectangle-list", "Isi formulir", "U"]] },
     { k: "ttd", t: "TTD & Stempel", ic: "fa-signature", it: [["@sign", "fa-signature", "Buat tanda tangan", "S"], ["mark", "fa-stamp", "Deteksi TTD & stempel", "D"], ["@lib", "fa-book-bookmark", "Pustaka", "L"], ["@img", "fa-image", "Sisipkan gambar", "I"]] },
     { k: "coret", t: "Coret & Bentuk", ic: "fa-pen", it: [["pen", "fa-pen", "Pena", "P"], ["hl", "fa-highlighter", "Stabilo", "H"], ["line", "fa-minus", "Garis", "G"], ["arrow", "fa-arrow-right-long", "Panah", "A"], ["rect", "fa-regular fa-square", "Kotak", "R"], ["ellipse", "fa-regular fa-circle", "Lingkaran", "O"], ["check", "fa-check", "Centang", "C"], ["rub", "fa-delete-left", "Hapus coretan", ""]] },
+    { k: "kom", t: "Catatan & Tautan", ic: "fa-comment-dots", it: [["note", "fa-note-sticky", "Catatan", "N"], ["link", "fa-link", "Tautan", "K"], ["@notes", "fa-list-ul", "Daftar catatan", ""]] },
     { k: "hapus", t: "Hapus & Sensor", ic: "fa-eraser", it: [["erase", "fa-eraser", "Hapus area", "X"], ["@redact", "fa-user-secret", "Sensor kata / data", ""]] },
-    { k: "hal", t: "Halaman", ic: "fa-file-lines", it: [["@pnum", "fa-list-ol", "Nomor, header & footer", ""], ["@wm", "fa-droplet", "Watermark", ""], "|", ["@rotl", "fa-rotate-left", "Putar kiri", ""], ["@rotr", "fa-rotate-right", "Putar kanan", ""], ["@pdup", "fa-regular fa-clone", "Duplikat", ""], ["@pdel", "fa-regular fa-trash-can", "Hapus halaman", ""], "|", ["@pins", "fa-file-circle-plus", "Sisipkan file", ""], ["@pcut", "fa-scissors", "Pecah di sini", ""], ["@pmerge", "fa-object-group", "Gabung file lain", ""]] }
+    { k: "hal", t: "Halaman", ic: "fa-file-lines", it: [["@pnum", "fa-list-ol", "Nomor, header & footer", ""], ["@wm", "fa-droplet", "Watermark", ""], "|", ["@rotl", "fa-rotate-left", "Putar kiri", ""], ["@rotr", "fa-rotate-right", "Putar kanan", ""], ["@pdup", "fa-regular fa-clone", "Duplikat", ""], ["@pdel", "fa-regular fa-trash-can", "Hapus halaman", ""], "|", ["crop", "fa-crop-simple", "Potong (crop)", ""], ["@size", "fa-up-right-and-down-left-from-center", "Ubah ukuran", ""], "|", ["@pins", "fa-file-circle-plus", "Sisipkan file", ""], ["@pcut", "fa-scissors", "Pecah di sini", ""], ["@pmerge", "fa-object-group", "Gabung file lain", ""], ["@cmp", "fa-code-compare", "Bandingkan versi", ""]] },
+    { k: "out", t: "Simpan & Ekspor", ic: "fa-file-export", it: [["@dlpdf", "fa-file-pdf", "Unduh PDF", ""], ["@comp", "fa-file-zipper", "Kompres", ""], ["@pw", "fa-lock", "Kunci password", ""], "|", ["@toimg", "fa-file-image", "Ke gambar", ""], ["@todocx", "fa-file-word", "Ke Word", ""], ["@toxlsx", "fa-file-excel", "Ke Excel", ""]] }
   ];
   var TOOLS = [].concat.apply([["sel", "fa-arrow-pointer", "Pilih", "V"]], RIB.map(function (g) { return g.it.filter(function (t) { return t !== "|"; }); }));
   var tabOf = function (t) { var r = RIB.filter(function (g) { return g.it.some(function (x) { return x[0] === t; }); })[0]; return r ? r.k : null; };
@@ -5993,7 +6185,7 @@ body>.pe-menu{z-index:120}
     });
     var ov = el.querySelector("canvas.ov");
     ov.addEventListener("pointerdown", edDown); ov.addEventListener("pointermove", edMove); ov.addEventListener("pointerup", edUp); ov.addEventListener("pointercancel", edUp);
-    ov.addEventListener("dblclick", function (e) { var pt = edPt(e), o = hit(pt); if (o && o.t === "text") { ED.sel = o; edText(o); } else if (!o && ED.tool !== "tedit") { var ln = lineAt(pt); if (ln) editLine(ln); } });
+    ov.addEventListener("dblclick", function (e) { var pt = edPt(e), o = hit(pt); if (o && o.t === "note") { ED.sel = o; notePop(o); } else if (o && o.t === "link") { ED.sel = o; linkPop(o); } else if (o && o.t === "text") { ED.sel = o; edText(o); } else if (!o && ED.tool !== "tedit") { var ln = lineAt(pt); if (ln) editLine(ln); } });
     var rt; addEventListener("resize", function () { if (!ED.on) return; clearTimeout(rt); rt = setTimeout(edLoad, 150); });
     return el;
   }
@@ -6002,7 +6194,8 @@ body>.pe-menu{z-index:120}
     if (t[0] === "@") return edAct(t.slice(1));
     if (t === "img") { ED.imgAt = null; $("pe-img-in").click(); return; }
     if (t === "lib") { libPanel(); return; }
-    ED.tool = t; ED.sel = null; ED.ms = []; if (tabOf(t)) ED.tab = tabOf(t); edTools(); edProps(); edDraw();
+    ED.tool = t; ED.sel = null; ED.ms = []; if (t !== "crop") ED.crop = null; if (tabOf(t)) ED.tab = tabOf(t); edTools(); edProps(); edDraw();
+    var fl = $("pe-formL"); if (fl) fl.classList.toggle("on", t === "form");
     if (t === "mark") runDetect(false);
   }
   function edOpen(id) { if (PE.lock) return; edShell(); ED.on = true; ED.id = id; ED.sel = null; ED.ms = []; ED.zoom = 1; if (!ED.tab) ED.tab = "teks"; if (!ED.toolSet) { ED.tool = "tedit"; ED.toolSet = 1; } var el = $("pe-ed"); el.classList.remove("hidden"); el.classList.remove("in"); void el.offsetWidth; el.classList.add("in"); $("pe-ed-backt").textContent = "Kembali ke " + MODE_T[PE.mode]; edTools(); edProps(); edStrip(); edLoad(); }
@@ -6045,6 +6238,7 @@ body>.pe-menu{z-index:120}
     }
     ED.lines = []; edDraw(); syncUndo();
     try { var my2 = ED.loadSeq; var ln = await pageLines(p); if (edPage() === p && my2 === ED.loadSeq) { ED.lines = ln; edDraw(); edProps(); edTools(); } } catch (e) { console.warn("deteksi teks:", e); }
+    try { await formLayer(); if (edPage() === p && ED.fields && ED.fields.length && !ED.formTold && ED.tool !== "form") { ED.formTold = 1; toast("Halaman ini punya " + ED.fields.length + " kolom isian — pilih Teks → Isi formulir untuk mengisinya", "info", 6000); } if (ED.tool === "form") edProps(); } catch (e) { console.warn("formulir:", e); }
   }
   function ribSync() {
     var tabs = $("pe-rib-tabs"); if (!tabs) return; var tb = ED.tab || "teks", ix = RIB.map(function (g) { return g.k; }).indexOf(tb), on = tabs.querySelector('[data-rt="' + tb + '"]');
@@ -6053,7 +6247,7 @@ body>.pe-menu{z-index:120}
     document.querySelectorAll("#pe-ed-tools .pe-rib-g").forEach(function (g) { var sh = g.dataset.g === tb; if (sh && g.classList.contains("hidden")) { g.classList.remove("hidden"); g.classList.remove("in"); void g.offsetWidth; g.classList.add("in"); } else if (!sh) g.classList.add("hidden"); });
     void ix;
   }
-  function edTools() { document.querySelectorAll("#pe-ed-tools [data-tool]").forEach(function (b) { b.classList.toggle("on", b.dataset.tool === ED.tool); }); ribSync(); var H = { mark: "Deteksi TTD & stempel: tanda tangan (biru), stempel (merah muda) dan gambar tertanam ditandai otomatis. Klik kotaknya untuk mengolah.", tedit: "Edit Teks: teks asli diberi garis biru — klik barisnya, ketik perubahan, klik di luar untuk selesai. Font, ukuran & warna disamakan otomatis.", sel: "Klik objek untuk memilih, geser untuk memindah, tarik sudut kanan bawah untuk mengubah ukuran. Klik dua kali teks untuk mengedit.", text: "Klik di halaman untuk menulis teks.", erase: "Tarik kotak di area yang ingin dihapus permanen (termasuk PDF berisi gambar / JPG).", pen: "Tarik untuk menggambar bebas.", hl: "Tarik untuk menandai dengan stabilo.", line: "Tarik untuk membuat garis.", arrow: "Tarik untuk membuat panah.", rect: "Tarik untuk membuat kotak.", ellipse: "Tarik untuk membuat lingkaran / elips.", check: "Klik untuk menaruh tanda centang.", rub: "Klik atau sapukan pada coretan / bentuk untuk menghapusnya." }; $("pe-ed-hint").textContent = H[ED.tool] || ""; }
+  function edTools() { document.querySelectorAll("#pe-ed-tools [data-tool]").forEach(function (b) { b.classList.toggle("on", b.dataset.tool === ED.tool); }); ribSync(); var H = { mark: "Deteksi TTD & stempel: tanda tangan (biru), stempel (merah muda) dan gambar tertanam ditandai otomatis. Klik kotaknya untuk mengolah.", tedit: "Edit Teks: teks asli diberi garis biru — klik barisnya, ketik perubahan, klik di luar untuk selesai. Font, ukuran & warna disamakan otomatis.", sel: "Klik objek untuk memilih, geser untuk memindah, tarik sudut kanan bawah untuk mengubah ukuran. Klik dua kali teks untuk mengedit.", text: "Klik di halaman untuk menulis teks.", erase: "Tarik kotak di area yang ingin dihapus permanen (termasuk PDF berisi gambar / JPG).", pen: "Tarik untuk menggambar bebas.", hl: "Tarik untuk menandai dengan stabilo.", line: "Tarik untuk membuat garis.", arrow: "Tarik untuk membuat panah.", rect: "Tarik untuk membuat kotak.", ellipse: "Tarik untuk membuat lingkaran / elips.", check: "Klik untuk menaruh tanda centang.", rub: "Klik atau sapukan pada coretan / bentuk untuk menghapusnya.", note: "Klik di halaman untuk menempel catatan.", link: "Tarik kotak untuk membuat tautan.", crop: "Tarik kotak area yang dipertahankan.", form: "Klik kolom untuk mengisi." }; $("pe-ed-hint").textContent = H[ED.tool] || ""; }
 
   function swatches(cur, key) { return PAL.map(function (c) { return '<button class="pe-sw ' + (String(cur).toLowerCase() === c ? "on" : "") + '" data-sw="' + key + '" data-c="' + c + '" style="background:' + c + '"></button>'; }).join("") + '<input type="color" data-col="' + key + '" value="' + (cur && cur[0] === "#" && cur.length === 7 ? cur : "#111827") + '">'; }
   function edProps() {
@@ -6097,10 +6291,23 @@ body>.pe-menu{z-index:120}
         + '<button class="pe-b" data-rescan style="height:28px"><i class="fa-solid fa-rotate"></i>Pindai ulang</button><span style="color:var(--pe-mute);font-size:11px">Klik kotak hasil deteksi untuk memindah, menempel ke semua halaman, menyimpan, atau menghapus.</span>';
     } else if (t === "tedit") {
       var n = (ED.lines || []).length;
-      h = '<span style="font-weight:700;color:' + (n ? "#0891b2" : "#d97706") + '"><i class="fa-solid ' + (n ? "fa-i-cursor" : "fa-triangle-exclamation") + ' mr-1"></i>' + (n ? n + " baris teks terdeteksi — klik untuk mengedit" : "Tidak ada teks asli di halaman ini (hasil scan / gambar)") + "</span>"
+      h = '<span style="font-weight:700;color:' + (n ? "#0891b2" : "#d97706") + '"><i class="fa-solid ' + (n ? "fa-i-cursor" : "fa-triangle-exclamation") + ' mr-1"></i>' + (n ? n + " baris teks terdeteksi" + (ED.lines[0] && ED.lines[0].ocr ? " (OCR)" : "") + " — klik untuk mengedit" : "Halaman ini hasil scan / gambar — belum ada teks") + "</span>" + (n ? "" : '<button class="pe-b pri" data-ocr style="height:28px"><i class="fa-solid fa-glasses"></i>Jalankan OCR</button>')
         + '<label style="margin-left:6px">Teks lama</label>'
         + '<button class="pe-b ' + (ED.st.tmode !== "perm" ? "on" : "") + '" data-tm="cover" style="height:28px" title="Ditutup warna latar · halaman tetap tajam & teks lain bisa dicari">Tutup rapi</button>'
         + '<button class="pe-b ' + (ED.st.tmode === "perm" ? "on" : "") + '" data-tm="perm" style="height:28px" title="Benar-benar dihapus dari file · halaman disimpan sebagai gambar">Hapus permanen</button>';
+    } else if (t === "note") {
+      h = '<label>Warna catatan</label>' + NOTEC.map(function (c) { return '<button class="pe-sw ' + ((o ? o.c : st.nc || NOTEC[0]) === c ? "on" : "") + '" data-nc2="' + c + '" style="background:' + c + '"></button>'; }).join("") + '<span class="mute" style="color:var(--pe-mute);font-size:11px">Klik di halaman untuk menempel catatan · klik dua kali untuk membuka. Catatan tersimpan sebagai komentar PDF asli (terlihat di Acrobat / browser).</span>' + (o ? '<button class="pe-b" data-opn style="height:28px"><i class="fa-solid fa-pen"></i>Buka catatan</button>' : "");
+    } else if (t === "link") {
+      h = '<span style="color:var(--pe-mute);font-size:11px"><i class="fa-solid fa-link" style="color:#2563eb"></i> Tarik kotak di atas teks / gambar yang ingin dijadikan tautan — ke situs web, email, atau halaman lain di dokumen ini.</span>' + (o ? '<b style="font-size:11px">' + E(o.url || (o.page ? "→ halaman " + o.page : "")) + '</b><button class="pe-b" data-opn style="height:28px"><i class="fa-solid fa-pen"></i>Ubah tujuan</button>' : "");
+    } else if (t === "crop") {
+      var c0 = ED.crop;
+      h = (c0 ? '<span class="pe-chip" style="--c:#059669">' + Math.round(c0.w * 0.3528) + " × " + Math.round(c0.h * 0.3528) + " mm</span>" : '<span style="color:var(--pe-mute);font-size:11px">Tarik kotak area yang <b>dipertahankan</b> — bagian di luar kotak dibuang.</span>')
+        + '<button class="pe-b" data-cr="auto" style="height:28px"><i class="fa-solid fa-wand-magic-sparkles"></i>Potong otomatis</button><button class="pe-b" data-cr="autoAll" style="height:28px">Otomatis semua halaman</button>'
+        + (c0 ? '<span class="sep" style="width:1px;height:20px;background:var(--pe-line)"></span><button class="pe-b pri" data-cr="cur" style="height:28px"><i class="fa-solid fa-crop-simple"></i>Potong halaman ini</button><button class="pe-b" data-cr="all" style="height:28px">Potong semua halaman</button><button class="pe-b" data-cr="x" style="height:28px">Batal</button>' : "");
+    } else if (t === "form") {
+      var nf = (ED.fields || []).length, filled = PE.form && edPage() && PE.form[edPage().d] ? Object.keys(PE.form[edPage().d]).length : 0;
+      h = nf ? '<span style="font-weight:700;color:#7c3aed"><i class="fa-solid fa-rectangle-list"></i> ' + nf + " kolom isian di halaman ini" + (filled ? " · " + filled + " sudah diubah" : "") + '</span><span style="color:var(--pe-mute);font-size:11px">Klik kolom untuk mengisi · Tab = kolom berikutnya. Saat disimpan, isian dibuat permanen (diratakan).</span>' + (filled ? '<button class="pe-b" data-fclr style="height:28px"><i class="fa-solid fa-eraser"></i>Kosongkan isian</button>' : "")
+        : '<span style="color:#d97706;font-weight:700"><i class="fa-solid fa-circle-info"></i> Halaman ini tidak punya kolom isian.</span><span style="color:var(--pe-mute);font-size:11px">Untuk formulir cetak (garis titik-titik), pakai <b>Tambah teks</b> lalu ketik di atas garisnya.</span><button class="pe-b" data-totext style="height:28px"><i class="fa-solid fa-font"></i>Tambah teks</button>';
     } else if (t === "sel" || t === "rub") {
       h = '<span style="color:var(--pe-mute)">' + (t === "sel" ? "Klik objek untuk mengatur · Shift+klik atau tarik kotak untuk memilih banyak · Ctrl+A pilih semua" : "Klik coretan / bentuk yang ingin dihapus.") + "</span>";
     } else {
@@ -6130,6 +6337,12 @@ body>.pe-menu{z-index:120}
     var rb = P.querySelector("[data-rot]"); if (rb) rb.onclick = function () { var cur = o ? (o.a || 0) : ED.st.a; setv("a", (cur + 90) % 360); renderSoon(); edProps(); };
     var dl = P.querySelector("[data-delo]"); if (dl) dl.onclick = edDelSel;
     var rsc = P.querySelector("[data-rescan]"); if (rsc) rsc.onclick = function () { runDetect(true); };
+    P.querySelectorAll("[data-nc2]").forEach(function (b) { b.onclick = function () { ED.st.nc = b.dataset.nc2; if (o && o.t === "note") { pushUndo(); o.c = b.dataset.nc2; edDraw(); } edProps(); }; });
+    var opn = P.querySelector("[data-opn]"); if (opn && o) opn.onclick = function () { o.t === "note" ? notePop(o) : linkPop(o); };
+    P.querySelectorAll("[data-cr]").forEach(function (b) { b.onclick = function () { var v = b.dataset.cr; if (v === "x") { ED.crop = null; edDraw(); edProps(); return; } cropApply(v); }; });
+    var fcl = P.querySelector("[data-fclr]"); if (fcl) fcl.onclick = formClear;
+    var tt = P.querySelector("[data-totext]"); if (tt) tt.onclick = function () { pickTool("text"); };
+    var ocb = P.querySelector("[data-ocr]"); if (ocb) ocb.onclick = function () { ocrModal(); };
     P.querySelectorAll("[data-tm]").forEach(function (b) { b.onclick = function () { ED.st.tmode = b.dataset.tm; edProps(); }; });
     P.querySelectorAll("[data-ord]").forEach(function (b) { b.onclick = function () { edOrder(+b.dataset.ord); }; });
     var kn = P.querySelector("[data-knock]"); if (kn && o) kn.onclick = async function () { var im = IMGS[o.ref]; pushUndo(); if (im && im.orig) o.ref = im.orig; else { busy("Menghapus latar putih…", 50); try { o.ref = await knockWhite(o.ref); } catch (e) { toast(e.message, "error"); } busy(null); } edDraw(); edProps(); renderSoon(); };
@@ -6162,7 +6375,7 @@ body>.pe-menu{z-index:120}
     var p = edPage(), ov = document.querySelector("#pe-ed-paper canvas.ov"); if (!p || !ov) return;
     var g = ov.getContext("2d"), k = ED.k * ED.dpr;
     g.clearRect(0, 0, ov.width, ov.height);
-    drawOps(g, p.ops, k, { hide: ED.edit ? ED.edit.o : null });
+    drawOps(g, p.ops, k, { hide: ED.edit ? ED.edit.o : null, ed: 1 });
     if (ED.temp) drawOps(g, [ED.temp], k);
     if ((ED.tool === "tedit" || ED.hoverLine) && ED.lines && ED.lines.length) {
       var doneK = {}; p.ops.forEach(function (o) { if (o.key) doneK[o.key] = 1; });
@@ -6179,6 +6392,7 @@ body>.pe-menu{z-index:120}
     drawMarks(g, k, p); drawFind(g, k, p);
     if (ED.guides) { g.save(); g.scale(k, k); g.strokeStyle = "#ec4899"; g.lineWidth = 1 / ED.k; g.setLineDash([5 / ED.k, 4 / ED.k]); var D = dims(p); ED.guides.forEach(function (gd) { g.beginPath(); if (gd.x != null) { g.moveTo(gd.x, 0); g.lineTo(gd.x, D.h); } else { g.moveTo(0, gd.y); g.lineTo(D.w, gd.y); } g.stroke(); }); g.restore(); }
     if (ED.hoverOp && ED.hoverOp !== ED.sel && p.ops.indexOf(ED.hoverOp) >= 0 && ED.tool === "sel") { var hb = bbox(ED.hoverOp); g.save(); g.scale(k, k); g.strokeStyle = "rgba(79,70,229,.45)"; g.lineWidth = 1 / ED.k; g.strokeRect(hb.x - 2, hb.y - 2, hb.w + 4, hb.h + 4); g.restore(); }
+    if (ED.tool === "crop" && ED.crop) { var Dk = dims(p), cr = ED.crop; g.save(); g.scale(k, k); g.fillStyle = "rgba(15,23,42,.5)"; g.fillRect(0, 0, Dk.w, cr.y); g.fillRect(0, cr.y + cr.h, Dk.w, Dk.h - cr.y - cr.h); g.fillRect(0, cr.y, cr.x, cr.h); g.fillRect(cr.x + cr.w, cr.y, Dk.w - cr.x - cr.w, cr.h); g.strokeStyle = "#10b981"; g.lineWidth = 2 / ED.k; g.strokeRect(cr.x, cr.y, cr.w, cr.h); g.lineWidth = 1 / ED.k; g.setLineDash([3 / ED.k, 3 / ED.k]); for (var gi = 1; gi < 3; gi++) { g.beginPath(); g.moveTo(cr.x + cr.w * gi / 3, cr.y); g.lineTo(cr.x + cr.w * gi / 3, cr.y + cr.h); g.moveTo(cr.x, cr.y + cr.h * gi / 3); g.lineTo(cr.x + cr.w, cr.y + cr.h * gi / 3); g.stroke(); } g.restore(); }
     if (ED.box) { g.save(); g.scale(k, k); g.fillStyle = "rgba(79,70,229,.08)"; g.strokeStyle = "#4f46e5"; g.lineWidth = 1 / ED.k; g.setLineDash([4 / ED.k, 3 / ED.k]); g.fillRect(ED.box.x, ED.box.y, ED.box.w, ED.box.h); g.strokeRect(ED.box.x, ED.box.y, ED.box.w, ED.box.h); g.restore(); }
     if (msOn()) {
       ED.ms = ED.ms.filter(function (q) { return p.ops.indexOf(q) >= 0; });
@@ -6253,17 +6467,18 @@ body>.pe-menu{z-index:120}
   // bilah aksi cepat yang melayang di atas objek terpilih
   function qbar() {
     var q = $("pe-qbar"), o = ED.sel, p = edPage(); if (!q) return;
-    if (!o || !p || p.ops.indexOf(o) < 0 || (ED.drag && ED.drag.moved) || ED.edit) { q.classList.add("hidden"); return; }
+    var mpo = $("pe-mpop");
+    if (!o || !p || p.ops.indexOf(o) < 0 || (ED.drag && ED.drag.moved) || ED.edit || (mpo && !mpo.classList.contains("hidden"))) { q.classList.add("hidden"); return; }
     var b = bbox(o), k = ED.k;
     if (rotatable(o) && o.a) { var cs = [toWorld(o, 0, 0), toWorld(o, o.w, 0), toWorld(o, 0, o.h), toWorld(o, o.w, o.h)]; var xs = cs.map(function (c) { return c[0]; }), ys = cs.map(function (c) { return c[1]; }); b = { x: Math.min.apply(null, xs), y: Math.min.apply(null, ys), w: Math.max.apply(null, xs) - Math.min.apply(null, xs), h: 0 }; }
-    var sig = o.t + (o.t === "text" ? 1 : 0);
+    var sig = o.t + (o.t === "text" ? 1 : 0) + "v2";
     if (q.dataset.sig !== sig) {
       q.dataset.sig = sig;
-      q.innerHTML = (o.t === "text" ? '<button data-q="edit" title="Edit teks"><i class="fa-solid fa-i-cursor"></i><b>Edit</b></button>' : "")
+      q.innerHTML = (o.t === "text" || o.t === "note" || o.t === "link" ? '<button data-q="edit" title="Edit"><i class="fa-solid ' + (o.t === "text" ? "fa-i-cursor" : "fa-pen") + '"></i><b>' + (o.t === "note" ? "Buka catatan" : o.t === "link" ? "Ubah tujuan" : "Edit") + "</b></button>" : "")
         + '<button data-q="dup" title="Duplikat (Ctrl+D)"><i class="fa-regular fa-clone"></i><b>Duplikat</b></button><button data-q="front" title="Bawa ke depan"><i class="fa-solid fa-arrow-up-wide-short"></i><b>Depan</b></button><button data-q="back" title="Kirim ke belakang"><i class="fa-solid fa-arrow-down-short-wide"></i><b>Belakang</b></button>'
         + (o.t === "img" ? '<button data-q="all" title="Tempel ke halaman lain (paraf / stempel semua halaman)"><i class="fa-solid fa-layer-group"></i><b>Semua hal.</b></button><button data-q="lib" title="Simpan gambar ini ke pustaka"><i class="fa-solid fa-book-bookmark"></i><b>Simpan</b></button>' : "")
         + '<span></span><button data-q="del" class="red" title="Hapus (Del)"><i class="fa-regular fa-trash-can"></i><b>Hapus</b></button>';
-      q.querySelectorAll("[data-q]").forEach(function (bt) { bt.onpointerdown = function (e) { e.stopPropagation(); }; bt.onclick = function (e) { e.stopPropagation(); var o2 = ED.sel; if (!o2) return; var a = bt.dataset.q; if (a === "edit") edText(o2); else if (a === "dup") edDup(); else if (a === "front") edOrder(1); else if (a === "back") edOrder(-1); else if (a === "del") edDelSel(); else if (a === "all") stampAll(o2); else if (a === "lib") { var im = IMGS[o2.ref]; if (im) libAdd({ kind: "gambar", bytes: im.bytes, mime: im.mime, name: "Gambar · " + (safeName(PE.base) || "dokumen") }).then(function () { toast("Tersimpan di Pustaka TTD & stempel", "success"); }); } }; });
+      q.querySelectorAll("[data-q]").forEach(function (bt) { bt.onpointerdown = function (e) { e.stopPropagation(); }; bt.onclick = function (e) { e.stopPropagation(); var o2 = ED.sel; if (!o2) return; var a = bt.dataset.q; if (a === "edit") { if (o2.t === "note") notePop(o2); else if (o2.t === "link") linkPop(o2); else edText(o2); } else if (a === "dup") edDup(); else if (a === "front") edOrder(1); else if (a === "back") edOrder(-1); else if (a === "del") edDelSel(); else if (a === "all") stampAll(o2); else if (a === "lib") { var im = IMGS[o2.ref]; if (im) libAdd({ kind: "gambar", bytes: im.bytes, mime: im.mime, name: "Gambar · " + (safeName(PE.base) || "dokumen") }).then(function () { toast("Tersimpan di Pustaka TTD & stempel", "success"); }); } }; });
     }
     q.classList.remove("hidden");
     var top = b.y * k - q.offsetHeight - (rotatable(o) ? 40 : 12);
@@ -6288,7 +6503,7 @@ body>.pe-menu{z-index:120}
     edDraw(); renderSoon();
   }
   function edDup() { var p = edPage(), o = ED.sel; if (!p || !o) return; pushUndo(); var c = clone(o); delete c.src; delete c.key; moveOp(c, 12, 12); p.ops.push(c); ED.sel = c; edDraw(); edProps(); renderSoon(); }
-  var resizable = function (o) { return o.t === "text" || o.t === "img" || o.t === "rect" || o.t === "ellipse" || o.t === "erase" || o.t === "check"; };
+  var resizable = function (o) { return o.t === "text" || o.t === "img" || o.t === "rect" || o.t === "ellipse" || o.t === "erase" || o.t === "check" || o.t === "link"; };
   function handlePt(o) { if (o.t === "check") return [o.x + o.w, o.y + o.w]; if ((o.t === "text" || o.t === "img") && o.a) { var a = o.a * Math.PI / 180, dx = o.w / 2, dy = o.h / 2; return [o.x + o.w / 2 + dx * Math.cos(a) - dy * Math.sin(a), o.y + o.h / 2 + dx * Math.sin(a) + dy * Math.cos(a)]; } return [o.x + o.w, o.y + o.h]; }
   function distSeg(p, a, b) { var dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy, t = l ? Math.max(0, Math.min(1, ((p.x - a[0]) * dx + (p.y - a[1]) * dy) / l)) : 0; return Math.hypot(p.x - a[0] - t * dx, p.y - a[1] - t * dy); }
   function hitOp(o, pt, tol) {
@@ -6368,6 +6583,10 @@ body>.pe-menu{z-index:120}
     if (t === "check") { pushUndo(); var ck = { t: "check", x: pt.x - 9, y: pt.y - 12, w: 18, c: st.c, lw: 2, op: st.op }; p.ops.push(ck); ED.sel = ck; ED.tool = "sel"; edTools(); edProps(); edDraw(); renderSoon(); ED.drag = null; return; }
     if (t === "pen" || t === "hl") { ED.temp = { t: t, pts: [[pt.x, pt.y]], c: t === "hl" ? st.hlc : st.c, lw: t === "hl" ? st.hlw : st.lw, op: t === "hl" ? 0.4 : st.op }; ED.drag.mode = "draw"; edDraw(); return; }
     if (t === "line" || t === "arrow") { ED.temp = { t: t, x1: pt.x, y1: pt.y, x2: pt.x, y2: pt.y, c: st.c, lw: st.lw, op: st.op }; ED.drag.mode = "draw"; return; }
+    if (t === "note") { pushUndo(); var no = { t: "note", x: Math.max(0, pt.x - 9), y: Math.max(0, pt.y - 9), w: 18, h: 18, text: "", c: st.nc || NOTEC[0], by: uName() }; p.ops.push(no); ED.sel = no; ED.drag = null; edDraw(); notePop(no, true); return; }
+    if (t === "crop") { ED.drag.mode = "crop"; ED.crop = { x: pt.x, y: pt.y, w: 0, h: 0 }; edDraw(); return; }
+    if (t === "form") { ED.drag = null; return; }
+    if (t === "link") { ED.temp = { t: "link", x: pt.x, y: pt.y, w: 0, h: 0, c: "#2563eb", url: "", page: 0 }; ED.drag.mode = "draw"; return; }
     if (t === "rect" || t === "ellipse" || t === "erase") { ED.temp = t === "erase" ? { t: "erase", x: pt.x, y: pt.y, w: 0, h: 0, fill: st.fill, col: st.fill === "auto" ? "#e2e8f0" : st.fill } : { t: t, x: pt.x, y: pt.y, w: 0, h: 0, c: st.c, lw: st.lw, op: st.op }; ED.drag.mode = "draw"; return; }
   }
   function edMove(e) {
@@ -6381,12 +6600,13 @@ body>.pe-menu{z-index:120}
       if (ED.tool === "tedit") { var hl = lineAt(hp0); if (hl !== ED.hoverLine) { ED.hoverLine = hl; edDraw(); } if (!cur && hl) cur = "text"; }
       else if (ED.tool === "sel") { var ho = hit(hp0); if (ho !== ED.hoverOp) { ED.hoverOp = ho; edDraw(); } if (!cur && ho) cur = "move"; }
       else if (ED.tool === "mark") { var hm = markAt(hp0); if (hm !== ED.hoverMark) { ED.hoverMark = hm; edDraw(); } if (hm) cur = "pointer"; }
-      else if (/^(pen|hl|line|arrow|rect|ellipse|erase|check|text)$/.test(ED.tool)) cur = "crosshair";
+      else if (/^(pen|hl|line|arrow|rect|ellipse|erase|check|text|note|link|crop)$/.test(ED.tool)) cur = "crosshair";
       e.target.style.cursor = cur; return;
     }
     if (d.mode === "pan") { var sg = $("pe-ed-stage"); sg.scrollLeft = d.sl - (e.clientX - d.cx); sg.scrollTop = d.st - (e.clientY - d.cy); return; }
     var pt = edPt(e), p = edPage(), dx = pt.x - d.x, dy = pt.y - d.y;
     if (Math.abs(dx) + Math.abs(dy) > 1.5 / ED.k) { if (!d.moved && (d.mode === "move" || d.mode === "resize" || d.mode === "mmove")) pushUndo(); d.moved = true; }
+    if (d.mode === "crop") { var Dc = dims(p), cx0 = Math.max(0, Math.min(d.x, pt.x)), cy0 = Math.max(0, Math.min(d.y, pt.y)); ED.crop = { x: cx0, y: cy0, w: Math.min(Dc.w, Math.max(d.x, pt.x)) - cx0, h: Math.min(Dc.h, Math.max(d.y, pt.y)) - cy0 }; edDraw(); return; }
     if (d.mode === "box") { ED.box = { x: Math.min(d.x, pt.x), y: Math.min(d.y, pt.y), w: Math.abs(dx), h: Math.abs(dy) }; edDraw(); return; }
     if (d.mode === "mmove") { if (d.moved) { ED.ms.forEach(function (o, i) { var o0 = d.o0s[i]; Object.keys(o0).forEach(function (k) { o[k] = clone(o0[k]); }); moveOp(o, dx, dy); }); edDraw(); } return; }
     if (d.mode === "move" && d.moved) { var o = ED.sel, o0 = d.o0; Object.keys(o0).forEach(function (k) { o[k] = clone(o0[k]); }); var sn = snapMove(o, o0, dx, dy, e.altKey); moveOp(o, sn[0], sn[1]); edDraw(); }
@@ -6424,13 +6644,14 @@ body>.pe-menu{z-index:120}
     if (ED.pinch) { if (PTR.size < 2) { var z = ED.pinch.z; ED.pinch = null; ED.drag = null; $("pe-ed-paper").style.transform = ""; if (z) { ED.zoom = z; edLoad(); } } return; }
     var d = ED.drag; ED.drag = null; ED.guides = null; if (!d) return;
     var p = edPage();
+    if (d.mode === "crop") { if (ED.crop && (ED.crop.w < 8 || ED.crop.h < 8)) ED.crop = null; edDraw(); edProps(); return; }
     if (d.mode === "box") { var bx = ED.box; ED.box = null; if (bx && bx.w * ED.k > 4 && bx.h * ED.k > 4) { var got = p.ops.filter(function (o) { if (o.t === "mask") return false; var b = bbox(o); return b.x < bx.x + bx.w && b.x + b.w > bx.x && b.y < bx.y + bx.h && b.y + b.h > bx.y; }); if (got.length === 1) { ED.sel = got[0]; ED.ms = []; } else if (got.length > 1) { ED.sel = null; ED.ms = got; } } edProps(); edDraw(); return; }
     if (d.mode === "mmove") { edDraw(); if (d.moved) renderSoon(); return; }
     if (d.mode === "rot" || (d.mode === "resize" && d.hid)) { edDraw(); if (d.moved) { renderSoon(); edProps(); } return; }
     if (d.mode === "draw" && ED.temp) {
       var tp = ED.temp, ok = tp.pts ? true : tp.x1 != null ? Math.hypot(tp.x2 - tp.x1, tp.y2 - tp.y1) > 3 : tp.w > 3 && tp.h > 3;
       ED.temp = null;
-      if (ok) { pushUndo(); if (tp.t === "erase" && tp.fill === "auto") tp.col = sampleBg(tp); p.ops.push(tp); if (tp.t === "erase" || tp.t === "rect" || tp.t === "ellipse") ED.sel = tp; if (tp.t === "erase") edProps(); }
+      if (ok) { pushUndo(); if (tp.t === "erase" && tp.fill === "auto") tp.col = sampleBg(tp); p.ops.push(tp); if (tp.t === "erase" || tp.t === "rect" || tp.t === "ellipse" || tp.t === "link") ED.sel = tp; if (tp.t === "erase") edProps(); if (tp.t === "link") { edDraw(); linkPop(tp, true); return; } }
       edDraw(); renderSoon();
     } else if (d.mode === "move" || d.mode === "resize") { edDraw(); if (d.moved) renderSoon(); }
   }
@@ -6480,6 +6701,16 @@ body>.pe-menu{z-index:120}
     if (a === "sign") return signPad();
     if (a === "find" || a === "redact") return findOpen(a === "find" ? "replace" : "redact");
     if (a === "pnum") return pnumModal();
+    if (a === "ocr") return ocrModal();
+    if (a === "notes") return notesList();
+    if (a === "size") return sizeModal();
+    if (a === "cmp") return compareOpen();
+    if (a === "comp") return compModal();
+    if (a === "pw") return pwModal();
+    if (a === "toimg") return imgModal();
+    if (a === "todocx") return docxModal();
+    if (a === "toxlsx") return exportXlsx();
+    if (a === "dlpdf") { edCommitText(); return isEdit() || isMerge() || segs().length < 2 ? dlOne(0) : dlZip(); }
     if (a === "wm") return wmModal();
     if (a === "rotl" || a === "rotr") { pushUndo(); rotOps(p, a === "rotl" ? -90 : 90); ED.sel = null; ED.ms = []; stripReset(); render(); edStrip(); edLoad(); fxPop(); return; }
     if (a === "pdup") { pushUndo(); var c = clone(p); c.id = "p" + (++PE.uid); PE.pages.splice(ix + 1, 0, c); render(); stripReset(); edGoTo(c.id, 1); toast("Halaman " + (ix + 1) + " diduplikat (beserta semua editannya)", "success"); return; }
@@ -6522,7 +6753,7 @@ body>.pe-menu{z-index:120}
         : '<label>Ganti dengan</label><input id="pe-fr" placeholder="teks pengganti (boleh kosong untuk menghapus kata)">')
       + '<div class="sum" id="pe-fsum"></div><div class="list" id="pe-flist"></div>'
       + '<div class="ft">' + (red ? '<button class="pe-b pri pe-red" data-go="redact"><i class="fa-solid fa-user-secret"></i>Sensor semua</button>' : '<button class="pe-b pri" data-go="replace"><i class="fa-solid fa-arrow-right-arrow-left"></i>Ganti semua</button>') + '<button class="pe-b" data-go="hl"><i class="fa-solid fa-highlighter"></i>Stabilo semua</button></div>'
-      + (red ? '<p class="note"><i class="fa-solid fa-shield-halved"></i>Sensor = kotak hitam permanen: teks di bawahnya benar-benar dibuang dari file (halaman terkait disimpan sebagai gambar).</p>' : '<p class="note"><i class="fa-solid fa-circle-info"></i>Font, ukuran & warna teks pengganti disamakan otomatis. Teks hasil scan (gambar) tidak bisa dicari.</p>');
+      + (red ? '<p class="note"><i class="fa-solid fa-shield-halved"></i>Sensor = kotak hitam permanen: teks di bawahnya benar-benar dibuang dari file (halaman terkait disimpan sebagai gambar).</p>' : '<p class="note"><i class="fa-solid fa-circle-info"></i>Font, ukuran & warna teks pengganti disamakan otomatis. Halaman scan: jalankan <b>OCR scan</b> dulu (tab Teks) agar teksnya bisa dicari.</p>');
     if (first) { el.classList.remove("hidden"); el.classList.remove("in"); void el.offsetWidth; el.classList.add("in"); }
     el.querySelector("[data-x]").onclick = findClose;
     el.querySelectorAll("[data-m]").forEach(function (b) { b.onclick = function () { findOpen(b.dataset.m); }; });
@@ -6821,6 +7052,538 @@ body>.pe-menu{z-index:120}
     return o;
   }
 
+  // ===================== v17 · OCR, formulir, crop/ukuran, catatan/tautan, kompres, password, konversi, bandingkan =====================
+  var uName = function () { try { return (currentUser && (currentUser.name || currentUser.nama || currentUser.email)) || "STARLITE VM"; } catch (e) { return "STARLITE VM"; } };
+  var listNow = function () { return isMerge() ? (segs()[0] || { pages: [] }).pages : PE.pages; };
+  function radioRow(name, items, cur) { return '<div class="pe-seg3">' + items.map(function (it) { return '<label><input type="radio" name="' + name + '" value="' + it[0] + '" ' + (it[0] === cur ? "checked" : "") + "> <span><b>" + it[1] + "</b>" + (it[2] ? "<small>" + it[2] + "</small>" : "") + "</span></label>"; }).join("") + "</div>"; }
+  var rv = function (m, name) { var x = m.querySelector('input[name="' + name + '"]:checked'); return x ? x.value : ""; };
+  function pickRange(txt) { var r = parseRange(txt, PE.pages.length); if (r.bad) { toast("Rentang \"" + r.bad + "\" tidak valid", "error"); return null; } return r.idx.map(function (i) { return PE.pages[i]; }); }
+
+  // ---------- OCR (tesseract.js, Indonesia + Inggris) ----------
+  var TESS = null, OCRP = null;
+  function tess() {
+    if (!TESS) TESS = (async function () {
+      await loadJs("https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js");
+      return window.Tesseract.createWorker(["ind", "eng"], 1, { workerPath: "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js", corePath: "https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1", logger: function (m) { if (OCRP) OCRP(m); } });
+    })().catch(function (e) { TESS = null; throw new Error("Mesin OCR gagal dimuat — periksa koneksi internet (" + (e && e.message || e) + ")"); });
+    return TESS;
+  }
+  function ocrLines(data, sc, p) {
+    var k = pkey(p), out = [];
+    (data.lines || []).forEach(function (ln, i) {
+      if (!ln.words || !ln.words.length || ln.confidence < 30) return;
+      var top = ln.bbox.y0 / sc, h = (ln.bbox.y1 - ln.bbox.y0) / sc, base = ln.baseline && ln.baseline.y0 > 0 ? (ln.baseline.y0 + ln.baseline.y1) / 2 / sc : top + h * 0.8, str = "", ws = [];
+      ln.words.forEach(function (w) { var t = String(w.text || "").trim(); if (!t) return; if (str) str += " "; ws.push({ s: t, cs: str.length, x: w.bbox.x0 / sc, w: Math.max(1, (w.bbox.x1 - w.bbox.x0) / sc), top: top, h: h, base: base }); str += t; });
+      if (!str.trim()) return;
+      var x = ln.bbox.x0 / sc, size = Math.max(5, Math.min(72, (base - top) * 1.32));
+      out.push({ key: k + "#o" + i, str: str, x: x, w: (ln.bbox.x1 - ln.bbox.x0) / sc, top: top, h: h, base: base, size: size, asc: 0.8, desc: -0.2, mf: { font: "Helvetica", b: false, i: false }, words: ws, ocr: true, conf: ln.confidence });
+    });
+    return out;
+  }
+  async function ocrModal() {
+    var cur = edPage(), noT = [];
+    busy("Memeriksa halaman…", 30, "read");
+    for (var i = 0; i < PE.pages.length; i++) { var nl = []; try { nl = await nativeLines(PE.pages[i]); } catch (e) { } if (!nl.length) noT.push(PE.pages[i]); }
+    busy(null);
+    var done = PE.pages.filter(function (p) { return OCR[pkey(p)]; }).length;
+    var m = modal('<i class="fa-solid fa-glasses" style="color:#0891b2"></i> OCR · ubah scan jadi teks',
+      '<p class="pe-mp">OCR membaca teks pada halaman hasil scan / foto, sehingga bisa <b>dicari, diedit, disensor, disalin</b>, dan PDF hasilnya <b>bisa dicari</b>. Bahasa: Indonesia + Inggris. Diproses di perangkat ini.</p>'
+      + '<div class="pe-msum"><div><b>' + PE.pages.length + '</b><small>halaman</small></div><div><b>' + noT.length + '</b><small>tanpa teks (scan)</small></div><div><b>' + done + '</b><small>sudah di-OCR</small></div></div>'
+      + radioRow("pe-oc", [["cur", "Halaman ini saja", "halaman " + (PE.pages.indexOf(cur) + 1)], ["scan", "Semua halaman scan (" + noT.length + ")", "halaman yang belum punya teks"], ["all", "Semua halaman (" + PE.pages.length + ")", "termasuk yang sudah punya teks — hasil OCR hanya dipakai bila teks asli kosong"]], noT.length > 1 ? "scan" : "cur")
+      + '<p class="pe-mp mute"><i class="fa-solid fa-circle-info"></i> Pertama kali butuh mengunduh data bahasa (±15 MB), berikutnya tersimpan di perangkat. ±3–8 detik per halaman.</p>',
+      '<button class="pe-b" data-c>Batal</button><button class="pe-b pri" data-ok><i class="fa-solid fa-glasses"></i>Jalankan OCR</button>', 560);
+    m.querySelector("[data-c]").onclick = function () { m.remove(); };
+    m.querySelector("[data-ok]").onclick = function () { var v = rv(m, "pe-oc"), L = v === "cur" ? [cur] : v === "scan" ? noT : PE.pages.slice(); m.remove(); if (!L.length) return toast("Tidak ada halaman scan — semua sudah punya teks", "info"); runOcr(L); };
+  }
+  async function runOcr(pages) {
+    var n = pages.length, k = 0, found = 0;
+    busy("Menyiapkan mesin OCR…", 2, "read");
+    try {
+      OCRP = function (m) { if (m.status === "recognizing text") busy("Membaca teks halaman " + (PE.pages.indexOf(pages[k]) + 1) + " (" + (k + 1) + "/" + n + ")…", 5 + 95 * (k + (m.progress || 0)) / n, "read"); else if (/load|init/.test(m.status) && k === 0) busy("Menyiapkan OCR: " + m.status.replace("loading", "memuat").replace("initializing", "menyiapkan").replace("language traineddata", "data bahasa").replace("tesseract", "mesin") + "…", 2 + 3 * (m.progress || 0), "read"); };
+      var w = await tess();
+      for (k = 0; k < n; k++) {
+        var p = pages[k], D = dims(p), sc = Math.min(300 / 72, 3000 / Math.max(D.w, D.h)), c = await renderBase(p, D.w * sc, 1);
+        var res = await w.recognize(c); c.width = c.height = 0;
+        OCR[pkey(p)] = ocrLines(res.data, sc, p); found += OCR[pkey(p)].length;
+        await tick();
+      }
+    } catch (e) { OCRP = null; busy(null); return toast(e.message, "error", 8000); }
+    OCRP = null; busy(null); autosave();
+    if (ED.on) { var cp = edPage(); ED.lines = cp ? await pageLines(cp) : []; edDraw(); edProps(); edTools(); }
+    toast("OCR selesai: " + found + " baris teks dari " + n + " halaman — kini bisa dicari, diedit & disensor. PDF hasilnya juga bisa dicari.", "success", 7000);
+    if (findOn()) fdRun();
+  }
+
+  // ---------- isi formulir PDF ----------
+  var FORMF = {};
+  async function formFields(p) {
+    var k = pkey(p); if (FORMF[k]) return FORMF[k];
+    try {
+      var doc = await jsDoc(p.d), pg = await doc.getPage(p.i + 1), D = dims(p), vp = pg.getViewport({ scale: 1, rotation: D.t }), an = await pg.getAnnotations();
+      FORMF[k] = an.filter(function (a) { return a.subtype === "Widget" && a.fieldName && !a.pushButton && !a.hidden; }).map(function (a) {
+        var r = vp.convertToViewportRectangle(a.rect);
+        return { name: a.fieldName, type: a.fieldType, check: !!a.checkBox, radio: !!a.radioButton, exp: a.exportValue || a.buttonValue || "", opts: (a.options || []).map(function (o) { return { v: o.exportValue, t: o.displayValue }; }), multi: !!a.multiLine, ro: !!a.readOnly, val: a.fieldValue, max: a.maxLen || 0, x: Math.min(r[0], r[2]), y: Math.min(r[1], r[3]), w: Math.abs(r[2] - r[0]), h: Math.abs(r[3] - r[1]) };
+      });
+    } catch (e) { FORMF[k] = []; }
+    return FORMF[k];
+  }
+  var fval = function (p, f) { var fv = PE.form && PE.form[p.d]; return fv && fv[f.name] != null ? fv[f.name] : (f.check ? (f.val && f.val !== "Off") : f.val == null ? "" : f.val); };
+  function setF(p, name, v) { PE.form = PE.form || {}; if (!ED.formUndo) { pushUndo(); ED.formUndo = 1; setTimeout(function () { ED.formUndo = 0; }, 1200); } var fv = PE.form[p.d] = PE.form[p.d] || {}; fv[name] = v; autosave(); renderSoon(); }
+  async function formLayer() {
+    var p = edPage(), paper = $("pe-ed-paper"); if (!p || !paper) return;
+    var lay = $("pe-formL"); if (!lay) { lay = document.createElement("div"); lay.id = "pe-formL"; lay.className = "pe-formL"; paper.insertBefore(lay, paper.querySelector(".pe-scan")); }
+    var F = await formFields(p); if (edPage() !== p) return; ED.fields = F;
+    var k = ED.k;
+    lay.classList.toggle("on", ED.tool === "form");
+    lay.innerHTML = F.map(function (f, i) {
+      var v = fval(p, f), st = "left:" + f.x * k + "px;top:" + f.y * k + "px;width:" + f.w * k + "px;height:" + f.h * k + "px;font-size:" + Math.max(8, Math.min(f.h * 0.7, 14) * k) + "px";
+      if (f.ro) return '<div class="ro" style="' + st + '" title="' + E(f.name) + ' (hanya baca)"></div>';
+      if (f.check) return '<label class="ck" style="' + st + '" title="' + E(f.name) + '"><input type="checkbox" data-fi="' + i + '" ' + (v ? "checked" : "") + "><i class=\"fa-solid fa-check\"></i></label>";
+      if (f.radio) return '<label class="ck rd" style="' + st + '" title="' + E(f.name) + '"><input type="radio" name="pf-' + E(f.name) + '" data-fi="' + i + '" ' + (String(v) === String(f.exp) ? "checked" : "") + '><i class="fa-solid fa-circle"></i></label>';
+      if (f.type === "Ch") return '<select data-fi="' + i + '" style="' + st + '" title="' + E(f.name) + '"><option value=""></option>' + f.opts.map(function (o) { return '<option value="' + E(o.v) + '" ' + (String(v) === String(o.v) || String(v) === String(o.t) ? "selected" : "") + ">" + E(o.t) + "</option>"; }).join("") + "</select>";
+      return (f.multi ? '<textarea data-fi="' + i + '"' : '<input data-fi="' + i + '" value="' + E(v) + '"') + (f.max ? ' maxlength="' + f.max + '"' : "") + ' style="' + st + '" title="' + E(f.name) + '" placeholder="' + E(f.name) + '">' + (f.multi ? E(v) + "</textarea>" : "");
+    }).join("");
+    lay.querySelectorAll("[data-fi]").forEach(function (el) {
+      var f = F[+el.dataset.fi];
+      el.addEventListener("keydown", function (e) { e.stopPropagation(); if (e.key === "Tab") return; if (e.key === "Escape") el.blur(); });
+      el.addEventListener("pointerdown", function (e) { e.stopPropagation(); });
+      var on = function () { setF(p, f.name, f.check ? el.checked : f.radio ? (el.checked ? f.exp : "") : el.value); if (f.radio) lay.querySelectorAll('input[name="pf-' + CSS.escape(f.name) + '"]').forEach(function () { }); };
+      el.addEventListener(f.check || f.radio || f.type === "Ch" ? "change" : "input", on);
+    });
+  }
+  function formClear() { var p = edPage(); if (!p || !PE.form || !PE.form[p.d]) return; pushUndo(); delete PE.form[p.d]; formLayer(); toast("Isian formulir dikosongkan (kembali ke nilai asli)", "info"); }
+
+  // ---------- potong (crop) & ubah ukuran halaman ----------
+  function xformOp(o, s) {
+    var X = function (v) { return s.tx + v * s.sc; }, Y = function (v) { return s.ty + v * s.sc; };
+    if (o.pts) o.pts = o.pts.map(function (q) { return [X(q[0]), Y(q[1])]; });
+    if (o.x1 != null) { o.x1 = X(o.x1); o.x2 = X(o.x2); o.y1 = Y(o.y1); o.y2 = Y(o.y2); }
+    if (o.x != null) { o.x = X(o.x); o.y = Y(o.y); }
+    if (o.w != null) o.w *= s.sc; if (o.h != null) o.h *= s.sc; if (o.lw != null) o.lw *= s.sc; if (o.size != null) o.size *= s.sc; if (o.minW) o.minW *= s.sc;
+  }
+  function xformLine(l, s, key) {
+    var c = clone(l), X = function (v) { return s.tx + v * s.sc; }, Y = function (v) { return s.ty + v * s.sc; };
+    c.x = X(l.x); c.top = Y(l.top); c.base = Y(l.base); c.w = l.w * s.sc; c.h = l.h * s.sc; c.size = l.size * s.sc; c.key = key + "#o" + l.key.split("#").pop();
+    if (c.words) c.words.forEach(function (w) { w.x = X(w.x); w.top = Y(w.top); w.base = Y(w.base); w.w *= s.sc; w.h *= s.sc; });
+    return c;
+  }
+  // rakit ulang halaman ke dokumen baru (tampilan sekarang → ukuran/area baru); editan & hasil OCR ikut dipindah
+  async function remake(pages, specFn, label) {
+    var L = await loadPdfLib(), out = await L.PDFDocument.create(), specs = [];
+    for (var k = 0; k < pages.length; k++) {
+      var p = pages[k], D = dims(p), sp0 = specFn(p, D); specs.push(sp0);
+      var src = await getSrc(p.d, true), sp = src.getPage(p.i), cb = sp.getCropBox(), W = cb.width, H = cb.height, np = out.addPage([sp0.W, sp0.H]);
+      if (hasContents(sp)) {
+        var emb = await out.embedPage(sp, { left: cb.x, bottom: cb.y, right: cb.x + W, top: cb.y + H }), pos = { 0: [0, 0], 90: [0, W], 180: [W, H], 270: [H, 0] }[D.t], sc = sp0.sc, x0 = sp0.tx, y0 = sp0.H - sp0.ty - D.h * sc;
+        np.drawPage(emb, { x: x0 + pos[0] * sc, y: y0 + pos[1] * sc, width: W * sc, height: H * sc, rotate: L.degrees(-D.t) });
+      }
+      busy(label + "… " + (k + 1) + "/" + pages.length, 10 + 85 * (k + 1) / pages.length);
+      if (k % 4 === 3) await tick();
+    }
+    var bytes = new Uint8Array(await out.save()), d = PE.docs.length;
+    PE.docs.push({ bytes: bytes, name: label + " · " + PE.base, hash: "rm" + d + ":" + bytes.length });
+    pushUndo();
+    pages.forEach(function (p, k) {
+      var s = specs[k], ok = pkey(p), oc = OCR[ok];
+      p.d = d; p.i = k; p.r0 = 0; p.rot = 0; p.w = s.W; p.h = s.H;
+      p.ops.forEach(function (o) { xformOp(o, s); });
+      if (oc) OCR[pkey(p)] = oc.map(function (l) { return xformLine(l, s, pkey(p)); });
+    });
+    ED.baseKey = null; ED.crop = null; THUMB = {}; stripReset(); render(); if (ED.on) { edStrip(); edLoad(); }
+  }
+  async function autoBox(p) {
+    var D = dims(p), sc = Math.min(2, 900 / Math.max(D.w, D.h)), c = await renderBase(p, D.w * sc, 1), W = c.width, H = c.height, d = c.getContext("2d", { willReadFrequently: true }).getImageData(0, 0, W, H).data;
+    var lum = function (x, y) { var i = (y * W + x) * 4; return 0.3 * d[i] + 0.59 * d[i + 1] + 0.11 * d[i + 2]; };
+    var flat = function (get, len) { var a = [], i; for (i = 0; i < len; i += 2) a.push(get(i)); a.sort(function (u, v) { return u - v; }); var med = a[a.length >> 1], off = 0; for (i = 0; i < a.length; i++) if (Math.abs(a[i] - med) > 45) off++; return off / a.length < 0.004; };
+    var t = 0, b = H - 1, l = 0, r = W - 1;
+    while (t < b && flat(function (x) { return lum(x, t); }, W)) t++;
+    while (b > t && flat(function (x) { return lum(x, b); }, W)) b--;
+    while (l < r && flat(function (y) { return lum(l, y); }, H)) l++;
+    while (r > l && flat(function (y) { return lum(r, y); }, H)) r--;
+    c.width = c.height = 0;
+    if (r - l < 20 || b - t < 20) return null;
+    var pad = 8;
+    return { x: Math.max(0, l / sc - pad), y: Math.max(0, t / sc - pad), w: Math.min(D.w, (r - l) / sc + pad * 2), h: Math.min(D.h, (b - t) / sc + pad * 2) };
+  }
+  async function cropApply(scope) {
+    var p = edPage(), c = ED.crop; if (!p) return;
+    var pages = scope === "all" ? PE.pages.slice() : [p], D0 = dims(p);
+    if (scope === "auto" || scope === "autoAll") {
+      pages = scope === "autoAll" ? PE.pages.slice() : [p]; var boxes = {};
+      busy("Mendeteksi tepi kosong…", 5, "read");
+      for (var i = 0; i < pages.length; i++) { boxes[pages[i].id] = await autoBox(pages[i]); busy("Mendeteksi tepi kosong… " + (i + 1) + "/" + pages.length, 5 + 40 * (i + 1) / pages.length, "read"); }
+      pages = pages.filter(function (q) { var b = boxes[q.id], D = dims(q); return b && (b.w < D.w - 4 || b.h < D.h - 4); });
+      if (!pages.length) { busy(null); return toast("Tidak ada tepi kosong yang bisa dipotong", "info"); }
+      await remake(pages, function (q) { var b = boxes[q.id]; return { W: b.w, H: b.h, tx: -b.x, ty: -b.y, sc: 1 }; }, "Potong otomatis");
+      busy(null); return toast(pages.length + " halaman dipotong otomatis — Ctrl+Z untuk membatalkan", "success");
+    }
+    if (!c || c.w < 10 || c.h < 10) return toast("Tarik kotak area yang ingin dipertahankan dulu", "error");
+    var fx = c.x / D0.w, fy = c.y / D0.h, fw = c.w / D0.w, fh = c.h / D0.h;
+    busy("Memotong halaman…", 5);
+    try { await remake(pages, function (q, D) { return { W: fw * D.w, H: fh * D.h, tx: -fx * D.w, ty: -fy * D.h, sc: 1 }; }, "Potong"); } catch (e) { busy(null); return toast("Gagal: " + e.message, "error"); }
+    busy(null); toast(pages.length + " halaman dipotong — Ctrl+Z untuk membatalkan", "success");
+  }
+  var SIZES = { A4: [595.28, 841.89, "A4 · 210×297 mm"], F4: [609.45, 935.43, "F4 / Folio · 215×330 mm"], Letter: [612, 792, "Letter · 216×279 mm"], Legal: [612, 1008, "Legal · 216×356 mm"], A5: [419.53, 595.28, "A5 · 148×210 mm"], A3: [841.89, 1190.55, "A3 · 297×420 mm"] };
+  function sizeModal() {
+    var p = edPage() || PE.pages[0], D = dims(p);
+    var m = modal('<i class="fa-solid fa-up-right-and-down-left-from-center" style="color:#059669"></i> Ubah ukuran halaman',
+      '<p class="pe-mp">Ukuran sekarang: <b>' + Math.round(D.w * 0.3528) + " × " + Math.round(D.h * 0.3528) + ' mm</b>. Isi halaman diskalakan pas & ditengahkan — tidak terpotong.</p>'
+      + '<div class="pe-pn-f"><div class="g2"><div><label>Ukuran kertas</label><select id="sz-k">' + Object.keys(SIZES).map(function (k) { return '<option value="' + k + '">' + SIZES[k][2] + "</option>"; }).join("") + '</select></div><div><label>Orientasi</label><select id="sz-o"><option value="auto">Ikuti tiap halaman</option><option value="p">Potret</option><option value="l">Lanskap</option></select></div></div>'
+      + '<div class="g2"><div><label>Margin (mm)</label><input type="number" id="sz-m" min="0" max="40" value="0"></div><div><label>Halaman</label><input id="sz-r" placeholder="Semua · atau mis. 1-3"></div></div></div>',
+      '<button class="pe-b" data-c>Batal</button><button class="pe-b pri" data-ok><i class="fa-solid fa-check"></i>Ubah ukuran</button>', 560);
+    m.querySelectorAll("input").forEach(function (x) { x.addEventListener("keydown", function (e) { e.stopPropagation(); }); });
+    m.querySelector("[data-c]").onclick = function () { m.remove(); };
+    m.querySelector("[data-ok]").onclick = async function () {
+      var S = SIZES[m.querySelector("#sz-k").value], o = m.querySelector("#sz-o").value, mg = Math.max(0, +m.querySelector("#sz-m").value || 0) / 0.3528, pages = pickRange(m.querySelector("#sz-r").value); if (!pages) return;
+      m.remove(); busy("Mengubah ukuran…", 5);
+      try {
+        await remake(pages, function (q, Dq) { var land = o === "l" || (o === "auto" && Dq.w > Dq.h), TW = land ? Math.max(S[0], S[1]) : Math.min(S[0], S[1]), TH = land ? Math.min(S[0], S[1]) : Math.max(S[0], S[1]), sc = Math.min((TW - 2 * mg) / Dq.w, (TH - 2 * mg) / Dq.h); return { W: TW, H: TH, sc: sc, tx: (TW - Dq.w * sc) / 2, ty: (TH - Dq.h * sc) / 2 }; }, "Ubah ukuran");
+      } catch (e) { busy(null); return toast("Gagal: " + e.message, "error"); }
+      busy(null); toast(pages.length + " halaman diubah ke " + S[2].split(" ·")[0] + " — Ctrl+Z untuk membatalkan", "success");
+    };
+  }
+
+  // ---------- catatan & tautan ----------
+  var NOTEC = ["#f59e0b", "#3b82f6", "#22c55e", "#ec4899", "#a855f7"];
+  function popAt(o) { var mp = $("pe-mpop"), k = ED.k, pw = $("pe-ed-paper").offsetWidth, left = (o.x + o.w) * k + 10; if (left + mp.offsetWidth > pw - 4) left = Math.max(4, o.x * k - mp.offsetWidth - 10); mp.style.left = left + "px"; mp.style.top = Math.max(4, Math.min($("pe-ed-paper").offsetHeight - mp.offsetHeight - 4, o.y * k)) + "px"; }
+  function notePop(o, fresh) {
+    var mp = $("pe-mpop"); if (!mp) return;
+    mp.innerHTML = '<div class="hd"><span class="dot" style="background:' + o.c + '"></span><b>Catatan</b><small>' + E(o.by || "") + '</small><button data-a="x" class="x"><i class="fa-solid fa-xmark"></i></button></div>'
+      + '<textarea class="pe-nta" id="pe-nta" rows="4" placeholder="Tulis catatan / komentar untuk dokumen ini…">' + E(o.text || "") + "</textarea>"
+      + '<div class="pe-ntc">' + NOTEC.map(function (c) { return '<button data-nc="' + c + '" class="' + (c === o.c ? "on" : "") + '" style="background:' + c + '"></button>'; }).join("") + '<span style="flex:1"></span><button class="pe-b red" data-a="del" style="height:28px"><i class="fa-regular fa-trash-can"></i>Hapus</button><button class="pe-b pri" data-a="ok" style="height:28px"><i class="fa-solid fa-check"></i>Simpan</button></div>';
+    mp.classList.remove("hidden"); popAt(o);
+    var ta = mp.querySelector("#pe-nta"); ta.onkeydown = function (e) { e.stopPropagation(); if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) save(); if (e.key === "Escape") close(); };
+    ta.onpointerdown = function (e) { e.stopPropagation(); };
+    setTimeout(function () { ta.focus(); }, 30);
+    var p = edPage(), before = JSON.stringify(o);
+    var close = function () { hidePop(); if (fresh && !o.text) { p.ops.splice(p.ops.indexOf(o), 1); ED.sel = null; PE.undo.pop(); syncUndo(); } edDraw(); edProps(); renderSoon(); };
+    var save = function () { var t = ta.value.trim(); if (!fresh && t !== o.text) pushUndo(); o.text = t; if (!t) { if (!fresh) p.ops.splice(p.ops.indexOf(o), 1); else close(); } fresh = false; hidePop(); edDraw(); edProps(); renderSoon(); };
+    mp.querySelectorAll("[data-nc]").forEach(function (b) { b.onpointerdown = function (e) { e.stopPropagation(); }; b.onclick = function () { if (!fresh) pushUndo(); o.c = ED.st.nc = b.dataset.nc; mp.querySelectorAll("[data-nc]").forEach(function (x) { x.classList.toggle("on", x === b); }); mp.querySelector(".dot").style.background = o.c; edDraw(); }; });
+    mp.querySelectorAll("[data-a]").forEach(function (b) { b.onpointerdown = function (e) { e.stopPropagation(); }; b.onclick = function (e) { e.stopPropagation(); var a = b.dataset.a; if (a === "x") close(); else if (a === "ok") save(); else if (a === "del") { if (fresh) { o.text = ""; close(); } else { pushUndo(); p.ops.splice(p.ops.indexOf(o), 1); ED.sel = null; hidePop(); edDraw(); edProps(); renderSoon(); } } }; });
+    void before;
+  }
+  function linkPop(o, fresh) {
+    var mp = $("pe-mpop"); if (!mp) return;
+    var web = !o.page;
+    mp.innerHTML = '<div class="hd"><span class="dot" style="background:#2563eb"></span><b>Tautan</b><button data-a="x" class="x"><i class="fa-solid fa-xmark"></i></button></div>'
+      + '<div class="pe-fseg" style="margin:4px 0 8px"><button data-lt="web" class="' + (web ? "on" : "") + '"><i class="fa-solid fa-globe"></i>Situs web</button><button data-lt="pg" class="' + (web ? "" : "on") + '"><i class="fa-regular fa-file"></i>Halaman</button></div>'
+      + '<input id="pe-lku" placeholder="https://…" value="' + E(o.url || "") + '" class="' + (web ? "" : "hidden") + '" style="width:100%">'
+      + '<input id="pe-lkp" type="number" min="1" max="' + PE.pages.length + '" placeholder="Nomor halaman tujuan (1–' + PE.pages.length + ')" value="' + (o.page || "") + '" class="' + (web ? "hidden" : "") + '" style="width:100%">'
+      + '<div class="pe-ntc" style="margin-top:8px"><span style="flex:1"></span><button class="pe-b red" data-a="del" style="height:28px"><i class="fa-regular fa-trash-can"></i>Hapus</button><button class="pe-b pri" data-a="ok" style="height:28px"><i class="fa-solid fa-check"></i>Simpan</button></div>';
+    mp.classList.remove("hidden"); popAt(o);
+    var u = mp.querySelector("#pe-lku"), pg = mp.querySelector("#pe-lkp"), p = edPage();
+    [u, pg].forEach(function (x) { x.onkeydown = function (e) { e.stopPropagation(); if (e.key === "Enter") save(); }; x.onpointerdown = function (e) { e.stopPropagation(); }; });
+    setTimeout(function () { (web ? u : pg).focus(); }, 30);
+    mp.querySelectorAll("[data-lt]").forEach(function (b) { b.onpointerdown = function (e) { e.stopPropagation(); }; b.onclick = function () { web = b.dataset.lt === "web"; mp.querySelectorAll("[data-lt]").forEach(function (x) { x.classList.toggle("on", x === b); }); u.classList.toggle("hidden", !web); pg.classList.toggle("hidden", web); (web ? u : pg).focus(); }; });
+    var drop = function () { var i = p.ops.indexOf(o); if (i >= 0) p.ops.splice(i, 1); ED.sel = null; };
+    var save = function () {
+      var url = u.value.trim(), n = parseInt(pg.value, 10);
+      if (web) { if (!url) return toast("Isi alamat web", "error"); if (!/^(https?:|mailto:|tel:)/i.test(url)) url = (/@/.test(url) && !/\//.test(url) ? "mailto:" : "https://") + url; }
+      else if (!(n >= 1 && n <= PE.pages.length)) return toast("Nomor halaman 1–" + PE.pages.length, "error");
+      if (!fresh) pushUndo(); o.url = web ? url : ""; o.page = web ? 0 : n; fresh = false; hidePop(); edDraw(); edProps(); renderSoon(); toast("Tautan disimpan — aktif saat PDF dibuka", "success");
+    };
+    mp.querySelectorAll("[data-a]").forEach(function (b) { b.onpointerdown = function (e) { e.stopPropagation(); }; b.onclick = function (e) { e.stopPropagation(); var a = b.dataset.a; if (a === "ok") save(); else if (a === "x") { if (fresh) { drop(); PE.undo.pop(); syncUndo(); } hidePop(); edDraw(); edProps(); } else if (a === "del") { if (!fresh) pushUndo(); else { PE.undo.pop(); syncUndo(); } drop(); hidePop(); edDraw(); edProps(); renderSoon(); } }; });
+  }
+  function notesList() {
+    var rows = []; PE.pages.forEach(function (p, i) { p.ops.forEach(function (o) { if (o.t === "note" || o.t === "link") rows.push({ p: p, i: i, o: o }); }); });
+    var m = modal('<i class="fa-solid fa-comments" style="color:#f59e0b"></i> Daftar catatan &amp; tautan (' + rows.length + ")",
+      rows.length ? '<div class="pe-nlist">' + rows.map(function (r, j) { var o = r.o; return '<button data-j="' + j + '"><span class="pg">Hal ' + (r.i + 1) + '</span>' + (o.t === "note" ? '<i class="fa-solid fa-note-sticky" style="color:' + o.c + '"></i><span class="tx"><b>' + E(o.by || "") + "</b>" + E(o.text || "(kosong)") + "</span>" : '<i class="fa-solid fa-link" style="color:#2563eb"></i><span class="tx">' + E(o.url || "ke halaman " + o.page) + "</span>") + "</button>"; }).join("") + "</div>" : '<div class="pe-lib-empty"><i class="fa-solid fa-note-sticky"></i><b>Belum ada catatan</b><small>Pilih alat Catatan lalu klik di halaman.</small></div>',
+      '<button class="pe-b" data-c>Tutup</button>', 560);
+    m.querySelector("[data-c]").onclick = function () { m.remove(); };
+    m.querySelectorAll("[data-j]").forEach(function (b) { b.onclick = function () { var r = rows[+b.dataset.j]; m.remove(); if (r.p.id !== ED.id) edGoTo(r.p.id, 1); ED.tool = "sel"; ED.sel = r.o; edTools(); edProps(); edDraw(); setTimeout(function () { r.o.t === "note" ? notePop(r.o) : linkPop(r.o); }, 120); }; });
+  }
+
+  // ---------- kompres ----------
+  function compModal() {
+    var m = modal('<i class="fa-solid fa-file-zipper" style="color:#7c3aed"></i> Kompres PDF',
+      '<p class="pe-mp">Halaman bergambar (hasil scan / foto) diperkecil resolusinya; halaman teks biasa tetap tajam. Teks tetap <b>bisa dicari & disalin</b>. Berlaku untuk Unduh, Submit, dan Simpan ke Drive.</p>'
+      + radioRow("pe-cp", [["0", "Tanpa kompres", "kualitas asli"], ["1", "Seimbang (disarankan)", "150 dpi — tetap jelas untuk dibaca & dicetak"], ["2", "Maksimal", "110 dpi — paling kecil, cocok untuk kirim via chat / email"]], String(PE.comp || 0))
+      + '<div class="pe-msum" id="pe-cpsum" style="margin-top:10px"><div><b>–</b><small>asli</small></div><div><b>–</b><small>seimbang</small></div><div><b>–</b><small>maksimal</small></div></div>',
+      '<button class="pe-b" data-calc style="margin-right:auto"><i class="fa-solid fa-calculator"></i>Hitung ukuran</button><button class="pe-b" data-c>Batal</button><button class="pe-b pri" data-ok><i class="fa-solid fa-check"></i>Pakai</button>', 560);
+    m.querySelector("[data-c]").onclick = function () { m.remove(); };
+    m.querySelector("[data-calc]").onclick = async function () {
+      var L = listNow(), box = m.querySelector("#pe-cpsum"), res = [];
+      m.dataset.busy = 1;
+      try { for (var c = 0; c <= 2; c++) { busy("Menghitung ukuran " + ["asli", "seimbang", "maksimal"][c] + "…", 10 + c * 30); res.push((await buildPdf(L, PE.base, null, { comp: c, noCmp: 1 })).length); } } catch (e) { toast(e.message, "error"); }
+      busy(null); delete m.dataset.busy;
+      if (res.length === 3) box.innerHTML = res.map(function (b, i) { var pct = i ? Math.round(100 - 100 * Math.min(b, res[0]) / res[0]) : 0; return "<div><b>" + MB(Math.min(b, res[0])) + "</b><small>" + ["asli", "seimbang", "maksimal"][i] + (i ? (pct > 0 ? " · −" + pct + "%" : " · tidak lebih kecil") : "") + "</small></div>"; }).join("");
+    };
+    m.querySelector("[data-ok]").onclick = function () { PE.comp = +rv(m, "pe-cp") || 0; m.remove(); render(); toast(PE.comp ? "Kompres " + COMP[PE.comp].t + " aktif untuk semua hasil" : "Kompres dimatikan", "success"); };
+  }
+
+  // ---------- password (qpdf) ----------
+  var QW = null;
+  function qpdfLib() {
+    if (!QW) QW = (async function () {
+      var base = "https://cdn.jsdelivr.net/npm/@neslinesli93/qpdf-wasm@0.3.0/dist/";
+      var r1 = await fetch(base + "qpdf.js"), r2 = await fetch(base + "qpdf.wasm"); if (!r1.ok || !r2.ok) throw new Error("unduh gagal");
+      var src = await r1.text(), factory = new Function("module", "exports", src + "\n;return Module;")({}, {});
+      return { factory: factory, wasm: new Uint8Array(await r2.arrayBuffer()) };
+    })().catch(function (e) { QW = null; throw new Error("Modul password gagal dimuat — periksa koneksi (" + (e && e.message) + ")"); });
+    return QW;
+  }
+  async function qpdf(args, input) {
+    var q = await qpdfLib(), err = [], inst = await q.factory({ wasmBinary: q.wasm, noInitialRun: true, locateFile: function (f) { return "https://cdn.jsdelivr.net/npm/@neslinesli93/qpdf-wasm@0.3.0/dist/" + f; }, instantiateWasm: function (imp, cb) { WebAssembly.instantiate(q.wasm, imp).then(function (r) { cb(r.instance, r.module); }); return {}; }, print: function () { }, printErr: function (t) { err.push(t); } });
+    inst.FS.writeFile("/in.pdf", input);
+    var code = 0; try { code = inst.callMain(args); } catch (e) { code = e && e.status != null ? e.status : 1; if (!err.length && e && e.message) err.push(e.message); }
+    if (code !== 0 && code !== 3) { var msg = err.join(" "); var ex = new Error(/invalid password/i.test(msg) ? "Password salah" : (msg || "qpdf gagal (" + code + ")")); ex.pw = /invalid password/i.test(msg); ex.code = code; throw ex; }
+    return inst.FS.readFile("/out.pdf");
+  }
+  var hasEncrypt = function (b) { var pat = [47, 69, 110, 99, 114, 121, 112, 116]; outer: for (var i = 0, n = b.length - 8; i < n; i++) { if (b[i] !== 47) continue; for (var j = 1; j < 8; j++) if (b[i + j] !== pat[j]) continue outer; return true; } return false; };
+  function askPw(name, wrong) {
+    return new Promise(function (ok) {
+      var m = modal('<i class="fa-solid fa-lock" style="color:#d97706"></i> PDF dikunci password', '<p class="pe-mp">"' + E(name) + '" dilindungi password. Masukkan password untuk membukanya — kunci dilepas di perangkat ini saja.</p>' + (wrong ? '<p class="pe-mp" style="color:#e11d48;font-weight:700"><i class="fa-solid fa-triangle-exclamation"></i> Password salah, coba lagi.</p>' : "") + '<input type="password" id="pe-pwi" placeholder="Password PDF" style="width:100%;height:38px" autocomplete="off">',
+        '<button class="pe-b" data-c>Lewati file ini</button><button class="pe-b pri" data-ok><i class="fa-solid fa-unlock"></i>Buka kunci</button>', 440);
+      var i = m.querySelector("#pe-pwi"); setTimeout(function () { i.focus(); }, 40);
+      var done = function (v) { m.remove(); ok(v); };
+      i.onkeydown = function (e) { e.stopPropagation(); if (e.key === "Enter") done(i.value); };
+      m.querySelector("[data-c]").onclick = function () { done(null); }; m.querySelector("[data-ok]").onclick = function () { done(i.value); };
+      m.querySelector("[data-x]").onclick = function () { done(null); };
+    });
+  }
+  // buka file berpassword / berenkripsi pemilik (izin) → salinan tanpa kunci
+  async function unlockBytes(bytes, name) {
+    var wrong = false;
+    for (;;) {
+      busy(null); var pw = await askPw(name, wrong); if (pw == null) return null;
+      busy("Membuka kunci…", 40, "read");
+      try { return await qpdf(["--password=" + pw, "--decrypt", "/in.pdf", "/out.pdf"], bytes); } catch (e) { if (e.pw || e.code === 2) { wrong = true; continue; } busy(null); throw e; }
+    }
+  }
+  async function finalPdf(b) {
+    if (!PE.pw) return b;
+    var P = PE.pw, owner = P.owner || (P.user + "·" + Math.random().toString(36).slice(2, 10));
+    return qpdf(["--encrypt", P.user || "", owner, "256", "--print=" + (P.print ? "full" : "none"), "--extract=" + (P.copy ? "y" : "n"), "--modify=" + (P.edit ? "all" : "none"), "--", "/in.pdf", "/out.pdf"], b);
+  }
+  function pwModal() {
+    var P = PE.pw || { user: "", print: true, copy: false, edit: false };
+    var tg = function (k, t, s) { return '<label class="pe-tog"><input type="checkbox" data-pk="' + k + '" ' + (P[k] ? "checked" : "") + '><span class="sw"></span><span><b>' + t + "</b><small>" + s + "</small></span></label>"; };
+    var m = modal('<i class="fa-solid fa-lock" style="color:#d97706"></i> Kunci PDF dengan password',
+      '<p class="pe-mp">Berlaku untuk file yang <b>diunduh</b> (AES-256). File yang dikirim ke sistem (Submit / Drive / Signing) tidak dikunci agar tetap bisa diproses.</p>'
+      + '<div class="pe-pn-f"><label>Password untuk membuka</label><input type="password" id="pw-u" value="' + E(P.user) + '" placeholder="min. 4 karakter" autocomplete="new-password"><label>Ulangi password</label><input type="password" id="pw-u2" value="' + E(P.user) + '" autocomplete="new-password">'
+      + tg("print", "Boleh dicetak", "penerima bisa mencetak") + tg("copy", "Boleh menyalin teks", "matikan agar isi tidak mudah disalin") + tg("edit", "Boleh diubah", "matikan agar tidak bisa diedit di aplikasi PDF") + "</div>",
+      (PE.pw ? '<button class="pe-b red" data-off style="margin-right:auto"><i class="fa-solid fa-lock-open"></i>Matikan kunci</button>' : "") + '<button class="pe-b" data-c>Batal</button><button class="pe-b pri" data-ok><i class="fa-solid fa-lock"></i>Kunci unduhan</button>', 520);
+    m.querySelectorAll("input").forEach(function (x) { x.addEventListener("keydown", function (e) { e.stopPropagation(); }); });
+    m.querySelector("[data-c]").onclick = function () { m.remove(); };
+    var off = m.querySelector("[data-off]"); if (off) off.onclick = function () { PE.pw = null; m.remove(); render(); toast("Kunci password dimatikan", "info"); };
+    m.querySelector("[data-ok]").onclick = function () {
+      var u = m.querySelector("#pw-u").value, u2 = m.querySelector("#pw-u2").value;
+      if (u.length < 4) return toast("Password minimal 4 karakter", "error"); if (u !== u2) return toast("Ulangi password tidak sama", "error");
+      var o = { user: u }; m.querySelectorAll("[data-pk]").forEach(function (c) { o[c.dataset.pk] = c.checked; });
+      PE.pw = o; m.remove(); render(); qpdfLib().catch(function (e) { toast(e.message, "error"); }); toast("File yang diunduh akan dikunci password", "success");
+    };
+  }
+
+  // ---------- konversi: gambar, Word, Excel ----------
+  async function pageCanvas(p, dpi) { var D = dims(p), sc = Math.min(dpi / 72, 4000 / Math.max(D.w, D.h)), c = await renderBase(p, D.w * sc, 1); drawOps(c.getContext("2d"), p.ops, c.width / D.w); return c; }
+  function imgModal() {
+    var m = modal('<i class="fa-solid fa-file-image" style="color:#0891b2"></i> Unduh sebagai gambar',
+      '<div class="pe-pn-f"><div class="g2"><div><label>Format</label><select id="im-f"><option value="jpg">JPG (lebih kecil)</option><option value="png">PNG (tajam, lossless)</option></select></div><div><label>Resolusi</label><select id="im-d"><option value="100">100 dpi · layar</option><option value="150" selected>150 dpi · standar</option><option value="200">200 dpi · tajam</option><option value="300">300 dpi · cetak</option></select></div></div><label>Halaman</label><input id="im-r" placeholder="Semua halaman · atau mis. 1-3, 5"></div><p class="pe-mp mute">Lebih dari 1 halaman → satu file ZIP. Semua editan ikut tergambar.</p>',
+      '<button class="pe-b" data-c>Batal</button><button class="pe-b pri" data-ok><i class="fa-solid fa-download"></i>Unduh</button>', 500);
+    m.querySelector("#im-r").onkeydown = function (e) { e.stopPropagation(); };
+    m.querySelector("[data-c]").onclick = function () { m.remove(); };
+    m.querySelector("[data-ok]").onclick = async function () {
+      var fmt = m.querySelector("#im-f").value, dpi = +m.querySelector("#im-d").value, L = listNow(), r = parseRange(m.querySelector("#im-r").value, L.length); if (r.bad) return toast("Rentang \"" + r.bad + "\" tidak valid", "error");
+      m.remove(); var files = [];
+      try {
+        for (var k = 0; k < r.idx.length; k++) {
+          busy("Membuat gambar halaman " + (r.idx[k] + 1) + "…", 5 + 90 * k / r.idx.length);
+          var c = await pageCanvas(L[r.idx[k]], dpi), b = fmt === "png" ? await canvasPng(c) : await canvasJpg(c, 0.9); c.width = c.height = 0;
+          files.push({ name: safeName(PE.base) + " - hal " + (r.idx[k] + 1) + "." + fmt, bytes: b });
+        }
+        if (files.length === 1) saveBlob(files[0].bytes, files[0].name, fmt === "png" ? "image/png" : "image/jpeg");
+        else { busy("Membuat ZIP…", 97); await loadJs("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"); var z = new window.JSZip(); files.forEach(function (f) { z.file(f.name, f.bytes); }); saveBlob(await z.generateAsync({ type: "uint8array" }), safeName(PE.base) + " (" + files.length + " gambar).zip", "application/zip"); }
+      } catch (e) { toast("Gagal: " + e.message, "error"); }
+      busy(null);
+    };
+  }
+  var X = function (t) { return String(t == null ? "" : t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, ""); };
+  // baris teks halaman untuk ekspor: teks asli/OCR yang belum diganti + teks tambahan; yang disensor dibuang
+  async function exportLines(p) {
+    var ln = []; try { ln = await pageLines(p); } catch (e) { }
+    var done = {}, er = p.ops.filter(function (o) { return o.t === "erase"; }); p.ops.forEach(function (o) { if (o.key) done[o.key] = 1; });
+    var out = [];
+    ln.forEach(function (l) { if (done[l.key]) return; var ws = wordsOf(l).filter(function (w) { var wb = { x: w.x, y: w.top, w: w.w, h: w.h }; return !er.some(function (e) { return ovl(e, wb) > wb.w * wb.h * 0.25; }); }); if (!ws.length) return; out.push({ str: ws.map(function (w) { return w.s; }).join(" "), x: ws[0].x, top: l.top, h: l.h, size: l.size, b: l.mf.b, i: l.mf.i, words: ws }); });
+    p.ops.forEach(function (o) { if (o.t !== "text" || !o.text || o.grp === "wm") return; textLines(o).forEach(function (t, j) { if (!t.trim()) return; out.push({ str: t, x: o.x + PAD, top: o.y + PAD + j * o.size * LH, h: o.size * LH, size: o.size, b: o.b, i: o.i, al: o.al, w: o.w }); }); });
+    out.sort(function (a, b) { return Math.abs(a.top - b.top) > Math.min(a.h, b.h) * 0.5 ? a.top - b.top : a.x - b.x; });
+    return out;
+  }
+  function docxModal() {
+    var m = modal('<i class="fa-solid fa-file-word" style="color:#2563eb"></i> Unduh sebagai Word (.docx)',
+      radioRow("pe-dx", [["text", "Teks bisa diedit", "baris & paragraf jadi teks Word (ukuran, tebal, posisi dikira-kira). Halaman scan perlu OCR dulu."], ["img", "Tampilan persis seperti asli", "tiap halaman jadi gambar di Word — rapi tapi teks tidak bisa diedit"]], "text"),
+      '<button class="pe-b" data-c>Batal</button><button class="pe-b pri" data-ok><i class="fa-solid fa-download"></i>Unduh .docx</button>', 520);
+    m.querySelector("[data-c]").onclick = function () { m.remove(); };
+    m.querySelector("[data-ok]").onclick = function () { var v = rv(m, "pe-dx"); m.remove(); exportDocx(v); };
+  }
+  async function exportDocx(mode) {
+    var L = listNow(); if (!L.length) return;
+    busy("Menyusun dokumen Word…", 3);
+    try {
+      await loadJs("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
+      var z = new window.JSZip(), body = "", rels = [], D0 = dims(L[0]), emptyPages = 0;
+      for (var k = 0; k < L.length; k++) {
+        var p = L[k], D = dims(p);
+        if (k) body += '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
+        if (mode === "img") {
+          var c = await pageCanvas(p, 150), b = await canvasJpg(c, 0.85), id = "rI" + (k + 1); c.width = c.height = 0;
+          z.file("word/media/hal" + (k + 1) + ".jpeg", b); rels.push('<Relationship Id="' + id + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/hal' + (k + 1) + '.jpeg"/>');
+          var cx = Math.round(D0.w * 0.985 * 12700), cy = Math.round(D0.w * 0.985 * D.h / D.w * 12700);
+          body += '<w:p><w:pPr><w:spacing w:before="0" w:after="0"/><w:jc w:val="center"/></w:pPr><w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="' + cx + '" cy="' + cy + '"/><wp:docPr id="' + (k + 1) + '" name="Halaman ' + (k + 1) + '"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="' + (k + 1) + '" name="hal' + (k + 1) + '.jpeg"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="' + id + '"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="' + cx + '" cy="' + cy + '"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>';
+        } else {
+          var ls = await exportLines(p); if (!ls.length) { emptyPages++; body += '<w:p><w:r><w:rPr><w:i/><w:color w:val="94A3B8"/></w:rPr><w:t xml:space="preserve">[Halaman ' + (k + 1) + ': tidak ada teks — halaman scan perlu OCR]</w:t></w:r></w:p>'; continue; }
+          var left = Math.max(28, Math.min(90, Math.min.apply(null, ls.map(function (l) { return l.x; })))), prevB = 50;
+          // gabung baris dengan top sama → satu paragraf dengan tab
+          var rows = []; ls.forEach(function (l) { var r = rows[rows.length - 1]; if (r && Math.abs(r.top - l.top) < Math.min(r.h, l.h) * 0.5) r.parts.push(l); else rows.push({ top: l.top, h: l.h, parts: [l] }); });
+          rows.forEach(function (r) {
+            var f = r.parts[0], gap = Math.max(0, r.top - prevB), mid = (f.x + (r.parts[r.parts.length - 1].x + (r.parts[r.parts.length - 1].w || 0))) / 2, center = r.parts.length === 1 && f.x > left + 40 && Math.abs((f.x + f.str.length * f.size * 0.25) - D.w / 2) < D.w * 0.08;
+            void mid;
+            body += '<w:p><w:pPr><w:spacing w:before="' + Math.round(Math.min(gap, 60) * 20) + '" w:after="0" w:line="' + Math.round(Math.max(f.size * 1.15, 10) * 20) + '" w:lineRule="atLeast"/>' + (center ? '<w:jc w:val="center"/>' : '<w:ind w:left="' + Math.round(Math.max(0, f.x - left) * 20) + '"/>') + "</w:pPr>";
+            r.parts.forEach(function (pt, j) { body += (j ? '<w:r><w:tab/></w:r>' : "") + '<w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>' + (pt.b ? "<w:b/>" : "") + (pt.i ? "<w:i/>" : "") + '<w:sz w:val="' + Math.max(12, Math.round(pt.size * 2)) + '"/></w:rPr><w:t xml:space="preserve">' + X(pt.str) + "</w:t></w:r>"; });
+            body += "</w:p>"; prevB = r.top + r.h;
+          });
+        }
+        busy("Menyusun dokumen Word… " + (k + 1) + "/" + L.length, 5 + 85 * (k + 1) / L.length);
+      }
+      var mg = mode === "img" ? 0 : 720, left2 = mode === "img" ? 0 : 1134;
+      var doc = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"><w:body>' + body
+        + '<w:sectPr><w:pgSz w:w="' + Math.round(D0.w * 20) + '" w:h="' + Math.round(D0.h * 20) + '"' + (D0.w > D0.h ? ' w:orient="landscape"' : "") + '/><w:pgMar w:top="' + mg + '" w:right="' + left2 + '" w:bottom="' + mg + '" w:left="' + left2 + '" w:header="0" w:footer="0" w:gutter="0"/></w:sectPr></w:body></w:document>';
+      z.file("[Content_Types].xml", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="jpeg" ContentType="image/jpeg"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+      z.file("_rels/.rels", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+      z.file("word/_rels/document.xml.rels", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + rels.join("") + "</Relationships>");
+      z.file("word/document.xml", doc);
+      saveBlob(await z.generateAsync({ type: "uint8array", compression: "DEFLATE" }), safeName(PE.base) + ".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+      busy(null); toast("File Word diunduh" + (emptyPages ? " — " + emptyPages + " halaman tanpa teks (jalankan OCR untuk halaman scan)" : ""), emptyPages ? "info" : "success", 6000);
+    } catch (e) { busy(null); toast("Gagal: " + e.message, "error"); }
+  }
+  // sel tabel dari posisi teks: baris = garis dasar sama, kolom = jarak antar teks
+  async function pageCells(p) {
+    var items = [];
+    try { await nativeLines(p); } catch (e) { }
+    var k = pkey(p), done = {}, er = p.ops.filter(function (o) { return o.t === "erase"; }); p.ops.forEach(function (o) { if (o.key) done[o.key] = 1; });
+    if (TXTI[k] && TXTI[k].length) items = TXTI[k].map(function (it) { return { x: it.x, base: it.base, w: it.w, size: it.size, str: it.str }; });
+    else if (OCR[k]) OCR[k].forEach(function (l) { l.words.forEach(function (w) { items.push({ x: w.x, base: w.base, w: w.w, size: l.size, str: w.s }); }); });
+    items = items.filter(function (it) { var b = { x: it.x, y: it.base - it.size, w: it.w, h: it.size }; return it.str.trim() && !er.some(function (e) { return ovl(e, b) > b.w * b.h * 0.25; }); });
+    var rows = [];
+    items.sort(function (a, b) { return Math.abs(a.base - b.base) > Math.min(a.size, b.size) * 0.4 ? a.base - b.base : a.x - b.x; }).forEach(function (it) { var r = rows[rows.length - 1]; if (r && Math.abs(r.base - it.base) < Math.min(r.size, it.size) * 0.45) r.it.push(it); else rows.push({ base: it.base, size: it.size, it: [it] }); });
+    rows.forEach(function (r) { r.it.sort(function (a, b) { return a.x - b.x; }); var cells = []; r.it.forEach(function (it) { var c = cells[cells.length - 1]; if (c && it.x - (c.x + c.w) < Math.max(r.size * 0.9, 4)) { c.s += (it.x - (c.x + c.w) > r.size * 0.15 ? " " : "") + it.str.trim(); c.w = it.x + it.w - c.x; } else cells.push({ x: it.x, w: it.w, s: it.str.trim() }); }); r.cells = cells; });
+    var xs = []; rows.forEach(function (r) { r.cells.forEach(function (c) { xs.push(c.x); }); }); xs.sort(function (a, b) { return a - b; });
+    var anc = []; xs.forEach(function (x) { if (!anc.length || x - anc[anc.length - 1].last > 9) anc.push({ x: x, last: x, n: 1 }); else { anc[anc.length - 1].last = x; anc[anc.length - 1].n++; } });
+    var col = function (x) { var best = 0, bd = 1e9; anc.forEach(function (a, i) { var d = Math.abs(a.x - x); if (d < bd) { bd = d; best = i; } }); return best; };
+    return rows.map(function (r) { var out = []; r.cells.forEach(function (c) { var j = col(c.x); while (out[j] != null && j < anc.length + 20) j++; out[j] = c.s; }); return out; });
+  }
+  var numId = function (s) { var t = String(s).replace(/^Rp\.?\s*/i, "").trim(); if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(t) || /^-?\d+(,\d+)?$/.test(t)) { var n = parseFloat(t.replace(/\./g, "").replace(",", ".")); if (isFinite(n) && t.replace(/\D/g, "").length < 16) return n; } return null; };
+  var colName = function (i) { var s = ""; i++; while (i) { var m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; };
+  async function exportXlsx() {
+    var L = listNow(); if (!L.length) return;
+    busy("Menyusun Excel…", 3);
+    try {
+      await loadJs("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
+      var z = new window.JSZip(), sheets = [], empty = 0;
+      for (var k = 0; k < L.length; k++) {
+        var rows = await pageCells(L[k]), wid = [];
+        if (!rows.length) empty++;
+        var sd = rows.map(function (r, ri) { return '<row r="' + (ri + 1) + '">' + r.map(function (v, ci) { if (v == null || v === "") return ""; wid[ci] = Math.max(wid[ci] || 6, Math.min(60, String(v).length + 2)); var ref = colName(ci) + (ri + 1), n = numId(v); return n != null ? '<c r="' + ref + '"><v>' + n + "</v></c>" : '<c r="' + ref + '" t="inlineStr"><is><t xml:space="preserve">' + X(v) + "</t></is></c>"; }).join("") + "</row>"; }).join("");
+        var cols = wid.length ? "<cols>" + wid.map(function (w, i) { return '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + (w || 8) + '" customWidth="1"/>'; }).join("") + "</cols>" : "";
+        z.file("xl/worksheets/sheet" + (k + 1) + ".xml", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' + cols + "<sheetData>" + sd + "</sheetData></worksheet>");
+        sheets.push(k + 1); busy("Menyusun Excel… " + (k + 1) + "/" + L.length, 5 + 85 * (k + 1) / L.length);
+      }
+      z.file("[Content_Types].xml", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>' + sheets.map(function (n) { return '<Override PartName="/xl/worksheets/sheet' + n + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'; }).join("") + "</Types>");
+      z.file("_rels/.rels", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>');
+      z.file("xl/workbook.xml", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>' + sheets.map(function (n) { return '<sheet name="Hal ' + n + '" sheetId="' + n + '" r:id="rId' + n + '"/>'; }).join("") + "</sheets></workbook>");
+      z.file("xl/_rels/workbook.xml.rels", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + sheets.map(function (n) { return '<Relationship Id="rId' + n + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + n + '.xml"/>'; }).join("") + '<Relationship Id="rIdS" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>');
+      z.file("xl/styles.xml", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="1"><font><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/></cellXfs></styleSheet>');
+      saveBlob(await z.generateAsync({ type: "uint8array", compression: "DEFLATE" }), safeName(PE.base) + ".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      busy(null); toast("File Excel diunduh — 1 sheet per halaman" + (empty ? " · " + empty + " halaman tanpa teks (jalankan OCR untuk scan)" : ""), empty ? "info" : "success", 6000);
+    } catch (e) { busy(null); toast("Gagal: " + e.message, "error"); }
+  }
+
+  // ---------- bandingkan 2 versi ----------
+  function myers(a, b) {
+    var n = a.length, m = b.length, max = n + m, v = { 1: 0 }, tr = [];
+    for (var d = 0; d <= max; d++) {
+      tr.push(Object.assign({}, v));
+      for (var k = -d; k <= d; k += 2) {
+        var x = (k === -d || (k !== d && v[k - 1] < v[k + 1])) ? v[k + 1] : v[k - 1] + 1, y = x - k;
+        while (x < n && y < m && a[x] === b[y]) { x++; y++; }
+        v[k] = x;
+        if (x >= n && y >= m) {
+          var ops = [], cx = n, cy = m;
+          for (var dd = d; dd > 0; dd--) { var V = tr[dd], kk = cx - cy, pk = (kk === -dd || (kk !== dd && V[kk - 1] < V[kk + 1])) ? kk + 1 : kk - 1, px = V[pk], py = px - pk; while (cx > px && cy > py) { ops.push(["=", cx - 1, cy - 1]); cx--; cy--; } if (cx === px) ops.push(["+", -1, cy - 1]); else ops.push(["-", cx - 1, -1]); cx = px; cy = py; }
+          while (cx > 0 && cy > 0) { ops.push(["=", cx - 1, cy - 1]); cx--; cy--; }
+          return ops.reverse();
+        }
+      }
+      if (d > 2500) return null;
+    }
+    return null;
+  }
+  async function cmpLoad(bytes) {
+    var Lj = await loadPdfJs(), doc = await Lj.getDocument({ data: bytes.slice(0) }).promise, pages = [];
+    for (var i = 1; i <= doc.numPages; i++) {
+      var pg = await doc.getPage(i), vp = pg.getViewport({ scale: 1 }), tc = await pg.getTextContent(), ws = [];
+      tc.items.forEach(function (it) { if (!it.str || !it.str.trim()) return; var tx = Lj.Util.transform(vp.transform, it.transform), sz = Math.hypot(tx[2], tx[3]), len = it.str.length || 1, re = /\S+/g, mm, rot = Math.abs(tx[1]) > sz * 0.05 || Math.abs(tx[2]) > sz * 0.05; if (sz < 2) return; while ((mm = re.exec(it.str))) ws.push({ s: mm[0], x: tx[4] + it.width * mm.index / len, w: Math.max(2, it.width * mm[0].length / len), y: tx[5] - sz * 0.85, h: sz * 1.1, rot: rot }); });
+      ws.sort(function (a, b) { return Math.abs(a.y - b.y) > a.h * 0.4 ? a.y - b.y : a.x - b.x; });
+      pages.push({ pg: pg, vp: vp, ws: ws });
+    }
+    return { doc: doc, pages: pages };
+  }
+  function compareOpen() {
+    var A = null, B = null, R = null, cur = 0, vis = false;
+    var m = modal('<i class="fa-solid fa-code-compare" style="color:#7c3aed"></i> Bandingkan 2 versi PDF',
+      '<div class="pe-cmp-in"><div class="pe-cmp-slot" data-s="A"><b>Versi lama (A)</b><span class="nm">' + (PE.pages.length ? "Dokumen yang sedang dibuka · " + PE.pages.length + " hal" : "Belum dipilih") + '</span><label class="pe-b"><input type="file" accept="application/pdf,.pdf" class="hidden" data-f="A"><i class="fa-solid fa-folder-open"></i>Pilih PDF</label></div>'
+      + '<i class="fa-solid fa-arrow-right-arrow-left pe-cmp-ar"></i><div class="pe-cmp-slot" data-s="B"><b>Versi baru (B)</b><span class="nm">Belum dipilih</span><label class="pe-b pri"><input type="file" accept="application/pdf,.pdf" class="hidden" data-f="B"><i class="fa-solid fa-folder-open"></i>Pilih PDF</label></div></div>'
+      + '<div id="pe-cmp-r"></div>',
+      '<button class="pe-b" data-c>Tutup</button><button class="pe-b pri" data-go><i class="fa-solid fa-code-compare"></i>Bandingkan</button>', 1180);
+    m.classList.add("pe-cmp");
+    var src = { A: PE.pages.length ? "cur" : null, B: null }, files = {};
+    m.querySelector("[data-c]").onclick = function () { m.remove(); };
+    m.querySelectorAll("[data-f]").forEach(function (inp) { inp.onchange = async function () { var f = inp.files[0]; inp.value = ""; if (!f) return; files[inp.dataset.f] = await readBuf(f); src[inp.dataset.f] = "file"; m.querySelector('[data-s="' + inp.dataset.f + '"] .nm').textContent = f.name + " · " + MB(f.size); }; });
+    m.querySelector("[data-go]").onclick = async function () {
+      if (!src.A || !src.B) return toast("Pilih kedua versi PDF dulu", "error");
+      busy("Membaca kedua versi…", 10, "read");
+      try {
+        var ab = src.A === "cur" ? await buildPdf(PE.pages, PE.base, null, { raw: 1 }) : files.A;
+        A = await cmpLoad(ab); busy("Membaca versi baru…", 40, "read"); B = await cmpLoad(files.B);
+        busy("Membandingkan…", 70, "read");
+        R = []; var n = Math.max(A.pages.length, B.pages.length), tot = 0;
+        for (var i = 0; i < n; i++) {
+          var pa = A.pages[i], pb = B.pages[i], r = { i: i, del: [], ins: [], ch: [] };
+          if (!pa || !pb) { r.only = pa ? "A" : "B"; R.push(r); tot++; continue; }
+          var ops = myers(pa.ws.map(function (w) { return w.s; }), pb.ws.map(function (w) { return w.s; }));
+          if (!ops) { r.del = pa.ws.map(function (_, j) { return j; }); r.ins = pb.ws.map(function (_, j) { return j; }); r.ch.push({ a: "(seluruh halaman berubah)", b: "" }); }
+          else { var run = null; ops.forEach(function (o) { if (o[0] === "=") { run = null; return; } if (!run) { run = { a: [], b: [] }; r.ch.push(run); } if (o[0] === "-") { r.del.push(o[1]); run.a.push(pa.ws[o[1]].s); } else { r.ins.push(o[2]); run.b.push(pb.ws[o[2]].s); } }); r.ch = r.ch.map(function (c) { return c.a.join ? { a: c.a.join(" "), b: c.b.join(" ") } : c; }); }
+          tot += r.ch.length; R.push(r);
+          if (i % 5 === 4) await tick();
+        }
+        busy(null); cur = Math.max(0, R.findIndex(function (r) { return r.ch.length || r.only; })); draw(tot);
+      } catch (e) { busy(null); toast("Gagal: " + e.message, "error"); }
+    };
+    function draw(tot) {
+      var box = m.querySelector("#pe-cmp-r"), np = R.filter(function (r) { return r.ch.length || r.only; }).length;
+      box.innerHTML = '<div class="pe-cmp-sum">' + (tot ? '<b>' + tot + "</b> perubahan di <b>" + np + "</b> halaman" : '<b style="color:#059669"><i class="fa-solid fa-circle-check"></i> Teks kedua versi sama persis</b>') + (A.pages.length !== B.pages.length ? ' · <span style="color:#d97706">jumlah halaman beda: ' + A.pages.length + " vs " + B.pages.length + "</span>" : "") + '<label class="pe-tog sm"><input type="checkbox" id="pe-cmp-vis" ' + (vis ? "checked" : "") + '><span class="sw"></span><span><b>Sorot beda visual</b><small>gambar, stempel, tata letak</small></span></label></div>'
+        + '<div class="pe-cmp-main"><div class="pe-cmp-pages">' + R.map(function (r) { return '<button data-pi="' + r.i + '" class="' + (r.i === cur ? "on" : "") + '">Hal ' + (r.i + 1) + (r.only ? '<em>' + (r.only === "A" ? "dihapus" : "baru") + "</em>" : r.ch.length ? "<em>" + r.ch.length + "</em>" : '<i class="fa-solid fa-check"></i>') + "</button>"; }).join("") + "</div>"
+        + '<div class="pe-cmp-view"><div class="pe-cmp-col"><small>A · versi lama</small><canvas id="pe-cmp-a"></canvas></div><div class="pe-cmp-col"><small>B · versi baru</small><canvas id="pe-cmp-b"></canvas></div></div>'
+        + '<div class="pe-cmp-list" id="pe-cmp-l"></div></div>';
+      box.querySelectorAll("[data-pi]").forEach(function (b) { b.onclick = function () { cur = +b.dataset.pi; box.querySelectorAll("[data-pi]").forEach(function (x) { x.classList.toggle("on", x === b); }); page(); }; });
+      box.querySelector("#pe-cmp-vis").onchange = function () { vis = this.checked; page(); };
+      page();
+    }
+    async function rend(P, cv, w) { var vp = P.pg.getViewport({ scale: w / P.vp.width }), dpr = Math.min(2, devicePixelRatio || 1); cv.width = Math.round(vp.width * dpr); cv.height = Math.round(vp.height * dpr); cv.style.width = vp.width + "px"; var g = cv.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, cv.width, cv.height); await P.pg.render({ canvasContext: g, viewport: P.pg.getViewport({ scale: w / P.vp.width * dpr }) }).promise; return w / P.vp.width * dpr; }
+    async function page() {
+      var r = R[cur], ca = m.querySelector("#pe-cmp-a"), cb = m.querySelector("#pe-cmp-b"), w = Math.min(470, (m.querySelector(".pe-cmp-view").clientWidth - 30) / 2), pa = A.pages[cur], pb = B.pages[cur];
+      var hl = function (cv, P, idx, col, s) { var g = cv.getContext("2d"); g.save(); g.fillStyle = col; idx.forEach(function (j) { var t = P.ws[j]; if (t.rot) return; g.fillRect(t.x * s - 1, t.y * s - 1, t.w * s + 2, t.h * s + 2); }); g.restore(); };
+      if (pa) { var sa = await rend(pa, ca, w); hl(ca, pa, r.del, "rgba(225,29,72,.32)", sa); } else { ca.width = ca.height = 1; }
+      if (pb) { var sb = await rend(pb, cb, w); hl(cb, pb, r.ins, "rgba(22,163,74,.32)", sb); } else { cb.width = cb.height = 1; }
+      if (vis && pa && pb) {   // beda piksel → magenta
+        var ga = ca.getContext("2d"), gb = cb.getContext("2d"), W = Math.min(ca.width, cb.width), H = Math.min(ca.height, cb.height), da = ga.getImageData(0, 0, W, H).data, db = gb.getImageData(0, 0, W, H), d2 = db.data, cnt = 0;
+        for (var q = 0; q < d2.length; q += 4) { var la = 0.3 * da[q] + 0.59 * da[q + 1] + 0.11 * da[q + 2], lb = 0.3 * d2[q] + 0.59 * d2[q + 1] + 0.11 * d2[q + 2]; if (Math.abs(la - lb) > 70) { d2[q] = 236; d2[q + 1] = 72; d2[q + 2] = 153; cnt++; } }
+        gb.putImageData(db, 0, 0); if (!cnt) toast("Tidak ada beda visual di halaman ini", "info");
+      }
+      var L = m.querySelector("#pe-cmp-l");
+      L.innerHTML = r.only ? '<div class="it"><b>Halaman ' + (cur + 1) + (r.only === "A" ? " dihapus di versi baru" : " ditambahkan di versi baru") + "</b></div>" : r.ch.length ? r.ch.map(function (c) { return '<div class="it">' + (c.a ? '<del>' + E(c.a) + "</del>" : "") + (c.a && c.b ? '<i class="fa-solid fa-arrow-right"></i>' : "") + (c.b ? "<ins>" + E(c.b) + "</ins>" : "") + "</div>"; }).join("") : '<div class="it mute"><i class="fa-solid fa-check"></i> Teks halaman ini sama</div>';
+    }
+  }
+
   // ===================== buka / tutup =====================
   async function peOpen(opt) {
     opt = opt || {};
@@ -6833,7 +7596,7 @@ body>.pe-menu{z-index:120}
     if (opt.file) await addFiles([opt.file]);
     if (opt.bytes) { busy("Membuka dokumen…", 40); try { var pages = await addBytes(opt.bytes, opt.name || "Dokumen.pdf"); PE.pages = pages; PE.base = safeName(opt.name) || "Dokumen"; } catch (e) { toast(e.message, "error"); } busy(null); render(); }
   }
-  function reset() { PE.docs = []; PE.pages = []; PE.cuts = new Set(); PE.names = {}; PE.pairs = {}; PE.sel = new Set(); PE.undo = []; PE.redo = []; PE.pattern = ""; PE.base = "Dokumen"; PE.mf = false; JS = {}; LIB = {}; LIBF = {}; PE.blankDoc = null; PE.mfiles = []; PE.mopt = { marks: true, flatten: true, a4: false, blank: false, inter: false, interRev: true, outName: "" }; ED.baseKey = null; SAVED = { docs: -1, imgs: -1 }; Object.keys(IMGS).forEach(function (k) { try { URL.revokeObjectURL(IMGS[k].url); } catch (e) { } }); IMGS = {}; THUMB = {}; TXT = {}; MARKS = {}; }
+  function reset() { PE.docs = []; PE.pages = []; PE.cuts = new Set(); PE.names = {}; PE.pairs = {}; PE.sel = new Set(); PE.undo = []; PE.redo = []; PE.pattern = ""; PE.base = "Dokumen"; PE.mf = false; JS = {}; LIB = {}; LIBF = {}; PE.blankDoc = null; PE.mfiles = []; PE.mopt = { marks: true, flatten: true, a4: false, blank: false, inter: false, interRev: true, outName: "" }; ED.baseKey = null; SAVED = { docs: -1, imgs: -1 }; Object.keys(IMGS).forEach(function (k) { try { URL.revokeObjectURL(IMGS[k].url); } catch (e) { } }); IMGS = {}; THUMB = {}; TXT = {}; TXTI = {}; OCR = {}; MARKS = {}; PE.form = {}; FORMF = {}; LIBX = {}; PE.comp = 0; PE.pw = null; }
   function peClose(force) {
     if (!force && PE.undo.length && PE.pages.length && !confirm("Tutup " + (isEdit() ? "Edit PDF" : "Split PDF") + "? Pekerjaan ini akan dibuang (yang sudah diunduh / dikirim tetap aman).")) return;
     if (ED.on) { edCommitText(); ED.on = false; var ed = $("pe-ed"); if (ed) ed.classList.add("hidden"); }
@@ -6843,7 +7606,7 @@ body>.pe-menu{z-index:120}
     try { JS && Object.keys(JS).forEach(function (k) { JS[k].then(function (d) { d.destroy(); }).catch(function () { }); }); } catch (e) { }
     reset();
   }
-  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__peT = { ptr: function () { return [PTR.size, !!ED.pinch, ED.tool]; }, render: render, lines: function () { return ED.lines; }, PE: PE, ED: ED, segs: segs, buildPdf: buildPdf, finalNames: finalNames, IMGS: function () { return IMGS; } };
+  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__peT = { ptr: function () { return [PTR.size, !!ED.pinch, ED.tool]; }, render: render, lines: function () { return ED.lines; }, PE: PE, ED: ED, segs: segs, buildPdf: buildPdf, finalNames: finalNames, IMGS: function () { return IMGS; }, exportDocx: exportDocx, exportXlsx: exportXlsx, OCR: function () { return OCR; }, qpdf: qpdf, finalPdf: finalPdf };
   window.peOpen = function (mode) { peOpen({ kind: "tab", mode: mode }); };
   window.peClose = peClose;
 
@@ -6870,7 +7633,8 @@ body>.pe-menu{z-index:120}
 
   // ===================== kaitan ke aplikasi =====================
   // tombol di PDF Tools punya animasi proses sendiri — jangan ikut ditandai "Memproses/Berhasil" oleh panggilan server latar belakang
-  document.addEventListener("click", function (e) { try { if (typeof BUSY !== "undefined" && e.target.closest && e.target.closest("#pe, .pe-menu")) { BUSY.lastBtn = null; } } catch (er) { } }, true);
+  var appBusy = function () { try { return (0, eval)("typeof BUSY !== 'undefined' ? BUSY : null"); } catch (er) { return null; } };   // BUSY milik aplikasi (bukan overlay PDF Tools)
+  document.addEventListener("click", function (e) { try { if (e.target.closest && e.target.closest("#pe, .pe-menu")) { var ab = appBusy(); if (ab && "lastBtn" in ab) ab.lastBtn = null; } } catch (er) { } }, true);
   function hook() {
     var ok = canPdf();
     var bar = $("gs-toolbar");
@@ -6882,7 +7646,8 @@ body>.pe-menu{z-index:120}
         menu(b, [
           { ic: "fa-scissors", t: "Split PDF", s: "pecah satu PDF jadi banyak file bernama custom", fn: function () { peOpen({ kind: "tab", mode: "split" }); } },
           { ic: "fa-object-group", t: "Gabung PDF", s: "satukan beberapa PDF / gambar jadi satu file", fn: function () { peOpen({ kind: "tab", mode: "merge" }); } },
-          { ic: "fa-pen-to-square", t: "Edit PDF", s: "edit teks asli, deteksi TTD & stempel, tulis, gambar", fn: function () { peOpen({ kind: "tab", mode: "edit" }); } }
+          { ic: "fa-pen-to-square", t: "Edit PDF", s: "edit teks, OCR scan, TTD & stempel, formulir, catatan", fn: function () { peOpen({ kind: "tab", mode: "edit" }); } },
+          { ic: "fa-code-compare", t: "Bandingkan PDF", s: "cari perbedaan 2 versi dokumen", fn: function () { peOpen({ kind: "tab", mode: "edit" }).then(compareOpen); } }
         ]);
       };
       var up = $("docs-tab-upload"), nx = up ? up.nextSibling : null;
