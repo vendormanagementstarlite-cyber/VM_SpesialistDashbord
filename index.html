@@ -4790,6 +4790,39 @@ body:has(#rec-modal:not(.hidden)) #st-nt,body:has(#detail-modal:not(.hidden)) #s
 @media(max-width:760px){.ton-ov{padding:0;align-items:flex-end}.ton-card{border-radius:22px 22px 0 0;max-height:94dvh}.ton-bd{grid-template-columns:1fr}.ton-res{height:min(40vh,320px)}}
 body:has(#ton-ov) #st-nt{display:none!important}
 body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka → pop-up tidak menutupinya */
+/* v20 · notifikasi SP: dua kelompok (Overdue / Belum rilis) + tindak lanjut ke Request */
+.st-it{flex-wrap:wrap;cursor:default;padding:6px 8px 6px 6px;gap:6px}
+.st-it:hover{transform:none}
+.st-itm{display:flex;align-items:center;gap:10px;flex:1 1 220px;min-width:0;padding:2px;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;border-radius:9px}
+.st-itm:focus-visible,.st-fu:focus-visible,.st-grp button:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.st-fu{flex-shrink:0;margin-left:auto;display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:8px;border:1px solid color-mix(in srgb,var(--c) 40%,transparent);background:#fff;color:color-mix(in srgb,var(--c) 85%,#000);font:inherit;font-size:10.5px;font-weight:800;cursor:pointer;white-space:nowrap;transition:background .15s}
+.st-fu:hover{background:color-mix(in srgb,var(--c) 10%,#fff)}
+.st-fu.done{border-color:#a7f3d0;background:#ecfdf5;color:#047857}
+.dark .st-fu{background:#0b1220;color:color-mix(in srgb,var(--c) 60%,#fff)}.dark .st-fu.done{background:#05966922;color:#6ee7b7;border-color:#05966955}
+.st-grp{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 4px}
+.st-grp.sm{margin:4px 12px 8px}
+.st-grp button{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:13px;border:0;background:color-mix(in srgb,var(--c) 9%,#fff);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 28%,transparent);color:inherit;font:inherit;text-align:left;cursor:pointer;transition:box-shadow .15s}
+.dark .st-grp button{background:color-mix(in srgb,var(--c) 14%,#0b1220)}
+.st-grp button:hover:not(:disabled){box-shadow:inset 0 0 0 1.5px var(--c)}
+.st-grp button:disabled{opacity:.45;cursor:default}
+.st-grp i{color:var(--c);font-size:13px}
+.st-grp b{font-size:20px;font-weight:900;color:var(--c);font-variant-numeric:tabular-nums;line-height:1}
+.st-grp span{font-size:11.5px;font-weight:800;line-height:1.2}.st-grp small{display:block;font-size:10px;font-weight:600;color:#64748b}
+.st-gh{margin:8px 2px 4px;font-size:10.5px;font-weight:900;color:var(--c)}
+.st-list .st-it{margin-bottom:4px}
+.st-fu-pop{position:fixed;z-index:130;padding:12px;border-radius:16px;background:#fff;color:#0f172a;box-shadow:0 24px 60px -20px #0f172a99,0 0 0 1px #e2e8f0;font-size:12px}
+.dark .st-fu-pop{background:#111a2c;color:#e2e8f0;box-shadow:0 24px 60px -20px #000,0 0 0 1px #24314a}
+.st-fu-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.st-fu-h b i{margin-right:6px;color:#4f46e5}
+.st-fu-h .x{width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:#94a3b8;cursor:pointer}
+.st-fu-opts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.st-fu-opts button{border:1px solid #dbe2ec;background:#fff;border-radius:999px;padding:4px 10px;font:inherit;font-size:11px;font-weight:700;color:#334155;cursor:pointer}
+.dark .st-fu-opts button{background:#0b1220;border-color:#2a3956;color:#cbd5e1}
+.st-fu-opts button.on{background:#4f46e5;border-color:#4f46e5;color:#fff}
+.st-fu-opts em{font-style:normal;font-size:9.5px;opacity:.8}
+.st-fu-pop textarea{font-size:12px;line-height:1.45;resize:vertical}
+.st-fu-f{display:flex;align-items:center;gap:8px;margin-top:8px}.st-fu-f small{flex:1;color:#64748b;font-size:10.5px}
+.st-umflow>span{flex:1 1 200px}
+.st-fu-pop textarea{min-height:150px;height:150px}
 
 </style>
 <script id="addon_v14">
@@ -8367,15 +8400,79 @@ body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka
     var extra = st >= 4 ? '<g class="st-sign"><rect x="33" y="-4" width="19" height="12" rx="2" fill="#fff" stroke="#0f172a" stroke-width="1.5"/><text x="42.5" y="5" text-anchor="middle" font-size="6.5" font-weight="900" fill="#be123c" font-family="Arial">SP!</text><path d="M42.5 8v9" stroke="#0f172a" stroke-width="1.6"/></g>' : st === 3 ? '<g class="st-steam"><path d="M8 6q-3-4 0-7M40 6q3-4 0-7" stroke="#ef4444" stroke-width="2" fill="none" stroke-linecap="round"/></g>' : st === 0 ? '<g class="st-zz"><text x="38" y="6" font-size="8" font-weight="900" fill="#8b5cf6" font-family="Arial">?</text></g>' : "";
     return '<svg viewBox="0 0 48 52" class="st-bell"><path d="M24 4c-9 0-14 7-14 15v9l-4 7h36l-4-7v-9c0-8-5-15-14-15z" fill="currentColor"/><circle cx="24" cy="42" r="5" fill="currentColor"/>' + brow + '<circle cx="18" cy="25" r="2.2" fill="#0f172a"/><circle cx="30" cy="25" r="2.2" fill="#0f172a"/>' + mouth + extra + "</svg>";
   }
+  function groups(S, small) {
+    var od = S.od, rl = S.cnt[0];
+    return '<div class="st-grp' + (small ? " sm" : "") + '"><button data-g="od" style="--c:' + GRP.od.c + '"' + (od ? "" : " disabled") + '><i class="fa-solid ' + GRP.od.ic + '"></i><b>' + od + '</b><span>Overdue' + (od ? "<small>terlama " + S.maxOd + " hari</small>" : "") + '</span></button><button data-g="rl" style="--c:' + GRP.rl.c + '"' + (rl ? "" : " disabled") + '><i class="fa-solid ' + GRP.rl.ic + '"></i><b>' + rl + "</b><span>Belum rilis<small>tanpa tanggal rilis</small></span></button></div>";
+  }
+  function topList(S, n) {
+    var od = S.items.filter(function (x) { return x.st; }), rl = S.items.filter(function (x) { return !x.st; }), a = od.slice(0, n), b = rl.slice(0, Math.max(1, n - a.length));
+    var h = (a.length ? '<p class="st-gh" style="--c:' + GRP.od.c + '">Overdue · ' + od.length + "</p>" + a.map(itemRow).join("") : "") + (b.length ? '<p class="st-gh" style="--c:' + GRP.rl.c + '">Belum rilis · ' + rl.length + "</p>" + b.map(itemRow).join("") : "");
+    var rest = S.total - a.length - b.length; return h + (rest > 0 ? '<div class="st-more">+' + rest + " SP lainnya di lonceng</div>" : "");
+  }
+  function bindGroups(root, after) { root.querySelectorAll("[data-g]").forEach(function (b) { b.onclick = function () { if (after) after(); try { notifClose(); } catch (e) { } try { goSp({ q: b.dataset.g === "od" ? "overdue" : "belum rilis" }); } catch (e) { try { switchTab("sp"); } catch (er) { } } }; }); }
   function stepper(S, small) {
     return '<div class="st-steps' + (small ? " sm" : "") + '" style="--p:' + Math.max(0, S.stage) / 4 + '">' + '<i class="st-track"><b></b></i>' + STG.map(function (g) { var on = g.n === S.stage, done = g.n < S.stage; return '<div class="st-step' + (on ? " on" : done ? " done" : "") + (S.cnt[g.n] ? " has" : "") + '" style="--c:' + g.c + '"><span class="dot">' + (S.cnt[g.n] ? S.cnt[g.n] : '<i class="fa-solid fa-check"></i>') + "</span><b>" + g.k + "</b><small>" + g.l + "</small></div>"; }).join("") + "</div>";
   }
   function nagInfo() { var day = new Date().toDateString(), raw = (lsGet(uKey("sp_nag")) || "").split("|"); return { day: day, n: raw[0] === day ? +raw[1] || 0 : 0 }; }
-  function itemRow(x) {
-    var s = x.s, lt = ""; try { lt = spLetter(s); } catch (e) { lt = s.sp1 || ""; } var g = STG[x.st];
-    return '<button class="st-it" data-sid="' + E(s.id) + '" style="--c:' + g.c + '"><span class="ic"><i class="fa-solid ' + g.ic + '"></i></span><span class="tx"><b>' + E(s.mitra || "-") + "</b><small>" + E(lt || "-") + (s.site ? " · " + E(s.site) : "") + (s.region ? " · " + E(s.region) : "") + '</small></span><span class="chip">' + (x.st ? "overdue " + x.od + " hari" : "belum rilis") + "</span></button>";
+  var GRP = { od: { k: "Overdue", c: "#e11d48", ic: "fa-hourglass-end" }, rl: { k: "Belum rilis", c: "#8b5cf6", ic: "fa-paper-plane" } };
+  // saran tindak lanjut: belum rilis → rilis SP level itu; overdue SP1 → SP-2; SP2 → SP-3; SP3 → eskalasi
+  function fuOf(s, st) { var lv = +s.level || (s.sp3 ? 3 : s.sp2 ? 2 : 1); if (!st) return { j: "SP-" + lv, t: "Rilis SP-" + lv }; return lv >= 3 ? { j: "Lainnya", t: "Eskalasi" } : { j: "SP-" + (lv + 1), t: "Ajukan SP-" + (lv + 1) }; }
+  function reqOf(s) {   // request SP yang masih terbuka untuk SP ini
+    try { if (typeof REQ === "undefined" || !REQ.items) return null; var po = String(s.po || "").split(/[,;\s]+/)[0], lt = s.sp3 || s.sp2 || s.sp1 || "";
+      return REQ.items.filter(function (r) { return !r.parent && r.status !== "selesai" && /^SP-|^Lainnya/.test(r.jenis || "") && ((lt && r.text.indexOf(lt) >= 0) || (po && s.mitra && r.text.indexOf(po) >= 0 && r.text.toUpperCase().indexOf(String(s.mitra).toUpperCase()) >= 0)); }).pop() || null; } catch (e) { return null; }
   }
-  function bindItems(root) { root.querySelectorAll("[data-sid]").forEach(function (b) { b.onclick = function () { var c = $("st-call"); if (c) ntClose(c); try { notifClose(); } catch (e) { } try { notifOpen(b.dataset.sid); } catch (e) { try { openRecord(b.dataset.sid); } catch (er) { } } }; }); }
+  function itemRow(x) {
+    var s = x.s, lt = ""; try { lt = spLetter(s); } catch (e) { lt = s.sp1 || ""; } var g = x.st ? GRP.od : GRP.rl, fu = fuOf(s, x.st), rq = reqOf(s);
+    var rs = rq && typeof REQ_ST !== "undefined" && REQ_ST[rq.status] ? REQ_ST[rq.status][0] : "";
+    return '<div class="st-it" style="--c:' + g.c + '"><button class="st-itm" data-sid="' + E(s.id) + '"><span class="ic"><i class="fa-solid ' + g.ic + '"></i></span><span class="tx"><b>' + E(s.mitra || "-") + "</b><small>" + E(lt || "-") + (s.site ? " · " + E(s.site) : "") + (s.region ? " · " + E(s.region) : "") + '</small></span><span class="chip">' + (x.st ? "overdue " + x.od + " hari" : "belum rilis") + "</span></button>"
+      + (rq ? '<button class="st-fu done" data-fu="' + E(s.id) + '" data-st="' + x.st + '" title="Sudah ada request — klik untuk membuka"><i class="fa-solid fa-comments"></i>' + E(rq.jenis) + " · " + E(rs || rq.status) + "</button>"
+        : '<button class="st-fu" data-fu="' + E(s.id) + '" data-st="' + x.st + '" title="Buat request tindak lanjut"><i class="fa-solid fa-share-from-square"></i>' + E(fu.t) + "</button>") + "</div>";
+  }
+  function bindItems(root) { root.querySelectorAll("[data-fu]").forEach(function (b) { b.onclick = function (ev) { ev.stopPropagation(); spFollow(b.dataset.fu, +b.dataset.st, b); }; }); root.querySelectorAll("[data-sid]").forEach(function (b) { b.onclick = function () { var c = $("st-call"); if (c) ntClose(c); try { notifClose(); } catch (e) { } try { notifOpen(b.dataset.sid); } catch (e) { try { openRecord(b.dataset.sid); } catch (er) { } } }; }); }
+  // ---------- tindak lanjut → Request (SP-2 / SP-3 / rilis / eskalasi) ----------
+  async function spFollow(sid, st, btn) {
+    var s = (STATE.sp || []).filter(function (x) { return x.id === sid; })[0]; if (!s) return;
+    var old = $("st-fu-pop"); if (old) { var same = old.dataset.sid === sid; old.remove(); if (same) return; }
+    try { if (typeof REQ !== "undefined" && !REQ.loaded && typeof reqLoad === "function") await reqLoad(); } catch (e) { }
+    var rq = reqOf(s);
+    if (rq) { try { notifClose(); } catch (e) { } var c0 = $("st-call"); c0 && ntClose(c0); try { REQ.filter = "open"; reqOpenPane(); } catch (e) { } setTimeout(function () { var el = document.querySelector('[data-req-id="' + rq.id + '"]') || document.querySelector("#req-list"); el && el.scrollIntoView({ block: "center", behavior: "smooth" }); }, 600); return; }
+    var fu = fuOf(s, st), lt = ""; try { lt = spLetter(s); } catch (e) { lt = s.sp3 || s.sp2 || s.sp1 || ""; }
+    var x = spItems().filter(function (y) { return y.s === s; })[0] || { st: st, od: 0 };
+    var txt = (fu.j === "Lainnya" ? "Eskalasi SP-3 (sudah lewat tenggat)" : st ? "Mohon diterbitkan " + fu.j + " (lanjutan)" : "Mohon " + fu.j + " dirilis / dikirim ke mitra") + "\n"
+      + "No SP: " + (lt || "-") + "\nMitra: " + (s.mitra || "-") + "\nSite: " + (s.site || "-") + (s.region ? " · " + s.region : "") + "\nPO: " + (s.po || "-")
+      + (st ? "\nStatus: overdue " + x.od + " hari" : "\nStatus: belum ada tanggal rilis") + (s.pic ? "\nPIC: " + s.pic : "");
+    var J = []; try { REQ_JENIS.forEach(function (g) { g[1].forEach(function (j) { J.push(j); }); }); } catch (e) { J = ["SP-1", "SP-2", "SP-3", "Lainnya"]; }
+    var pop = document.createElement("div"); pop.id = "st-fu-pop"; pop.className = "st-fu-pop"; pop.dataset.sid = sid;
+    pop.innerHTML = '<div class="st-fu-h"><b><i class="fa-solid fa-share-from-square"></i>Tindak lanjut SP</b><button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
+      + '<div class="st-fu-opts">' + ["SP-2", "SP-3", "SP-1", "Lainnya"].filter(function (j, i, a) { return J.indexOf(j) >= 0; }).map(function (j) { var lab = j === "Lainnya" ? "Eskalasi / lainnya" : (st || j !== fu.j ? "Ajukan " : "Rilis ") + j; return '<button type="button" data-j="' + j + '" class="' + (j === fu.j ? "on" : "") + '">' + lab + (j === fu.j ? " <em>disarankan</em>" : "") + "</button>"; }).join("") + "</div>"
+      + '<textarea rows="7" class="field w-full" id="st-fu-t"></textarea>'
+      + '<div class="st-fu-f"><small>Masuk ke <b>Request</b> sebagai jenis <b id="st-fu-j">' + E(fu.j) + '</b></small><button class="st-b pri" data-send><i class="fa-solid fa-paper-plane"></i>Kirim request</button></div>';
+    document.body.appendChild(pop);
+    var ta = pop.querySelector("#st-fu-t"); ta.value = txt; var J0 = fu.j;
+    pop.querySelectorAll("[data-j]").forEach(function (b) { b.onclick = function () { pop.querySelectorAll("[data-j]").forEach(function (y) { y.classList.toggle("on", y === b); }); var j = b.dataset.j; ta.value = ta.value.replace(/^.*\n/, (j === "Lainnya" ? "Eskalasi SP (perlu keputusan lanjutan)" : st || j !== fuOf(s, 0).j ? "Mohon diterbitkan " + j + (st ? " (lanjutan)" : "") : "Mohon " + j + " dirilis / dikirim ke mitra") + "\n"); J0 = j; pop.querySelector("#st-fu-j").textContent = j; }; });
+    var r = btn.getBoundingClientRect(), w = Math.min(360, innerWidth - 16);
+    pop.style.width = w + "px"; pop.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.right - w)) + "px";
+    var top = r.bottom + 6; pop.style.top = top + "px"; var h = pop.offsetHeight; if (top + h > innerHeight - 8) pop.style.top = Math.max(8, r.top - h - 6) + "px";
+    var close = function () { pop.remove(); document.removeEventListener("mousedown", out, true); document.removeEventListener("keydown", esc2); };
+    var out = function (e) { if (!pop.contains(e.target) && e.target !== btn && !btn.contains(e.target)) close(); };
+    var esc2 = function (e) { if (e.key === "Escape") close(); };
+    setTimeout(function () { document.addEventListener("mousedown", out, true); document.addEventListener("keydown", esc2); }, 0);
+    pop.onclick = function (e) { e.stopPropagation(); };
+    pop.querySelector("[data-x]").onclick = close;
+    pop.querySelector("[data-send]").onclick = async function () {
+      var t = ta.value.trim(); if (!t) return ta.focus();
+      var b = this; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Mengirim…';
+      try {
+        var res = await callApi("req.add", { parent: "", jenis: J0, text: t }, 60000);
+        try { if (res && res.item) { REQ.items.push(res.item); REQ.rev = res.rev || REQ.rev; } if (typeof reqBadge === "function") reqBadge(); } catch (e) { }
+        close(); toast("Request " + J0 + " terkirim — lihat di menu Request", "success", 5000);
+        try { if (typeof NOTIF !== "undefined" && NOTIF.open) notifPanel(); } catch (e) { }
+        var c = $("st-call"); if (c) { c.querySelectorAll('[data-fu="' + sid + '"]').forEach(function (y) { y.classList.add("done"); y.innerHTML = '<i class="fa-solid fa-comments"></i>' + E(J0) + " · Baru"; }); }
+      } catch (e) { b.disabled = false; b.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Kirim request'; toast("Gagal mengirim request: " + e.message, "error", 7000); }
+    };
+    setTimeout(function () { ta.focus(); ta.setSelectionRange(0, ta.value.indexOf("\n")); ta.scrollTop = 0; }, 30);
+  }
+  window.spFollow = spFollow;
   function goFix(S) { try { goSp({ q: S.stage >= 1 ? "overdue" : "belum rilis" }); } catch (e) { try { switchTab("sp"); } catch (er) { } } }
   // ---------- callout utama: menempel ke ikon lonceng di layar utama ----------
   function spCallout(force) {
@@ -8387,13 +8484,13 @@ body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka
     var c = document.createElement("div"); c.id = "st-call"; c.className = "st-call st" + S.stage; c.style.setProperty("--c", g.c);
     var snoozeBtn = P.lock ? '<button class="st-b" data-min><i class="fa-solid fa-down-left-and-up-right-to-center"></i>Kecilkan</button>' : g.sn ? '<button class="st-b" data-sn>' + (nag.n ? "Tunda lagi " : "Ingatkan ") + (g.sn >= 60 ? g.sn / 60 + " jam lagi" : g.sn + " menit lagi") + "</button>" : '<button class="st-b" data-min><i class="fa-solid fa-down-left-and-up-right-to-center"></i>Kecilkan ke lonceng</button>';
     c.innerHTML = '<i class="st-arrow"></i><div class="st-aura"></div>'
-      + '<div class="st-hd"><span class="st-av">' + mascot(S.stage) + '</span><div class="st-hd-t"><span class="st-tag"><i class="fa-solid ' + g.ic + '"></i>Tahap ' + S.stage + " dari 4 · " + g.k + "</span>" + (P.lock ? '<span class="st-tag lock"><i class="fa-solid fa-lock"></i>Wajib</span>' : "") + "<b>" + title + "</b><small>" + S.total + " SP perlu tindakan · " + S.cnt[0] + " belum rilis · " + S.od + " overdue</small></div>" + (P.lock ? "" : '<button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button>') + "</div>"
-      + stepper(S)
+      + '<div class="st-hd"><span class="st-av">' + mascot(S.stage) + '</span><div class="st-hd-t"><span class="st-tag"><i class="fa-solid fa-bell"></i>Notifikasi SP</span>' + (P.lock ? '<span class="st-tag lock"><i class="fa-solid fa-lock"></i>Wajib</span>' : "") + "<b>" + title + "</b><small>" + S.total + " SP perlu tindakan · " + S.cnt[0] + " belum rilis · " + S.od + " overdue</small></div>" + (P.lock ? "" : '<button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button>') + "</div>"
+      + groups(S)
       + '<p class="st-msg">' + M[1](S) + (nag.n === 1 ? '<span class="st-nag">Tadi sudah kamu tunda. Aku ingat, lho.</span>' : nag.n >= 2 ? '<span class="st-nag">Sudah ' + nag.n + "× ditunda hari ini. Aku mulai curiga kamu menghindar 🙃</span>" : "") + "</p>"
-      + '<div class="st-list">' + S.items.slice(0, 3).map(itemRow).join("") + (S.total > 3 ? '<div class="st-more">+' + (S.total - 3) + " SP lainnya</div>" : "") + "</div>"
+      + '<div class="st-list">' + topList(S, 4) + "</div>"
       + '<div class="st-ft">' + snoozeBtn + '<button class="st-b pri" data-go><i class="fa-solid fa-list-check"></i>Bereskan sekarang</button></div>';
     ntHost().appendChild(c); place(c, bell); NT.shown = true;
-    bindItems(c);
+    bindItems(c); bindGroups(c, function () { ntClose(c); });
     var toBell = function () { var b = bellEl(); if (b) { var r = b.getBoundingClientRect(), cr = c.getBoundingClientRect(); c.style.setProperty("--tx", (r.left + r.width / 2 - cr.left - cr.width / 2) + "px"); c.style.setProperty("--ty", (r.top + r.height / 2 - cr.top - 40) + "px"); c.classList.add("tobell"); setTimeout(function () { c.remove(); b.classList.remove("st-catch"); void b.offsetWidth; b.classList.add("st-catch"); }, 520); } else ntClose(c); };
     var sn = c.querySelector("[data-sn]"); if (sn) sn.onclick = function () { lsSet(uKey("sp_snooze"), Date.now() + g.sn * 60000); lsSet(uKey("sp_snooze_st"), S.stage); lsSet(uKey("sp_nag"), nag.day + "|" + (nag.n + 1)); toBell(); };
     var mn = c.querySelector("[data-min]"); if (mn) mn.onclick = function () { lsSet(uKey("sp_nag"), nag.day + "|" + (nag.n + 1)); toBell(); };
@@ -8416,12 +8513,14 @@ body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka
   function ntPanel() {
     var e = $("notif-panel"); if (!e) { e = document.createElement("div"); e.id = "notif-panel"; e.onclick = function (ev) { ev.stopPropagation(); }; document.body.appendChild(e); }
     var S = spStats(), P = ntPerm(), rd = new Set(); try { rd = notifRead(); } catch (er) { }
-    var grp = STG.slice().reverse().map(function (g) { var L = S.items.filter(function (x) { return x.st === g.n; }); return L.length ? '<div class="st-pg" style="--c:' + g.c + '"><p><i class="fa-solid ' + g.ic + '"></i>Tahap ' + g.n + " · " + g.k + " · " + g.l + "<span>" + L.length + "</span></p>" + L.slice(0, 30).map(function (x) { return itemRow(x).replace('class="st-it"', 'class="st-it' + (rd.has(notifKey(x.s)) ? "" : " unread") + '"'); }).join("") + (L.length > 30 ? '<div class="st-more">+' + (L.length - 30) + " lainnya</div>" : "") + "</div>" : ""; }).join("");
+    var mk = function (L, g) { return L.length ? '<div class="st-pg" style="--c:' + g.c + '"><p><i class="fa-solid ' + g.ic + '"></i>' + g.k + "<span>" + L.length + "</span></p>" + L.slice(0, 40).map(function (x) { return itemRow(x).replace('class="st-it"', 'class="st-it' + (rd.has(notifKey(x.s)) ? "" : " unread") + '"'); }).join("") + (L.length > 40 ? '<div class="st-more">+' + (L.length - 40) + " lainnya</div>" : "") + "</div>" : ""; };
+    var grp = mk(S.items.filter(function (x) { return x.st; }), GRP.od) + mk(S.items.filter(function (x) { return !x.st; }), GRP.rl);
     e.className = "st-panel";
     e.innerHTML = '<div class="st-ph"><b><i class="fa-solid fa-bell"></i> Notifikasi SP</b>' + (P.lock ? '<span class="st-tag lock"><i class="fa-solid fa-lock"></i>Wajib</span>' : "") + '<button class="x" onclick="notifClose()"><i class="fa-solid fa-xmark"></i></button></div>'
-      + (S.total ? stepper(S, true) + '<div class="st-pl">' + grp + "</div>" : '<div class="st-empty"><i class="fa-solid fa-circle-check"></i><b>Semua SP aman</b><small>Tidak ada SP yang belum rilis atau overdue.</small></div>')
+      + (S.total ? groups(S, true) + '<div class="st-pl">' + grp + "</div>" : '<div class="st-empty"><i class="fa-solid fa-circle-check"></i><b>Semua SP aman</b><small>Tidak ada SP yang belum rilis atau overdue.</small></div>')
       + '<div class="st-pf"><button onclick="notifClose(); goSp({})">Buka Monitoring SP</button>' + (S.total ? '<button data-sum>Lihat ringkasan</button>' : "") + (currentUser && currentUser.role === "owner" ? '<button data-set><i class="fa-solid fa-sliders"></i>Atur penerima</button>' : "") + "</div>";
-    bindItems(e);
+    bindItems(e); bindGroups(e);
+    try { if (typeof REQ !== "undefined" && !REQ.loaded && !REQ.loading && typeof reqLoad === "function") reqLoad().then(function () { if (typeof NOTIF !== "undefined" && NOTIF.open) notifPanel(); }); } catch (er) { }
     var sm = e.querySelector("[data-sum]"); if (sm) sm.onclick = function () { try { notifClose(); } catch (er) { } spCallout(true); };
     var st = e.querySelector("[data-set]"); if (st) st.onclick = function () { try { notifClose(); switchTab("users"); } catch (er) { } setTimeout(function () { var c = $("st-umn"); if (c) c.scrollIntoView({ behavior: "smooth", block: "start" }); }, 400); };
     var b = bellEl(); if (b) { var r = b.getBoundingClientRect(), w = Math.min(420, innerWidth - 16); e.style.width = w + "px"; e.style.top = r.bottom + 8 + "px"; e.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.right - w)) + "px"; }
@@ -8432,7 +8531,7 @@ body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka
     var origNR = notifRender;
     window.notifRender = notifRender = function () {
       var r = origNR.apply(this, arguments);
-      try { var S = spStats(), P = ntPerm(); document.querySelectorAll(".notif-bell:not(.undo-btn)").forEach(function (b) { if (!P.on) { b.classList.remove("st-ring"); return; } b.classList.toggle("st-ring", S.stage >= 0); b.style.setProperty("--c", S.stage >= 0 ? STG[S.stage].c : ""); b.dataset.stage = S.stage; b.title = S.stage >= 0 ? "Notifikasi SP · tahap " + S.stage + " (" + STG[S.stage].k + ") · " + S.total + " SP" : "Notifikasi SP"; }); } catch (e) { }
+      try { var S = spStats(), P = ntPerm(); document.querySelectorAll(".notif-bell:not(.undo-btn)").forEach(function (b) { if (!P.on) { b.classList.remove("st-ring"); return; } b.classList.toggle("st-ring", S.stage >= 0); b.style.setProperty("--c", S.stage >= 0 ? STG[S.stage].c : ""); b.dataset.stage = S.stage; b.title = S.stage >= 0 ? "Notifikasi SP · " + S.od + " overdue · " + S.cnt[0] + " belum rilis" : "Notifikasi SP"; }); } catch (e) { }
       return r;
     };
   }
@@ -8462,7 +8561,7 @@ body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka
     var nOn = L.filter(function (u) { return u.active !== false && umEff(u, "spnotif"); }).length, nLock = L.filter(function (u) { return u.active !== false && umEff(u, "spnotif") && umEff(u, "spnotif_lock"); }).length;
     var RL = { owner: ["Akun Utama", "#0891b2"], operator: ["Operator", "#4f46e5"], viewer: ["Viewer", "#64748b"] };
     box.innerHTML = '<div class="st-umh"><span class="st-umi"><i class="fa-solid fa-bell"></i></span><div><b>Notifikasi SP</b><small>Atur akun mana yang menerima pengingat SP <b>belum rilis</b> &amp; <b>overdue</b>, dan mana yang <b>wajib</b> (selalu tampil saat membuka aplikasi, tidak bisa ditunda).</small></div><div class="st-ums"><span><b>' + nOn + "</b> menerima</span><span><b>" + nLock + "</b> wajib</span></div></div>"
-      + '<div class="st-umflow">' + STG.map(function (g) { return '<span style="--c:' + g.c + '"><i class="fa-solid ' + g.ic + '"></i><b>Tahap ' + g.n + "</b>" + g.l + "<small>" + (g.sn ? "tunda " + (g.sn >= 60 ? g.sn / 60 + " jam" : g.sn + " mnt") : "tanpa tunda") + "</small></span>"; }).join('<i class="fa-solid fa-chevron-right sep"></i>') + "</div>"
+      + '<div class="st-umflow"><span style="--c:' + GRP.od.c + '"><i class="fa-solid ' + GRP.od.ic + '"></i><b>Overdue</b>SP lewat tenggat<small>tindak lanjut: ajukan SP berikutnya</small></span><span style="--c:' + GRP.rl.c + '"><i class="fa-solid ' + GRP.rl.ic + '"></i><b>Belum rilis</b>SP tanpa tanggal rilis<small>tindak lanjut: rilis SP</small></span></div>'
       + '<div class="st-umt"><div class="st-umr hd"><span>Akun</span><span>Terima</span><span>Wajib</span></div>' + L.map(function (u) {
         var on = umEff(u, "spnotif"), lk = umEff(u, "spnotif_lock"), cust = u.px && ("spnotif" in u.px || "spnotif_lock" in u.px), r = RL[u.role] || [u.role, "#64748b"];
         return '<div class="st-umr' + (u.active === false ? " off" : "") + '"><span class="who"><i class="av" style="--c:' + r[1] + '">' + E(String(u.name || "?").trim().split(/\s+/).map(function (w) { return w[0]; }).slice(0, 2).join("").toUpperCase()) + "</i><span><b>" + E(u.name) + '</b><small>@' + E(u.username) + ' · <em style="color:' + r[1] + '">' + r[0] + "</em>" + (cust ? " · diatur khusus" : " · ikut bawaan") + (u.active === false ? " · nonaktif" : "") + '</small></span></span><label class="st-sw"><input type="checkbox" data-u="' + u.id + '" data-k="spnotif" ' + (on ? "checked" : "") + '><i></i></label><label class="st-sw lk"><input type="checkbox" data-u="' + u.id + '" data-k="spnotif_lock" ' + (lk ? "checked" : "") + (on ? "" : " disabled") + "><i></i></label></div>";
