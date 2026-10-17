@@ -4210,6 +4210,148 @@ body>.pe-menu{z-index:120}
 #pe .pe-modes button{color:var(--pe-mute)}
 #pe .pe-modes button.on{color:#fff}
 #pe .pe-mpop>button.red b{color:#e11d48}
+/* ===================== v16 · pita alat mendatar berlabel, cari & ganti, tanda tangan, nomor halaman ===================== */
+.pe-rib{flex-shrink:0;background:var(--pe-card);border-bottom:1px solid var(--pe-line);box-shadow:0 6px 16px -14px #0f172a66;z-index:6;position:relative}
+.pe-rib-tabs{position:relative;display:flex;gap:2px;padding:4px 10px 0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--pe-line)}
+.pe-rib-tabs::-webkit-scrollbar{display:none}
+.pe-rib-tabs button{position:relative;display:flex;align-items:center;gap:7px;height:34px;padding:0 14px;border:0;background:none;border-radius:9px 9px 0 0;font-weight:800;color:var(--pe-mute);cursor:pointer;white-space:nowrap;transition:color .2s,background .2s}
+.pe-rib-tabs button:hover{color:var(--pe-ink);background:var(--pe-soft)}
+.pe-rib-tabs button.on{color:var(--pe-acc2)}
+.pe-rib-tabs button.has::after{content:"";position:absolute;top:8px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--pe-acc2)}
+.pe-rib-ind{position:absolute;left:0;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:linear-gradient(90deg,#6366f1,#4338ca);transition:transform .32s var(--pe-ease),width .32s var(--pe-ease);pointer-events:none}
+.pe-rib-row{display:flex;align-items:center;gap:4px;padding:6px 10px;overflow-x:auto;scrollbar-width:thin;min-height:52px}
+.pe-rib-g{display:flex;align-items:center;gap:4px}
+.pe-rib-g.in>*{animation:peRibIn .28s var(--pe-ease) both}
+.pe-rib-g.in>*:nth-child(2){animation-delay:.02s}.pe-rib-g.in>*:nth-child(3){animation-delay:.04s}.pe-rib-g.in>*:nth-child(4){animation-delay:.06s}.pe-rib-g.in>*:nth-child(5){animation-delay:.08s}.pe-rib-g.in>*:nth-child(n+6){animation-delay:.1s}
+@keyframes peRibIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.pe-rt{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 12px;border:1px solid transparent;border-radius:10px;background:none;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .15s,color .15s,border-color .15s,box-shadow .2s,transform .12s}
+#pe .pe-rt{color:var(--pe-ink)}
+.pe-rt i{font-size:14px;width:16px;text-align:center;color:var(--pe-mute);transition:color .15s,transform .2s var(--pe-ease)}
+.pe-rt:hover{background:var(--pe-soft);border-color:var(--pe-line)}
+.pe-rt:hover i{color:var(--pe-acc2);transform:translateY(-1px)}
+.pe-rt:active{transform:scale(.97)}
+#pe .pe-rt.on{background:linear-gradient(180deg,#5b54f0,#4338ca);color:#fff;border-color:#4338ca;box-shadow:0 8px 18px -10px #4338ca}
+.pe-rt.on i{color:#fff!important}
+#pe .pe-rt[data-tool=mark].on{background:linear-gradient(180deg,#ec4899,#be185d);border-color:#be185d}
+#pe .pe-rt[data-tool=tedit].on{background:linear-gradient(180deg,#06b6d4,#0e7490);border-color:#0e7490}
+#pe .pe-rt[data-tool=erase].on{background:linear-gradient(180deg,#f43f5e,#be123c);border-color:#be123c}
+#pe .pe-rt.red{color:#e11d48}.pe-rt.red i{color:#e11d48}
+.pe-rt.pin{border-color:var(--pe-line)}
+.pe-rsep{width:1px;height:26px;background:var(--pe-line);margin:0 6px;flex-shrink:0}
+/* panel properti: menempel di bawah pita, mendatar */
+#pe .pe-ed-main .pe-props{position:relative;top:auto;left:auto;transform:none;max-width:none;border:0;border-bottom:1px solid var(--pe-line);border-radius:0;box-shadow:none;background:var(--pe-glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);min-height:46px;padding:6px 12px;animation:none;flex-wrap:wrap;z-index:4}
+#pe .pe-ed-main .pe-props:empty{display:none}
+#pe .pe-ed-main .pe-stage{padding:26px 24px 90px}
+.pe-dock{display:none!important}
+/* bilah cepat berlabel */
+#pe .pe-qbar button{width:auto;height:34px;padding:0 9px;display:inline-flex;align-items:center;gap:6px;font-size:11.5px}
+.pe-qbar button b{font-weight:700}
+/* alur antar fitur */
+.pe-flow{display:inline-flex;align-items:center;gap:6px;margin-left:auto;padding:3px 3px 3px 10px;border-radius:12px;background:linear-gradient(90deg,#eef2ff,#f5f3ff);border:1px solid #c7d2fe}
+.dark .pe-flow{background:linear-gradient(90deg,#1e1b4b66,#2e106566);border-color:#3730a3}
+.pe-flow label{color:#4f46e5!important;font-size:11px;font-weight:800}
+.dark .pe-flow label{color:#a5b4fc!important}
+.pe-flow .pe-b{height:28px;border-color:#c7d2fe}
+.pe-mf{grid-template-columns:30px 70px 1fr}
+.pe-mf .acts{grid-column:3;flex-wrap:wrap}
+.pe-mf .acts .pe-b{height:28px;padding:0 9px;font-size:11.5px}
+/* cari & ganti / sensor */
+.pe-find{position:absolute;top:58px;right:14px;z-index:7;width:340px;max-height:calc(100% - 80px);display:flex;flex-direction:column;gap:7px;padding:12px;border-radius:16px;background:var(--pe-card);border:1px solid var(--pe-line);box-shadow:0 24px 54px -18px #0f172a99}
+.pe-find.in{animation:peFindIn .28s var(--pe-ease) both}
+@keyframes peFindIn{from{opacity:0;transform:translateX(16px) scale(.98)}to{opacity:1;transform:none}}
+.pe-find .hd{display:flex;align-items:center;gap:8px;font-size:13px}
+.pe-find .hd i{color:var(--pe-acc2)}
+.pe-find .hd b{flex:1;font-weight:800}
+.pe-find .x{width:28px;height:28px;border:0;border-radius:8px;background:var(--pe-soft);cursor:pointer}
+.pe-find label{color:var(--pe-mute);font-weight:700;font-size:11px}
+.pe-find .row{display:flex;gap:5px}
+.pe-find .row input{flex:1}
+.pe-find .row .pe-b{height:30px;padding:0 8px;font-size:11px}
+.pe-find>input{width:100%}
+.pe-fseg{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;border-radius:10px;background:var(--pe-soft)}
+.pe-fseg button{display:flex;gap:6px;align-items:center;justify-content:center;height:28px;border:0;border-radius:8px;background:none;font-weight:800;cursor:pointer;color:var(--pe-mute)}
+#pe .pe-fseg button.on{background:var(--pe-card);color:var(--pe-ink);box-shadow:0 1px 4px #0f172a22}
+.pe-fpre{display:flex;flex-wrap:wrap;gap:5px}
+.pe-fpre button{padding:4px 9px;border-radius:999px;border:1px solid var(--pe-line);background:none;font-size:11px;font-weight:700;cursor:pointer}
+#pe .pe-fpre button.on{background:#0f172a;color:#fff;border-color:#0f172a}
+.pe-find .sum{font-size:11.5px;min-height:16px}
+.pe-find .mute,.pe-find .sum .mute{color:var(--pe-mute)}
+.pe-find .list{flex:1;min-height:40px;max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:3px;margin:0 -4px;padding:0 4px}
+.pe-find .it{display:flex;align-items:center;gap:7px;padding:6px 7px;border-radius:9px;cursor:pointer;border:1px solid transparent;transition:background .15s}
+.pe-find .it:hover{background:var(--pe-soft)}
+.pe-find .it.on{background:#fff7ed;border-color:#fdba74}
+.dark .pe-find .it.on{background:#7c2d1233;border-color:#9a3412}
+.pe-find .it .pg{flex-shrink:0;padding:1px 6px;border-radius:6px;background:var(--pe-soft);font-weight:800;font-size:10px;color:var(--pe-mute)}
+.pe-find .it .cx{flex:1;min-width:0;font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pe-find mark{background:#fde047;color:#0f172a;border-radius:3px;padding:0 1px}
+.pe-find .it button{flex-shrink:0;padding:2px 7px;border-radius:6px;border:1px solid var(--pe-line);background:var(--pe-card);font-size:10.5px;font-weight:700;cursor:pointer;opacity:0;transition:opacity .15s}
+.pe-find .it:hover button,.pe-find .it.on button{opacity:1}
+.pe-find .ft{display:flex;gap:6px}
+.pe-find .ft .pe-b{flex:1}
+#pe .pe-find .pe-red{background:linear-gradient(180deg,#334155,#0f172a);border-color:#0f172a}
+.pe-find .note{margin:0;color:var(--pe-mute);font-size:10.5px;line-height:1.45}
+.pe-find .note i{margin-right:4px}
+/* tanda tangan */
+.pe-sgtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px;border-radius:12px;background:var(--pe-soft);margin-bottom:10px}
+.pe-sgtabs button{display:flex;gap:7px;align-items:center;justify-content:center;height:34px;border:0;border-radius:9px;background:none;font-weight:800;color:var(--pe-mute);cursor:pointer;transition:background .2s,color .2s}
+#pe .pe-sgtabs button.on{background:var(--pe-card);color:var(--pe-ink);box-shadow:0 2px 8px #0f172a1f}
+.pe-sgpad{position:relative;height:200px;border-radius:14px;border:1.5px dashed #c7d2fe;background:#fff;overflow:hidden;cursor:crosshair}
+.pe-sgpad canvas{position:absolute;inset:0;width:100%;height:100%}
+.pe-sgpad .ln{position:absolute;left:28px;right:28px;bottom:48px;border-bottom:1.5px solid #cbd5e1;pointer-events:none}
+.pe-sgpad .ln::before{content:"×";position:absolute;left:-16px;bottom:-4px;color:#94a3b8;font-size:16px}
+.pe-sgpad .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;color:#94a3b8;font-weight:700;pointer-events:none;animation:peFade .3s both}
+.pe-sgrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pe-sgrow label{color:var(--pe-mute);font-weight:700;font-size:11px}
+.pe-sgcol{display:flex;gap:5px;flex-wrap:wrap}
+.pe-sgcol button{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:9px;border:1px solid var(--pe-line);background:var(--pe-card);font-weight:700;cursor:pointer}
+.pe-sgcol button i{width:12px;height:12px;border-radius:50%;display:inline-block}
+#pe .pe-sgcol button.on{border-color:var(--pe-acc2);box-shadow:0 0 0 2px #6366f155}
+.pe-sgfonts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.pe-sgfonts button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:96px;border-radius:12px;border:1px solid var(--pe-line);background:#fff;font-size:30px;cursor:pointer;overflow:hidden;white-space:nowrap;padding:0 8px;transition:border-color .15s,box-shadow .2s,transform .15s}
+.pe-sgfonts button:hover{transform:translateY(-2px)}
+.pe-sgfonts button small{font:700 10px "Plus Jakarta Sans",sans-serif;color:#94a3b8}
+#pe .pe-sgfonts button.on{border-color:#db2777;box-shadow:0 0 0 3px #f9a8d455}
+.pe-sgup{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;height:200px;border:2px dashed var(--pe-line);border-radius:14px;cursor:pointer;color:var(--pe-mute);transition:border-color .2s,color .2s,background .2s}
+.pe-sgup:hover{border-color:#db2777;color:#db2777;background:#db27770a}
+.pe-sgup i{font-size:28px}
+.pe-sgprev{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px;border-radius:14px;background:repeating-conic-gradient(#f1f5f9 0 25%,#fff 0 50%) 0 0/14px 14px}
+.pe-sgprev img{max-height:170px;max-width:100%}
+.pe-sgopt{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.pe-sgopt .pe-tog{flex:1;min-width:220px;position:relative}
+.pe-sgopt>label:last-child{display:flex;align-items:center;gap:6px;color:var(--pe-mute);font-weight:700}
+/* nomor halaman / watermark */
+.pe-pn{display:grid;grid-template-columns:1fr 230px;gap:16px}
+.pe-pn-f{display:flex;flex-direction:column;gap:7px;min-width:0}
+.pe-pn-f>label,.pe-pn-f .g2 label{color:var(--pe-mute);font-weight:700;font-size:11px}
+.pe-pn-f .pe-tog{position:relative}
+.pe-pn-f .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pe-pn-f .g2>div{display:flex;flex-direction:column;gap:4px}
+.pe-pn-f .g2b{display:grid;grid-template-columns:1fr 100px;gap:6px}
+.pe-pn-f .chk{display:flex;align-items:center;gap:7px;font-weight:600;cursor:pointer}
+.pe-pn-f hr{border:0;border-top:1px solid var(--pe-line);margin:4px 0}
+.pe-pn-f input[type=color]{width:100%!important}
+.pe-pn-pv{display:flex;flex-direction:column;align-items:center;gap:6px}
+.pe-pn-pv small{color:var(--pe-mute);font-size:10.5px}
+.pe-pv{position:relative;width:100%;max-height:360px;background:#fff center/100% 100% no-repeat;border-radius:6px;box-shadow:0 0 0 1px var(--pe-line),0 14px 30px -16px #0f172a88;overflow:hidden}
+.pe-pv span{position:absolute;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .2s var(--pe-ease)}
+@media (max-width:899px){
+  .pe-rib-tabs{padding:3px 6px 0}
+  .pe-rib-tabs button{height:32px;padding:0 10px;font-size:11.5px}
+  .pe-rib-row{padding:5px 6px;min-height:48px}
+  .pe-rt{height:36px;padding:0 9px;font-size:11.5px}
+  #pe .pe-ed-main .pe-props{flex-wrap:nowrap;overflow-x:auto}
+  #pe .pe-ed-main .pe-stage{padding:14px 10px 76px}
+  .pe-find{left:8px;right:8px;width:auto;top:8px;max-height:calc(100% - 90px)}
+  .pe-pn{grid-template-columns:1fr}.pe-pn-pv{display:none}
+  .pe-sgfonts{grid-template-columns:1fr}.pe-sgfonts button{height:70px}
+  .pe-flow{margin-left:0}
+  .pe-ed-top .tx{display:none}
+}
+@media (max-width:899px){.pe-ed-body{flex-direction:row}}
+#pe .pe-sgfonts button{font-size:30px;color:inherit}
+#pe .pe-find .pe-red,#pe .pe-find .pe-red i{color:#fff}
+@media (max-width:899px){.pe-find{top:auto;bottom:72px;max-height:56%}.pe-find .list{max-height:none}}
+
 </style>
 <script id="addon_v14">
 /* ===================== STARLITE v14 · Split & Edit PDF =====================
@@ -4239,11 +4381,14 @@ body>.pe-menu{z-index:120}
     { k: "Open Sans", label: "Open Sans", fs: "open-sans" },
     { k: "Poppins", label: "Poppins", fs: "poppins" },
     { k: "Arimo", label: "Arimo (mirip Arial)", fs: "arimo" },
-    { k: "Carlito", label: "Carlito (mirip Calibri)", fs: "carlito" }
+    { k: "Carlito", label: "Carlito (mirip Calibri)", fs: "carlito" },
+    { k: "Dancing Script", label: "Dancing Script (tulisan tangan)", fs: "dancing-script", w4: 1 },
+    { k: "Great Vibes", label: "Great Vibes (tanda tangan)", fs: "great-vibes", w4: 1 },
+    { k: "Allura", label: "Allura (tanda tangan)", fs: "allura", w4: 1 }
   ];
   var fontOf = function (k) { return FONTS.filter(function (f) { return f.k === k; })[0] || FONTS[0]; };
   var fontCss = function (f) { return f.fs ? '"PE ' + f.k + '"' : f.css; };
-  var fontUrl = function (f, b, i) { return FS + f.fs + "@" + FSV + "/files/" + f.fs + "-latin-" + (b ? 700 : 400) + "-" + (i ? "italic" : "normal") + ".woff"; };
+  var fontUrl = function (f, b, i) { if (f.w4) b = i = false; return FS + f.fs + "@" + FSV + "/files/" + f.fs + "-latin-" + (b ? 700 : 400) + "-" + (i ? "italic" : "normal") + ".woff"; };
   var WF = {};
   function webFont(f, b, i) {
     if (!f.fs || typeof FontFace === "undefined") return Promise.resolve();
@@ -4336,7 +4481,7 @@ body>.pe-menu{z-index:120}
   function undo() { if (!PE.undo.length) return; PE.redo.push(snap()); restore(PE.undo.pop()); afterChange(); }
   function redo() { if (!PE.redo.length) return; PE.undo.push(snap()); restore(PE.redo.pop()); afterChange(); }
   function syncUndo() { ["pe-undo", "pe-ed-undo"].forEach(function (id) { var b = $(id); if (b) b.disabled = !PE.undo.length; }); ["pe-redo", "pe-ed-redo"].forEach(function (id) { var b = $(id); if (b) b.disabled = !PE.redo.length; }); }
-  function afterChange() { syncUndo(); render(); if (ED.on) { var p = edPage(); if (!p) edClose(); else { ED.sel = null; edLoad(); } } }
+  function afterChange() { syncUndo(); render(); if (ED.on) { var p = edPage(); if (!p) edClose(); else { ED.sel = null; ED.ms = []; edLoad(); } } }
 
   // ---------- dokumen sumber ----------
   function jsDoc(d) { if (!JS[d]) JS[d] = loadPdfJs().then(function (L) { return L.getDocument({ data: PE.docs[d].bytes.slice(0) }).promise; }); return JS[d]; }
@@ -4400,10 +4545,11 @@ body>.pe-menu{z-index:120}
         pushUndo();
         var pos = at == null ? PE.pages.length : at;
         PE.pages.splice.apply(PE.pages, [pos, 0].concat(add));
+        if (ED.on && at != null) toast(add.length + " halaman disisipkan setelah halaman " + at, "success");
       }
     } catch (e) { toast(e.message, "error", 7000); }
-    busy(null);
-    render();
+    busy(null); PE.insAt = null;
+    render(); if (ED.on) { stripReset(); edStrip(); edLoad(); }
   }
 
   function hideDz() { var d = $("pe-dz"); if (d) d.classList.add("hidden"); }
@@ -4793,8 +4939,8 @@ body>.pe-menu{z-index:120}
       + '<div class="pe-modes" id="pe-modes" role="tablist"><i class="pe-mode-ind"></i><button data-mode="split" role="tab"><i class="fa-solid fa-scissors"></i><span>Split</span></button><button data-mode="merge" role="tab"><i class="fa-solid fa-object-group"></i><span>Gabung</span></button><button data-mode="edit" role="tab"><i class="fa-solid fa-pen-to-square"></i><span>Edit</span></button></div>'
       + '<span class="pe-saved hidden" id="pe-saved" title="Pekerjaan tersimpan otomatis di perangkat ini — aman bila tab tertutup"><i class="fa-solid fa-cloud-arrow-down"></i><span class="tx">Tersimpan di perangkat</span></span>'
       + '<span class="pe-lock hidden" id="pe-lock"><i class="fa-solid fa-lock mr-1"></i>Mode Split saja</span>'
-      + '<button class="pe-b ic" id="pe-undo" title="Urungkan (Ctrl+Z)" disabled><i class="fa-solid fa-rotate-left"></i></button>'
-      + '<button class="pe-b ic" id="pe-redo" title="Ulangi (Ctrl+Y)" disabled><i class="fa-solid fa-rotate-right"></i></button>'
+      + '<button class="pe-b" id="pe-undo" title="Urungkan (Ctrl+Z)" disabled><i class="fa-solid fa-rotate-left"></i><span class="tx">Urungkan</span></button>'
+      + '<button class="pe-b" id="pe-redo" title="Ulangi (Ctrl+Y)" disabled><i class="fa-solid fa-rotate-right"></i><span class="tx">Ulangi</span></button>'
       + '<button class="pe-b" id="pe-add" title="Tambah PDF / gambar"><i class="fa-solid fa-plus"></i><span class="tx">Tambah file</span></button>'
       + '<button class="pe-b" id="pe-dl"><i class="fa-solid fa-download"></i><span class="tx">Unduh</span></button>'
       + '<button class="pe-b pri" id="pe-send"><i class="fa-solid fa-paper-plane"></i><span class="tx">Kirim / Simpan</span><i class="fa-solid fa-chevron-down" style="font-size:9px"></i></button>'
@@ -4825,12 +4971,14 @@ body>.pe-menu{z-index:120}
       var tag = (e.target.tagName || "").toLowerCase(); if ((tag === "input" || tag === "textarea" || tag === "select") && e.key !== "Escape") return;
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); e.shiftKey ? redo() : undo(); }
       else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") { e.preventDefault(); redo(); }
-      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "d" && ED.on && ED.sel) { e.preventDefault(); edDup(); }
+      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "d" && ED.on && (ED.sel || msOn())) { e.preventDefault(); msOn() ? msDup() : edDup(); }
+      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "f" && ED.on) { e.preventDefault(); edAct("find"); }
+      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "a" && ED.on) { e.preventDefault(); msAll(); }
       else if (ED.on && !e.ctrlKey && !e.metaKey && !e.altKey && e.key.length === 1 && TOOLS.some(function (t) { return t[3] && t[3].toLowerCase() === e.key.toLowerCase(); })) { pickTool(TOOLS.filter(function (t) { return t[3] && t[3].toLowerCase() === e.key.toLowerCase(); })[0][0]); }
       else if (ED.on && (e.key === "PageDown" || e.key === "PageUp")) { e.preventDefault(); edGo(e.key === "PageDown" ? 1 : -1); }
-      else if (ED.on && ED.sel && /^Arrow/.test(e.key)) { e.preventDefault(); var st = e.shiftKey ? 10 : 1; if (!ED.nudge) pushUndo(); clearTimeout(ED.nudge); ED.nudge = setTimeout(function () { ED.nudge = null; renderSoon(); }, 600); moveOp(ED.sel, e.key === "ArrowLeft" ? -st : e.key === "ArrowRight" ? st : 0, e.key === "ArrowUp" ? -st : e.key === "ArrowDown" ? st : 0); edDraw(); }
-      else if (e.key === "Delete" || e.key === "Backspace") { if (ED.on) { if (ED.sel) { e.preventDefault(); edDelSel(); } } else if (PE.sel.size) { e.preventDefault(); delPages(); } }
-      else if (e.key === "Escape") { var md = document.querySelector("#pe .pe-modal:last-of-type"); if (md && !md.dataset.busy) { md.remove(); return; } if (document.querySelector(".pe-menu")) closeMenus(); else if (ED.on && !$("pe-mpop").classList.contains("hidden")) hidePop(); else if (ED.on && ED.sel) { ED.sel = null; edProps(); edDraw(); } else if (ED.on) edClose(); }
+      else if (ED.on && (ED.sel || msOn()) && /^Arrow/.test(e.key)) { e.preventDefault(); var st = e.shiftKey ? 10 : 1; if (!ED.nudge) pushUndo(); clearTimeout(ED.nudge); ED.nudge = setTimeout(function () { ED.nudge = null; renderSoon(); }, 600); (msOn() ? ED.ms : [ED.sel]).forEach(function (o) { moveOp(o, e.key === "ArrowLeft" ? -st : e.key === "ArrowRight" ? st : 0, e.key === "ArrowUp" ? -st : e.key === "ArrowDown" ? st : 0); }); edDraw(); }
+      else if (e.key === "Delete" || e.key === "Backspace") { if (ED.on) { if (msOn()) { e.preventDefault(); msDel(); } else if (ED.sel) { e.preventDefault(); edDelSel(); } } else if (PE.sel.size) { e.preventDefault(); delPages(); } }
+      else if (e.key === "Escape") { var md = document.querySelector("#pe .pe-modal:last-of-type"); if (md && !md.dataset.busy) { md.remove(); return; } if (document.querySelector(".pe-menu")) closeMenus(); else if (ED.on && !$("pe-mpop").classList.contains("hidden")) hidePop(); else if (ED.on && $("pe-find") && !$("pe-find").classList.contains("hidden")) findClose(); else if (ED.on && (ED.sel || msOn())) { ED.sel = null; ED.ms = []; edProps(); edDraw(); } else if (ED.on) edClose(); }
     });
     return el;
   }
@@ -4854,29 +5002,48 @@ body>.pe-menu{z-index:120}
     renderBar(); renderGrid(S); renderFiles(S); syncUndo(); autosave();
   }
 
+  // alur antar fitur: hasil satu fitur bisa langsung dilanjutkan di fitur lain (halaman & editan ikut terbawa)
+  function flowHtml() {
+    if (PE.lock || !PE.pages.length) return "";
+    var B = { edit: ["fa-pen-to-square", isMerge() ? "Edit hasil gabungan" : "Edit halaman"], split: ["fa-scissors", isMerge() ? "Pecah hasil gabungan" : "Pecah jadi beberapa file"], merge: ["fa-object-group", "Gabung dengan file lain"] };
+    var list = PE.mode === "split" ? ["merge"] : isMerge() ? ["edit", "split"] : ["split", "merge"];
+    return '<span class="pe-flow"><label>Lanjut ke</label>' + list.map(function (k) { return '<button class="pe-b" data-flow="' + k + '"><i class="fa-solid ' + B[k][0] + '"></i>' + B[k][1] + "</button>"; }).join("") + "</span>";
+  }
+  function bindFlow(bar) {
+    bar.querySelectorAll("[data-flow]").forEach(function (b) { b.onclick = async function () {
+      var k = b.dataset.flow;
+      if (k === "merge") { PE.insAt = null; $("pe-in").click(); await switchMode("merge"); toast("Pilih file yang mau digabung — dokumen ini (beserta editannya) jadi file pertama", "info", 5000); return; }
+      if (k === "edit" && PE.mode === "split") { var id = PE.sel.size ? selected()[0].id : PE.pages[0].id; edOpen(id); return; }
+      var from = PE.mode; await switchMode(k);
+      toast(k === "edit" ? "Lanjut edit — urutan & pilihan halaman ikut terbawa" : (from === "merge" ? "Hasil gabungan siap dipecah — klik gunting di antara halaman atau isi rentang" : "Klik gunting di antara halaman untuk memecah — semua editan ikut terbawa"), "success", 5000);
+    }; });
+  }
   function renderBar() {
     var bar = $("pe-bar"), n = PE.sel.size, has = PE.pages.length > 0;
     if (!has) { bar.innerHTML = '<span style="color:var(--pe-mute)">Belum ada file.</span>'; return; }
     if (isMerge()) {
       bar.innerHTML = '<label>Urutkan</label><button class="pe-b" data-sort="az" title="Nama A–Z (angka diurutkan wajar: 2 sebelum 10)"><i class="fa-solid fa-arrow-down-a-z"></i>A–Z</button><button class="pe-b" data-sort="za"><i class="fa-solid fa-arrow-up-z-a"></i>Z–A</button><button class="pe-b" data-sort="rev" title="Balik urutan"><i class="fa-solid fa-right-left"></i>Balik</button>'
-        + '<span class="sep"></span><span style="color:var(--pe-mute);font-size:11px"><i class="fa-solid fa-grip-vertical"></i> Seret kartu untuk mengatur urutan · isi kolom halaman untuk memilih sebagian</span>';
+        + '<span class="sep"></span><span style="color:var(--pe-mute);font-size:11px"><i class="fa-solid fa-grip-vertical"></i> Seret kartu untuk mengatur urutan · isi kolom halaman untuk memilih sebagian</span>' + flowHtml();
+      bindFlow(bar);
       bar.querySelectorAll("[data-sort]").forEach(function (b) { b.onclick = function () { pushUndo(); var k = b.dataset.sort, col = new Intl.Collator("id", { numeric: true, sensitivity: "base" }); if (k === "rev") PE.mfiles.reverse(); else PE.mfiles.sort(function (a, c) { return (k === "az" ? 1 : -1) * col.compare(a.name, c.name); }); render(); }; });
       return;
     }
     var L = PE.lock;
+    var dis = n ? "" : "disabled";
     bar.innerHTML = '<button class="pe-b" id="pe-b-all"><i class="fa-regular fa-square-check"></i>' + (n === PE.pages.length ? "Batal pilih" : "Pilih semua") + "</button>"
-      + (n ? '<span style="font-weight:800">' + n + " dipilih</span>" : "")
-      + (L ? "" : '<button class="pe-b ic" id="pe-b-rl" title="Putar kiri" ' + (n ? "" : "disabled") + '><i class="fa-solid fa-rotate-left"></i></button><button class="pe-b ic" id="pe-b-rr" title="Putar kanan" ' + (n ? "" : "disabled") + '><i class="fa-solid fa-rotate-right"></i></button>'
-        + '<button class="pe-b ic" id="pe-b-dup" title="Duplikat" ' + (n ? "" : "disabled") + '><i class="fa-regular fa-clone"></i></button>'
-        + '<button class="pe-b ic" id="pe-b-ml" title="Geser ke kiri" ' + (n ? "" : "disabled") + '><i class="fa-solid fa-arrow-left"></i></button><button class="pe-b ic" id="pe-b-mr" title="Geser ke kanan" ' + (n ? "" : "disabled") + '><i class="fa-solid fa-arrow-right"></i></button>')
-      + '<button class="pe-b ic red" id="pe-b-del" title="Hapus halaman" ' + (n && n < PE.pages.length ? "" : "disabled") + '><i class="fa-regular fa-trash-can"></i></button>'
-      + (L || !isEdit() ? "" : '<button class="pe-b pri" id="pe-b-ed" ' + (PE.pages.length ? "" : "disabled") + '><i class="fa-solid fa-pen-ruler"></i>Edit halaman</button><span style="color:var(--pe-mute);font-size:11px">Klik dua kali halaman untuk mengedit · seret untuk menyusun</span>')
+      + (n ? '<span class="pe-chip" style="--c:#4f46e5">' + n + " dipilih</span>" : "")
+      + (L ? "" : '<button class="pe-b" id="pe-b-rl" ' + dis + '><i class="fa-solid fa-rotate-left"></i>Putar kiri</button><button class="pe-b" id="pe-b-rr" ' + dis + '><i class="fa-solid fa-rotate-right"></i>Putar kanan</button>'
+        + '<button class="pe-b" id="pe-b-dup" ' + dis + '><i class="fa-regular fa-clone"></i>Duplikat</button>'
+        + '<button class="pe-b" id="pe-b-ml" title="Geser halaman terpilih ke kiri" ' + dis + '><i class="fa-solid fa-arrow-left"></i>Geser</button><button class="pe-b" id="pe-b-mr" title="Geser halaman terpilih ke kanan" ' + dis + '>Geser<i class="fa-solid fa-arrow-right"></i></button>')
+      + '<button class="pe-b red" id="pe-b-del" ' + (n && n < PE.pages.length ? "" : "disabled") + '><i class="fa-regular fa-trash-can"></i>Hapus</button>'
+      + (L ? "" : '<button class="pe-b pri" id="pe-b-ed"><i class="fa-solid fa-pen-ruler"></i>Edit halaman</button>')
       + (isEdit() ? "" : '<span class="sep"></span><label>Pecah</label>'
       + '<input id="pe-rg" placeholder="mis. 1-3, 4, 5-8" style="width:140px" title="Rentang halaman per file">'
       + '<button class="pe-b" id="pe-b-rg">Terapkan</button>'
       + '<button class="pe-b" id="pe-b-n" title="Pecah tiap N halaman">Tiap <input id="pe-nn" type="number" min="1" value="2" style="width:48px;height:24px;padding:2px 4px" onclick="event.stopPropagation()"> hal</button>'
       + '<button class="pe-b" id="pe-b-1">Per halaman</button>'
-      + '<button class="pe-b" id="pe-b-0" ' + (PE.cuts.size ? "" : "disabled") + '>Satukan</button>');
+      + '<button class="pe-b" id="pe-b-0" ' + (PE.cuts.size ? "" : "disabled") + '>Satukan</button>') + flowHtml();
+    bindFlow(bar);
     var on = function (id, f) { var b = $(id); if (b) b.onclick = f; };
     on("pe-b-all", function () { if (PE.sel.size === PE.pages.length) PE.sel.clear(); else PE.pages.forEach(function (p) { PE.sel.add(p.id); }); render(); });
     on("pe-b-rl", function () { rotatePages(-90); }); on("pe-b-rr", function () { rotatePages(90); });
@@ -4928,7 +5095,7 @@ body>.pe-menu{z-index:120}
       card.innerHTML = (first && !isEdit() ? '<span class="fl">File ' + s.no + "</span>" : "")
         + (ix && !isEdit() ? '<button class="cut" title="' + (first ? "Gabungkan dengan file sebelumnya" : "Mulai file baru dari halaman ini") + '"><i class="fa-solid fa-scissors"></i></button>' : "")
         + '<div class="th"><img alt="" draggable="false"><span class="ck"><i class="fa-solid fa-check"></i></span>'
-        + '<span class="tools">' + (PE.lock || !isEdit() ? "" : '<button data-a="ed" title="Edit halaman"><i class="fa-solid fa-pen"></i></button>') + '<button data-a="vw" title="Lihat besar"><i class="fa-solid fa-magnifying-glass-plus"></i></button></span>'
+        + '<span class="tools">' + (PE.lock ? "" : '<button data-a="ed" title="Edit halaman ini"><i class="fa-solid fa-pen"></i></button>') + '<button data-a="vw" title="Lihat besar"><i class="fa-solid fa-magnifying-glass-plus"></i></button></span>'
         + (p.ops.length ? '<span class="mk">diedit</span>' : "") + "</div>"
         + '<div class="ft">Hal ' + (ix + 1) + "<span>· " + (PE.docs.length > 1 ? E(String(PE.docs[p.d].name).slice(0, 14)) + " h" + (p.i + 1) : "asli " + (p.i + 1)) + (p.rot ? " · ↻" + p.rot + "°" : "") + "</span></div>";
       var img = card.querySelector("img"); img.style.aspectRatio = D.w + "/" + D.h;
@@ -4940,7 +5107,7 @@ body>.pe-menu{z-index:120}
         else if (PE.sel.has(p.id)) PE.sel.delete(p.id); else PE.sel.add(p.id);
         PE.last = ix; render();
       };
-      card.querySelector(".th").ondblclick = function () { if (!PE.lock && isEdit()) edOpen(p.id); };
+      card.querySelector(".th").ondblclick = function () { if (!PE.lock) edOpen(p.id); };
       var cut = card.querySelector(".cut");
       if (cut) cut.onclick = function (e) { e.stopPropagation(); pushUndo(); if (PE.cuts.has(p.id)) PE.cuts.delete(p.id); else PE.cuts.add(p.id); render(); };
       if (!PE.lock) touchDrag(card, p);
@@ -5031,7 +5198,7 @@ body>.pe-menu{z-index:120}
         + '<div class="th"><img alt="" style="aspect-ratio:' + D.w + "/" + D.h + ";transform:rotate(" + f.rot + 'deg)"><span class="cnt">' + r.idx.length + (r.idx.length !== all.length ? "/" + all.length : "") + " hal</span></div>"
         + '<div class="info"><input class="nm" data-nm="' + i + '" value="' + E(f.name) + '" title="Nama file (dipakai sebagai judul bookmark)"><small>' + all.length + " halaman · " + Math.round(D.w * 0.3528) + "×" + Math.round(D.h * 0.3528) + " mm · " + MB(mb) + "</small>"
         + '<div class="rg"><input data-rg="' + i + '" value="' + E(f.range) + '" placeholder="Semua halaman"><button class="pe-b" data-pick="' + i + '" title="Pilih halaman secara visual"><i class="fa-regular fa-images"></i>Pilih</button></div>' + (warn ? '<div class="ws">' + warn + "</div>" : "") + "</div>"
-        + '<div class="acts"><button class="pe-b ic" data-mv="' + i + '|-1" title="Naik" ' + (i ? "" : "disabled") + '><i class="fa-solid fa-arrow-up"></i></button><button class="pe-b ic" data-mv="' + i + '|1" title="Turun" ' + (i < F.length - 1 ? "" : "disabled") + '><i class="fa-solid fa-arrow-down"></i></button><button class="pe-b ic" data-rot="' + i + '" title="Putar semua halaman file ini"><i class="fa-solid fa-rotate-right"></i></button><button class="pe-b ic red" data-rm="' + i + '" title="Keluarkan dari gabungan"><i class="fa-solid fa-xmark"></i></button></div></div>';
+        + '<div class="acts"><button class="pe-b" data-med="' + i + '" title="Edit isi file ini (teks, TTD, coretan…)"><i class="fa-solid fa-pen-to-square"></i>Edit</button><button class="pe-b" data-mv="' + i + '|-1" ' + (i ? "" : "disabled") + '><i class="fa-solid fa-arrow-up"></i>Naik</button><button class="pe-b" data-mv="' + i + '|1" ' + (i < F.length - 1 ? "" : "disabled") + '><i class="fa-solid fa-arrow-down"></i>Turun</button><button class="pe-b" data-rot="' + i + '" title="Putar semua halaman file ini"><i class="fa-solid fa-rotate-right"></i>Putar</button><button class="pe-b red" data-rm="' + i + '" title="Keluarkan dari gabungan"><i class="fa-solid fa-xmark"></i>Keluarkan</button></div></div>';
     }).join("") + '<label class="pe-madd" for="pe-in"><i class="fa-solid fa-plus"></i><span><b>Tambah file</b><small>PDF, JPG atau PNG — boleh beberapa sekaligus</small></span></label></div>';
     F.forEach(function (f) { SEEN.add("f" + f.d); });
     grid.querySelectorAll(".pe-mf").forEach(function (card) {
@@ -5048,6 +5215,7 @@ body>.pe-menu{z-index:120}
     grid.querySelectorAll("[data-rot]").forEach(function (b) { b.onclick = function () { pushUndo(); var f = F[+b.dataset.rot]; f.rot = (f.rot + 90) % 360; render(); }; });
     grid.querySelectorAll("[data-rm]").forEach(function (b) { b.onclick = function () { var f = F[+b.dataset.rm]; pushUndo(); PE.pages = PE.pages.filter(function (p) { return p.d !== f.d; }); PE.mfiles.splice(+b.dataset.rm, 1); render(); toast("\"" + f.name + "\" dikeluarkan — Urungkan untuk mengembalikan", "info"); }; });
     grid.querySelectorAll("[data-pick]").forEach(function (b) { b.onclick = function () { pickPages(F[+b.dataset.pick]); }; });
+    grid.querySelectorAll("[data-med]").forEach(function (b) { b.onclick = function () { var f = F[+b.dataset.med], all = pagesOf(f), r = parseRange(f.range, all.length), p0 = all[r.idx[0] || 0]; if (p0) edOpen(p0.id); }; });
   }
   function pickPages(f) {
     var all = pagesOf(f), r = parseRange(f.range, all.length), on = new Set(r.idx);
@@ -5108,7 +5276,7 @@ body>.pe-menu{z-index:120}
       + '<div class="pe-files-l">' + S.map(function (s, i) {
         var a = s.start + 1, b = s.start + s.pages.length, pr = PE.pairs[s.key], k = safeName(nameOf(s, S.length)).toLowerCase();
         return '<div class="pe-file' + (dup[k] > 1 ? " dup" : "") + '" style="--c:' + s.color + '" data-key="' + s.key + '">'
-          + '<div class="pe-file-h"><b>File ' + s.no + "</b><small>" + s.pages.length + " hal · " + (a === b ? "hal " + a : "hal " + a + "–" + b) + '</small><span style="flex:1"></span><button class="pe-b ic" data-dl="' + i + '" title="Unduh file ini" style="height:26px;width:26px"><i class="fa-solid fa-download"></i></button></div>'
+          + '<div class="pe-file-h"><b>File ' + s.no + "</b><small>" + s.pages.length + " hal · " + (a === b ? "hal " + a : "hal " + a + "–" + b) + '</small><span style="flex:1"></span>' + (PE.lock ? "" : '<button class="pe-b" data-fed="' + i + '" title="Edit isi file ini" style="height:26px;padding:0 8px"><i class="fa-solid fa-pen-to-square"></i>Edit</button>') + '<button class="pe-b" data-dl="' + i + '" title="Unduh file ini" style="height:26px;padding:0 8px"><i class="fa-solid fa-download"></i>Unduh</button></div>'
           + '<div class="pe-nm"><input data-k="' + s.key + '" data-t="nm" value="' + E(nameOf(s, S.length)) + '" placeholder="Nama file"><span>.pdf</span></div>'
           + (dup[k] > 1 ? '<small style="color:#d97706;font-weight:700"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Nama sama dengan file lain — akan diberi akhiran (2)</small>' : "")
           + (pr ? '<div class="pe-pair">' + pairLabel(pr) + '<button class="x" data-unpair="' + s.key + '" title="Lepas"><i class="fa-solid fa-xmark"></i></button></div>'
@@ -5128,6 +5296,7 @@ body>.pe-menu{z-index:120}
     });
     box.querySelectorAll("[data-unpair]").forEach(function (b) { b.onclick = function () { pushUndo(); delete PE.pairs[b.dataset.unpair]; render(); }; });
     box.querySelectorAll("[data-dl]").forEach(function (b) { b.onclick = function () { dlOne(+b.dataset.dl); }; });
+    box.querySelectorAll("[data-fed]").forEach(function (b) { b.onclick = function () { edOpen(S[+b.dataset.fed].pages[0].id); }; });
     box.querySelectorAll("[data-v]").forEach(function (b) { b.onclick = function () { var p = $("pe-pat"), s0 = p.selectionStart == null ? p.value.length : p.selectionStart; p.value = p.value.slice(0, s0) + b.dataset.v + p.value.slice(p.selectionEnd == null ? s0 : p.selectionEnd); p.focus(); }; });
     var go = function () { pushUndo(); PE.pattern = $("pe-pat").value.trim() || ""; S.forEach(function (s) { delete PE.names[s.key]; }); render(); toast("Pola nama diterapkan ke " + S.length + " file", "success"); };
     $("pe-pat-go").onclick = go; $("pe-pat").onkeydown = function (e) { if (e.key === "Enter") go(); };
@@ -5507,10 +5676,10 @@ body>.pe-menu{z-index:120}
     TXT[key] = lines.filter(function (l) { return l.str; });
     return TXT[key];
   }
-  function inkColor(l) {
-    var c = ED.base; if (!c) return "#000000";
+  function inkColor(l, cv, DD) {
+    var c = cv || ED.base; if (!c) return "#000000";
     try {
-      var s = c.width / dims(edPage()).w, x0 = Math.max(0, Math.floor(l.x * s)), y0 = Math.max(0, Math.floor(l.top * s)), w = Math.max(1, Math.min(c.width - x0, Math.ceil(l.w * s))), h = Math.max(1, Math.min(c.height - y0, Math.ceil(l.h * s)));
+      var s = c.width / (DD || dims(edPage())).w, x0 = Math.max(0, Math.floor(l.x * s)), y0 = Math.max(0, Math.floor(l.top * s)), w = Math.max(1, Math.min(c.width - x0, Math.ceil(l.w * s))), h = Math.max(1, Math.min(c.height - y0, Math.ceil(l.h * s)));
       var d = c.getContext("2d").getImageData(x0, y0, w, h).data, min = 999, px = [];
       for (var i = 0; i < d.length; i += 4) { var lum = 0.3 * d[i] + 0.59 * d[i + 1] + 0.11 * d[i + 2]; px.push(lum); if (lum < min) min = lum; }
       var acc = [0, 0, 0], n = 0;
@@ -5521,26 +5690,31 @@ body>.pe-menu{z-index:120}
     } catch (e) { return "#000000"; }
   }
   // kotak teks hasil edit melebar mengikuti isi (seperti Nitro), baru membungkus di tepi halaman
-  function fitW(o) {
-    var p = edPage(), D = p ? dims(p) : { w: 9999 };
+  function fitW(o, pp) {
+    var p = pp || edPage(), D = p ? dims(p) : { w: 9999 };
     MC.font = cssFont(o, 1);
     var widest = String(o.text || "").split("\n").reduce(function (m, ln) { return Math.max(m, MC.measureText(ln).width); }, 0);
     o.w = Math.max(o.minW || 20, Math.min(widest + PAD * 2 + 2, D.w - o.x - 2));
     o.h = textH(o);
   }
   function lineAt(pt) { var L = ED.lines || [], tol = 2 / ED.k; for (var i = 0; i < L.length; i++) { var l = L[i]; if (pt.x >= l.x - tol && pt.x <= l.x + l.w + tol && pt.y >= l.top - tol && pt.y <= l.top + l.h + tol) return l; } return null; }
+  // satu baris teks asli → [penutup, kotak teks baru] (font, ukuran, warna & latar disamakan)
+  async function lineOps(p, l, txt, cv, DD) {
+    var f = fontOf(l.mf.font); await webFont(f, l.mf.b, l.mf.i);
+    var size = Math.round(l.size * 2) / 2, bg = sampleBg({ x: l.x - 1, y: l.top - 1, w: l.w + 2, h: l.h + 2 }, cv, DD), col = inkColor(l, cv, DD);
+    var t = { t: "text", x: l.x - PAD, y: 0, w: 10, text: txt, font: l.mf.font, size: size, b: l.mf.b, i: l.mf.i, u: false, al: "l", c: col, bg: "", op: 1, a: 0, src: l.key, orig: l.str };
+    t.y = l.base - baseY(t, 0);
+    t.autoW = true; t.minW = l.w + PAD * 2; fitW(t, p);
+    var cover = ED.st.tmode === "perm" ? { t: "erase", fill: "auto", col: bg } : { t: "mask", col: bg };
+    Object.assign(cover, { x: l.x - 1.5, y: l.top - 1.5, w: l.w + 3, h: l.h + 3, key: l.key });
+    return [cover, t];
+  }
   async function editLine(l) {
     var p = edPage(); if (!p) return;
     var done = p.ops.filter(function (o) { return o.t === "text" && o.src === l.key; })[0];
     if (done) { ED.sel = done; edProps(); edText(done); return; }
-    var f = fontOf(l.mf.font); await webFont(f, l.mf.b, l.mf.i);
-    var size = Math.round(l.size * 2) / 2, bg = sampleBg({ x: l.x - 1, y: l.top - 1, w: l.w + 2, h: l.h + 2 }), col = inkColor(l);
-    var t = { t: "text", x: l.x - PAD, y: 0, w: 10, text: l.str, font: l.mf.font, size: size, b: l.mf.b, i: l.mf.i, u: false, al: "l", c: col, bg: "", op: 1, a: 0, src: l.key, orig: l.str };
-    t.y = l.base - baseY(t, 0);
-    t.autoW = true; t.minW = l.w + PAD * 2; fitW(t);
-    var cover = ED.st.tmode === "perm" ? { t: "erase", fill: "auto", col: bg } : { t: "mask", col: bg };
-    Object.assign(cover, { x: l.x - 1.5, y: l.top - 1.5, w: l.w + 3, h: l.h + 3, key: l.key });
-    pushUndo(); p.ops.push(cover, t); ED.sel = t; edProps(); edText(t, false, true); renderSoon();
+    var two = await lineOps(p, l, l.str), t = two[1];
+    pushUndo(); p.ops.push(two[0], t); ED.sel = t; edProps(); edText(t, false, true); renderSoon();
   }
 
   // ===================== deteksi tanda tangan & stempel =====================
@@ -5639,7 +5813,7 @@ body>.pe-menu{z-index:120}
     if (ED.tool === "mark") toast(n ? n + " tanda tangan / stempel ditemukan — klik untuk mengolahnya" : (ED.marks && ED.marks.length ? "Hanya gambar/logo yang ditemukan" : "Tidak ada tanda tangan / stempel di halaman ini"), n ? "success" : "info", 4000);
   }
   function animMarks() { var f = function () { edDraw(); if (Date.now() - ED.markAnim < 700) requestAnimationFrame(f); }; requestAnimationFrame(f); setTimeout(edDraw, 720); }
-  var MK = { ttd: ["Tanda tangan", "#2563eb"], stempel: ["Stempel", "#db2777"], gambar: ["Gambar / logo", "#0891b2"] };
+  var MK = { ttd: ["Tanda tangan", "#2563eb"], stempel: ["Stempel", "#db2777"], gambar: ["Gambar / logo", "#0891b2"], paraf: ["Paraf", "#7c3aed"] };
   function drawMarks(g, k, p) {
     if (ED.tool !== "mark" || !ED.marks) return;
     var t = Math.min(1, (Date.now() - (ED.markAnim || 0)) / 600);
@@ -5730,18 +5904,19 @@ body>.pe-menu{z-index:120}
   }
   // ---------- pustaka TTD & stempel (tersimpan di perangkat) ----------
   async function libGet() { try { return (await kv("get", "lib")) || []; } catch (e) { return []; } }
-  async function libAdd(it) { var L = await libGet(); L.unshift({ id: "L" + Date.now().toString(36), kind: it.kind || "gambar", name: it.name || "Gambar", bytes: it.bytes, at: Date.now() }); await kv("put", "lib", L.slice(0, 40)); }
+  async function libAdd(it) { var L = await libGet(); L.unshift({ id: "L" + Date.now().toString(36), kind: it.kind || "gambar", name: it.name || "Gambar", bytes: it.bytes, mime: it.mime || "image/png", at: Date.now() }); await kv("put", "lib", L.slice(0, 40)); }
   async function libPanel() {
     var L = await libGet();
     var m = modal('<i class="fa-solid fa-book-bookmark" style="color:#4f46e5"></i> Pustaka TTD & stempel',
       '<p style="color:var(--pe-mute);font-size:11.5px">Tersimpan di perangkat ini. Klik untuk menaruh di halaman. Tambah dari hasil deteksi (menu Deteksi TTD & stempel) atau unggah gambar.</p><div class="pe-lib" id="pe-lib"></div>',
-      '<label class="pe-b" style="margin-right:auto"><input type="file" accept="image/png,image/jpeg" class="hidden" id="pe-lib-in"><i class="fa-solid fa-upload"></i>Unggah gambar</label><button class="pe-b" data-c>Tutup</button>', 620);
+      '<label class="pe-b"><input type="file" accept="image/png,image/jpeg" class="hidden" id="pe-lib-in"><i class="fa-solid fa-upload"></i>Unggah gambar</label><button class="pe-b" data-sg style="margin-right:auto"><i class="fa-solid fa-signature"></i>Buat tanda tangan</button><button class="pe-b" data-c>Tutup</button>', 620);
     m.querySelector("[data-c]").onclick = function () { m.remove(); };
+    m.querySelector("[data-sg]").onclick = function () { m.remove(); signPad(); };
     var urls = [];
     var draw = function () {
       var box = m.querySelector("#pe-lib");
-      box.innerHTML = L.length ? L.map(function (it, i) { var u = URL.createObjectURL(new Blob([it.bytes], { type: "image/png" })); urls.push(u); return '<div class="pe-lib-it" data-i="' + i + '"><img src="' + u + '"><b>' + E(it.name) + '</b><small>' + (MK[it.kind] || MK.gambar)[0] + '</small><button class="x" data-del="' + i + '" title="Hapus dari pustaka"><i class="fa-solid fa-xmark"></i></button></div>'; }).join("") : '<div class="pe-lib-empty"><i class="fa-solid fa-signature"></i><b>Pustaka masih kosong</b><small>Deteksi TTD / stempel di dokumen lalu pilih "Simpan ke pustaka", atau unggah gambar.</small></div>';
-      box.querySelectorAll(".pe-lib-it").forEach(function (el) { el.onclick = async function (e) { if (e.target.closest("[data-del]")) return; var it = L[+el.dataset.i]; m.remove(); var id = await regImage(it.bytes, "image/png"); placeImg(id); }; });
+      box.innerHTML = L.length ? L.map(function (it, i) { var u = URL.createObjectURL(new Blob([it.bytes], { type: it.mime || "image/png" })); urls.push(u); return '<div class="pe-lib-it" data-i="' + i + '"><img src="' + u + '"><b>' + E(it.name) + '</b><small>' + (MK[it.kind] || MK.gambar)[0] + '</small><button class="x" data-del="' + i + '" title="Hapus dari pustaka"><i class="fa-solid fa-xmark"></i></button></div>'; }).join("") : '<div class="pe-lib-empty"><i class="fa-solid fa-signature"></i><b>Pustaka masih kosong</b><small>Deteksi TTD / stempel di dokumen lalu pilih "Simpan ke pustaka", atau unggah gambar.</small></div>';
+      box.querySelectorAll(".pe-lib-it").forEach(function (el) { el.onclick = async function (e) { if (e.target.closest("[data-del]")) return; var it = L[+el.dataset.i]; m.remove(); var id = await regImage(it.bytes, it.mime || "image/png"); placeImg(id); }; });
       box.querySelectorAll("[data-del]").forEach(function (b) { b.onclick = async function (e) { e.stopPropagation(); L.splice(+b.dataset.del, 1); await kv("put", "lib", L); draw(); }; });
     };
     draw();
@@ -5757,22 +5932,30 @@ body>.pe-menu{z-index:120}
   // ===================== editor halaman =====================
   var ED = { on: false, id: null, tool: "sel", sel: null, k: 1, zoom: 1, base: null, drag: null, edit: null,
     st: { tmode: "cover", c: "#111827", lw: 2.5, op: 1, hlc: "#facc15", hlw: 14, fill: "#ffffff", font: "Helvetica", size: 12, b: false, i: false, u: false, al: "l", tc: "#111827", bg: "", top: 1, a: 0 } };
-  var TOOLS = [
-    ["sel", "fa-arrow-pointer", "Pilih & atur", "V"], ["tedit", "fa-i-cursor", "Edit teks asli", "E"], ["mark", "fa-stamp", "Deteksi TTD & stempel", "D"], "|",
-    ["text", "fa-font", "Tambah teks", "T"], ["img", "fa-image", "Sisipkan gambar", "I"], ["lib", "fa-book-bookmark", "Pustaka TTD & stempel", "L"], "|",
-    ["erase", "fa-eraser", "Hapus area", "X"], ["pen", "fa-pen", "Pena", "P"], ["hl", "fa-highlighter", "Stabilo", "H"], ["line", "fa-minus", "Garis", ""], ["arrow", "fa-arrow-right-long", "Panah", "A"],
-    ["rect", "fa-regular fa-square", "Kotak", "R"], ["ellipse", "fa-regular fa-circle", "Lingkaran", "O"], ["check", "fa-check", "Centang", "C"], ["rub", "fa-delete-left", "Hapus coretan", ""]
+  // pita alat (ribbon) mendatar: tab berlabel → tombol ikon + teks. "@" = aksi sekali klik (bukan alat).
+  var RIB = [
+    { k: "teks", t: "Teks", ic: "fa-font", it: [["tedit", "fa-i-cursor", "Edit teks asli", "E"], ["text", "fa-font", "Tambah teks", "T"], ["@find", "fa-magnifying-glass", "Cari & ganti", "F"]] },
+    { k: "ttd", t: "TTD & Stempel", ic: "fa-signature", it: [["@sign", "fa-signature", "Buat tanda tangan", "S"], ["mark", "fa-stamp", "Deteksi TTD & stempel", "D"], ["@lib", "fa-book-bookmark", "Pustaka", "L"], ["@img", "fa-image", "Sisipkan gambar", "I"]] },
+    { k: "coret", t: "Coret & Bentuk", ic: "fa-pen", it: [["pen", "fa-pen", "Pena", "P"], ["hl", "fa-highlighter", "Stabilo", "H"], ["line", "fa-minus", "Garis", "G"], ["arrow", "fa-arrow-right-long", "Panah", "A"], ["rect", "fa-regular fa-square", "Kotak", "R"], ["ellipse", "fa-regular fa-circle", "Lingkaran", "O"], ["check", "fa-check", "Centang", "C"], ["rub", "fa-delete-left", "Hapus coretan", ""]] },
+    { k: "hapus", t: "Hapus & Sensor", ic: "fa-eraser", it: [["erase", "fa-eraser", "Hapus area", "X"], ["@redact", "fa-user-secret", "Sensor kata / data", ""]] },
+    { k: "hal", t: "Halaman", ic: "fa-file-lines", it: [["@pnum", "fa-list-ol", "Nomor, header & footer", ""], ["@wm", "fa-droplet", "Watermark", ""], "|", ["@rotl", "fa-rotate-left", "Putar kiri", ""], ["@rotr", "fa-rotate-right", "Putar kanan", ""], ["@pdup", "fa-regular fa-clone", "Duplikat", ""], ["@pdel", "fa-regular fa-trash-can", "Hapus halaman", ""], "|", ["@pins", "fa-file-circle-plus", "Sisipkan file", ""], ["@pcut", "fa-scissors", "Pecah di sini", ""], ["@pmerge", "fa-object-group", "Gabung file lain", ""]] }
   ];
+  var TOOLS = [].concat.apply([["sel", "fa-arrow-pointer", "Pilih", "V"]], RIB.map(function (g) { return g.it.filter(function (t) { return t !== "|"; }); }));
+  var tabOf = function (t) { var r = RIB.filter(function (g) { return g.it.some(function (x) { return x[0] === t; }); })[0]; return r ? r.k : null; };
+  var faI = function (c) { return c.indexOf("fa-regular") === 0 ? c : "fa-solid " + c; };
+  function ribBtn(t) { if (t === "|") return '<span class="pe-rsep"></span>'; var act = t[0][0] === "@"; return '<button class="pe-rt' + (t[0] === "@pdel" ? " red" : "") + '" ' + (act ? 'data-act="' + t[0].slice(1) + '"' : 'data-tool="' + t[0] + '"') + ' title="' + E(t[2]) + (t[3] ? " (" + t[3] + ")" : "") + '"><i class="' + faI(t[1]) + '"></i><span>' + E(t[2]) + "</span></button>"; }
   var edPage = function () { return PE.pages.filter(function (p) { return p.id === ED.id; })[0]; };
   function edShell() {
     var el = $("pe-ed"); if (el) return el;
     el = document.createElement("div"); el.id = "pe-ed"; el.className = "hidden";
-    el.innerHTML = '<div class="pe-top pe-ed-top"><button class="pe-b" id="pe-ed-back"><i class="fa-solid fa-arrow-left"></i><span class="tx">Semua halaman</span></button>'
+    el.innerHTML = '<div class="pe-top pe-ed-top"><button class="pe-b" id="pe-ed-back"><i class="fa-solid fa-arrow-left"></i><span class="tx" id="pe-ed-backt">Semua halaman</span></button>'
       + '<div class="pe-title"><b id="pe-ed-t">Edit halaman</b><small id="pe-ed-s"></small></div>'
-      + '<button class="pe-b ic" id="pe-ed-undo" title="Urungkan (Ctrl+Z)"><i class="fa-solid fa-rotate-left"></i></button><button class="pe-b ic" id="pe-ed-redo" title="Ulangi (Ctrl+Y)"><i class="fa-solid fa-rotate-right"></i></button>'
+      + '<button class="pe-b" id="pe-ed-undo" title="Urungkan (Ctrl+Z)"><i class="fa-solid fa-rotate-left"></i><span class="tx">Urungkan</span></button><button class="pe-b" id="pe-ed-redo" title="Ulangi (Ctrl+Y)"><i class="fa-solid fa-rotate-right"></i><span class="tx">Ulangi</span></button>'
       + '<button class="pe-b pri" id="pe-ed-done"><i class="fa-solid fa-check"></i><span class="tx">Selesai</span></button></div>'
-      + '<div class="pe-ed-body"><nav class="pe-dock" id="pe-ed-tools">' + TOOLS.map(function (t) { if (t === "|") return '<span class="pe-dock-sep"></span>'; return '<button class="pe-dk" data-tool="' + t[0] + '" aria-label="' + t[2] + '"><i class="' + (t[1].indexOf("fa-regular") === 0 ? t[1] : "fa-solid " + t[1]) + '"></i><span class="tip">' + t[2] + (t[3] ? "<kbd>" + t[3] + "</kbd>" : "") + "</span></button>"; }).join("") + "</nav>"
-      + '<div class="pe-ed-main"><div class="pe-props" id="pe-ed-props"></div>'
+      + '<nav class="pe-rib" id="pe-ed-tools"><div class="pe-rib-tabs" role="tablist" id="pe-rib-tabs"><i class="pe-rib-ind"></i>' + RIB.map(function (g) { return '<button role="tab" data-rt="' + g.k + '"><i class="fa-solid ' + g.ic + '"></i><span>' + g.t + "</span></button>"; }).join("") + '</div>'
+      + '<div class="pe-rib-row"><button class="pe-rt pin" data-tool="sel" title="Pilih, geser & atur objek (V) · Shift+klik / tarik kotak untuk memilih banyak"><i class="fa-solid fa-arrow-pointer"></i><span>Pilih</span></button><span class="pe-rsep"></span>'
+      + RIB.map(function (g) { return '<div class="pe-rib-g" data-g="' + g.k + '">' + g.it.map(ribBtn).join("") + "</div>"; }).join("") + "</div></nav>"
+      + '<div class="pe-ed-body"><div class="pe-ed-main"><div class="pe-props" id="pe-ed-props"></div>'
       + '<div class="pe-stage" id="pe-ed-stage"><div class="pe-paper" id="pe-ed-paper"><canvas class="bs"></canvas><canvas class="ov"></canvas><div class="pe-scan" id="pe-scan"></div><div class="pe-qbar hidden" id="pe-qbar"></div><div class="pe-mpop hidden" id="pe-mpop"></div></div></div>'
       + '<div class="pe-nav"><button class="pe-b ic" id="pe-ed-prev" title="Halaman sebelumnya (PgUp)"><i class="fa-solid fa-chevron-left"></i></button><span class="pg" id="pe-ed-pg">1 / 1</span><button class="pe-b ic" id="pe-ed-next" title="Halaman berikutnya (PgDn)"><i class="fa-solid fa-chevron-right"></i></button>'
       + '<span class="sep"></span><button class="pe-b ic" id="pe-ed-zo" title="Perkecil"><i class="fa-solid fa-minus"></i></button><button class="pe-b zl" id="pe-ed-zl" title="Kembali ke ukuran pas">100%</button><button class="pe-b ic" id="pe-ed-zi" title="Perbesar"><i class="fa-solid fa-plus"></i></button></div>'
@@ -5785,6 +5968,8 @@ body>.pe-menu{z-index:120}
     $("pe-ed-zi").onclick = function () { ED.zoom = Math.min(3, ED.zoom * 1.25); edLoad(); }; $("pe-ed-zo").onclick = function () { ED.zoom = Math.max(0.4, ED.zoom / 1.25); edLoad(); };
     $("pe-ed-zl").onclick = function () { ED.zoom = 1; edLoad(); };
     el.querySelectorAll("[data-tool]").forEach(function (b) { b.onclick = function () { pickTool(b.dataset.tool); }; });
+    el.querySelectorAll("#pe-rib-tabs [data-rt]").forEach(function (b) { b.onclick = function () { ED.tab = b.dataset.rt; ribSync(); var first = RIB.filter(function (g) { return g.k === ED.tab; })[0].it.filter(function (t) { return t !== "|" && t[0][0] !== "@"; })[0]; if (first && tabOf(ED.tool) !== ED.tab && ED.tool !== "sel") pickTool(first[0]); }; });
+    el.querySelectorAll(".pe-rib [data-act]").forEach(function (b) { b.onclick = function () { edAct(b.dataset.act, b); }; });
     var ii = document.createElement("input"); ii.type = "file"; ii.id = "pe-img-in"; ii.className = "hidden"; ii.accept = "image/png,image/jpeg,image/webp,image/gif,image/bmp,.png,.jpg,.jpeg,.webp"; el.appendChild(ii);
     ii.onchange = async function () {
       var f = ii.files && ii.files[0]; ii.value = ""; if (!f) { ED.replace = null; return; }
@@ -5814,17 +5999,18 @@ body>.pe-menu{z-index:120}
   }
   function pickTool(t) {
     edCommitText(); hidePop();
+    if (t[0] === "@") return edAct(t.slice(1));
     if (t === "img") { ED.imgAt = null; $("pe-img-in").click(); return; }
     if (t === "lib") { libPanel(); return; }
-    ED.tool = t; ED.sel = null; edTools(); edProps(); edDraw();
+    ED.tool = t; ED.sel = null; ED.ms = []; if (tabOf(t)) ED.tab = tabOf(t); edTools(); edProps(); edDraw();
     if (t === "mark") runDetect(false);
   }
-  function edOpen(id) { if (PE.lock || !isEdit()) return; edShell(); ED.on = true; ED.id = id; ED.sel = null; ED.zoom = 1; if (!ED.toolSet) { ED.tool = "tedit"; ED.toolSet = 1; } var el = $("pe-ed"); el.classList.remove("hidden"); el.classList.remove("in"); void el.offsetWidth; el.classList.add("in"); edTools(); edProps(); edStrip(); edLoad(); }
-  function edClose() { edCommitText(); hidePop(); ED.on = false; ED.sel = null; var el = $("pe-ed"); if (el) el.classList.add("hidden"); render(); }
+  function edOpen(id) { if (PE.lock) return; edShell(); ED.on = true; ED.id = id; ED.sel = null; ED.ms = []; ED.zoom = 1; if (!ED.tab) ED.tab = "teks"; if (!ED.toolSet) { ED.tool = "tedit"; ED.toolSet = 1; } var el = $("pe-ed"); el.classList.remove("hidden"); el.classList.remove("in"); void el.offsetWidth; el.classList.add("in"); $("pe-ed-backt").textContent = "Kembali ke " + MODE_T[PE.mode]; edTools(); edProps(); edStrip(); edLoad(); }
+  function edClose() { edCommitText(); hidePop(); findClose(); ED.on = false; ED.sel = null; ED.ms = []; var el = $("pe-ed"); if (el) el.classList.add("hidden"); render(); }
   function edGo(d) { var i = PE.pages.indexOf(edPage()) + d; if (i < 0 || i >= PE.pages.length) return; edGoTo(PE.pages[i].id, d); }
   function edGoTo(id, dir) {
     edCommitText(); hidePop(); if (id === ED.id) return;
-    ED.id = id; ED.sel = null; ED.guides = null;
+    ED.id = id; ED.sel = null; ED.ms = []; ED.guides = null;
     var pp = $("pe-ed-paper"); if (pp) { pp.classList.remove("slideL", "slideR"); void pp.offsetWidth; pp.classList.add(dir < 0 ? "slideR" : "slideL"); }
     $("pe-ed-stage").scrollTop = 0; edStrip(); edLoad(); if (ED.tool === "mark") runDetect(false);
   }
@@ -5860,11 +6046,27 @@ body>.pe-menu{z-index:120}
     ED.lines = []; edDraw(); syncUndo();
     try { var my2 = ED.loadSeq; var ln = await pageLines(p); if (edPage() === p && my2 === ED.loadSeq) { ED.lines = ln; edDraw(); edProps(); edTools(); } } catch (e) { console.warn("deteksi teks:", e); }
   }
-  function edTools() { document.querySelectorAll("#pe-ed-tools [data-tool]").forEach(function (b) { b.classList.toggle("on", b.dataset.tool === ED.tool); }); var H = { mark: "Deteksi TTD & stempel: tanda tangan (biru), stempel (merah muda) dan gambar tertanam ditandai otomatis. Klik kotaknya untuk mengolah.", tedit: "Edit Teks: teks asli diberi garis biru — klik barisnya, ketik perubahan, klik di luar untuk selesai. Font, ukuran & warna disamakan otomatis.", sel: "Klik objek untuk memilih, geser untuk memindah, tarik sudut kanan bawah untuk mengubah ukuran. Klik dua kali teks untuk mengedit.", text: "Klik di halaman untuk menulis teks.", erase: "Tarik kotak di area yang ingin dihapus permanen (termasuk PDF berisi gambar / JPG).", pen: "Tarik untuk menggambar bebas.", hl: "Tarik untuk menandai dengan stabilo.", line: "Tarik untuk membuat garis.", arrow: "Tarik untuk membuat panah.", rect: "Tarik untuk membuat kotak.", ellipse: "Tarik untuk membuat lingkaran / elips.", check: "Klik untuk menaruh tanda centang.", rub: "Klik atau sapukan pada coretan / bentuk untuk menghapusnya." }; $("pe-ed-hint").textContent = H[ED.tool] || ""; }
+  function ribSync() {
+    var tabs = $("pe-rib-tabs"); if (!tabs) return; var tb = ED.tab || "teks", ix = RIB.map(function (g) { return g.k; }).indexOf(tb), on = tabs.querySelector('[data-rt="' + tb + '"]');
+    tabs.querySelectorAll("[data-rt]").forEach(function (b) { b.classList.toggle("on", b.dataset.rt === tb); b.setAttribute("aria-selected", b.dataset.rt === tb); b.classList.toggle("has", b.dataset.rt === tabOf(ED.tool) && b.dataset.rt !== tb); });
+    var ind = tabs.querySelector(".pe-rib-ind"); if (on && ind) { ind.style.width = on.offsetWidth + "px"; ind.style.transform = "translateX(" + on.offsetLeft + "px)"; }
+    document.querySelectorAll("#pe-ed-tools .pe-rib-g").forEach(function (g) { var sh = g.dataset.g === tb; if (sh && g.classList.contains("hidden")) { g.classList.remove("hidden"); g.classList.remove("in"); void g.offsetWidth; g.classList.add("in"); } else if (!sh) g.classList.add("hidden"); });
+    void ix;
+  }
+  function edTools() { document.querySelectorAll("#pe-ed-tools [data-tool]").forEach(function (b) { b.classList.toggle("on", b.dataset.tool === ED.tool); }); ribSync(); var H = { mark: "Deteksi TTD & stempel: tanda tangan (biru), stempel (merah muda) dan gambar tertanam ditandai otomatis. Klik kotaknya untuk mengolah.", tedit: "Edit Teks: teks asli diberi garis biru — klik barisnya, ketik perubahan, klik di luar untuk selesai. Font, ukuran & warna disamakan otomatis.", sel: "Klik objek untuk memilih, geser untuk memindah, tarik sudut kanan bawah untuk mengubah ukuran. Klik dua kali teks untuk mengedit.", text: "Klik di halaman untuk menulis teks.", erase: "Tarik kotak di area yang ingin dihapus permanen (termasuk PDF berisi gambar / JPG).", pen: "Tarik untuk menggambar bebas.", hl: "Tarik untuk menandai dengan stabilo.", line: "Tarik untuk membuat garis.", arrow: "Tarik untuk membuat panah.", rect: "Tarik untuk membuat kotak.", ellipse: "Tarik untuk membuat lingkaran / elips.", check: "Klik untuk menaruh tanda centang.", rub: "Klik atau sapukan pada coretan / bentuk untuk menghapusnya." }; $("pe-ed-hint").textContent = H[ED.tool] || ""; }
 
   function swatches(cur, key) { return PAL.map(function (c) { return '<button class="pe-sw ' + (String(cur).toLowerCase() === c ? "on" : "") + '" data-sw="' + key + '" data-c="' + c + '" style="background:' + c + '"></button>'; }).join("") + '<input type="color" data-col="' + key + '" value="' + (cur && cur[0] === "#" && cur.length === 7 ? cur : "#111827") + '">'; }
   function edProps() {
     var P = $("pe-ed-props"), o = ED.sel, t = o ? o.t : ED.tool, st = ED.st, h = "";
+    if (msOn()) {
+      var AL = [["l", "fa-align-left", "Kiri"], ["c", "fa-align-center", "Tengah"], ["r", "fa-align-right", "Kanan"], ["t", "fa-arrow-up-long", "Atas"], ["m", "fa-grip-lines", "Tengah ↕"], ["b", "fa-arrow-down-long", "Bawah"]];
+      P.innerHTML = '<span class="pe-chip" style="--c:#4f46e5">' + ED.ms.length + ' objek dipilih</span><label>Ratakan</label>' + AL.map(function (a) { return '<button class="pe-b" data-al2="' + a[0] + '" style="height:28px"><i class="fa-solid ' + a[1] + '"></i>' + a[2] + "</button>"; }).join("")
+        + '<label>Jarak sama</label><button class="pe-b" data-al2="dh" style="height:28px"><i class="fa-solid fa-arrows-left-right"></i>Mendatar</button><button class="pe-b" data-al2="dv" style="height:28px"><i class="fa-solid fa-arrows-up-down"></i>Tegak</button>'
+        + '<span style="flex:1"></span><button class="pe-b" data-mdup style="height:28px"><i class="fa-regular fa-clone"></i>Duplikat</button><button class="pe-b red" data-mdel style="height:28px"><i class="fa-regular fa-trash-can"></i>Hapus</button>';
+      P.querySelectorAll("[data-al2]").forEach(function (b) { b.onclick = function () { msAlign(b.dataset.al2); }; });
+      P.querySelector("[data-mdup]").onclick = msDup; P.querySelector("[data-mdel]").onclick = msDel;
+      return;
+    }
     var v = function (k, d) { return o ? (o[k] == null ? d : o[k]) : d; };
     if (t === "text") {
       var font = v("font", st.font), size = v("size", st.size), c = v("c", st.tc), bg = v("bg", st.bg), opv = v("op", st.top), a = v("a", st.a);
@@ -5875,11 +6077,11 @@ body>.pe-menu{z-index:120}
         + '<label>Warna</label>' + swatches(c, "c")
         + '<label>Latar</label><button class="pe-b ' + (bg ? "" : "on") + '" data-nobg style="height:28px">Tanpa</button><input type="color" data-col="bg" value="' + (bg || "#fff59d") + '">'
         + '<label>Transparansi</label><input type="range" data-p="op" min="0.1" max="1" step="0.05" value="' + opv + '" style="width:80px">'
-        + '<label>Putar</label><input type="number" data-p="a" min="-180" max="360" step="5" value="' + a + '" style="width:58px"><button class="pe-b ic" data-rot="90" title="Putar 90°"><i class="fa-solid fa-rotate-right"></i></button>';
+        + '<label>Putar</label><input type="number" data-p="a" min="-180" max="360" step="5" value="' + a + '" style="width:58px"><button class="pe-b" data-rot="90" style="height:28px" title="Putar 90°"><i class="fa-solid fa-rotate-right"></i>Putar 90°</button>';
     } else if (t === "img") {
       var im = o && IMGS[o.ref], clean = !!(im && im.orig);
       h = '<label>Transparansi</label><input type="range" data-p="op" min="0.1" max="1" step="0.05" value="' + v("op", 1) + '" style="width:90px">'
-        + '<button class="pe-b ic" data-rot="90" title="Putar 90°"><i class="fa-solid fa-rotate-right"></i></button>'
+        + '<button class="pe-b" data-rot="90" style="height:28px" title="Putar 90°"><i class="fa-solid fa-rotate-right"></i>Putar 90°</button>'
         + '<button class="pe-b ' + (clean ? "on" : "") + '" data-knock style="height:30px" title="Buat latar putih jadi transparan — cocok untuk stempel / tanda tangan hasil scan"><i class="fa-solid fa-wand-magic-sparkles"></i>Hapus latar putih</button>'
         + '<button class="pe-b" data-fit style="height:30px" title="Kembalikan rasio asli gambar"><i class="fa-solid fa-expand"></i>Rasio asli</button>'
         + '<button class="pe-b" data-repl style="height:30px"><i class="fa-solid fa-arrow-right-arrow-left"></i>Ganti gambar</button>'
@@ -5900,14 +6102,14 @@ body>.pe-menu{z-index:120}
         + '<button class="pe-b ' + (ED.st.tmode !== "perm" ? "on" : "") + '" data-tm="cover" style="height:28px" title="Ditutup warna latar · halaman tetap tajam & teks lain bisa dicari">Tutup rapi</button>'
         + '<button class="pe-b ' + (ED.st.tmode === "perm" ? "on" : "") + '" data-tm="perm" style="height:28px" title="Benar-benar dihapus dari file · halaman disimpan sebagai gambar">Hapus permanen</button>';
     } else if (t === "sel" || t === "rub") {
-      h = '<span style="color:var(--pe-mute)">' + (t === "sel" ? "Pilih objek untuk mengubah gaya, warna, ukuran, atau menghapusnya." : "Klik coretan / bentuk yang ingin dihapus.") + "</span>";
+      h = '<span style="color:var(--pe-mute)">' + (t === "sel" ? "Klik objek untuk mengatur · Shift+klik atau tarik kotak untuk memilih banyak · Ctrl+A pilih semua" : "Klik coretan / bentuk yang ingin dihapus.") + "</span>";
     } else {
       var isHl = t === "hl", col = v("c", isHl ? st.hlc : st.c), lw = v("lw", isHl ? st.hlw : st.lw), opv2 = v("op", isHl ? 0.4 : st.op);
       h = '<label>Warna</label>' + swatches(col, "c")
         + (t === "check" ? '<label>Ukuran</label><input type="range" data-p="w" min="8" max="60" step="1" value="' + v("w", 18) + '" style="width:100px">' : '<label>Tebal</label><input type="range" data-p="lw" min="0.5" max="' + (isHl ? 40 : 16) + '" step="0.5" value="' + lw + '" style="width:100px">')
         + (isHl ? "" : '<label>Transparansi</label><input type="range" data-p="op" min="0.1" max="1" step="0.05" value="' + opv2 + '" style="width:80px">');
     }
-    if (o) h += '<span style="flex:1"></span><button class="pe-b ic" data-ord="1" title="Bawa ke depan"><i class="fa-solid fa-layer-group"></i></button><button class="pe-b ic" data-ord="-1" title="Kirim ke belakang" style="transform:scaleY(-1)"><i class="fa-solid fa-layer-group"></i></button><button class="pe-b ic" data-dupo title="Duplikat objek"><i class="fa-regular fa-clone"></i></button><button class="pe-b red" data-delo style="height:30px"><i class="fa-regular fa-trash-can"></i>Hapus objek</button>';
+    if (o) h += '<span style="flex:1"></span><button class="pe-b red" data-delo style="height:28px"><i class="fa-regular fa-trash-can"></i>Hapus objek</button>';
     P.innerHTML = h;
     var setv = function (k, val, live) {
       var map = { c: t === "text" ? "tc" : t === "hl" ? "hlc" : "c", lw: t === "hl" ? "hlw" : "lw", op: t === "text" ? "top" : "op" };
@@ -5974,9 +6176,17 @@ body>.pe-menu{z-index:120}
       });
       g.restore();
     }
-    drawMarks(g, k, p);
+    drawMarks(g, k, p); drawFind(g, k, p);
     if (ED.guides) { g.save(); g.scale(k, k); g.strokeStyle = "#ec4899"; g.lineWidth = 1 / ED.k; g.setLineDash([5 / ED.k, 4 / ED.k]); var D = dims(p); ED.guides.forEach(function (gd) { g.beginPath(); if (gd.x != null) { g.moveTo(gd.x, 0); g.lineTo(gd.x, D.h); } else { g.moveTo(0, gd.y); g.lineTo(D.w, gd.y); } g.stroke(); }); g.restore(); }
     if (ED.hoverOp && ED.hoverOp !== ED.sel && p.ops.indexOf(ED.hoverOp) >= 0 && ED.tool === "sel") { var hb = bbox(ED.hoverOp); g.save(); g.scale(k, k); g.strokeStyle = "rgba(79,70,229,.45)"; g.lineWidth = 1 / ED.k; g.strokeRect(hb.x - 2, hb.y - 2, hb.w + 4, hb.h + 4); g.restore(); }
+    if (ED.box) { g.save(); g.scale(k, k); g.fillStyle = "rgba(79,70,229,.08)"; g.strokeStyle = "#4f46e5"; g.lineWidth = 1 / ED.k; g.setLineDash([4 / ED.k, 3 / ED.k]); g.fillRect(ED.box.x, ED.box.y, ED.box.w, ED.box.h); g.strokeRect(ED.box.x, ED.box.y, ED.box.w, ED.box.h); g.restore(); }
+    if (msOn()) {
+      ED.ms = ED.ms.filter(function (q) { return p.ops.indexOf(q) >= 0; });
+      var G = msBox(); g.save(); g.scale(k, k); g.lineWidth = 1.2 / ED.k; g.strokeStyle = "#4f46e5";
+      ED.ms.forEach(function (q) { var bq = bbox(q); g.setLineDash([]); g.fillStyle = "rgba(79,70,229,.06)"; g.fillRect(bq.x - 2, bq.y - 2, bq.w + 4, bq.h + 4); g.strokeRect(bq.x - 2, bq.y - 2, bq.w + 4, bq.h + 4); });
+      if (G) { g.setLineDash([6 / ED.k, 4 / ED.k]); g.strokeRect(G.x - 6, G.y - 6, G.w + 12, G.h + 12); g.setLineDash([]); var lab = ED.ms.length + " objek"; g.font = "700 " + 10 / ED.k + "px sans-serif"; var lw = g.measureText(lab).width + 10 / ED.k; g.fillStyle = "#4f46e5"; g.fillRect(G.x - 6, G.y - 6 - 16 / ED.k, lw, 15 / ED.k); g.fillStyle = "#fff"; g.fillText(lab, G.x - 6 + 5 / ED.k, G.y - 6 - 5 / ED.k); }
+      g.restore();
+    }
     var o = ED.sel;
     if (o && p.ops.indexOf(o) >= 0) {
       var b = bbox(o), W = o.w, H = o.t === "check" ? o.w : o.h;
@@ -6049,16 +6259,33 @@ body>.pe-menu{z-index:120}
     var sig = o.t + (o.t === "text" ? 1 : 0);
     if (q.dataset.sig !== sig) {
       q.dataset.sig = sig;
-      q.innerHTML = (o.t === "text" ? '<button data-q="edit" title="Edit teks"><i class="fa-solid fa-i-cursor"></i></button>' : "")
-        + '<button data-q="dup" title="Duplikat (Ctrl+D)"><i class="fa-regular fa-clone"></i></button><button data-q="front" title="Bawa ke depan"><i class="fa-solid fa-arrow-up-wide-short"></i></button><button data-q="back" title="Kirim ke belakang"><i class="fa-solid fa-arrow-down-short-wide"></i></button>'
-        + (o.t === "img" ? '<button data-q="all" title="Tempel ke halaman lain (paraf / stempel semua halaman)"><i class="fa-solid fa-layer-group"></i></button>' : "")
-        + '<span></span><button data-q="del" class="red" title="Hapus (Del)"><i class="fa-regular fa-trash-can"></i></button>';
-      q.querySelectorAll("[data-q]").forEach(function (bt) { bt.onpointerdown = function (e) { e.stopPropagation(); }; bt.onclick = function (e) { e.stopPropagation(); var o2 = ED.sel; if (!o2) return; var a = bt.dataset.q; if (a === "edit") edText(o2); else if (a === "dup") edDup(); else if (a === "front") edOrder(1); else if (a === "back") edOrder(-1); else if (a === "del") edDelSel(); else if (a === "all") stampAll(o2); }; });
+      q.innerHTML = (o.t === "text" ? '<button data-q="edit" title="Edit teks"><i class="fa-solid fa-i-cursor"></i><b>Edit</b></button>' : "")
+        + '<button data-q="dup" title="Duplikat (Ctrl+D)"><i class="fa-regular fa-clone"></i><b>Duplikat</b></button><button data-q="front" title="Bawa ke depan"><i class="fa-solid fa-arrow-up-wide-short"></i><b>Depan</b></button><button data-q="back" title="Kirim ke belakang"><i class="fa-solid fa-arrow-down-short-wide"></i><b>Belakang</b></button>'
+        + (o.t === "img" ? '<button data-q="all" title="Tempel ke halaman lain (paraf / stempel semua halaman)"><i class="fa-solid fa-layer-group"></i><b>Semua hal.</b></button><button data-q="lib" title="Simpan gambar ini ke pustaka"><i class="fa-solid fa-book-bookmark"></i><b>Simpan</b></button>' : "")
+        + '<span></span><button data-q="del" class="red" title="Hapus (Del)"><i class="fa-regular fa-trash-can"></i><b>Hapus</b></button>';
+      q.querySelectorAll("[data-q]").forEach(function (bt) { bt.onpointerdown = function (e) { e.stopPropagation(); }; bt.onclick = function (e) { e.stopPropagation(); var o2 = ED.sel; if (!o2) return; var a = bt.dataset.q; if (a === "edit") edText(o2); else if (a === "dup") edDup(); else if (a === "front") edOrder(1); else if (a === "back") edOrder(-1); else if (a === "del") edDelSel(); else if (a === "all") stampAll(o2); else if (a === "lib") { var im = IMGS[o2.ref]; if (im) libAdd({ kind: "gambar", bytes: im.bytes, mime: im.mime, name: "Gambar · " + (safeName(PE.base) || "dokumen") }).then(function () { toast("Tersimpan di Pustaka TTD & stempel", "success"); }); } }; });
     }
     q.classList.remove("hidden");
     var top = b.y * k - q.offsetHeight - (rotatable(o) ? 40 : 12);
     q.style.left = Math.max(4, Math.min($("pe-ed-paper").offsetWidth - q.offsetWidth - 4, (b.x + b.w / 2) * k - q.offsetWidth / 2)) + "px";
     q.style.top = (top < 4 ? (b.y + (b.h || 0)) * k + 14 : top) + "px";
+  }
+  // ---------- pilih banyak objek: Shift+klik, tarik kotak, Ctrl+A ----------
+  var msOn = function () { return !!(ED.ms && ED.ms.length > 1); };
+  function msBox() { if (!ED.ms || !ED.ms.length) return null; var bs = ED.ms.map(bbox), x0 = Math.min.apply(null, bs.map(function (b) { return b.x; })), y0 = Math.min.apply(null, bs.map(function (b) { return b.y; })), x1 = Math.max.apply(null, bs.map(function (b) { return b.x + b.w; })), y1 = Math.max.apply(null, bs.map(function (b) { return b.y + b.h; })); return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }; }
+  function msToggle(h) { var L = msOn() ? ED.ms.slice() : (ED.sel ? [ED.sel] : []), i = L.indexOf(h); if (i >= 0) L.splice(i, 1); else L.push(h); if (L.length > 1) { ED.ms = L; ED.sel = null; } else { ED.ms = []; ED.sel = L[0] || null; } edProps(); edDraw(); }
+  function msAll() { var p = edPage(); if (!p) return; edCommitText(); var L = p.ops.filter(function (o) { return o.t !== "mask"; }); if (!L.length) return toast("Belum ada objek di halaman ini", "info"); if (ED.tool !== "sel") { ED.tool = "sel"; edTools(); } if (L.length === 1) { ED.sel = L[0]; ED.ms = []; } else { ED.sel = null; ED.ms = L; } edProps(); edDraw(); }
+  function msDel() { var p = edPage(); if (!p || !msOn()) return; pushUndo(); var n = ED.ms.length; p.ops = p.ops.filter(function (o) { return ED.ms.indexOf(o) < 0; }); ED.ms = []; edProps(); edDraw(); renderSoon(); toast(n + " objek dihapus — Ctrl+Z untuk mengembalikan", "info"); }
+  function msDup() { var p = edPage(); if (!p || !msOn()) return; pushUndo(); var cs = ED.ms.map(function (o) { var c = clone(o); delete c.src; delete c.key; moveOp(c, 12, 12); p.ops.push(c); return c; }); ED.ms = cs; edProps(); edDraw(); renderSoon(); }
+  function msAlign(k) {
+    var G = msBox(); if (!G) return; pushUndo();
+    if (k === "dh" || k === "dv") {
+      var hz = k === "dh", L = ED.ms.slice().sort(function (a, b) { var A = bbox(a), B = bbox(b); return hz ? A.x - B.x : A.y - B.y; });
+      if (L.length < 3) { PE.undo.pop(); syncUndo(); return toast("Perlu minimal 3 objek untuk meratakan jarak", "info"); }
+      var tot = L.reduce(function (s, o) { var b = bbox(o); return s + (hz ? b.w : b.h); }, 0), gap = ((hz ? G.w : G.h) - tot) / (L.length - 1), cur = hz ? G.x : G.y;
+      L.forEach(function (o) { var b = bbox(o); if (hz) moveOp(o, cur - b.x, 0); else moveOp(o, 0, cur - b.y); cur += (hz ? b.w : b.h) + gap; });
+    } else ED.ms.forEach(function (o) { var b = bbox(o); moveOp(o, k === "l" ? G.x - b.x : k === "c" ? G.x + G.w / 2 - b.x - b.w / 2 : k === "r" ? G.x + G.w - b.x - b.w : 0, k === "t" ? G.y - b.y : k === "m" ? G.y + G.h / 2 - b.y - b.h / 2 : k === "b" ? G.y + G.h - b.y - b.h : 0); });
+    edDraw(); renderSoon();
   }
   function edDup() { var p = edPage(), o = ED.sel; if (!p || !o) return; pushUndo(); var c = clone(o); delete c.src; delete c.key; moveOp(c, 12, 12); p.ops.push(c); ED.sel = c; edDraw(); edProps(); renderSoon(); }
   var resizable = function (o) { return o.t === "text" || o.t === "img" || o.t === "rect" || o.t === "ellipse" || o.t === "erase" || o.t === "check"; };
@@ -6074,10 +6301,10 @@ body>.pe-menu{z-index:120}
   function hit(pt, filter) { var p = edPage(), tol = 5 / ED.k; for (var i = p.ops.length - 1; i >= 0; i--) { var o = p.ops[i]; if (o.t === "mask" || (filter && !filter(o))) continue; if (hitOp(o, pt, tol)) return o; } return null; }
   function moveOp(o, dx, dy) { if (o.pts) o.pts = o.pts.map(function (q) { return [q[0] + dx, q[1] + dy]; }); if (o.x1 != null) { o.x1 += dx; o.x2 += dx; o.y1 += dy; o.y2 += dy; } if (o.x != null) { o.x += dx; o.y += dy; } }
   function edPt(e) { var r = e.target.getBoundingClientRect(); return { x: (e.clientX - r.left) / ED.k, y: (e.clientY - r.top) / ED.k }; }
-  function sampleBg(o) {
-    var c = ED.base; if (!c) return "#ffffff";
+  function sampleBg(o, cv, DD) {
+    var c = cv || ED.base; if (!c) return "#ffffff";
     try {
-      var g = c.getContext("2d"), s = c.width / dims(edPage()).w, x0 = Math.max(0, Math.floor(o.x * s) - 3), y0 = Math.max(0, Math.floor(o.y * s) - 3), x1 = Math.min(c.width - 1, Math.ceil((o.x + o.w) * s) + 3), y1 = Math.min(c.height - 1, Math.ceil((o.y + o.h) * s) + 3);
+      var g = c.getContext("2d"), s = c.width / (DD || dims(edPage())).w, x0 = Math.max(0, Math.floor(o.x * s) - 3), y0 = Math.max(0, Math.floor(o.y * s) - 3), x1 = Math.min(c.width - 1, Math.ceil((o.x + o.w) * s) + 3), y1 = Math.min(c.height - 1, Math.ceil((o.y + o.h) * s) + 3);
       var acc = [0, 0, 0], n = 0, add = function (x, y, w, h) { if (w <= 0 || h <= 0) return; var d = g.getImageData(x, y, w, h).data; for (var i = 0; i < d.length; i += 4) { acc[0] += d[i]; acc[1] += d[i + 1]; acc[2] += d[i + 2]; n++; } };
       add(x0, y0, x1 - x0, 3); add(x0, y1 - 3, x1 - x0, 3); add(x0, y0, 3, y1 - y0); add(x1 - 3, y0, 3, y1 - y0);
       if (!n) return "#ffffff";
@@ -6105,9 +6332,13 @@ body>.pe-menu{z-index:120}
     if (t === "sel" || (ED.sel && handleAt(ED.sel, pt))) {
       var o = ED.sel, hid = o ? handleAt(o, pt) : null;
       if (hid) { ED.drag.mode = hid === "rot" ? "rot" : "resize"; ED.drag.hid = hid; ED.drag.o0 = clone(o); return; }
-      var h = hit(pt); ED.sel = h; edProps(); edDraw();
+      var h = hit(pt);
+      if (e.shiftKey && h && t === "sel") { msToggle(h); ED.drag = null; return; }
+      if (msOn() && h && ED.ms.indexOf(h) >= 0) { ED.drag.mode = "mmove"; ED.drag.o0s = ED.ms.map(clone); return; }
+      ED.ms = []; ED.sel = h; edProps(); edDraw();
       if (h) { ED.drag.mode = "move"; ED.drag.o0 = clone(h); }
       else if (e.pointerType === "touch") { var sg = $("pe-ed-stage"); ED.drag.mode = "pan"; ED.drag.cx = e.clientX; ED.drag.cy = e.clientY; ED.drag.sl = sg.scrollLeft; ED.drag.st = sg.scrollTop; }
+      else if (t === "sel") { ED.drag.mode = "box"; ED.box = { x: pt.x, y: pt.y, w: 0, h: 0 }; }
       return;
     }
     if (t === "rub") { ED.drag.mode = "rub"; edRub(pt); return; }
@@ -6155,7 +6386,9 @@ body>.pe-menu{z-index:120}
     }
     if (d.mode === "pan") { var sg = $("pe-ed-stage"); sg.scrollLeft = d.sl - (e.clientX - d.cx); sg.scrollTop = d.st - (e.clientY - d.cy); return; }
     var pt = edPt(e), p = edPage(), dx = pt.x - d.x, dy = pt.y - d.y;
-    if (Math.abs(dx) + Math.abs(dy) > 1.5 / ED.k) { if (!d.moved && (d.mode === "move" || d.mode === "resize")) pushUndo(); d.moved = true; }
+    if (Math.abs(dx) + Math.abs(dy) > 1.5 / ED.k) { if (!d.moved && (d.mode === "move" || d.mode === "resize" || d.mode === "mmove")) pushUndo(); d.moved = true; }
+    if (d.mode === "box") { ED.box = { x: Math.min(d.x, pt.x), y: Math.min(d.y, pt.y), w: Math.abs(dx), h: Math.abs(dy) }; edDraw(); return; }
+    if (d.mode === "mmove") { if (d.moved) { ED.ms.forEach(function (o, i) { var o0 = d.o0s[i]; Object.keys(o0).forEach(function (k) { o[k] = clone(o0[k]); }); moveOp(o, dx, dy); }); edDraw(); } return; }
     if (d.mode === "move" && d.moved) { var o = ED.sel, o0 = d.o0; Object.keys(o0).forEach(function (k) { o[k] = clone(o0[k]); }); var sn = snapMove(o, o0, dx, dy, e.altKey); moveOp(o, sn[0], sn[1]); edDraw(); }
     else if (d.mode === "rot" && d.moved) {
       var ro = ED.sel, rc = toWorld(ro, ro.w / 2, ro.h / 2), ang = Math.atan2(pt.y - rc[1], pt.x - rc[0]) * 180 / Math.PI + 90;
@@ -6191,6 +6424,8 @@ body>.pe-menu{z-index:120}
     if (ED.pinch) { if (PTR.size < 2) { var z = ED.pinch.z; ED.pinch = null; ED.drag = null; $("pe-ed-paper").style.transform = ""; if (z) { ED.zoom = z; edLoad(); } } return; }
     var d = ED.drag; ED.drag = null; ED.guides = null; if (!d) return;
     var p = edPage();
+    if (d.mode === "box") { var bx = ED.box; ED.box = null; if (bx && bx.w * ED.k > 4 && bx.h * ED.k > 4) { var got = p.ops.filter(function (o) { if (o.t === "mask") return false; var b = bbox(o); return b.x < bx.x + bx.w && b.x + b.w > bx.x && b.y < bx.y + bx.h && b.y + b.h > bx.y; }); if (got.length === 1) { ED.sel = got[0]; ED.ms = []; } else if (got.length > 1) { ED.sel = null; ED.ms = got; } } edProps(); edDraw(); return; }
+    if (d.mode === "mmove") { edDraw(); if (d.moved) renderSoon(); return; }
     if (d.mode === "rot" || (d.mode === "resize" && d.hid)) { edDraw(); if (d.moved) { renderSoon(); edProps(); } return; }
     if (d.mode === "draw" && ED.temp) {
       var tp = ED.temp, ok = tp.pts ? true : tp.x1 != null ? Math.hypot(tp.x2 - tp.x1, tp.y2 - tp.y1) > 3 : tp.w > 3 && tp.h > 3;
@@ -6232,6 +6467,358 @@ body>.pe-menu{z-index:120}
     if (!o.text && !o.bg && p) { var i = p.ops.indexOf(o); if (i >= 0) p.ops.splice(i, 1); if (ED.sel === o) ED.sel = null; if (ed.fresh) { PE.undo.pop(); syncUndo(); } }
     else { o.h = textH(o); if (!ed.fresh && JSON.stringify(o) === ed.before) { PE.undo.pop(); syncUndo(); } }
     edDraw(); edProps(); renderSoon();
+  }
+
+  // ===================== aksi pita (ribbon) =====================
+  function stripReset() { var st = $("pe-strip"); if (st) st.dataset.sig = ""; }
+  function edAct(a) {
+    edCommitText(); hidePop();
+    var p = edPage(); if (!p) return;
+    var ix = PE.pages.indexOf(p);
+    if (a === "img") { ED.imgAt = null; $("pe-img-in").click(); return; }
+    if (a === "lib") return libPanel();
+    if (a === "sign") return signPad();
+    if (a === "find" || a === "redact") return findOpen(a === "find" ? "replace" : "redact");
+    if (a === "pnum") return pnumModal();
+    if (a === "wm") return wmModal();
+    if (a === "rotl" || a === "rotr") { pushUndo(); rotOps(p, a === "rotl" ? -90 : 90); ED.sel = null; ED.ms = []; stripReset(); render(); edStrip(); edLoad(); fxPop(); return; }
+    if (a === "pdup") { pushUndo(); var c = clone(p); c.id = "p" + (++PE.uid); PE.pages.splice(ix + 1, 0, c); render(); stripReset(); edGoTo(c.id, 1); toast("Halaman " + (ix + 1) + " diduplikat (beserta semua editannya)", "success"); return; }
+    if (a === "pdel") {
+      if (PE.pages.length < 2) return toast("Minimal 1 halaman harus tersisa", "error");
+      var nb = PE.pages[ix + 1] || PE.pages[ix - 1]; PE.sel = new Set([p.id]); delPages(); stripReset(); ED.id = null; edGoTo(nb.id, 1);
+      toast("Halaman " + (ix + 1) + " dihapus — Urungkan (Ctrl+Z) untuk mengembalikan", "info"); return;
+    }
+    if (a === "pins") { PE.insAt = ix + 1; PE.insNote = ix + 1; $("pe-in").click(); return; }
+    if (a === "pcut") return cutHere(p);
+    if (a === "pmerge") { PE.insAt = null; $("pe-in").click(); edClose(); switchMode("merge"); toast("Pilih file yang mau digabung — dokumen ini (beserta editannya) jadi file pertama", "info", 5000); return; }
+  }
+  async function cutHere(p) {
+    var ix = PE.pages.indexOf(p);
+    if (isMerge()) { var ml = mergedPages(); ix = ml.findIndex(function (x) { return String(x.id).indexOf(p.id + "~") === 0; }); }
+    if (ix <= 0) return toast("Ini halaman pertama — buka halaman lain sebagai awal file baru", "info");
+    edClose();
+    if (isMerge()) { await switchMode("split"); pushUndo(); if (PE.pages[ix]) PE.cuts.add(PE.pages[ix].id); }
+    else { pushUndo(); PE.cuts.add(p.id); if (PE.mode !== "split") await switchMode("split"); }
+    render(); toast("Dipecah mulai halaman " + (ix + 1) + " — atur nama tiap file di panel kanan", "success", 5000);
+  }
+
+  // ===================== cari & ganti · sensor · stabilo (semua halaman) =====================
+  var FD = { mode: "replace", q: "", cs: false, ww: false, re: null, reName: "", hits: [], cur: -1, seq: 0 };
+  var REDACT_PRESET = [
+    ["email", "Email", /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g],
+    ["hp", "No. HP", /(?:\+62|62|0)8\d(?:[\s-]?\d){6,11}/g],
+    ["nik", "NIK 16 digit", /(?<!\d)\d{16}(?!\d)/g],
+    ["angka", "Angka panjang (rekening / NPWP)", /(?<![\d])\d(?:[\d.\- ]{6,})\d(?![\d])/g]
+  ];
+  function findOpen(mode) {
+    var main = document.querySelector("#pe-ed .pe-ed-main"), el = $("pe-find"); if (!main) return;
+    if (!el) { el = document.createElement("div"); el.id = "pe-find"; el.className = "pe-find hidden"; main.appendChild(el); }
+    var first = el.classList.contains("hidden"); FD.mode = mode; if (mode === "replace") { FD.re = null; FD.reName = ""; }
+    var red = mode === "redact";
+    el.innerHTML = '<div class="hd"><i class="fa-solid ' + (red ? "fa-user-secret" : "fa-magnifying-glass") + '"></i><b>' + (red ? "Sensor kata / data" : "Cari & ganti") + '</b><button class="x" data-x title="Tutup (Esc)"><i class="fa-solid fa-xmark"></i></button></div>'
+      + '<div class="pe-fseg"><button data-m="replace" class="' + (red ? "" : "on") + '"><i class="fa-solid fa-arrow-right-arrow-left"></i>Cari &amp; ganti</button><button data-m="redact" class="' + (red ? "on" : "") + '"><i class="fa-solid fa-user-secret"></i>Sensor</button></div>'
+      + '<label>Cari di semua halaman</label><div class="row"><input id="pe-fq" placeholder="' + (red ? "kata / nama / nomor yang disensor" : "mis. nama, tanggal, nomor") + '" value="' + E(FD.re ? "" : FD.q) + '"><button class="pe-b ' + (FD.cs ? "on" : "") + '" data-cs title="Huruf besar/kecil harus sama">Aa</button><button class="pe-b ' + (FD.ww ? "on" : "") + '" data-ww title="Hanya kata utuh">Kata utuh</button></div>'
+      + (red ? '<label>Atau sensor otomatis</label><div class="pe-fpre">' + REDACT_PRESET.map(function (r) { return '<button data-pre="' + r[0] + '" class="' + (FD.reName === r[0] ? "on" : "") + '">' + r[1] + "</button>"; }).join("") + "</div>"
+        : '<label>Ganti dengan</label><input id="pe-fr" placeholder="teks pengganti (boleh kosong untuk menghapus kata)">')
+      + '<div class="sum" id="pe-fsum"></div><div class="list" id="pe-flist"></div>'
+      + '<div class="ft">' + (red ? '<button class="pe-b pri pe-red" data-go="redact"><i class="fa-solid fa-user-secret"></i>Sensor semua</button>' : '<button class="pe-b pri" data-go="replace"><i class="fa-solid fa-arrow-right-arrow-left"></i>Ganti semua</button>') + '<button class="pe-b" data-go="hl"><i class="fa-solid fa-highlighter"></i>Stabilo semua</button></div>'
+      + (red ? '<p class="note"><i class="fa-solid fa-shield-halved"></i>Sensor = kotak hitam permanen: teks di bawahnya benar-benar dibuang dari file (halaman terkait disimpan sebagai gambar).</p>' : '<p class="note"><i class="fa-solid fa-circle-info"></i>Font, ukuran & warna teks pengganti disamakan otomatis. Teks hasil scan (gambar) tidak bisa dicari.</p>');
+    if (first) { el.classList.remove("hidden"); el.classList.remove("in"); void el.offsetWidth; el.classList.add("in"); }
+    el.querySelector("[data-x]").onclick = findClose;
+    el.querySelectorAll("[data-m]").forEach(function (b) { b.onclick = function () { findOpen(b.dataset.m); }; });
+    var q = el.querySelector("#pe-fq"), t = null;
+    q.oninput = function () { FD.q = q.value; FD.re = null; FD.reName = ""; el.querySelectorAll("[data-pre]").forEach(function (x) { x.classList.remove("on"); }); clearTimeout(t); t = setTimeout(fdRun, 220); };
+    q.onkeydown = function (e) { e.stopPropagation(); if (e.key === "Enter") { e.preventDefault(); if (FD.hits.length) fdGo((FD.cur + (e.shiftKey ? -1 : 1) + FD.hits.length) % FD.hits.length); } if (e.key === "Escape") findClose(); };
+    var r = el.querySelector("#pe-fr"); if (r) r.onkeydown = function (e) { e.stopPropagation(); if (e.key === "Escape") findClose(); };
+    el.querySelector("[data-cs]").onclick = function () { FD.cs = !FD.cs; this.classList.toggle("on", FD.cs); fdRun(); };
+    el.querySelector("[data-ww]").onclick = function () { FD.ww = !FD.ww; this.classList.toggle("on", FD.ww); fdRun(); };
+    el.querySelectorAll("[data-pre]").forEach(function (b) { b.onclick = function () { var on = FD.reName !== b.dataset.pre; el.querySelectorAll("[data-pre]").forEach(function (x) { x.classList.remove("on"); }); if (on) { var pr = REDACT_PRESET.filter(function (x) { return x[0] === b.dataset.pre; })[0]; FD.re = pr[2]; FD.reName = pr[0]; b.classList.add("on"); q.value = ""; } else { FD.re = null; FD.reName = ""; } fdRun(); }; });
+    el.querySelectorAll("[data-go]").forEach(function (b) { b.onclick = function () { fdApply(b.dataset.go); }; });
+    setTimeout(function () { q.focus(); q.select(); }, 30);
+    fdRun();
+  }
+  function findClose() { var el = $("pe-find"); if (!el || el.classList.contains("hidden")) return; el.classList.add("hidden"); FD.hits = []; FD.cur = -1; FD.seq++; edDraw(); }
+  var findOn = function () { var el = $("pe-find"); return !!el && !el.classList.contains("hidden"); };
+  function fdRegex() {
+    if (FD.re) return new RegExp(FD.re.source, "g");
+    var q = FD.q; if (!q || !q.trim()) return null;
+    var esc = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
+    try { if (FD.ww) return new RegExp("(?<![\\p{L}\\p{N}])" + esc + "(?![\\p{L}\\p{N}])", "gu" + (FD.cs ? "" : "i")); } catch (e) { }
+    return new RegExp(esc, "g" + (FD.cs ? "" : "i"));
+  }
+  function covered(p, b) { return p.ops.some(function (o) { if (o.t !== "erase") return false; var ix = Math.max(0, Math.min(o.x + o.w, b.x + b.w) - Math.max(o.x, b.x)), iy = Math.max(0, Math.min(o.y + o.h, b.y + b.h) - Math.max(o.y, b.y)); return ix * iy >= b.w * b.h * 0.7; }); }
+  async function fdRun() {
+    var re = fdRegex(), my = ++FD.seq, S = $("pe-fsum"); FD.hits = []; FD.cur = -1;
+    if (!re) { fdList(); edDraw(); return; }
+    if (S) S.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mencari di ' + PE.pages.length + " halaman…";
+    var hits = [];
+    for (var n = 0; n < PE.pages.length; n++) {
+      var p = PE.pages[n], lines = [];
+      try { lines = await pageLines(p); } catch (e) { }
+      if (my !== FD.seq) return;
+      var doneK = {}; p.ops.forEach(function (o) { if (o.key) doneK[o.key] = 1; });
+      lines.forEach(function (l) { if (doneK[l.key]) return; re.lastIndex = 0; var m; while ((m = re.exec(l.str))) { if (!m[0].length) { re.lastIndex++; continue; } var h = { p: p, l: l, s: m.index, n: m[0].length, txt: l.str }; if (!covered(p, hitBox(h))) hits.push(h); } });
+      p.ops.forEach(function (o) { if (o.t !== "text" || !o.text) return; re.lastIndex = 0; var m; while ((m = re.exec(o.text))) { if (!m[0].length) { re.lastIndex++; continue; } hits.push({ p: p, o: o, s: m.index, n: m[0].length, txt: o.text }); } });
+      if (n % 6 === 5) { if (S) S.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mencari… ' + (n + 1) + " / " + PE.pages.length; await tick(); if (my !== FD.seq) return; }
+    }
+    FD.hits = hits; fdList(); edDraw();
+    var onCur = hits.filter(function (h) { return h.p === edPage(); })[0];
+    if (hits.length && !onCur) fdGo(0, true); else if (onCur) FD.cur = hits.indexOf(onCur), fdList();
+  }
+  function hitBox(h) {
+    if (h.o) { var o = h.o, ls = textLines(o), acc = 0, li = 0; for (; li < ls.length; li++) { if (h.s < acc + ls[li].length + 1) break; acc += ls[li].length + 1; } li = Math.min(li, ls.length - 1); MC.font = cssFont(o, 1); var ln = ls[li] || "", st = Math.max(0, h.s - acc), x0 = MC.measureText(ln.slice(0, st)).width, x1 = MC.measureText(ln.slice(0, st + h.n)).width, lw = MC.measureText(ln).width, off = o.al === "c" ? (o.w - lw) / 2 : o.al === "r" ? o.w - PAD - lw : PAD; return o.a ? { x: o.x, y: o.y, w: o.w, h: o.h } : { x: o.x + off + x0 - 0.5, y: o.y + PAD + li * o.size * LH, w: Math.max(2, x1 - x0 + 1), h: o.size * LH }; }
+    var l = h.l, f = fontOf(l.mf.font); MC.font = (l.mf.i ? "italic " : "") + (l.mf.b ? "700 " : "400 ") + l.size + "px " + fontCss(f);
+    var full = MC.measureText(l.str).width || 1, sc = l.w / full, a = MC.measureText(l.str.slice(0, h.s)).width * sc, b = MC.measureText(l.str.slice(0, h.s + h.n)).width * sc;
+    return { x: l.x + a - 0.6, y: l.top - 0.6, w: b - a + 1.2, h: l.h + 1.2 };
+  }
+  function fdList() {
+    var L = $("pe-flist"), S = $("pe-fsum"); if (!L || !S) return;
+    var np = new Set(FD.hits.map(function (h) { return h.p.id; })).size, red = FD.mode === "redact";
+    S.innerHTML = !FD.q.trim() && !FD.re ? '<span class="mute">' + (red ? "Ketik kata atau pilih sensor otomatis" : "Ketik kata yang dicari — semua halaman dipindai") + "</span>"
+      : FD.hits.length ? "<b>" + FD.hits.length + "</b> hasil di <b>" + np + "</b> halaman" + (FD.cur >= 0 ? '<span class="mute"> · ' + (FD.cur + 1) + "/" + FD.hits.length + " · Enter = berikutnya</span>" : "")
+      : '<span class="mute">Tidak ditemukan</span>';
+    L.innerHTML = FD.hits.slice(0, 400).map(function (h, i) {
+      var a = Math.max(0, h.s - 22), z = h.s + h.n + 28, ctx = (a ? "…" : "") + E(h.txt.slice(a, h.s)) + "<mark>" + E(h.txt.substr(h.s, h.n)) + "</mark>" + E(h.txt.slice(h.s + h.n, z)) + (z < h.txt.length ? "…" : "");
+      return '<div class="it' + (i === FD.cur ? " on" : "") + '" data-h="' + i + '"><span class="pg">Hal ' + (PE.pages.indexOf(h.p) + 1) + '</span><span class="cx">' + ctx + '</span><button data-one="' + i + '" title="' + (red ? "Sensor yang ini saja" : "Ganti yang ini saja") + '">' + (red ? "Sensor" : "Ganti") + "</button></div>";
+    }).join("") + (FD.hits.length > 400 ? '<div class="mute" style="padding:6px">+' + (FD.hits.length - 400) + " hasil lain</div>" : "");
+    L.querySelectorAll("[data-h]").forEach(function (it) { it.onclick = function (e) { if (e.target.closest("[data-one]")) return; fdGo(+it.dataset.h); }; });
+    L.querySelectorAll("[data-one]").forEach(function (b) { b.onclick = function () { fdApply(FD.mode, [FD.hits[+b.dataset.one]]); }; });
+    var on = L.querySelector(".it.on"); if (on) try { on.scrollIntoView({ block: "nearest" }); } catch (e) { }
+  }
+  function fdGo(i, quiet) {
+    var h = FD.hits[i]; if (!h) return; FD.cur = i;
+    if (h.p.id !== ED.id) edGoTo(h.p.id, PE.pages.indexOf(h.p) < PE.pages.indexOf(edPage()) ? -1 : 1);
+    var b = hitBox(h), st = $("pe-ed-stage"), pp = $("pe-ed-paper");
+    if (st && pp && !quiet) setTimeout(function () { var y = pp.offsetTop + b.y * ED.k - st.clientHeight / 3; try { st.scrollTo({ top: Math.max(0, y), behavior: "smooth" }); } catch (e) { st.scrollTop = y; } }, 40);
+    FD.flash = Date.now(); var f = function () { edDraw(); if (Date.now() - FD.flash < 900) requestAnimationFrame(f); }; requestAnimationFrame(f);
+    fdList();
+  }
+  function drawFind(g, k, p) {
+    if (!findOn() || !FD.hits.length) return;
+    g.save(); g.scale(k, k);
+    var t = Math.min(1, (Date.now() - (FD.flash || 0)) / 900);
+    FD.hits.forEach(function (h, i) {
+      if (h.p !== p) return; var b = hitBox(h), cur = i === FD.cur;
+      g.fillStyle = cur ? "rgba(249,115,22,.35)" : (FD.mode === "redact" ? "rgba(15,23,42,.18)" : "rgba(250,204,21,.38)"); g.fillRect(b.x, b.y, b.w, b.h);
+      if (cur) { g.strokeStyle = "#ea580c"; g.lineWidth = 1.6 / ED.k; var pad = (1 - t) * 8; g.globalAlpha = 1; g.strokeRect(b.x - pad, b.y - pad, b.w + pad * 2, b.h + pad * 2); }
+    });
+    g.restore();
+  }
+  async function fdApply(kind, list) {
+    list = (list || FD.hits).filter(Boolean); if (!list.length) return toast("Tidak ada hasil untuk diterapkan", "info");
+    if (kind === "replace" && !$("pe-fr")) return;
+    var rep = kind === "replace" ? $("pe-fr").value : "", n = list.length;
+    pushUndo(); busy(kind === "redact" ? "Menyensor…" : kind === "hl" ? "Menandai…" : "Mengganti teks…", 10, kind === "redact" ? "write" : "read");
+    try {
+      var byLine = new Map(), byOp = new Map(), cvs = {};
+      list.forEach(function (h) { if (h.o) { if (!byOp.has(h.o)) byOp.set(h.o, { p: h.p, hs: [] }); byOp.get(h.o).hs.push(h); } else { var k = h.l.key; if (!byLine.has(k)) byLine.set(k, { p: h.p, l: h.l, hs: [] }); byLine.get(k).hs.push(h); } });
+      var cut = function (str, hs, by) { hs.slice().sort(function (a, b) { return b.s - a.s; }).forEach(function (h) { str = str.slice(0, h.s) + (typeof by === "function" ? by(h) : by) + str.slice(h.s + h.n); }); return str; };
+      var G = Array.from(byLine.values()), done = 0;
+      for (var i = 0; i < G.length; i++) {
+        var g = G[i], p = g.p;
+        if (kind === "replace") {
+          var cv = cvs[p.id]; if (!cv) { var D = dims(p); cv = cvs[p.id] = p === edPage() && ED.base ? { c: ED.base, D: D } : { c: await renderBase(p, Math.min(1400, D.w * 1.6), 1), D: D, tmp: 1 }; }
+          var two = await lineOps(p, g.l, cut(g.l.str, g.hs, rep), cv.c, cv.D); p.ops.push(two[0], two[1]);
+        } else g.hs.forEach(function (h) {
+          var b = hitBox(h);
+          if (kind === "redact") p.ops.push({ t: "erase", x: b.x - 0.6, y: b.y - 0.4, w: b.w + 1.2, h: b.h + 0.8, fill: "#000000", col: "#000000" });
+          else { var r = b.h / 2, y = b.y + r; p.ops.push({ t: "hl", pts: b.w > b.h ? [[b.x + r, y], [b.x + b.w - r, y]] : [[b.x + b.w / 2, y]], c: "#facc15", lw: b.h, op: 0.4 }); }
+        });
+        done += g.hs.length; if (i % 4 === 3) { busy("Memproses " + done + " / " + n + "…", 10 + 85 * done / n); await tick(); }
+      }
+      byOp.forEach(function (g, o) {
+        if (kind === "replace") o.text = cut(o.text, g.hs, rep);
+        else if (kind === "redact") o.text = cut(o.text, g.hs, function (h) { return new Array(h.n + 1).join("X"); });
+        else g.hs.forEach(function (h) { var b = hitBox(h), r = b.h / 2; g.p.ops.push({ t: "hl", pts: [[b.x + r, b.y + r], [b.x + Math.max(r, b.w - r), b.y + r]], c: "#facc15", lw: b.h, op: 0.4 }); });
+        if (o.t === "text") { if (o.autoW) fitW(o, g.p); o.h = textH(o); }
+      });
+      Object.keys(cvs).forEach(function (k) { if (cvs[k].tmp) cvs[k].c.width = cvs[k].c.height = 0; });
+    } catch (e) { busy(null); toast("Gagal: " + e.message, "error"); return; }
+    busy(null); ED.sel = null; ED.ms = [];
+    render(); stripReset(); edStrip(); edDraw(); renderSoon();
+    toast((kind === "redact" ? n + " data disensor permanen" : kind === "hl" ? n + " hasil ditandai stabilo" : n + " hasil diganti" + (rep ? " dengan \"" + rep + "\"" : " (dihapus)")) + " — Ctrl+Z untuk membatalkan", "success", 5000);
+    fdRun();
+  }
+
+  // ===================== buat tanda tangan: gambar · ketik · unggah =====================
+  var SIGF = ["Dancing Script", "Great Vibes", "Allura"];
+  function trimCanvas(c, pad) {
+    var g = c.getContext("2d"), W = c.width, H = c.height, d = g.getImageData(0, 0, W, H).data, x0 = W, y0 = H, x1 = -1, y1 = -1;
+    for (var y = 0; y < H; y++) for (var x = 0; x < W; x++) if (d[(y * W + x) * 4 + 3] > 10) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    if (x1 < 0) return null;
+    var o = document.createElement("canvas"); o.width = x1 - x0 + 1 + pad * 2; o.height = y1 - y0 + 1 + pad * 2;
+    o.getContext("2d").drawImage(c, x0, y0, x1 - x0 + 1, y1 - y0 + 1, pad, pad, x1 - x0 + 1, y1 - y0 + 1); return o;
+  }
+  function signPad() {
+    var SG = { tab: "draw", col: "#1e3a8a", lw: 3, strokes: [], font: SIGF[0], up: null };
+    var cols = [["#111827", "Hitam"], ["#1e3a8a", "Biru"], ["#b91c1c", "Merah"]];
+    var colRow = '<div class="pe-sgcol">' + cols.map(function (c) { return '<button data-sc="' + c[0] + '" class="' + (c[0] === SG.col ? "on" : "") + '"><i style="background:' + c[0] + '"></i>' + c[1] + "</button>"; }).join("") + "</div>";
+    var nm = ""; try { nm = (currentUser && (currentUser.name || currentUser.nama)) || ""; } catch (e) { }
+    var m = modal('<i class="fa-solid fa-signature" style="color:#db2777"></i> Buat tanda tangan / paraf',
+      '<div class="pe-sgtabs"><button data-st="draw" class="on"><i class="fa-solid fa-pen-nib"></i>Gambar</button><button data-st="type"><i class="fa-solid fa-keyboard"></i>Ketik</button><button data-st="up"><i class="fa-solid fa-upload"></i>Unggah foto</button></div>'
+      + '<div class="pe-sgp" data-p="draw"><div class="pe-sgpad" id="pe-sgpad"><canvas id="pe-sgc"></canvas><span class="ln"></span><span class="ph" id="pe-sgph"><i class="fa-solid fa-pen-nib"></i> Tanda tangan di sini — pakai mouse, pena, atau jari</span></div>'
+      + '<div class="pe-sgrow">' + colRow + '<label>Tebal</label><input type="range" id="pe-sglw" min="1.5" max="7" step="0.5" value="3" style="width:90px"><span style="flex:1"></span><button class="pe-b" id="pe-sgun" style="height:28px"><i class="fa-solid fa-rotate-left"></i>Urungkan goresan</button><button class="pe-b" id="pe-sgcl" style="height:28px"><i class="fa-regular fa-trash-can"></i>Bersihkan</button></div></div>'
+      + '<div class="pe-sgp hidden" data-p="type"><input id="pe-sgn" placeholder="Ketik nama Anda" value="' + E(nm) + '" style="width:100%;height:36px;font-size:14px"><div class="pe-sgfonts" id="pe-sgf"></div><div class="pe-sgrow">' + colRow + "</div></div>"
+      + '<div class="pe-sgp hidden" data-p="up"><label class="pe-sgup" id="pe-sgupl"><input type="file" accept="image/*" class="hidden" id="pe-sgu"><i class="fa-solid fa-cloud-arrow-up"></i><b>Pilih foto / scan tanda tangan</b><small>Foto di kertas putih — latar putih otomatis dibuang</small></label><div class="pe-sgprev hidden" id="pe-sgprev"><img id="pe-sgimg" alt=""><button class="pe-b" id="pe-sgre" style="height:28px"><i class="fa-solid fa-arrow-rotate-right"></i>Ganti foto</button></div></div>'
+      + '<div class="pe-sgopt"><label class="pe-tog"><input type="checkbox" id="pe-sgsave" checked><span class="sw"></span><span><b>Simpan ke pustaka</b><small>pakai lagi kapan saja dari Pustaka</small></span></label><label>Jenis <select id="pe-sgk"><option value="ttd">Tanda tangan</option><option value="paraf">Paraf</option></select></label></div>',
+      '<button class="pe-b" data-c>Batal</button><button class="pe-b pri" id="pe-sggo"><i class="fa-solid fa-check"></i>Taruh di halaman</button>', 640);
+    m.querySelector("[data-c]").onclick = function () { m.remove(); };
+    var cv = m.querySelector("#pe-sgc"), pad = m.querySelector("#pe-sgpad"), ph = m.querySelector("#pe-sgph"), dpr = Math.min(3, devicePixelRatio || 1), g = cv.getContext("2d");
+    var size = function () { var w = pad.clientWidth, h = pad.clientHeight; cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.width = w + "px"; cv.style.height = h + "px"; redraw(); };
+    function strokeOn(ctx, s, sc, col) {
+      ctx.save(); ctx.scale(sc, sc); ctx.fillStyle = ctx.strokeStyle = col; ctx.lineCap = "round"; ctx.lineJoin = "round";
+      var P = s.pts; if (P.length === 1) { ctx.beginPath(); ctx.arc(P[0][0], P[0][1], s.lw * 0.6, 0, Math.PI * 2); ctx.fill(); ctx.restore(); return; }
+      var w = s.lw;
+      for (var i = 1; i < P.length; i++) {   // tebal mengikuti kecepatan (goresan cepat lebih tipis) + kurva halus
+        var a = P[i - 1], b = P[i], dt = Math.max(1, b[2] - a[2]), v = Math.hypot(b[0] - a[0], b[1] - a[1]) / dt, tw = s.lw * Math.max(0.45, Math.min(1.25, 1.3 - v * 0.35)) * (b[3] ? 0.6 + b[3] * 0.8 : 1);
+        w = w * 0.7 + tw * 0.3; ctx.lineWidth = w;
+        var m0 = i > 1 ? [(P[i - 2][0] + a[0]) / 2, (P[i - 2][1] + a[1]) / 2] : a, m1 = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+        ctx.beginPath(); ctx.moveTo(m0[0], m0[1]); ctx.quadraticCurveTo(a[0], a[1], m1[0], m1[1]); ctx.stroke();
+        if (i === P.length - 1) { ctx.beginPath(); ctx.moveTo(m1[0], m1[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); }
+      }
+      ctx.restore();
+    }
+    function redraw() { g.clearRect(0, 0, cv.width, cv.height); SG.strokes.forEach(function (s) { strokeOn(g, s, dpr, SG.col); }); ph.classList.toggle("hidden", SG.strokes.length > 0); }
+    var cur = null, pos = function (e) { var r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top, e.timeStamp || Date.now(), e.pointerType === "pen" ? e.pressure || 0.5 : 0]; };
+    cv.addEventListener("pointerdown", function (e) { e.preventDefault(); cv.setPointerCapture(e.pointerId); cur = { lw: SG.lw, pts: [pos(e)] }; SG.strokes.push(cur); redraw(); });
+    cv.addEventListener("pointermove", function (e) { if (!cur) return; var q = pos(e), l = cur.pts[cur.pts.length - 1]; if (Math.hypot(q[0] - l[0], q[1] - l[1]) < 1.2) return; cur.pts.push(q); redraw(); });
+    var end = function () { cur = null; }; cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", end);
+    cv.style.touchAction = "none";
+    m.querySelector("#pe-sglw").oninput = function () { SG.lw = +this.value; };
+    m.querySelector("#pe-sgun").onclick = function () { SG.strokes.pop(); redraw(); };
+    m.querySelector("#pe-sgcl").onclick = function () { SG.strokes = []; redraw(); };
+    var fbox = m.querySelector("#pe-sgf"), nmIn = m.querySelector("#pe-sgn");
+    var drawFonts = function () { var t = nmIn.value.trim() || "Tanda Tangan"; fbox.innerHTML = SIGF.map(function (f) { return '<button data-f="' + f + '" class="' + (f === SG.font ? "on" : "") + '" style="font-family:\'PE ' + f + '\',cursive;color:' + SG.col + '">' + E(t) + "<small>" + f + "</small></button>"; }).join(""); fbox.querySelectorAll("[data-f]").forEach(function (b) { b.onclick = function () { SG.font = b.dataset.f; drawFonts(); }; }); };
+    Promise.all(SIGF.map(function (f) { return webFont(fontOf(f), false, false); })).then(drawFonts); drawFonts();
+    nmIn.oninput = drawFonts; nmIn.onkeydown = function (e) { e.stopPropagation(); };
+    m.querySelectorAll("[data-sc]").forEach(function (b) { b.onclick = function () { SG.col = b.dataset.sc; m.querySelectorAll("[data-sc]").forEach(function (x) { x.classList.toggle("on", x.dataset.sc === SG.col); }); redraw(); drawFonts(); }; });
+    var upIn = m.querySelector("#pe-sgu");
+    upIn.onchange = async function () { var f = upIn.files[0]; upIn.value = ""; if (!f) return; try { busy("Membersihkan latar…", 50, "read"); var id = await fileToImage(f), nid = await knockWhite(id); SG.up = nid; m.querySelector("#pe-sgimg").src = IMGS[nid].url; m.querySelector("#pe-sgprev").classList.remove("hidden"); m.querySelector("#pe-sgupl").classList.add("hidden"); } catch (e) { toast(e.message, "error"); } busy(null); };
+    m.querySelector("#pe-sgre").onclick = function () { upIn.click(); };
+    m.querySelectorAll("[data-st]").forEach(function (b) { b.onclick = function () { SG.tab = b.dataset.st; m.querySelectorAll("[data-st]").forEach(function (x) { x.classList.toggle("on", x === b); }); m.querySelectorAll(".pe-sgp").forEach(function (p) { p.classList.toggle("hidden", p.dataset.p !== SG.tab); }); if (SG.tab === "draw") size(); if (SG.tab === "type") nmIn.focus(); }; });
+    setTimeout(size, 30);
+    m.querySelector("#pe-sggo").onclick = async function () {
+      var kind = m.querySelector("#pe-sgk").value, keep = m.querySelector("#pe-sgsave").checked, bytes = null, mime = "image/png";
+      try {
+        if (SG.tab === "draw") {
+          if (!SG.strokes.length) return toast("Tanda tangani dulu di kotak", "error");
+          var hi = document.createElement("canvas"), S = 3; hi.width = cv.width / dpr * S; hi.height = cv.height / dpr * S;
+          SG.strokes.forEach(function (s) { strokeOn(hi.getContext("2d"), s, S, SG.col); });
+          var t1 = trimCanvas(hi, 8); if (!t1) return toast("Tanda tangan kosong", "error"); bytes = await canvasPng(t1);
+        } else if (SG.tab === "type") {
+          var txt = nmIn.value.trim(); if (!txt) return toast("Ketik nama dulu", "error");
+          await webFont(fontOf(SG.font), false, false);
+          var tc = document.createElement("canvas"), tg = tc.getContext("2d"), fs = 160; tg.font = fs + "px 'PE " + SG.font + "', cursive"; tc.width = Math.ceil(tg.measureText(txt).width + fs); tc.height = Math.ceil(fs * 1.9);
+          tg.font = fs + "px 'PE " + SG.font + "', cursive"; tg.fillStyle = SG.col; tg.textBaseline = "middle"; tg.fillText(txt, fs * 0.4, tc.height / 2);
+          var t2 = trimCanvas(tc, 10); if (!t2) return; bytes = await canvasPng(t2);
+        } else {
+          if (!SG.up) return toast("Pilih foto tanda tangan dulu", "error"); bytes = IMGS[SG.up].bytes; mime = IMGS[SG.up].mime;
+        }
+        var id = await regImage(bytes, mime); m.remove(); placeImg(id);
+        if (keep) { await libAdd({ kind: kind, bytes: bytes, mime: mime, name: (kind === "paraf" ? "Paraf" : "Tanda tangan") + (nm ? " · " + nm : "") }); }
+        toast((kind === "paraf" ? "Paraf" : "Tanda tangan") + " ditaruh — geser ke posisinya" + (keep ? " · tersimpan di Pustaka" : "") + ". Untuk semua halaman: pilih lalu klik \"Semua hal.\"", "success", 6000);
+      } catch (e) { toast("Gagal: " + e.message, "error"); }
+    };
+  }
+
+  // ===================== nomor halaman, header & footer =====================
+  var PN_FMT = ["{n}", "Halaman {n}", "Halaman {n} dari {N}", "{n} / {N}", "- {n} -", "Hal. {n}"];
+  var POS = { tl: "Atas kiri", tc: "Atas tengah", tr: "Atas kanan", bl: "Bawah kiri", bc: "Bawah tengah", br: "Bawah kanan" };
+  var isAuto = function (o) { return /^(pn|hdr|ftr)$/.test(o.grp || ""); };
+  function pnumModal() {
+    var S = segs(), multi = PE.mode === "split" && S.length > 1, has = PE.pages.some(function (p) { return p.ops.some(isAuto); });
+    var P = PE.pnum = PE.pnum || { on: true, fmt: "Halaman {n} dari {N}", pos: "bc", start: 1, skip: false, per: multi, size: 9, font: "Helvetica", c: "#334155", hdr: "", hal: "r", ftr: "", fal: "l" };
+    var sel = function (id, obj, cur) { return '<select id="' + id + '">' + Object.keys(obj).map(function (k) { return '<option value="' + k + '" ' + (k === cur ? "selected" : "") + ">" + obj[k] + "</option>"; }).join("") + "</select>"; };
+    var AL = { l: "Kiri", c: "Tengah", r: "Kanan" };
+    var cp = edPage() || PE.pages[0], D = dims(cp), th = THUMB[thumbKey(cp)] || "";
+    var m = modal('<i class="fa-solid fa-list-ol" style="color:#059669"></i> Nomor halaman, header &amp; footer',
+      '<div class="pe-pn"><div class="pe-pn-f">'
+      + '<label class="pe-tog"><input type="checkbox" id="pn-on" ' + (P.on ? "checked" : "") + '><span class="sw"></span><span><b>Nomor halaman</b><small>ditulis di setiap halaman</small></span></label>'
+      + '<div class="g2"><div><label>Format</label><select id="pn-fmt">' + PN_FMT.map(function (f) { return '<option ' + (f === P.fmt ? "selected" : "") + ">" + f + "</option>"; }).join("") + '</select></div><div><label>Posisi</label>' + sel("pn-pos", POS, P.pos) + "</div></div>"
+      + '<div class="g2"><div><label>Mulai dari</label><input type="number" id="pn-st" min="0" value="' + P.start + '"></div><div><label>Ukuran</label><input type="number" id="pn-sz" min="6" max="24" value="' + P.size + '"></div></div>'
+      + '<label class="chk"><input type="checkbox" id="pn-skip" ' + (P.skip ? "checked" : "") + "> Lewati halaman pertama (sampul)</label>"
+      + (multi ? '<label class="chk"><input type="checkbox" id="pn-per" ' + (P.per ? "checked" : "") + "> Mulai ulang di tiap file hasil split (" + S.length + " file)</label>" : "")
+      + '<hr><label>Header (atas)</label><div class="g2b"><input id="pn-hdr" placeholder="mis. {nama}" value="' + E(P.hdr) + '">' + sel("pn-hal", AL, P.hal) + "</div>"
+      + '<label>Footer (bawah)</label><div class="g2b"><input id="pn-ftr" placeholder="mis. Dicetak {tanggal}" value="' + E(P.ftr) + '">' + sel("pn-fal", AL, P.fal) + "</div>"
+      + '<div class="pe-vars">' + ["{n}", "{N}", "{nama}", "{file}", "{tanggal}"].map(function (v) { return "<button data-v=\"" + v + "\">" + v + "</button>"; }).join("") + "</div>"
+      + '<div class="g2"><div><label>Font</label><select id="pn-font">' + ["Helvetica", "Times", "Arimo", "Carlito", "Roboto"].map(function (f) { return '<option value="' + f + '" ' + (f === P.font ? "selected" : "") + ">" + fontOf(f).label + "</option>"; }).join("") + '</select></div><div><label>Warna</label><input type="color" id="pn-c" value="' + P.c + '"></div></div>'
+      + '</div><div class="pe-pn-pv"><div class="pe-pv" id="pn-pv" style="aspect-ratio:' + D.w + "/" + D.h + (th ? ";background-image:url(" + th + ")" : "") + '"></div><small>Pratinjau halaman ini</small></div></div>',
+      (has ? '<button class="pe-b red" data-rm style="margin-right:auto"><i class="fa-regular fa-trash-can"></i>Hapus semua</button>' : "") + '<button class="pe-b" data-c>Batal</button><button class="pe-b pri" data-ok><i class="fa-solid fa-check"></i>Terapkan ke ' + PE.pages.length + " halaman</button>", 760);
+    if (!th) thumb(cp, { set src(v) { var pv = m.querySelector("#pn-pv"); if (pv && v) pv.style.backgroundImage = "url(" + v + ")"; }, get isConnected() { return true; } });
+    var read = function () {
+      P.on = m.querySelector("#pn-on").checked; P.fmt = m.querySelector("#pn-fmt").value; P.pos = m.querySelector("#pn-pos").value; P.start = parseInt(m.querySelector("#pn-st").value, 10) || 0; P.size = Math.max(6, Math.min(24, +m.querySelector("#pn-sz").value || 9));
+      P.skip = m.querySelector("#pn-skip").checked; var pe = m.querySelector("#pn-per"); P.per = pe ? pe.checked : false;
+      P.hdr = m.querySelector("#pn-hdr").value; P.hal = m.querySelector("#pn-hal").value; P.ftr = m.querySelector("#pn-ftr").value; P.fal = m.querySelector("#pn-fal").value; P.font = m.querySelector("#pn-font").value; P.c = m.querySelector("#pn-c").value;
+    };
+    var pv = function () {
+      read(); var box = m.querySelector("#pn-pv"), H = box.clientHeight || 300, k = H / D.h, ix = Math.max(0, PE.pages.indexOf(cp)), items = pnItems(P, ix, PE.pages.length, PE.base);
+      box.innerHTML = items.map(function (it) { var top = it.pos[0] === "t"; return '<span style="' + (top ? "top" : "bottom") + ":" + 18 * k + "px;left:" + 22 * k + "px;right:" + 22 * k + "px;text-align:" + { l: "left", c: "center", r: "right" }[it.al] + ";font-size:" + Math.max(6, P.size * k) + "px;color:" + P.c + ";font-family:" + fontCss(fontOf(P.font)) + '">' + E(it.text) + "</span>"; }).join("");
+    };
+    m.querySelectorAll("input,select").forEach(function (x) { x.addEventListener("input", pv); x.addEventListener("change", pv); x.addEventListener("keydown", function (e) { e.stopPropagation(); }); });
+    var last = null; m.querySelectorAll("#pn-hdr,#pn-ftr").forEach(function (x) { x.addEventListener("focus", function () { last = x; }); });
+    m.querySelectorAll("[data-v]").forEach(function (b) { b.onclick = function () { var t = last || m.querySelector("#pn-ftr"), s0 = t.selectionStart == null ? t.value.length : t.selectionStart; t.value = t.value.slice(0, s0) + b.dataset.v + t.value.slice(s0); t.focus(); pv(); }; });
+    setTimeout(pv, 30);
+    m.querySelector("[data-c]").onclick = function () { m.remove(); };
+    var rm = m.querySelector("[data-rm]"); if (rm) rm.onclick = function () { pushUndo(); PE.pages.forEach(function (p) { p.ops = p.ops.filter(function (o) { return !isAuto(o); }); }); m.remove(); afterBulk("Nomor halaman, header & footer dihapus"); };
+    m.querySelector("[data-ok]").onclick = function () {
+      read(); if (!P.on && !P.hdr.trim() && !P.ftr.trim()) return toast("Aktifkan nomor halaman atau isi header / footer", "error");
+      pushUndo(); PE.pages.forEach(function (p) { p.ops = p.ops.filter(function (o) { return !isAuto(o); }); });
+      var groups = P.per && multi ? segs().map(function (s, i) { return { pages: s.pages, name: finalNames()[i] }; }) : [{ pages: PE.pages, name: PE.base }], cnt = 0;
+      groups.forEach(function (gp) { gp.pages.forEach(function (p, i) { pnItems(P, i, gp.pages.length, gp.name).forEach(function (it) { var D2 = dims(p), M = 22, o = { t: "text", x: M, y: 0, w: D2.w - M * 2, text: it.text, font: P.font, size: P.size, b: false, i: false, u: false, al: it.al, c: P.c, bg: "", op: 1, a: 0, grp: it.grp }; o.h = textH(o); o.y = it.pos[0] === "t" ? 18 : D2.h - 18 - o.h; p.ops.push(o); cnt++; }); }); });
+      webFont(fontOf(P.font), false, false).then(function () { if (ED.on) edDraw(); });
+      m.remove(); afterBulk(cnt ? "Ditambahkan ke " + PE.pages.length + " halaman" : "Tidak ada yang ditambahkan");
+    };
+  }
+  function pnItems(P, i, total, name) {
+    if (P.skip && i === 0) return [];
+    var n = P.start + i - (P.skip ? 1 : 0), N = P.start + total - 1 - (P.skip ? 1 : 0), v = { n: n, N: N, nama: PE.base, file: name || PE.base, tanggal: fmtD() };
+    var fill = function (t) { return String(t).replace(/\{(n|N|nama|file|tanggal)\}/g, function (m, k) { return v[k]; }); }, out = [];
+    if (P.on) out.push({ text: fill(P.fmt), pos: P.pos, al: P.pos[1] === "l" ? "l" : P.pos[1] === "r" ? "r" : "c", grp: "pn" });
+    if (P.hdr.trim()) out.push({ text: fill(P.hdr), pos: "t" + P.hal, al: P.hal, grp: "hdr" });
+    if (P.ftr.trim()) out.push({ text: fill(P.ftr), pos: "b" + P.fal, al: P.fal, grp: "ftr" });
+    return out;
+  }
+  function afterBulk(msg) { ED.sel = null; ED.ms = []; render(); if (ED.on) { stripReset(); edStrip(); edDraw(); renderSoon(); } toast(msg + " — Ctrl+Z untuk membatalkan", "success", 4500); }
+
+  // ===================== watermark =====================
+  function wmModal() {
+    var W = PE.wm = PE.wm || { text: "RAHASIA", c: "#dc2626", op: 0.16, scale: 0.7, ang: 315, rg: "" };
+    var has = PE.pages.some(function (p) { return p.ops.some(function (o) { return o.grp === "wm"; }); });
+    var cp = edPage() || PE.pages[0], D = dims(cp), th = THUMB[thumbKey(cp)] || "";
+    var m = modal('<i class="fa-solid fa-droplet" style="color:#0891b2"></i> Watermark',
+      '<div class="pe-pn"><div class="pe-pn-f"><label>Teks watermark</label><input id="wm-t" value="' + E(W.text) + '" maxlength="60">'
+      + '<div class="pe-vars">' + ["RAHASIA", "SALINAN", "DRAFT", "ASLI", "CONFIDENTIAL", "TIDAK UNTUK DIEDARKAN"].map(function (v) { return "<button data-wv=\"" + v + "\">" + v + "</button>"; }).join("") + "</div>"
+      + '<label>Warna</label><div class="pe-sgcol">' + [["#dc2626", "Merah"], ["#64748b", "Abu"], ["#1d4ed8", "Biru"], ["#111827", "Hitam"]].map(function (c) { return '<button data-wc="' + c[0] + '" class="' + (c[0] === W.c ? "on" : "") + '"><i style="background:' + c[0] + '"></i>' + c[1] + "</button>"; }).join("") + "</div>"
+      + '<div class="g2"><div><label>Transparansi</label><input type="range" id="wm-op" min="0.05" max="0.6" step="0.01" value="' + W.op + '"></div><div><label>Ukuran</label><input type="range" id="wm-sc" min="0.25" max="1" step="0.05" value="' + W.scale + '"></div></div>'
+      + '<label>Arah</label><div class="pe-sgcol"><button data-wa="315" class="' + (W.ang === 315 ? "on" : "") + '"><i class="fa-solid fa-slash" style="background:none;color:inherit;transform:scaleX(-1)"></i>Diagonal</button><button data-wa="0" class="' + (W.ang === 0 ? "on" : "") + '"><i class="fa-solid fa-minus" style="background:none;color:inherit"></i>Mendatar</button></div>'
+      + '<label>Halaman</label><input id="wm-rg" placeholder="Semua halaman · atau mis. 1-3, 5" value="' + E(W.rg) + '">'
+      + '</div><div class="pe-pn-pv"><div class="pe-pv" id="wm-pv" style="aspect-ratio:' + D.w + "/" + D.h + (th ? ";background-image:url(" + th + ")" : "") + '"></div><small>Pratinjau halaman ini</small></div></div>',
+      (has ? '<button class="pe-b red" data-rm style="margin-right:auto"><i class="fa-regular fa-trash-can"></i>Hapus watermark</button>' : "") + '<button class="pe-b" data-c>Batal</button><button class="pe-b pri" data-ok><i class="fa-solid fa-droplet"></i>Pasang watermark</button>', 760);
+    if (!th) thumb(cp, { set src(v) { var pv = m.querySelector("#wm-pv"); if (pv && v) pv.style.backgroundImage = "url(" + v + ")"; }, get isConnected() { return true; } });
+    var read = function () { W.text = m.querySelector("#wm-t").value.trim(); W.op = +m.querySelector("#wm-op").value; W.scale = +m.querySelector("#wm-sc").value; W.rg = m.querySelector("#wm-rg").value.trim(); };
+    var pv = function () { read(); var box = m.querySelector("#wm-pv"), H = box.clientHeight || 300, k = H / D.h, o = wmOp(W, D); box.innerHTML = o ? '<span style="left:' + (o.x * k) + "px;top:" + (o.y * k) + "px;width:" + (o.w * k) + "px;font:700 " + (o.size * k) + "px Helvetica,Arial,sans-serif;line-height:" + (o.h * k) + "px;color:" + W.c + ";opacity:" + W.op + ";transform:rotate(" + o.a + 'deg);text-align:center;white-space:nowrap">' + E(o.text) + "</span>" : ""; };
+    m.querySelectorAll("input").forEach(function (x) { x.addEventListener("input", pv); x.addEventListener("keydown", function (e) { e.stopPropagation(); }); });
+    m.querySelectorAll("[data-wv]").forEach(function (b) { b.onclick = function () { m.querySelector("#wm-t").value = b.dataset.wv; pv(); }; });
+    m.querySelectorAll("[data-wc]").forEach(function (b) { b.onclick = function () { W.c = b.dataset.wc; m.querySelectorAll("[data-wc]").forEach(function (x) { x.classList.toggle("on", x === b); }); pv(); }; });
+    m.querySelectorAll("[data-wa]").forEach(function (b) { b.onclick = function () { W.ang = +b.dataset.wa; m.querySelectorAll("[data-wa]").forEach(function (x) { x.classList.toggle("on", x === b); }); pv(); }; });
+    setTimeout(pv, 30);
+    m.querySelector("[data-c]").onclick = function () { m.remove(); };
+    var rm = m.querySelector("[data-rm]"); if (rm) rm.onclick = function () { pushUndo(); PE.pages.forEach(function (p) { p.ops = p.ops.filter(function (o) { return o.grp !== "wm"; }); }); m.remove(); afterBulk("Watermark dihapus"); };
+    m.querySelector("[data-ok]").onclick = function () {
+      read(); if (!W.text) return toast("Isi teks watermark", "error");
+      var r = parseRange(W.rg, PE.pages.length); if (r.bad) return toast("Rentang \"" + r.bad + "\" tidak valid", "error");
+      pushUndo(); PE.pages.forEach(function (p) { p.ops = p.ops.filter(function (o) { return o.grp !== "wm"; }); });
+      r.idx.forEach(function (i) { var p = PE.pages[i], o = wmOp(W, dims(p)); if (o) p.ops.push(o); });
+      m.remove(); afterBulk("Watermark dipasang di " + r.idx.length + " halaman");
+    };
+  }
+  function wmOp(W, D) {
+    if (!W.text) return null;
+    var o = { t: "text", text: W.text, font: "Helvetica", size: 100, b: true, i: false, u: false, al: "c", c: W.c, bg: "", op: W.op, a: W.ang, grp: "wm" };
+    MC.font = cssFont(o, 1); var w100 = MC.measureText(W.text).width || 1, span = (W.ang ? Math.hypot(D.w, D.h) : D.w) * W.scale;
+    o.size = Math.max(10, Math.min(260, Math.round(100 * span / w100))); MC.font = cssFont(o, 1);
+    o.w = MC.measureText(W.text).width + PAD * 2 + 6; o.h = textH(o); o.x = D.w / 2 - o.w / 2; o.y = D.h / 2 - o.h / 2;
+    return o;
   }
 
   // ===================== buka / tutup =====================
@@ -6282,6 +6869,8 @@ body>.pe-menu{z-index:120}
   };
 
   // ===================== kaitan ke aplikasi =====================
+  // tombol di PDF Tools punya animasi proses sendiri — jangan ikut ditandai "Memproses/Berhasil" oleh panggilan server latar belakang
+  document.addEventListener("click", function (e) { try { if (typeof BUSY !== "undefined" && e.target.closest && e.target.closest("#pe, .pe-menu")) { BUSY.lastBtn = null; } } catch (er) { } }, true);
   function hook() {
     var ok = canPdf();
     var bar = $("gs-toolbar");
@@ -6355,6 +6944,7 @@ body>.pe-menu{z-index:120}
     };
   }
 })();
+
 </script>
 </body>
 </html>
