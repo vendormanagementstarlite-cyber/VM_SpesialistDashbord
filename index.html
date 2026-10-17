@@ -4678,6 +4678,117 @@ body>.pe-menu{z-index:120}
 .st-umh small b{color:#0f172a}.dark .st-umh small b{color:#e2e8f0}
 .st-call.mob{overflow-y:auto;overscroll-behavior:contain;padding:14px}
 .st-call.mob .st-hd-t b{font-size:15px}
+/* v19 · form SP terhubung Tracker */
+.spl-box{grid-column:1/-1;border:1px solid rgba(13,148,136,.28);background:linear-gradient(135deg,rgba(13,148,136,.07),rgba(14,165,233,.05));border-radius:14px;padding:12px 14px;margin-bottom:4px}
+.spl-hd{display:flex;align-items:flex-start;gap:10px}
+.spl-hd>div{flex:1;min-width:0;font-size:12px;line-height:1.45}
+.spl-hd>div>b{display:block;color:#0f766e;font-weight:800}
+.dark .spl-hd>div>b{color:#5eead4}
+.spl-ic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#0d9488;color:#fff;flex-shrink:0;font-size:12px}
+.spl-st{display:block;font-size:11px;color:#64748b}.spl-st i{margin-right:5px}
+.spl-st.ok{color:#047857}.spl-st.warn{color:#b45309}.spl-miss{color:#b45309}
+.dark .spl-st.ok{color:#6ee7b7}.dark .spl-st.warn,.dark .spl-miss{color:#fcd34d}
+.spl-re{font-size:11px;font-weight:700;padding:6px 10px;border-radius:9px;background:#fff;border:1px solid rgba(13,148,136,.35);color:#0f766e;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.dark .spl-re{background:#0f172a;color:#5eead4}
+.spl-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:640px){.spl-row{grid-template-columns:1fr}.spl-hd{flex-wrap:wrap}.spl-re{margin-left:40px}}
+.spl-g>label{display:block;font-size:10px;font-weight:700;color:#64748b;margin-bottom:4px}
+.spl-seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.spl-opt{text-align:left;padding:7px 9px;border-radius:10px;border:1px solid #cbd5e1;background:#fff;min-width:0;transition:border-color .15s,box-shadow .15s}
+.dark .spl-opt{background:#0f172a;border-color:#334155}
+.spl-opt small{display:block;font-size:9.5px;color:#64748b;font-weight:700}
+.spl-opt b{display:block;font-size:11.5px;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dark .spl-opt b{color:#e2e8f0}
+.spl-opt.on{border-color:#0d9488;box-shadow:0 0 0 2px rgba(13,148,136,.25);background:#f0fdfa}
+.dark .spl-opt.on{background:rgba(13,148,136,.15)}
+.spl-opt.on small{color:#0f766e}
+.spl-opt:disabled{opacity:.45;cursor:not-allowed}
+.spl-opt:focus-visible,.spl-re:focus-visible{outline:2px solid #0d9488;outline-offset:2px}
+.field.spl-auto{background-image:linear-gradient(90deg,rgba(13,148,136,.09),transparent 60%)}
+.spl-man{margin-left:auto;font-size:9px;font-weight:700;padding:1px 6px;border-radius:6px;background:rgba(245,158,11,.15);color:#b45309}
+/* callout SP tidak menutupi form/modal yang sedang terbuka */
+body:has(#rec-modal:not(.hidden)) #st-nt,body:has(#detail-modal:not(.hidden)) #st-nt,body:has(#surat-modal:not(.hidden)) #st-nt,body:has(#user-modal:not(.hidden)) #st-nt,body:has(#trk-modal:not(.hidden)) #st-nt,body:has(#sg-modal:not(.hidden)) #st-nt{display:none!important}
+/* v19 · Notifikasi Takeover */
+.ton-av{width:48px;height:52px;font-size:20px}
+.ton-list{display:flex;flex-direction:column;gap:8px;margin:10px 0 12px;max-height:min(52vh,420px);overflow:auto;overscroll-behavior:contain}
+.ton-it,.ton-pi{padding:10px 11px;border-radius:14px;background:#ffffffb8;box-shadow:0 0 0 1px #e2e8f0}
+.dark .ton-it,.dark .ton-pi{background:#0b1220b3;box-shadow:0 0 0 1px #24314a}
+.ton-ih{display:flex;align-items:center;gap:6px}.ton-ih>b{flex:1;min-width:0;font-size:12.5px;font-weight:800}
+.ton-it p,.ton-pi p{margin:4px 0 6px;font-size:11.5px;line-height:1.5;color:#475569;white-space:pre-line}
+.dark .ton-it p,.dark .ton-pi p{color:#94a3b8}
+.ton-pos{display:flex;flex-direction:column;gap:4px}
+.ton-po{position:relative;display:block;width:100%;text-align:left;padding:6px 86px 6px 9px;border-radius:10px;border:0;background:#f0fdfa;color:inherit;font:inherit;cursor:pointer;transition:background .15s}
+.ton-po:hover{background:#ccfbf1}.dark .ton-po{background:#0d94881f}.dark .ton-po:hover{background:#0d948840}
+.ton-po b{display:block;font-size:11.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ton-po small{display:block;font-size:10.5px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ton-po em,.ton-r em{font-style:normal;color:#b45309;font-weight:700}
+.ton-st{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-style:normal;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:999px;background:#e2e8f0;color:#334155;max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ton-st.f{background:#dcfce7;color:#15803d}.ton-st.h{background:#fee2e2;color:#b91c1c}.ton-st.e{background:#fef3c7;color:#b45309}.ton-st.o{background:#e0e7ff;color:#4338ca}
+.ton-call .st-b.pri{background:linear-gradient(135deg,#0d9488,#0f766e)}
+.ton-sec{flex:0 0 auto;padding:4px 12px 10px;border-bottom:1px solid #e2e8f0;max-height:min(38vh,320px);overflow:auto;overscroll-behavior:contain}
+.dark .ton-sec{border-color:#24314a}
+.ton-sh{display:flex;align-items:center;gap:6px;margin:6px 2px 8px;font-size:11px;font-weight:800;color:#0f766e}
+.dark .ton-sh{color:#5eead4}
+.ton-sh>span{font-size:10px;padding:1px 7px;border-radius:999px;background:#ccfbf1;color:#0f766e}
+.ton-sh button{margin-left:auto;border:0;background:none;font:inherit;font-size:10.5px;font-weight:700;color:#0d9488;cursor:pointer}
+.ton-pi{margin-bottom:6px}.ton-pi.unread{box-shadow:0 0 0 1.5px #0d9488}
+.ton-pi.unread .ton-ih>b::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#0d9488;margin-right:6px;vertical-align:1px}
+.ton-rd{width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:#64748b;cursor:pointer}.ton-rd:hover{background:#0f172a0d;color:#0d9488}
+.ton-meta{display:block;margin-top:5px;font-size:10px;color:#94a3b8}
+.notif-bell.ton-has .notif-badge{background:#0d9488}
+/* kartu Manajemen User */
+.ton-ul{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.ton-ur{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;box-shadow:0 0 0 1px #e2e8f0}
+.dark .ton-ur{box-shadow:0 0 0 1px #24314a}
+.ton-ur.off{opacity:.55}
+.ton-ut{min-width:0}.ton-ut>b{display:block;font-weight:800;font-size:12.5px}.ton-ut>small{display:block;color:#64748b;font-size:10.5px;margin-top:2px}
+.ton-uc{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.ton-uc span{font-size:10px;font-weight:700;padding:2px 7px;border-radius:7px;background:#f0fdfa;color:#0f766e}
+.dark .ton-uc span{background:#0d948826;color:#5eead4}
+.ton-ur .st-sw{width:auto;height:auto;display:flex;flex-direction:column;align-items:center;gap:3px}
+.ton-ur .st-sw i{position:relative;display:block;width:40px;height:23px}
+.ton-ur .st-sw small{font-size:9.5px;color:#64748b;font-weight:700}
+.ton-ua{display:flex;gap:6px}.st-b.dng{color:#e11d48}
+.ton-empty{padding:18px;text-align:center;color:#64748b;font-size:11.5px}.ton-empty i{display:block;font-size:20px;margin-bottom:6px;color:#94a3b8}
+@media(max-width:640px){.ton-ur{grid-template-columns:1fr auto auto}.ton-ua{grid-column:1/-1;justify-content:flex-end}}
+/* editor */
+.ton-ov{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:16px;background:#0f172a8c;backdrop-filter:blur(4px)}
+.ton-card{width:min(980px,100%);max-height:calc(100dvh - 32px);display:flex;flex-direction:column;border-radius:22px;background:#fff;color:#0f172a;box-shadow:0 40px 80px -30px #000;font-size:12px;overflow:hidden}
+.dark .ton-card{background:#111a2c;color:#e2e8f0}
+.ton-hd{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid #e2e8f0}.dark .ton-hd{border-color:#24314a}
+.ton-hd>div{flex:1}.ton-hd b{display:block;font-size:14px;font-weight:800}.ton-hd small{color:#64748b}
+.ton-hd .x{width:32px;height:32px;border:0;border-radius:9px;background:transparent;color:#94a3b8;cursor:pointer}
+.ton-bd{display:grid;grid-template-columns:1fr 1.2fr;gap:18px;padding:16px 18px;overflow:auto;min-height:0}
+.ton-col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.ton-l{display:flex;flex-direction:column;gap:5px;font-size:11px;font-weight:800;color:#475569}.dark .ton-l{color:#94a3b8}
+.ton-l #ton-cnt{font-weight:600;color:#0d9488}
+.ton-to{display:flex;flex-direction:column;gap:4px;max-height:240px;overflow:auto;padding:4px;border-radius:12px;box-shadow:0 0 0 1px #e2e8f0}
+.dark .ton-to{box-shadow:0 0 0 1px #24314a}
+.ton-u{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center;padding:6px 8px;border-radius:9px;cursor:pointer;font-weight:600}
+.ton-u:hover{background:#f1f5f9}.dark .ton-u:hover{background:#ffffff0d}
+.ton-u input{grid-row:span 2;accent-color:#0d9488;width:16px;height:16px}.ton-u b{font-size:12px}.ton-u small{font-size:10px;color:#64748b}
+.ton-u.all{background:#f0fdfa}.dark .ton-u.all{background:#0d94881f}.ton-u.dim{opacity:.6}
+.ton-wj{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:#fff7ed;cursor:pointer}
+.dark .ton-wj{background:#f59e0b14}
+.ton-wj input{margin-top:2px;accent-color:#d97706;width:16px;height:16px}.ton-wj b{display:block;font-size:12px}.ton-wj small{color:#78716c;font-size:10.5px}
+.ton-fl{display:flex;flex-wrap:wrap;gap:6px}
+.ton-chip{border:1px solid #dbe2ec;background:#fff;border-radius:999px;padding:4px 10px;font:inherit;font-size:11px;font-weight:700;color:#334155;cursor:pointer}
+.dark .ton-chip{background:#0b1220;border-color:#2a3956;color:#cbd5e1}
+.ton-chip i{font-style:normal;font-size:10px;color:#94a3b8;margin-left:2px}
+.ton-chip.on{background:#0d9488;border-color:#0d9488;color:#fff}.ton-chip.on i{color:#ccfbf1}
+.ton-res{display:flex;flex-direction:column;gap:4px;height:min(46vh,380px);overflow:auto;padding:4px;border-radius:12px;box-shadow:0 0 0 1px #e2e8f0;overscroll-behavior:contain}
+.dark .ton-res{box-shadow:0 0 0 1px #24314a}
+.ton-r{position:relative;display:flex;gap:9px;align-items:center;padding:7px 90px 7px 9px;border-radius:10px;cursor:pointer}
+.ton-r:hover{background:#f1f5f9}.dark .ton-r:hover{background:#ffffff0d}
+.ton-r.on{background:#f0fdfa;box-shadow:inset 0 0 0 1px #99f6e4}.dark .ton-r.on{background:#0d94881f;box-shadow:inset 0 0 0 1px #0d948866}
+.ton-r input{accent-color:#0d9488;width:16px;height:16px;flex-shrink:0}
+.ton-r span{min-width:0}.ton-r b{display:block;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ton-r small{display:block;font-size:10.5px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ton-selbar{display:flex;gap:6px;flex-wrap:wrap}
+.ton-err{margin:0 18px 8px;padding:8px 10px;border-radius:10px;background:#fee2e2;color:#b91c1c;font-weight:700}
+.ton-ft{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid #e2e8f0}.dark .ton-ft{border-color:#24314a}
+.ton-ft .st-b.pri{background:linear-gradient(135deg,#0d9488,#0f766e)}
+.ton-po:focus-visible,.ton-chip:focus-visible,.ton-rd:focus-visible{outline:2px solid #0d9488;outline-offset:2px}
+@media(max-width:760px){.ton-ov{padding:0;align-items:flex-end}.ton-card{border-radius:22px 22px 0 0;max-height:94dvh}.ton-bd{grid-template-columns:1fr}.ton-res{height:min(40vh,320px)}}
+body:has(#ton-ov) #st-nt{display:none!important}
 
 </style>
 <script id="addon_v14">
@@ -8186,22 +8297,49 @@ body>.pe-menu{z-index:120}
     { n: 4, k: "Eskalasi", l: "> 30 hari", r: "lewat tenggat", c: "#be123c", sn: 0, ic: "fa-hand-fist" }
   ];
   var stOf = function (od) { return od > 30 ? 4 : od > 14 ? 3 : od > 7 ? 2 : 1; };
+  // konsep SP: status "Close" / "Final" = selesai → tidak dihitung. Yang dinotifikasi hanya:
+  //  (a) SP belum punya Tanggal Rilis   (b) SP berstatus OVERDUE (jumlah hari diambil dari teks status, mis. "OVERDUE SP1 13 hari")
+  var spDone = function (s) { return !!s.closed || /\b(clos(e|ed|ing)?|final)\b/i.test(String(s.overdue_raw || "") + " " + String(s.remark || "")); };
+  var spIsOverdue = function (s) { return /overdue/i.test(String(s.overdue_raw || "")); };
+  var spOdDays = function (s) { var m = String(s.overdue_raw || "").match(/(\d+)\s*hari/i); if (m) return +m[1]; var n = null; try { n = spDaysLeft(s); } catch (e) { } return n != null && n < 0 ? -n : 1; };
   function spItems() {
     var L = (typeof STATE !== "undefined" && STATE.sp) || [], out = [];
     L.forEach(function (s) {
-      if (s.closed) return;
-      if (!s.release_ts) { var lt = ""; try { lt = typeof spLetter === "function" ? spLetter(s) : s.sp1; } catch (e) { } if (!emp(lt) && (emp(s.overdue_raw) || /^-+$/.test(String(s.overdue_raw).trim()))) out.push({ s: s, st: 0, od: 0 }); return; }
-      var n = null; try { n = spDaysLeft(s); } catch (e) { } if (n != null && n < 0) out.push({ s: s, st: stOf(-n), od: -n });
+      if (spDone(s)) return;
+      if (emp(s.release_raw) && !s.release_ts) { out.push({ s: s, st: 0, od: 0 }); return; }
+      if (spIsOverdue(s)) { var d = Math.max(1, spOdDays(s)); out.push({ s: s, st: stOf(d), od: d }); }
     });
     return out.sort(function (a, b) { return b.st - a.st || b.od - a.od; });
   }
+  // perbaikan data SP: hari overdue dibaca dari teks status ("OVERDUE SP1 5 hari" = 5, bukan 15); Final = selesai; status ikut bisa dicari
+  function spFix(s) {
+    var m = String(s.overdue_raw || "").match(/(\d+)\s*hari/i); if (m && /overdue/i.test(s.overdue_raw)) s.overdue = +m[1];
+    s.closed = spDone(s); s.__fx = 1;
+    s.q = String(s.q || "") + " | " + String(s.overdue_raw || "").toLowerCase() + (emp(s.release_raw) ? " | belum rilis" : "") + (s.closed ? " | close closed final" : "");
+    return s;
+  }
+  if (typeof buildSp === "function") { var origBS = buildSp; window.buildSp = buildSp = function () { var r = origBS.apply(this, arguments); try { (r || []).forEach(spFix); } catch (e) { } return r; }; }
+  // pengaman data lokal: baris hasil "tambah" menggantikan entri lama di nomor baris yang sama (tidak dobel)
+  if (typeof recApplyRow === "function") { var origRAR = recApplyRow; window.recApplyRow = recApplyRow = function (sh, oldRow, newRow) { try { if (oldRow == null && newRow != null && STATE[sh] && STATE[sh].some(function (x) { return x.row === newRow; })) STATE[sh] = STATE[sh].filter(function (x) { return x.row !== newRow; }); } catch (e) { } return origRAR.apply(this, arguments); }; }
+  // bila ada 2 data di baris yang sama (cache lama) → ambil ulang sheet tersebut dari spreadsheet
+  var DUPAT = 0;
+  function dupHeal() {
+    try {
+      if (Date.now() - DUPAT < 300000 || typeof STATE === "undefined" || typeof autoSyncGoogleSheets !== "function" || STATE.syncing) return;
+      var bad = ["sp", "takeover", "spk", "perseroan"].filter(function (k) { var L = STATE[k]; if (!Array.isArray(L)) return false; var seen = {}; return L.some(function (x) { if (x.row == null) return false; if (seen[x.row]) return true; seen[x.row] = 1; return false; }); });
+      if (!bad.length) return; DUPAT = Date.now(); console.warn("Data lokal dobel di", bad, "→ sinkron ulang"); autoSyncGoogleSheets({ keys: bad, silent: true });
+    } catch (e) { }
+  }
+  var SPFIXED = null;
+  function spFixAll() { try { if (typeof STATE === "undefined" || !STATE.sp || STATE.sp === SPFIXED) return; STATE.sp.forEach(function (s) { if (!s.__fx) { spFix(s); s.__fx = 1; } }); SPFIXED = STATE.sp; } catch (e) { } }
   function spStats() {
+    spFixAll();
     var it = spItems(), cnt = [0, 0, 0, 0, 0]; it.forEach(function (x) { cnt[x.st]++; });
     var od = it.filter(function (x) { return x.st > 0; }), top = it.length ? it[0].st : -1;
     return { items: it, cnt: cnt, total: it.length, od: od.length, maxOd: od.length ? od[0].od : 0, stage: top, worst: od.length ? (od[0].od > 30 ? "31+" : od[0].od > 14 ? "15-30" : "0-14") : "" };
   }
   var MSG = {
-    0: [["Ada SP yang belum dirilis", "Psst… ada yang tertinggal 👀"], function (S) { return "<b>" + S.cnt[0] + " SP</b> belum punya tanggal rilis. Rilis dulu supaya tenggat 7 hari mulai berjalan."; }],
+    0: [["Ada SP yang belum dirilis", "Psst… ada yang tertinggal 👀"], function (S) { return "<b>" + S.cnt[0] + " SP</b> belum punya <b>Tanggal Rilis</b>. Isi tanggal rilisnya supaya tenggat mulai berjalan."; }],
     1: [["Ehem… ada SP yang telat", "Sekadar mengingatkan…"], function (S) { return "<b>" + S.od + " SP</b> lewat tenggat, terlama <b>" + S.maxOd + " hari</b>. Masih bisa dikejar — yuk tindak lanjuti sekarang."; }],
     2: [["Aku mulai kesal 😠", "Kok didiamkan terus? 😤"], function (S) { return "Sudah lebih dari seminggu! <b>" + S.od + " SP</b> lewat tenggat, terlama <b>" + S.maxOd + " hari</b>. Mitranya santai, aku yang deg-degan."; }],
     3: [["Ini sudah serius! 🔥", "Sabarku tinggal sedikit…"], function (S) { return "<b>" + S.od + " SP</b> lewat tenggat, ada yang <b>" + S.maxOd + " hari</b>. Segera naikkan ke SP berikutnya atau tutup yang sudah beres."; }],
@@ -8219,13 +8357,13 @@ body>.pe-menu{z-index:120}
   function nagInfo() { var day = new Date().toDateString(), raw = (lsGet(uKey("sp_nag")) || "").split("|"); return { day: day, n: raw[0] === day ? +raw[1] || 0 : 0 }; }
   function itemRow(x) {
     var s = x.s, lt = ""; try { lt = spLetter(s); } catch (e) { lt = s.sp1 || ""; } var g = STG[x.st];
-    return '<button class="st-it" data-sid="' + E(s.id) + '" style="--c:' + g.c + '"><span class="ic"><i class="fa-solid ' + g.ic + '"></i></span><span class="tx"><b>' + E(s.mitra || "-") + "</b><small>" + E(lt || "-") + (s.site ? " · " + E(s.site) : "") + (s.region ? " · " + E(s.region) : "") + '</small></span><span class="chip">' + (x.st ? "+" + x.od + " hari" : "belum rilis") + "</span></button>";
+    return '<button class="st-it" data-sid="' + E(s.id) + '" style="--c:' + g.c + '"><span class="ic"><i class="fa-solid ' + g.ic + '"></i></span><span class="tx"><b>' + E(s.mitra || "-") + "</b><small>" + E(lt || "-") + (s.site ? " · " + E(s.site) : "") + (s.region ? " · " + E(s.region) : "") + '</small></span><span class="chip">' + (x.st ? "overdue " + x.od + " hari" : "belum rilis") + "</span></button>";
   }
   function bindItems(root) { root.querySelectorAll("[data-sid]").forEach(function (b) { b.onclick = function () { var c = $("st-call"); if (c) ntClose(c); try { notifClose(); } catch (e) { } try { notifOpen(b.dataset.sid); } catch (e) { try { openRecord(b.dataset.sid); } catch (er) { } } }; }); }
-  function goFix(S) { try { goSp(S.stage >= 1 ? { overdue: S.worst } : {}); } catch (e) { try { switchTab("sp"); } catch (er) { } } }
+  function goFix(S) { try { goSp({ q: S.stage >= 1 ? "overdue" : "belum rilis" }); } catch (e) { try { switchTab("sp"); } catch (er) { } } }
   // ---------- callout utama: menempel ke ikon lonceng di layar utama ----------
   function spCallout(force) {
-    var P = ntPerm(); if (!P.on || $("st-call")) return;
+    var P = ntPerm(); if (!P.on || $("st-call") || $("ton-call")) return;
     var S = spStats(); if (S.stage < 0) return;
     var nag = nagInfo(), snooze = +lsGet(uKey("sp_snooze")) || 0, snSt = +lsGet(uKey("sp_snooze_st"));
     if (!force && !P.lock && Date.now() < snooze && !(S.stage > snSt)) return;   // tunda berlaku sampai tahap naik
@@ -8248,13 +8386,16 @@ body>.pe-menu{z-index:120}
   }
   function place(c, bell) {
     if (!bell) { c.classList.add("dock"); return; }
+    if (!c.offsetWidth) { c.dataset.np = "1"; return; }   // sedang tertutup modal → posisikan saat terlihat lagi
+    delete c.dataset.np;
     var r = bell.getBoundingClientRect();
     if (innerWidth < 640) { c.style.width = (innerWidth - 20) + "px"; c.style.maxHeight = (innerHeight - r.bottom - 90) + "px"; c.classList.add("mob"); }
     var w = c.offsetWidth, left = Math.max(10, Math.min(innerWidth - w - 10, r.right - w + 14));
     c.style.position = "fixed"; c.style.top = (r.bottom + 14) + "px"; c.style.left = left + "px";
     c.querySelector(".st-arrow").style.left = Math.max(18, Math.min(w - 30, r.left + r.width / 2 - left - 8)) + "px";
   }
-  addEventListener("resize", function () { var c = $("st-call"); if (c && !c.classList.contains("dock")) place(c, bellEl()); });
+  addEventListener("resize", function () { ["st-call", "ton-call"].forEach(function (i) { var c = $(i); if (c && !c.classList.contains("dock")) place(c, bellEl()); }); });
+  setInterval(function () { ["st-call", "ton-call"].forEach(function (i) { var c = $(i); if (c && c.dataset.np && c.offsetWidth) place(c, bellEl()); }); }, 700);
   // ---------- panel lonceng: tahapan + daftar per tahap ----------
   function ntPanel() {
     var e = $("notif-panel"); if (!e) { e = document.createElement("div"); e.id = "notif-panel"; e.onclick = function (ev) { ev.stopPropagation(); }; document.body.appendChild(e); }
@@ -8269,7 +8410,7 @@ body>.pe-menu{z-index:120}
     var st = e.querySelector("[data-set]"); if (st) st.onclick = function () { try { notifClose(); switchTab("users"); } catch (er) { } setTimeout(function () { var c = $("st-umn"); if (c) c.scrollIntoView({ behavior: "smooth", block: "start" }); }, 400); };
     var b = bellEl(); if (b) { var r = b.getBoundingClientRect(), w = Math.min(420, innerWidth - 16); e.style.width = w + "px"; e.style.top = r.bottom + 8 + "px"; e.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.right - w)) + "px"; }
   }
-  if (typeof notifCompute === "function") { window.notifCompute = notifCompute = function () { try { NOTIF.items = spItems().map(function (x) { return { s: x.s, n: x.st ? -x.od : "rilis" }; }); } catch (e) { } }; }
+  if (typeof notifCompute === "function") { window.notifCompute = notifCompute = function () { try { spFixAll(); NOTIF.items = spItems().map(function (x) { return { s: x.s, n: x.st ? -x.od : "rilis" }; }); } catch (e) { } }; }
   if (typeof notifPanel === "function") { window.notifPanel = notifPanel = ntPanel; }
   if (typeof notifRender === "function") {
     var origNR = notifRender;
@@ -8319,16 +8460,18 @@ body>.pe-menu{z-index:120}
   }
   if (typeof renderAccounts === "function") { var origRA = renderAccounts; window.renderAccounts = renderAccounts = function () { var r = origRA.apply(this, arguments); try { umNotifCard(); } catch (e) { console.warn(e); } return r; }; }
   function ntTick() {
+    dupHeal();
     try {
       if (!currentUser || typeof STATE === "undefined" || !STATE.sp) return;
       var b = $("docs-tab-pdf"); if (b && canPdf() && !lsGet(uKey("seen_" + NEWV))) b.classList.add("st-isnew");
       if (!STATE.sp.length) return;
       if (!onMain()) return;   // hanya di layar utama
-      if (!NT.shown) { NT.shown = true; setTimeout(function () { if (onMain()) spCallout(); setTimeout(function () { if (onMain() && !$("st-call")) whatsNew(); else if (!$("st-new")) NT.newLater = 1; }, 1200); }, 2600); }
-      else if (NT.newLater && !$("st-call")) { NT.newLater = 0; whatsNew(); }
+      if (!NT.shown) { NT.shown = true; setTimeout(function () { if (onMain()) { if (!(window.__tonShow && window.__tonShow(function () { if (onMain()) spCallout(); }))) spCallout(); } setTimeout(function () { if (onMain() && !$("st-call") && !$("ton-call")) whatsNew(); else if (!$("st-new")) NT.newLater = 1; }, 1200); }, 2600); }
+      else if (NT.newLater && !$("st-call") && !$("ton-call")) { NT.newLater = 0; whatsNew(); }
     } catch (e) { }
   }
   setInterval(ntTick, 4000); setTimeout(ntTick, 2000);
+  window.__NT = { host: ntHost, close: ntClose, onMain: onMain, bell: bellEl, place: place, uKey: uKey, lsGet: lsGet, lsSet: lsSet, sp: function () { spCallout(); } };
   window.stWhatsNew = function () { whatsNew(true); }; window.stSpRebel = window.stSpCallout = function () { spCallout(true); };
   // menu ⋯ Signing: tambah "Split PDF" untuk dokumen Selesai
   if (typeof sgMenu === "function") {
@@ -8363,6 +8506,374 @@ body>.pe-menu{z-index:120}
       return h;
     };
   }
+})();
+
+/* ===== v19 · Form Monitoring SP terhubung Tracker All Starlite ===== */
+(function () {
+  if (typeof openRecModal !== "function") return;
+  var LS = "sp_link_mitra";
+  var lsGet = function () { try { return localStorage.getItem(LS) || "before"; } catch (e) { return "before"; } };
+  var lsSet = function (v) { try { localStorage.setItem(LS, v); } catch (e) { } };
+  var X = function (s) { return typeof esc === "function" ? esc(s) : String(s == null ? "" : s); };
+  var cl = function (s) { return String(s == null ? "" : s).replace(/\s+/g, " ").trim(); };
+  var emp = function (s) { return typeof isEmpty === "function" ? isEmpty(s) : !cl(s); };
+  var bare = function (n) { return cl(n).replace(/^(PT|CV|UD|PD|KOPERASI|KSU)\.?\s+/i, "").replace(/,?\s*(PT|TBK)\.?$/i, "").trim(); };
+  var nk = function (n) { return bare(n).toUpperCase(); };
+  var poList = function (s) { var m = String(s || "").toUpperCase().match(/PO\.\d{4}\.\d{2}\.\d{3,6}/g) || []; return m.filter(function (x, i) { return m.indexOf(x) === i; }); };
+  var PL = {};   // tulisan nama PIC yang benar (bukan huruf besar semua)
+  var picFix = function (p) {
+    p = cl(p); if (!p || p !== p.toUpperCase()) return p;
+    var k = p.toUpperCase(); if (PL[k]) return PL[k];
+    return p.toLowerCase().replace(/(^|[\s.\-'])([a-z])/g, function (a, b, c) { return b + c.toUpperCase(); });
+  };
+  var IDX = { key: "", m: null };
+  function index() {
+    if ((typeof TRK === "undefined" || !TRK.rows || !TRK.rows.length) && typeof trkLoadCache === "function") { try { trkLoadCache(); } catch (e) { } }
+    var tr = (typeof TRK !== "undefined" && TRK.rows) || [], to = STATE.takeover || [];
+    var key = tr.length + ":" + (typeof TRK !== "undefined" && TRK.at) + ":" + to.length + ":" + STATE.lastSync;
+    if (IDX.key === key && IDX.m) return IDX.m;
+    var m = new Map();
+    [].concat(STATE.sp || [], to).forEach(function (r) { var p = cl(r.pic); if (p && p !== p.toUpperCase()) PL[p.toUpperCase()] = p; });
+    var put = function (r, src) {
+      var po = cl(r.po).toUpperCase(); if (!po) return;
+      var o = m.get(po) || { po: po, src: [] };
+      ["before", "after", "stasiun", "region", "pic", "status"].forEach(function (k) { if (emp(o[k]) && !emp(r[k])) o[k] = cl(r[k]); });
+      if (src === "to" && !emp(r.status_to)) o.to = cl(r.status_to);
+      o.src.indexOf(src) < 0 && o.src.push(src); m.set(po, o);
+    };
+    tr.forEach(function (r) { put(r, "trk"); });   // sumber utama: Tracker All Starlite (semua PO SP ada di sini)
+    to.forEach(function (r) { put(r, "to"); });    // Data Mitra Takeover hanya melengkapi yang kosong
+    IDX = { key: key, m: m }; return m;
+  }
+  // HR / Sales / Email dari SP sebelumnya untuk mitra yang sama + Info Perseroan
+  function mitraExtra(name) {
+    var k = nk(name), o = {}; if (!k) return o;
+    (STATE.sp || []).slice().sort(function (a, b) { return b.row - a.row; }).forEach(function (s) {
+      if (nk(s.mitra) !== k) return;
+      if (!o.hr && !emp(s.hr)) o.hr = s.hr; if (!o.sales && !emp(s.sales)) o.sales = s.sales; if (!o.email && !emp(s.email)) o.email = s.email;
+    });
+    if (!o.email) (STATE.perseroan || []).some(function (p) { if ((nk(p.nama) === k || nk(p.short) === k) && !emp(p.email)) { o.email = p.email; return true; } });
+    return o;
+  }
+  function look(poStr) {
+    var m = index(), pos = poList(poStr), hit = [], miss = [];
+    pos.forEach(function (p) { var r = m.get(p); r ? hit.push(r) : miss.push(p); });
+    return { pos: pos, hit: hit, miss: miss };
+  }
+  var F = function (c) { return document.querySelector('#rec-body [data-c="' + c + '"]'); };
+  var L = { mode: "before", site: "auto", res: null };
+  function setVal(c, v, force) {
+    var el = F(c); if (!el || el.disabled) return false;
+    v = cl(v); var cur = cl(el.value);
+    if (!v && !(cur && el.dataset.auto === "1")) return false;   // kosong → hanya bersihkan isian otomatis lama
+    if (!force && cur && el.dataset.auto !== "1") return false;
+    if (cur === v) { el.dataset.auto = "1"; return false; }
+    el.value = v; el.dataset.auto = "1"; el.classList.add("spl-auto");
+    typeof recDirty === "function" && recDirty(); return true;   // tanpa memicu popup saran
+  }
+  function uniq(a) { var o = []; a.forEach(function (x) { x = cl(x); x && o.indexOf(x) < 0 && o.push(x); }); return o; }
+  function apply(force) {
+    var el = F(3); if (!el) return;
+    var R = L.res = look(el.value), h = R.hit, n = 0;
+    if (h.length) {
+      var f = h[0], mitraFull = L.mode === "after" ? (f.after || f.before) : (f.before || f.after), mitra = bare(mitraFull);
+      if (setVal(4, mitra, force || L.forceMitra)) n++; L.forceMitra = false;
+      if (L.site === "auto" && setVal(5, uniq(h.map(function (x) { return x.stasiun; })).join(", "), force || L.forceSite)) n++; L.forceSite = false;
+      if (setVal(6, f.region, force)) n++;
+      if (setVal(7, picFix(f.pic), force)) n++;
+      var ex = mitraExtra(mitra);
+      if (setVal(8, ex.hr, force)) n++; if (setVal(9, ex.sales, force)) n++; if (setVal(14, ex.email, force)) n++;
+    }
+    render(); return n;
+  }
+  function render() {
+    var box = document.getElementById("spl-box"); if (!box) return;
+    var R = L.res || { pos: [], hit: [], miss: [] }, f = R.hit[0];
+    var st;
+    if (!R.pos.length) st = '<span class="spl-st"><i class="fa-solid fa-keyboard"></i>Ketik / tempel No PO — Mitra, Stasiun, Region, PIC, HR, Sales & Email terisi otomatis.</span>';
+    else if (!R.hit.length) st = '<span class="spl-st warn"><i class="fa-solid fa-circle-exclamation"></i>PO <b>' + X(R.miss.join(", ")) + '</b> belum ada di Tracker All Starlite — cek penulisan PO, atau isi manual.</span>';
+    else st = '<span class="spl-st ok"><i class="fa-solid fa-circle-check"></i><b>' + R.hit.length + "/" + R.pos.length + ' PO</b> ditemukan' + (f.status ? ' · status Tracker <b>' + X(f.status) + "</b>" : "") + (f.to ? " · Takeover <b>" + X(f.to) + "</b>" : "") + (R.miss.length ? ' · <span class="spl-miss">tidak ketemu: ' + X(R.miss.join(", ")) + "</span>" : "") + "</span>";
+    var seg = function (k, lbl, name) { return '<button type="button" class="spl-opt' + (L.mode === k ? " on" : "") + '" data-m="' + k + '"' + (f && !name ? " disabled" : "") + '><small>' + lbl + "</small><b>" + X(f ? (bare(name) || "—") : lbl) + "</b></button>"; };
+    var siteT = f ? uniq(R.hit.map(function (x) { return x.stasiun; })).join(", ") : "";
+    box.innerHTML = '<div class="spl-hd"><span class="spl-ic"><i class="fa-solid fa-link"></i></span><div><b>Terhubung Tracker All Starlite</b>' + st + "</div>" +
+      (f ? '<button type="button" class="spl-re" data-a="all" title="Timpa semua kolom dari Tracker (kecuali Dasar SP & Tanggal Rilis)"><i class="fa-solid fa-arrows-rotate"></i>Timpa semua</button>' : "") + "</div>" +
+      '<div class="spl-row"><div class="spl-g"><label>Mitra yang dicantumkan</label><div class="spl-seg">' + seg("before", "Mitra Before", f && f.before) + seg("after", "Mitra After", f && f.after) + "</div></div>" +
+      '<div class="spl-g"><label>Stasiun / Site</label><div class="spl-seg"><button type="button" class="spl-opt' + (L.site === "auto" ? " on" : "") + '" data-s="auto"><small>Ikuti Tracker</small><b>' + X(siteT || "otomatis") + '</b></button><button type="button" class="spl-opt' + (L.site === "manual" ? " on" : "") + '" data-s="manual"><small>Manual</small><b>Ketik sendiri</b></button></div></div></div>';
+  }
+  function mark() {
+    [10, 11].forEach(function (c) {
+      var el = F(c), w = el && el.closest(".rec-field"); if (!w || w.querySelector(".spl-man")) return;
+      var lb = w.querySelector("label"); lb && lb.insertAdjacentHTML("beforeend", '<span class="spl-man" title="Tidak diambil dari Tracker">isi manual</span>');
+    });
+    var s = F(5), sw = s && s.closest(".rec-field");
+    if (s) s.addEventListener("input", function (e) { if (e.isTrusted && L.site === "auto") { L.site = "manual"; s.dataset.auto = "0"; render(); } });
+    [4, 6, 7, 8, 9, 14].forEach(function (c) { var el = F(c); el && el.addEventListener("input", function (e) { if (e.isTrusted) { el.dataset.auto = "0"; el.classList.remove("spl-auto"); } }); });
+  }
+  var LOADING = null;
+  function ensureTrk() {   // Tracker belum dimuat di perangkat ini → ambil otomatis, lalu isi ulang form
+    if ((typeof TRK !== "undefined" && TRK.rows && TRK.rows.length) || LOADING || typeof trkFetch !== "function") return;
+    var bx = document.getElementById("spl-box"); bx && bx.insertAdjacentHTML("beforeend", '<p class="spl-st" id="spl-load"><i class="fa-solid fa-circle-notch fa-spin"></i>Memuat Tracker All Starlite…</p>');
+    LOADING = Promise.resolve().then(function () { return trkFetch(); }).catch(function () { }).then(function () {
+      LOADING = null; IDX.key = ""; var l = document.getElementById("spl-load"); l && l.remove();
+      if (document.getElementById("spl-box")) apply(false);
+    });
+  }
+  function init() {
+    var body = document.getElementById("rec-body"), po = F(3);
+    if (!body || !po || document.getElementById("spl-box")) return;
+    L = { mode: lsGet(), site: "auto", res: null };
+    var box = document.createElement("div"); box.id = "spl-box"; box.className = "spl-box md:col-span-2";
+    var grid = po.closest(".rec-field") && po.closest(".rec-field").parentNode;
+    (grid || body).insertBefore(box, (grid || body).firstChild);
+    // daftar PO dari Tracker untuk saran ketik
+    if (!po.getAttribute("list")) {
+      var dl = document.createElement("datalist"); dl.id = "spl-dl";
+      var m = index(), h = ""; m.forEach(function (v, k) { h += '<option value="' + X(k) + '">' + X(bare(v.before) + " · " + (v.stasiun || "")) + "</option>"; });
+      dl.innerHTML = h; body.appendChild(dl); po.setAttribute("list", "spl-dl");
+    }
+    if (REC.mode === "edit") {   // data lama tidak ditimpa — hanya baca pilihan yang cocok
+      var R = L.res = look(po.value), f = R.hit[0];
+      if (f) {
+        var mi = nk(F(4) && F(4).value);
+        if (mi && nk(f.after) === mi && nk(f.before) !== mi) L.mode = "after"; else if (mi && nk(f.before) === mi) L.mode = "before";
+        var sv = cl(F(5) && F(5).value), st = uniq(R.hit.map(function (x) { return x.stasiun; })).join(", ");
+        if (sv && sv.toUpperCase() !== st.toUpperCase()) L.site = "manual";
+      }
+      render();
+    } else apply(false);
+    var t; po.addEventListener("input", function () { clearTimeout(t); t = setTimeout(function () { apply(false); }, 220); });
+    box.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b || b.disabled) return;
+      if (b.dataset.m) { L.mode = b.dataset.m; lsSet(L.mode); L.forceMitra = true; apply(false); }
+      else if (b.dataset.s) { L.site = b.dataset.s; if (L.site === "auto") L.forceSite = true; else { var s = F(5); s && (s.dataset.auto = "0", s.classList.remove("spl-auto"), s.focus()); } apply(false); }
+      else if (b.dataset.a === "all") { var n = apply(true); showToast(n ? n + " kolom diperbarui dari Tracker" : "Semua kolom sudah sesuai Tracker", "success"); }
+    });
+    mark(); ensureTrk();
+  }
+  var orig = openRecModal;
+  window.openRecModal = openRecModal = function () {
+    var r = orig.apply(this, arguments);
+    try { if (REC.sheet === "sp" && (REC.mode === "add" || REC.mode === "edit")) init(); } catch (e) { console.warn("spLink", e); }
+    return r;
+  };
+  if (location.hostname === "localhost") window.__spLink = { look: look, index: index, bare: bare, mitraExtra: mitraExtra };
+})();
+
+/* ===== v19 · Notifikasi Takeover (ditentukan Akun Utama: PO, pesan, penerima) ===== */
+(function () {
+  var N = window.__NT; if (!N) return;
+  var $ = function (i) { return document.getElementById(i); };
+  var E = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var toast = function (m, t, ms) { try { showToast(m, t || "info", ms); } catch (e) { } };
+  var srv = function () { try { return typeof isServerMode === "function" && isServerMode(); } catch (e) { return false; } };
+  var isOwner = function () { return !!currentUser && currentUser.role === "owner"; };
+  var emp = function (v) { return typeof isEmpty === "function" ? isEmpty(v) : !String(v || "").trim(); };
+  var TON = { items: [], rev: "", at: 0, busy: false, user: "" };
+  var CK = function () { return N.uKey("ton_cache"); };
+  function loadCache() {
+    var u = currentUser && currentUser.username || ""; if (TON.user === u) return; TON.user = u; TON.items = []; TON.rev = ""; TON.at = 0;
+    try { var c = JSON.parse(N.lsGet(CK()) || "null"); if (c && Array.isArray(c.items)) { TON.items = c.items; TON.rev = c.rev || ""; } } catch (e) { }
+  }
+  function saveCache() { N.lsSet(CK(), JSON.stringify({ items: TON.items, rev: TON.rev })); }
+  var mine = function () { loadCache(); return TON.items.filter(function (x) { return x.mine && x.on; }); };
+  var unread = function () { return mine().filter(function (x) { return !x.read; }); };
+  var SS = "ton_later";   // "nanti saja" berlaku sampai aplikasi dibuka lagi
+  var later = function () { try { return JSON.parse(sessionStorage.getItem(SS) || "{}"); } catch (e) { return {}; } };
+  var setLater = function (ids) { var o = later(); ids.forEach(function (i) { o[i] = 1; }); try { sessionStorage.setItem(SS, JSON.stringify(o)); } catch (e) { } };
+  var pending = function () { var l = later(); return mine().filter(function (x) { return (x.w || !x.read) && !l[x.id]; }); };
+  function toOf(po) { po = String(po || "").toUpperCase(); return (STATE.takeover || []).filter(function (t) { return String(t.po || "").toUpperCase() === po; })[0] || null; }
+  function missAtt(t) { var M = [["att_ba", "BA"], ["att_spk", "SPK"], ["att_bap", "BAP"], ["att_bastm", "BASTM"]]; return M.filter(function (m) { return emp(t[m[0]]); }).map(function (m) { return m[1]; }); }
+  function stTxt(t) { return emp(t.status_to) ? "Status kosong" : t.status_to; }
+  function stCls(t) { var s = String(t.status_to || "").toUpperCase(); return !s.trim() ? "e" : /HOLD/.test(s) ? "h" : /FINAL/.test(s) ? "f" : "o"; }
+  function openPo(po) { var t = toOf(po); if (!t) return toast("PO " + po + " tidak ada di Data Mitra Takeover", "info"); try { notifClose(); } catch (e) { } var c = $("ton-call"); c && N.close(c); try { openRecord(t.id); } catch (e) { } }
+  window.tonOpenPo = openPo;
+  function poRow(po) {
+    var t = toOf(po);
+    if (!t) return '<button type="button" class="ton-po" data-po="' + E(po) + '"><b>' + E(po) + '</b><small>tidak ditemukan di Data Takeover</small></button>';
+    var ma = missAtt(t);
+    return '<button type="button" class="ton-po" data-po="' + E(po) + '"><b>' + E(po) + (t.stasiun ? " · " + E(t.stasiun) : "") + '</b><small>' + E((t.before || "-") + " → " + (t.after || "-")) + (ma.length ? ' · <em>lampiran belum: ' + E(ma.join(", ")) + "</em>" : "") + '</small><i class="ton-st ' + stCls(t) + '">' + E(stTxt(t)) + "</i></button>";
+  }
+  function bindPo(root) { root.querySelectorAll("[data-po]").forEach(function (b) { b.onclick = function (e) { e.stopPropagation(); openPo(b.dataset.po); }; }); }
+  async function markRead(ids, read) {
+    var ok = 0;
+    for (var i = 0; i < ids.length; i++) {
+      var x = TON.items.filter(function (y) { return y.id === ids[i]; })[0]; if (x) x.read = read !== false;
+      try { var r = await callApi("ton.read", { id: ids[i], read: read !== false }, 30000); if (r && r.item) { replaceItem(r.item); ok++; } } catch (e) { }
+    }
+    saveCache(); changed(true); return ok;
+  }
+  function replaceItem(it) { var i = TON.items.findIndex(function (y) { return y.id === it.id; }); if (i >= 0) TON.items[i] = Object.assign({}, TON.items[i], it); else TON.items.unshift(it); }
+  async function fetchTon(force) {
+    if (!currentUser || !srv() || TON.busy) return; loadCache();
+    if (!force && Date.now() - TON.at < 150000) return;
+    TON.busy = true;
+    try {
+      var r = await callApi("ton.list", { rev: force ? "" : TON.rev }, 30000); TON.at = Date.now();
+      if (r && !r.same && Array.isArray(r.items)) { TON.items = r.items; TON.rev = r.rev || ""; saveCache(); changed(false); }
+    } catch (e) { } finally { TON.busy = false; }
+  }
+  window.tonRefresh = function () { return fetchTon(true); };
+  function changed(quiet) {
+    try { notifRender(); } catch (e) { }
+    try { if (typeof NOTIF !== "undefined" && NOTIF.open) notifPanel(); } catch (e) { }
+    try { umCard(); } catch (e) { }
+    if (!quiet && N.onMain() && !$("st-call") && !$("ton-call") && !$("st-new") && N.__started) tonShow(null);
+  }
+  // ---------- pop-up di layar utama (menempel ke lonceng) ----------
+  function tonShow(after) {
+    if (!currentUser || $("ton-call")) return false;
+    var P = pending(); if (!P.length) return false;
+    var w = P.some(function (x) { return x.w; });
+    var c = document.createElement("div"); c.id = "ton-call"; c.className = "st-call ton-call"; c.style.setProperty("--c", "#0d9488");
+    var list = P.slice(0, 3).map(function (x) {
+      return '<div class="ton-it"><div class="ton-ih"><b>' + E(x.t) + "</b>" + (x.w ? '<span class="st-tag lock"><i class="fa-solid fa-lock"></i>Wajib</span>' : "") + "</div>" + (x.m ? '<p>' + E(x.m) + "</p>" : "") + '<div class="ton-pos">' + x.pos.slice(0, 4).map(poRow).join("") + (x.pos.length > 4 ? '<div class="st-more">+' + (x.pos.length - 4) + " PO lainnya — buka lonceng</div>" : "") + "</div></div>";
+    }).join("") + (P.length > 3 ? '<div class="st-more">+' + (P.length - 3) + " notifikasi lainnya di lonceng</div>" : "");
+    c.innerHTML = '<i class="st-arrow"></i><div class="st-hd"><span class="st-av ton-av"><i class="fa-solid fa-handshake-angle"></i></span><div class="st-hd-t"><span class="st-tag"><i class="fa-solid fa-bullhorn"></i>Notifikasi Takeover</span><b>' + (P.length === 1 ? E(P[0].t) : P.length + " hal takeover perlu perhatian") + "</b><small>dari " + E(P[0].by || "Akun Utama") + " · " + P.reduce(function (n, x) { return n + x.pos.length; }, 0) + " PO</small></div>" + (w ? "" : '<button class="x" data-x title="Nanti saja"><i class="fa-solid fa-xmark"></i></button>') + "</div>"
+      + '<div class="ton-list">' + list + "</div>"
+      + '<div class="st-ft"><button class="st-b" data-later>' + (w ? '<i class="fa-solid fa-down-left-and-up-right-to-center"></i>Kecilkan' : "Nanti saja") + '</button><button class="st-b pri" data-read><i class="fa-solid fa-check"></i>Sudah dibaca</button></div>';
+    N.host().appendChild(c); N.place(c, N.bell()); bindPo(c);
+    var done = function () { N.close(c, function () { if (after) after(); }); };
+    var lt = function () { setLater(P.map(function (x) { return x.id; })); done(); };
+    c.querySelector("[data-later]").onclick = lt; var xx = c.querySelector("[data-x]"); if (xx) xx.onclick = lt;
+    c.querySelector("[data-read]").onclick = function () { var ids = P.map(function (x) { return x.id; }); setLater(ids); markRead(ids.filter(function (i) { return P.some(function (x) { return x.id === i && !x.read; }); }), true); done(); };
+    return true;
+  }
+  window.__tonShow = function (after) { N.__started = true; loadCache(); var r = tonShow(after); fetchTon(false); return r; };
+  // ---------- lonceng: badge + bagian Takeover di panel ----------
+  if (typeof notifRender === "function") {
+    var oNR = notifRender;
+    window.notifRender = notifRender = function () {
+      var r = oNR.apply(this, arguments);
+      try {
+        if (!currentUser) return r;
+        var my = mine(), u = unread().length;
+        document.querySelectorAll("[data-notif-slot]").forEach(function (sl) {
+          if (!sl.querySelector(".notif-bell") && my.length) sl.innerHTML = '<button onclick="notifToggle(event)" class="notif-bell" title="Notifikasi Takeover"><i class="fa-solid fa-bell"></i></button>';
+          var b = sl.querySelector(".notif-bell"); if (!b) return;
+          var bd = b.querySelector(".notif-badge"), base = bd ? +(bd.dataset.sp || bd.textContent.replace(/\D/g, "")) || 0 : 0;
+          if (u) { b.classList.add("has", "ton-has"); if (!bd) { bd = document.createElement("span"); bd.className = "notif-badge"; b.appendChild(bd); } bd.dataset.sp = base; var t = base + u; bd.textContent = t > 99 ? "99+" : t; }
+          else b.classList.remove("ton-has");
+        });
+      } catch (e) { }
+      return r;
+    };
+  }
+  var canSp = function () { try { return can("sp"); } catch (e) { return false; } };
+  function panelSec() {
+    var my = mine(); if (!my.length) return "";
+    return '<div class="ton-sec"><p class="ton-sh"><i class="fa-solid fa-handshake-angle"></i>Takeover<span>' + my.length + "</span>" + (unread().length ? '<button data-allread>Tandai semua dibaca</button>' : "") + "</p>" + my.map(function (x) {
+      return '<div class="ton-pi' + (x.read ? "" : " unread") + '"><div class="ton-ih"><b>' + E(x.t) + "</b>" + (x.w ? '<span class="st-tag lock"><i class="fa-solid fa-lock"></i>Wajib</span>' : "") + '<button class="ton-rd" data-rd="' + E(x.id) + '" data-v="' + (x.read ? 0 : 1) + '" title="' + (x.read ? "Tandai belum dibaca" : "Tandai sudah dibaca") + '"><i class="fa-' + (x.read ? "regular fa-envelope-open" : "solid fa-envelope") + '"></i></button></div>' + (x.m ? "<p>" + E(x.m) + "</p>" : "") + '<div class="ton-pos">' + x.pos.slice(0, 12).map(poRow).join("") + (x.pos.length > 12 ? '<div class="st-more">+' + (x.pos.length - 12) + " PO lainnya</div>" : "") + "</div><small class=\"ton-meta\">" + E(x.by || "") + " · " + E(fmtD(x.up || x.at)) + "</small></div>";
+    }).join("") + "</div>";
+  }
+  function fmtD(s) { try { return new Date(s).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { return s || ""; } }
+  if (typeof notifPanel === "function") {
+    var oNP = notifPanel;
+    window.notifPanel = notifPanel = function () {
+      var r = oNP.apply(this, arguments);
+      try {
+        var e = $("notif-panel"); if (!e) return r;
+        var h = panelSec();
+        if (!canSp()) {   // akun tanpa akses SP: panel hanya berisi takeover
+          e.className = "st-panel"; e.innerHTML = '<div class="st-ph"><b><i class="fa-solid fa-bell"></i> Notifikasi</b><button class="x" onclick="notifClose()"><i class="fa-solid fa-xmark"></i></button></div>' + (h || '<div class="st-empty"><i class="fa-solid fa-circle-check"></i><b>Tidak ada notifikasi</b></div>');
+          var b = N.bell(); if (b) { var q = b.getBoundingClientRect(), w = Math.min(420, innerWidth - 16); e.style.width = w + "px"; e.style.top = q.bottom + 8 + "px"; e.style.left = Math.max(8, Math.min(innerWidth - w - 8, q.right - w)) + "px"; }
+        } else if (h) { var ph = e.querySelector(".st-ph"); if (ph) { ph.insertAdjacentHTML("afterend", h); var hb = ph.querySelector("b"); hb && (hb.innerHTML = '<i class="fa-solid fa-bell"></i> Notifikasi'); } else e.insertAdjacentHTML("afterbegin", h); }
+        bindPo(e);
+        e.querySelectorAll("[data-rd]").forEach(function (b) { b.onclick = function (ev) { ev.stopPropagation(); markRead([b.dataset.rd], b.dataset.v === "1"); }; });
+        var ar = e.querySelector("[data-allread]"); if (ar) ar.onclick = function (ev) { ev.stopPropagation(); markRead(unread().map(function (x) { return x.id; }), true); };
+      } catch (er) { console.warn("ton panel", er); }
+      return r;
+    };
+  }
+  // ---------- Manajemen User: kartu Notifikasi Takeover ----------
+  function users() { return (typeof UM !== "undefined" && UM.users) || []; }
+  function uName(id) { var u = users().filter(function (x) { return x.id === id; })[0]; return u ? u.name : "(akun dihapus)"; }
+  function recipients(x) { return (x.to || []).indexOf("*") >= 0 ? users().filter(function (u) { return u.active !== false; }).map(function (u) { return u.id; }) : (x.to || []); }
+  function umCard() {
+    if (!isOwner() || typeof UM === "undefined" || !UM.users) return;
+    var pane = $("um-pane-accounts"); if (!pane) return;
+    var box = $("ton-um"); if (!box) { box = document.createElement("div"); box.id = "ton-um"; box.className = "st-umn ton-um"; var sp = $("st-umn"); sp && sp.parentNode === pane ? sp.after(box) : pane.appendChild(box); }
+    loadCache();
+    var L = TON.items;
+    box.innerHTML = '<div class="st-umh"><span class="st-umi" style="background:#0d9488"><i class="fa-solid fa-handshake-angle"></i></span><div><b>Notifikasi Takeover</b><small>Anda yang memilih <b>PO takeover</b> mana yang ditampilkan, isi pesannya, dan <b>akun penerima</b>. Notifikasi <b>wajib</b> selalu muncul tiap aplikasi dibuka sampai Anda menonaktifkan atau menghapusnya.</small></div><div class="st-ums"><span><b>' + L.filter(function (x) { return x.on; }).length + "</b> aktif</span><span><b>" + L.length + '</b> total</span></div></div>'
+      + (L.length ? '<div class="ton-ul">' + L.map(function (x) {
+        var rc = recipients(x), rd = rc.filter(function (i) { return (x.reads || {})[i]; });
+        return '<div class="ton-ur' + (x.on ? "" : " off") + '"><div class="ton-ut"><b>' + E(x.t) + "</b><small>" + x.pos.length + " PO · " + ((x.to || []).indexOf("*") >= 0 ? "Semua akun" : rc.length + " akun") + ' · <span title="' + E(rc.map(function (i) { return uName(i) + ((x.reads || {})[i] ? " ✓ dibaca " + fmtD(x.reads[i]) : " — belum dibaca"); }).join("\n")) + '"><i class="fa-solid fa-check-double"></i> ' + rd.length + "/" + rc.length + " sudah baca</span> · " + E(fmtD(x.up || x.at)) + '</small><div class="ton-uc">' + x.pos.slice(0, 6).map(function (p) { return '<span>' + E(p) + "</span>"; }).join("") + (x.pos.length > 6 ? "<span>+" + (x.pos.length - 6) + "</span>" : "") + "</div></div>"
+          + '<label class="st-sw" title="Aktif"><input type="checkbox" data-on="' + E(x.id) + '" ' + (x.on ? "checked" : "") + '><i></i><small>Aktif</small></label><label class="st-sw" title="Wajib"><input type="checkbox" data-w="' + E(x.id) + '" ' + (x.w ? "checked" : "") + '><i></i><small>Wajib</small></label>'
+          + '<div class="ton-ua"><button class="st-b" data-ed="' + E(x.id) + '"><i class="fa-solid fa-pen"></i>Ubah</button><button class="st-b dng" data-del="' + E(x.id) + '"><i class="fa-solid fa-trash-can"></i></button></div></div>';
+      }).join("") + "</div>" : '<div class="ton-empty"><i class="fa-regular fa-bell"></i>Belum ada notifikasi takeover. Buat satu untuk mengingatkan tim soal PO tertentu.</div>')
+      + '<div class="st-umf"><button class="st-b pri" data-new><i class="fa-solid fa-plus"></i>Buat notifikasi takeover</button><button class="st-b" data-rf><i class="fa-solid fa-rotate"></i>Muat ulang</button></div>';
+    box.querySelector("[data-new]").onclick = function () { editor(null); };
+    box.querySelector("[data-rf]").onclick = function () { fetchTon(true).then(function () { toast("Notifikasi takeover dimuat ulang", "success"); }); };
+    box.querySelectorAll("[data-ed]").forEach(function (b) { b.onclick = function () { editor(TON.items.filter(function (x) { return x.id === b.dataset.ed; })[0]); }; });
+    box.querySelectorAll("[data-del]").forEach(function (b) { b.onclick = async function () { var x = TON.items.filter(function (y) { return y.id === b.dataset.del; })[0]; if (!x || !confirm('Hapus notifikasi "' + x.t + '"? Penerima tidak akan melihatnya lagi.')) return; try { await callApi("ton.delete", { id: x.id }, 30000); TON.items = TON.items.filter(function (y) { return y.id !== x.id; }); saveCache(); changed(true); toast("Notifikasi takeover dihapus", "success"); } catch (e) { toast(e.message, "error", 7000); } }; });
+    var quick = function (attr, key) { box.querySelectorAll("[" + attr + "]").forEach(function (cb) { cb.onchange = async function () { var x = TON.items.filter(function (y) { return y.id === cb.getAttribute(attr); })[0]; if (!x) return; var it = { id: x.id, t: x.t, m: x.m, pos: x.pos, to: x.to, w: x.w, on: x.on }; it[key] = cb.checked; cb.disabled = true; try { var r = await callApi("ton.save", { item: it }, 30000); replaceItem(r.item); saveCache(); changed(true); toast(key === "on" ? (cb.checked ? "Notifikasi diaktifkan" : "Notifikasi dinonaktifkan") : (cb.checked ? "Notifikasi dibuat wajib" : "Notifikasi tidak wajib lagi"), "success"); } catch (e) { cb.checked = !cb.checked; toast(e.message, "error", 7000); } cb.disabled = false; }; }); };
+    quick("data-on", "on"); quick("data-w", "w");
+    if (!TON.at) fetchTon(true);
+  }
+  if (typeof renderAccounts === "function") { var oRA = renderAccounts; window.renderAccounts = renderAccounts = function () { var r = oRA.apply(this, arguments); try { umCard(); } catch (e) { console.warn(e); } return r; }; }
+  // ---------- editor: pilih PO, pesan, penerima ----------
+  var FL = [["all", "Semua"], ["empty", "Status kosong"], ["hold", "HOLD"], ["att", "Lampiran belum lengkap"], ["nofinal", "Belum FINAL"], ["sel", "Terpilih"]];
+  function editor(x) {
+    var old = $("ton-ov"); old && old.remove();
+    var D = { id: x && x.id || "", t: x && x.t || "", m: x && x.m || "", pos: (x && x.pos || []).slice(), to: (x && x.to || []).slice(), w: !!(x && x.w), on: x ? x.on : true, f: "all", q: "" };
+    var ov = document.createElement("div"); ov.id = "ton-ov"; ov.className = "ton-ov";
+    ov.innerHTML = '<div class="ton-card" role="dialog" aria-modal="true" aria-labelledby="ton-h"><div class="ton-hd"><span class="st-umi" style="background:#0d9488"><i class="fa-solid fa-handshake-angle"></i></span><div><b id="ton-h">' + (x ? "Ubah" : "Buat") + ' notifikasi takeover</b><small>Muncul di layar utama &amp; lonceng akun yang Anda pilih</small></div><button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
+      + '<div class="ton-bd"><div class="ton-col"><label class="ton-l">Judul<input id="ton-t" class="field w-full" maxlength="120" placeholder="mis. Lengkapi BAP & BASTM takeover Jatim"></label><label class="ton-l">Pesan<textarea id="ton-m" class="field w-full" rows="3" maxlength="1200" placeholder="Apa yang perlu dilakukan penerima?"></textarea></label>'
+      + '<div class="ton-l">Penerima<div class="ton-to" id="ton-to"></div></div><label class="ton-wj"><input type="checkbox" id="ton-w"><span><b>Wajib</b><small>Selalu muncul setiap aplikasi dibuka, hanya bisa dikecilkan.</small></span></label>' + (x ? '<label class="ton-wj"><input type="checkbox" id="ton-un"><span><b>Tampilkan ulang ke semua penerima</b><small>Status "sudah dibaca" dihapus.</small></span></label>' : "") + "</div>"
+      + '<div class="ton-col"><div class="ton-l">PO takeover <span id="ton-cnt"></span></div><input id="ton-q" class="field w-full" placeholder="Cari PO, stasiun, mitra, region, PIC…"><div class="ton-fl" id="ton-fl"></div><div class="ton-res" id="ton-res"></div><div class="ton-selbar"><button type="button" class="st-b" data-pickall>Pilih semua yang tampil</button><button type="button" class="st-b" data-clear>Kosongkan pilihan</button></div></div></div>'
+      + '<p class="ton-err hidden" id="ton-err"></p><div class="ton-ft"><button class="st-b" data-x>Batal</button><button class="st-b pri" id="ton-save"><i class="fa-solid fa-paper-plane"></i>' + (x ? "Simpan perubahan" : "Kirim notifikasi") + "</button></div></div>";
+    document.body.appendChild(ov);
+    var q = function (s) { return ov.querySelector(s); };
+    q("#ton-t").value = D.t; q("#ton-m").value = D.m; q("#ton-w").checked = D.w;
+    var close = function () { ov.remove(); document.removeEventListener("keydown", esc); };
+    var esc = function (e) { if (e.key === "Escape") close(); }; document.addEventListener("keydown", esc);
+    ov.querySelectorAll("[data-x]").forEach(function (b) { b.onclick = close; }); ov.onclick = function (e) { if (e.target === ov) close(); };
+    var U = users().filter(function (u) { return u.active !== false || D.to.indexOf(u.id) >= 0; }).sort(function (a, b) { return ["owner", "operator", "viewer"].indexOf(a.role) - ["owner", "operator", "viewer"].indexOf(b.role) || String(a.name).localeCompare(b.name, "id"); });
+    function drawTo() {
+      var all = D.to.indexOf("*") >= 0;
+      q("#ton-to").innerHTML = '<label class="ton-u all"><input type="checkbox" data-uid="*" ' + (all ? "checked" : "") + '><b>Semua akun</b><small>termasuk akun yang dibuat nanti</small></label>' + U.map(function (u) { return '<label class="ton-u' + (all ? " dim" : "") + '"><input type="checkbox" data-uid="' + E(u.id) + '" ' + (all || D.to.indexOf(u.id) >= 0 ? "checked" : "") + (all ? " disabled" : "") + "><b>" + E(u.name) + "</b><small>@" + E(u.username) + " · " + E({ owner: "Akun Utama", operator: "Operator", viewer: "Viewer" }[u.role] || u.role) + (u.active === false ? " · nonaktif" : "") + "</small></label>"; }).join("");
+      q("#ton-to").querySelectorAll("[data-uid]").forEach(function (cb) { cb.onchange = function () { var id = cb.dataset.uid; if (id === "*") D.to = cb.checked ? ["*"] : []; else { D.to = D.to.filter(function (i) { return i !== id && i !== "*"; }); if (cb.checked) D.to.push(id); } drawTo(); }; });
+    }
+    var TOs = (STATE.takeover || []).filter(function (t) { return !emp(t.po); });
+    function match(t) {
+      var s = String(t.status_to || "").toUpperCase();
+      if (D.f === "empty" && !emp(t.status_to)) return false; if (D.f === "hold" && !/HOLD/.test(s)) return false;
+      if (D.f === "att" && !missAtt(t).length) return false; if (D.f === "nofinal" && /FINAL/.test(s)) return false;
+      if (D.f === "sel" && D.pos.indexOf(String(t.po).toUpperCase()) < 0) return false;
+      if (D.q) { var h = [t.po, t.stasiun, t.before, t.after, t.region, t.pic, t.status_to, t.bap_no].join(" ").toLowerCase(); if (D.q.split(/\s+/).some(function (w) { return h.indexOf(w) < 0; })) return false; }
+      return true;
+    }
+    var shown = [];
+    function drawRes() {
+      var cnt = {}; FL.forEach(function (f) { var o = D.f; D.f = f[0]; var qq = D.q; D.q = ""; cnt[f[0]] = TOs.filter(match).length; D.f = o; D.q = qq; });
+      q("#ton-fl").innerHTML = FL.map(function (f) { return '<button type="button" class="ton-chip' + (D.f === f[0] ? " on" : "") + '" data-f="' + f[0] + '">' + f[1] + " <i>" + (f[0] === "sel" ? D.pos.length : cnt[f[0]]) + "</i></button>"; }).join("");
+      q("#ton-fl").querySelectorAll("[data-f]").forEach(function (b) { b.onclick = function () { D.f = b.dataset.f; drawRes(); }; });
+      shown = TOs.filter(match); var extra = D.f === "sel" ? D.pos.filter(function (p) { return !toOf(p); }) : [];
+      q("#ton-res").innerHTML = (shown.length || extra.length ? shown.slice(0, 150).map(function (t) {
+        var po = String(t.po).toUpperCase(), on = D.pos.indexOf(po) >= 0, ma = missAtt(t);
+        return '<label class="ton-r' + (on ? " on" : "") + '"><input type="checkbox" data-p="' + E(po) + '" ' + (on ? "checked" : "") + '><span><b>' + E(po) + (t.stasiun ? " · " + E(t.stasiun) : "") + "</b><small>" + E((t.before || "-") + " → " + (t.after || "-")) + " · " + E(t.region || "-") + (ma.length ? ' · <em>belum: ' + E(ma.join(", ")) + "</em>" : "") + '</small></span><i class="ton-st ' + stCls(t) + '">' + E(stTxt(t)) + "</i></label>";
+      }).join("") + extra.map(function (p) { return '<label class="ton-r on"><input type="checkbox" data-p="' + E(p) + '" checked><span><b>' + E(p) + "</b><small>tidak ada lagi di Data Takeover</small></span></label>"; }).join("") + (shown.length > 150 ? '<div class="st-more">+' + (shown.length - 150) + " PO lagi — persempit pencarian</div>" : "") : '<div class="ton-empty">Tidak ada PO yang cocok.</div>');
+      q("#ton-res").querySelectorAll("[data-p]").forEach(function (cb) { cb.onchange = function () { var p = cb.dataset.p; D.pos = D.pos.filter(function (x) { return x !== p; }); if (cb.checked) D.pos.push(p); cb.closest(".ton-r").classList.toggle("on", cb.checked); cntTxt(); }; });
+      cntTxt();
+    }
+    function cntTxt() { q("#ton-cnt").innerHTML = "<b>" + D.pos.length + "</b> dipilih"; var b = q('[data-f="sel"] i'); if (b) b.textContent = D.pos.length; }
+    var tq; q("#ton-q").oninput = function () { clearTimeout(tq); var v = this.value; tq = setTimeout(function () { D.q = v.trim().toLowerCase(); drawRes(); }, 150); };
+    q("[data-pickall]").onclick = function () { shown.slice(0, 150).forEach(function (t) { var p = String(t.po).toUpperCase(); if (D.pos.indexOf(p) < 0) D.pos.push(p); }); drawRes(); };
+    q("[data-clear]").onclick = function () { D.pos = []; drawRes(); };
+    var err = function (m) { var e = q("#ton-err"); e.textContent = m; e.classList.remove("hidden"); };
+    q("#ton-save").onclick = async function () {
+      var it = { id: D.id, t: q("#ton-t").value.trim(), m: q("#ton-m").value.trim(), pos: D.pos, to: D.to, w: q("#ton-w").checked, on: D.on, unread: !!(q("#ton-un") && q("#ton-un").checked) };
+      if (!it.t) return err("Isi judul notifikasi."); if (!it.pos.length) return err("Pilih minimal satu PO takeover."); if (!it.to.length) return err("Pilih minimal satu akun penerima.");
+      var b = this; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Menyimpan…';
+      try { var r = await callApi("ton.save", { item: it }, 45000); replaceItem(r.item); TON.rev = ""; saveCache(); close(); changed(true); toast(D.id ? "Notifikasi takeover diperbarui" : "Notifikasi takeover terkirim ke " + (it.to[0] === "*" ? "semua akun" : it.to.length + " akun"), "success"); fetchTon(true); }
+      catch (e) { b.disabled = false; b.innerHTML = '<i class="fa-solid fa-paper-plane"></i>' + (D.id ? "Simpan perubahan" : "Kirim notifikasi"); err(e.message); }
+    };
+    drawTo(); drawRes(); setTimeout(function () { q("#ton-t").focus(); }, 50);
+  }
+  window.tonEditor = editor;
+  setInterval(function () { if (currentUser && document.visibilityState === "visible") fetchTon(false); }, 60000);
+  setTimeout(function () { fetchTon(true); }, 3500);
+  if (location.hostname === "localhost") window.__ton = { TON: TON, fetchTon: fetchTon, tonShow: tonShow, umCard: umCard, editor: editor, markRead: markRead };
 })();
 
 </script>
