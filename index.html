@@ -4789,6 +4789,7 @@ body:has(#rec-modal:not(.hidden)) #st-nt,body:has(#detail-modal:not(.hidden)) #s
 .ton-po:focus-visible,.ton-chip:focus-visible,.ton-rd:focus-visible{outline:2px solid #0d9488;outline-offset:2px}
 @media(max-width:760px){.ton-ov{padding:0;align-items:flex-end}.ton-card{border-radius:22px 22px 0 0;max-height:94dvh}.ton-bd{grid-template-columns:1fr}.ton-res{height:min(40vh,320px)}}
 body:has(#ton-ov) #st-nt{display:none!important}
+body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka → pop-up tidak menutupinya */
 
 </style>
 <script id="addon_v14">
@@ -8320,6 +8321,21 @@ body:has(#ton-ov) #st-nt{display:none!important}
   }
   if (typeof buildSp === "function") { var origBS = buildSp; window.buildSp = buildSp = function () { var r = origBS.apply(this, arguments); try { (r || []).forEach(spFix); } catch (e) { } return r; }; }
   // pengaman data lokal: baris hasil "tambah" menggantikan entri lama di nomor baris yang sama (tidak dobel)
+  // antrean Supabase: riwayat yang SUDAH selesai jangan diputar ulang saat aplikasi dibuka.
+  // Dulu: setiap buka aplikasi, hasil "tambah baris" lama (mis. 047/SP1 di baris 49) dimasukkan lagi ke tampilan
+  // walau barisnya sudah dihapus di spreadsheet → data hantu muncul & data asli di baris itu tertimpa.
+  if (typeof qApplyRemote === "function") {
+    var origQA = qApplyRemote;
+    window.qApplyRemote = qApplyRemote = function (e, prev) {
+      try {
+        if (!prev && e && (e.status === "done" || e.status === "discarded")) {
+          var dt = Date.parse(e.doneAt || e.at || "") || 0, ls = (typeof STATE !== "undefined" && STATE.lastSync) || 0;
+          if (!dt || !ls || dt < ls - 60000) return;   // sudah termasuk di data spreadsheet yang dimuat
+        }
+      } catch (er) { }
+      return origQA.apply(this, arguments);
+    };
+  }
   if (typeof recApplyRow === "function") { var origRAR = recApplyRow; window.recApplyRow = recApplyRow = function (sh, oldRow, newRow) { try { if (oldRow == null && newRow != null && STATE[sh] && STATE[sh].some(function (x) { return x.row === newRow; })) STATE[sh] = STATE[sh].filter(function (x) { return x.row !== newRow; }); } catch (e) { } return origRAR.apply(this, arguments); }; }
   // bila ada 2 data di baris yang sama (cache lama) → ambil ulang sheet tersebut dari spreadsheet
   var DUPAT = 0;
