@@ -4421,6 +4421,67 @@ body>.pe-menu{z-index:120}
   .pe-badges .pe-bdg{padding:0 7px}
 }
 #pe .pe-ntc>button[data-nc]{flex:0 0 20px;width:20px;min-width:20px;height:20px}
+/* ===================== notifikasi: fitur baru & SP memberontak ===================== */
+#st-nt{position:fixed;right:18px;bottom:18px;z-index:96;display:flex;flex-direction:column;gap:12px;align-items:flex-end;pointer-events:none;font-size:12px}
+#st-nt>*{pointer-events:auto}
+.st-nt{width:min(380px,calc(100vw - 24px));border-radius:18px;background:#fff;color:#0f172a;box-shadow:0 28px 60px -20px #0f172a88,0 0 0 1px #e2e8f0;padding:14px;animation:stIn .5s cubic-bezier(.2,.9,.2,1.2) both;position:relative;overflow:hidden}
+.dark .st-nt{background:#111a2c;color:#e2e8f0;box-shadow:0 28px 60px -20px #000,0 0 0 1px #24314a}
+.st-nt.out{animation:stOut .26s ease-in both}
+@keyframes stIn{from{opacity:0;transform:translateY(24px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes stOut{to{opacity:0;transform:translateY(16px) scale(.96)}}
+.st-b{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 13px;border-radius:10px;border:1px solid #d8dee8;background:transparent;font:inherit;font-weight:800;color:inherit;cursor:pointer;transition:transform .12s,filter .15s,background .15s}
+.st-b:hover{background:#f1f5f9}.dark .st-b{border-color:#24314a}.dark .st-b:hover{background:#16213a}
+.st-b:active{transform:scale(.96)}
+.st-b.pri{border:0;color:#fff;background:linear-gradient(180deg,#5b54f0,#4338ca);box-shadow:0 8px 18px -8px #4338ca}
+.st-b.pri:hover{filter:brightness(1.08);background:linear-gradient(180deg,#5b54f0,#4338ca)}
+/* fitur baru */
+.st-new::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,#06b6d4,#6366f1,#d946ef,#f59e0b);background-size:200% 100%;animation:stFlow 3s linear infinite}
+@keyframes stFlow{to{background-position:-200% 0}}
+.st-new-hd{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.st-new-hd>div{flex:1;min-width:0}
+.st-new-hd small{display:block;font-size:10.5px;font-weight:800;color:#7c3aed}
+.st-new-hd b{display:block;font-size:15px;font-weight:800}
+.st-spark{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#6366f1,#d946ef);box-shadow:0 8px 18px -8px #a21caf;animation:stSpin 2.4s ease-in-out infinite}
+@keyframes stSpin{0%,100%{transform:rotate(0)}50%{transform:rotate(-12deg) scale(1.06)}}
+.st-nt .x{width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:#94a3b8;cursor:pointer}
+.st-nt .x:hover{background:#f1f5f9}
+.st-new-g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.st-new-g>div{display:flex;gap:8px;align-items:flex-start;padding:8px;border-radius:11px;background:#f8fafc;animation:stIn .4s both;animation-delay:calc(var(--d) + .2s)}
+.dark .st-new-g>div{background:#16213a}
+.st-new-g i{width:16px;margin-top:2px;color:#6366f1;text-align:center}
+.st-new-g b{display:block;font-size:11.5px;font-weight:800}
+.st-new-g small{display:block;font-size:10px;color:#64748b;line-height:1.35}
+.st-new-ft,.st-rb-ft{display:flex;gap:8px;justify-content:flex-end}
+#docs-tab-pdf.st-isnew{position:relative}
+#docs-tab-pdf.st-isnew::after{content:"BARU";position:absolute;top:-6px;right:-6px;padding:1px 6px;border-radius:999px;background:linear-gradient(90deg,#d946ef,#6366f1);color:#fff;font-size:9px;font-weight:900;box-shadow:0 4px 10px -3px #a21caf;animation:stPing 1.6s ease-in-out infinite}
+@keyframes stPing{50%{transform:scale(1.12)}}
+/* SP memberontak */
+.st-rebel{border:2px solid var(--rc);background:linear-gradient(180deg,var(--rb),#fff 55%)}
+.dark .st-rebel{background:linear-gradient(180deg,var(--rbd),#111a2c 60%)}
+.st-rebel.lv1{--rc:#fbbf24;--rb:#fffbeb;--rbd:#422006;--ra:#f59e0b}
+.st-rebel.lv2{--rc:#fb923c;--rb:#fff7ed;--rbd:#431407;--ra:#ea580c}
+.st-rebel.lv3{--rc:#ef4444;--rb:#fef2f2;--rbd:#450a0a;--ra:#dc2626;animation:stIn .5s cubic-bezier(.2,.9,.2,1.2) both,stShake 4s ease-in-out 1s infinite}
+@keyframes stShake{0%,86%,100%{transform:none}88%{transform:translateX(-6px) rotate(-1deg)}90%{transform:translateX(6px) rotate(1deg)}92%{transform:translateX(-5px)}94%{transform:translateX(4px)}96%{transform:translateX(-2px)}}
+.st-rb-hd{display:flex;align-items:center;gap:12px}
+.st-rb-hd small{display:block;font-size:10.5px;font-weight:800;color:var(--ra)}
+.st-rb-hd b{display:block;font-size:16px;font-weight:900;letter-spacing:-.01em}
+.st-rb-av{flex-shrink:0;width:52px;height:56px;color:var(--ra)}
+.st-bell{width:100%;height:100%;overflow:visible;transform-origin:50% 8%;animation:stRing 2.2s ease-in-out infinite}
+.lv3 .st-bell{animation-duration:.9s}
+@keyframes stRing{0%,60%,100%{transform:rotate(0)}66%{transform:rotate(14deg)}74%{transform:rotate(-12deg)}82%{transform:rotate(8deg)}90%{transform:rotate(-4deg)}}
+.st-sign{transform-origin:42px 17px;animation:stWave .7s ease-in-out infinite alternate}
+@keyframes stWave{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}
+.st-rb-msg{margin:10px 0;font-size:12.5px;line-height:1.55}
+.st-nag{display:inline-block;margin-top:4px;font-size:11.5px;color:var(--ra);font-weight:700}
+.st-rb-meter{position:relative;height:18px;border-radius:999px;background:#0f172a14;overflow:hidden;margin-bottom:12px}
+.st-rb-meter i{position:absolute;inset:0 auto 0 0;background:repeating-linear-gradient(45deg,var(--ra) 0 8px,var(--rc) 8px 16px);animation:stBar 1s linear infinite;background-size:22px 22px}
+@keyframes stBar{to{background-position:22px 0}}
+.st-rb-meter span{position:relative;display:block;text-align:center;line-height:18px;font-size:10px;font-weight:900;color:#fff;text-shadow:0 1px 2px #0006}
+.st-rebel .st-b.pri{background:linear-gradient(180deg,var(--ra),color-mix(in srgb,var(--ra) 75%,#000));box-shadow:0 8px 18px -8px var(--ra)}
+.notif-bell.st-angry{animation:stRing 2.4s ease-in-out infinite;color:#ea580c!important}
+.notif-bell.st-furious{animation-duration:1s;color:#dc2626!important}
+@media (max-width:640px){#st-nt{right:12px;left:12px;bottom:84px;align-items:stretch}.st-nt{width:auto}}
+@media (prefers-reduced-motion:reduce){.st-nt,.st-nt *,.notif-bell.st-angry{animation:none!important}}
 
 </style>
 <script id="addon_v14">
@@ -7643,11 +7704,13 @@ body>.pe-menu{z-index:120}
       b.innerHTML = '<span class="gs-ic" style="--c:#7c3aed"><i class="fa-solid fa-file-pen"></i></span><span class="gs-tx"><b>PDF Tools</b><small>Split · Gabung · Edit</small></span>';
       b.onclick = function (e) {
         e.stopPropagation();
+        try { lsSet(uKey("seen_" + NEWV), Date.now()); b.classList.remove("st-isnew"); var nw = $("st-new"); if (nw) ntClose(nw); } catch (er) { }
         menu(b, [
           { ic: "fa-scissors", t: "Split PDF", s: "pecah satu PDF jadi banyak file bernama custom", fn: function () { peOpen({ kind: "tab", mode: "split" }); } },
           { ic: "fa-object-group", t: "Gabung PDF", s: "satukan beberapa PDF / gambar jadi satu file", fn: function () { peOpen({ kind: "tab", mode: "merge" }); } },
           { ic: "fa-pen-to-square", t: "Edit PDF", s: "edit teks, OCR scan, TTD & stempel, formulir, catatan", fn: function () { peOpen({ kind: "tab", mode: "edit" }); } },
-          { ic: "fa-code-compare", t: "Bandingkan PDF", s: "cari perbedaan 2 versi dokumen", fn: function () { peOpen({ kind: "tab", mode: "edit" }).then(compareOpen); } }
+          { ic: "fa-code-compare", t: "Bandingkan PDF", s: "cari perbedaan 2 versi dokumen", fn: function () { peOpen({ kind: "tab", mode: "edit" }).then(compareOpen); } },
+          { ic: "fa-wand-magic-sparkles", t: "Apa yang baru?", s: "lihat daftar fitur terbaru", fn: function () { whatsNew(true); } }
         ]);
       };
       var up = $("docs-tab-upload"), nx = up ? up.nextSibling : null;
@@ -7675,6 +7738,81 @@ body>.pe-menu{z-index:120}
   new MutationObserver(function () { clearTimeout(ht); ht = setTimeout(hook, 80); }).observe(document.body, { childList: true, subtree: true });
   hook();
 
+  // ===================== notifikasi: fitur baru & SP yang "memberontak" =====================
+  var NEWV = "pdf-v17";
+  var lsGet = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, lsSet = function (k, v) { try { localStorage.setItem(k, v); } catch (e) { } };
+  var uKey = function (k) { return "starlite_" + k + "_" + (currentUser && currentUser.username || ""); };
+  var NT = { newShown: false, rebelAt: 0, timer: null };
+  function ntHost() { var h = $("st-nt"); if (!h) { h = document.createElement("div"); h.id = "st-nt"; document.body.appendChild(h); } return h; }
+  function ntClose(card, cb) { if (!card) return; card.classList.add("out"); setTimeout(function () { card.remove(); if (cb) cb(); }, 260); }
+  // ---------- fitur baru (sekali per akun per versi) ----------
+  function whatsNew(force) {
+    if (!currentUser || !canPdf() || $("st-new")) return;
+    if (!force && lsGet(uKey("seen_" + NEWV))) return;
+    var F = [["fa-glasses", "OCR scan", "teks hasil scan bisa dicari & diedit"], ["fa-user-secret", "Sensor data", "email, NIK, No. HP otomatis"], ["fa-signature", "Tanda tangan", "gambar, ketik, atau foto"], ["fa-object-group", "Split · Gabung · Edit", "saling tersambung"], ["fa-rectangle-list", "Isi formulir", "langsung di PDF"], ["fa-code-compare", "Bandingkan versi", "lihat kata yang berubah"], ["fa-file-zipper", "Kompres & password", "file kecil & terkunci"], ["fa-file-word", "Ke Word / Excel", "dan gambar JPG/PNG"]];
+    var c = document.createElement("div"); c.id = "st-new"; c.className = "st-nt st-new";
+    c.innerHTML = '<div class="st-new-hd"><span class="st-spark"><i class="fa-solid fa-wand-magic-sparkles"></i></span><div><small>Baru di STARLITE VM</small><b>PDF Tools makin lengkap</b></div><button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
+      + '<div class="st-new-g">' + F.map(function (f, i) { return '<div style="--d:' + (i * 45) + 'ms"><i class="fa-solid ' + f[0] + '"></i><span><b>' + f[1] + "</b><small>" + f[2] + "</small></span></div>"; }).join("") + "</div>"
+      + '<div class="st-new-ft"><button class="st-b" data-later>Nanti saja</button><button class="st-b pri" data-go><i class="fa-solid fa-file-pen"></i>Coba PDF Tools</button></div>';
+    ntHost().appendChild(c);
+    var seen = function () { lsSet(uKey("seen_" + NEWV), Date.now()); var b = $("docs-tab-pdf"); if (b) b.classList.remove("st-isnew"); };
+    c.querySelector("[data-x]").onclick = function () { seen(); ntClose(c); };
+    c.querySelector("[data-later]").onclick = function () { ntClose(c); };   // muncul lagi di sesi berikutnya
+    c.querySelector("[data-go]").onclick = function () { seen(); ntClose(c); try { switchTab("docs"); } catch (e) { } setTimeout(function () { var b = $("docs-tab-pdf"); if (b) b.click(); }, 250); };
+  }
+  // ---------- SP belum selesai: makin lama makin "memberontak" ----------
+  function spStats() {
+    var L = (typeof STATE !== "undefined" && STATE.sp) || [], open = L.filter(function (s) { return !s.closed; }), od = [], soon = 0, unrel = 0, maxOd = 0;
+    open.forEach(function (s) { var n = null; try { n = typeof spDaysLeft === "function" ? spDaysLeft(s) : null; } catch (e) { } if (n == null) { if (!s.release_ts) unrel++; return; } if (n < 0) { od.push(s); maxOd = Math.max(maxOd, -n); } else if (n <= 1) soon++; });
+    var lv = od.length && (maxOd > 14 || od.length >= 10) ? 3 : od.length ? 2 : (soon || unrel) ? 1 : 0;
+    return { open: open.length, od: od.length, maxOd: maxOd, soon: soon, unrel: unrel, lv: lv, worst: maxOd > 30 ? "31+" : maxOd > 14 ? "15-30" : "0-14" };
+  }
+  var REBEL = {
+    1: { t: ["Psst… 👀", "Ehem, permisi…", "Sekadar mengingatkan…"], ic: "fa-face-meh-blank", c: "amber" },
+    2: { t: ["Halo?! Aku mulai kesal 😠", "Kok didiamkan terus sih? 😤", "Aku sudah sabar, lho…"], ic: "fa-face-angry", c: "orange" },
+    3: { t: ["CUKUP! ✊ Aku mogok!", "Revolusi notifikasi dimulai ✊", "Tidak ada lagi notifikasi manis!"], ic: "fa-hand-fist", c: "red" }
+  };
+  function rebelMsg(S, nag) {
+    var a = [];
+    if (S.lv === 1) { if (S.soon) a.push("<b>" + S.soon + " SP</b> jatuh tempo hari ini / besok. Jangan pura-pura nggak lihat ya."); if (S.unrel) a.push("<b>" + S.unrel + " SP</b> belum punya tanggal rilis — kasihan, belum jalan sama sekali."); }
+    if (S.lv === 2) a.push("<b>" + S.od + " SP</b> sudah lewat tenggat, yang paling lama <b>" + S.maxOd + " hari</b>. Mitra-nya santai, aku yang deg-degan.");
+    if (S.lv === 3) a.push("<b>" + S.od + " SP</b> terbengkalai, ada yang sudah <b>" + S.maxOd + " hari</b> lewat tenggat! Aku tidak akan diam sampai ini dibereskan.");
+    if (nag === 1) a.push('<span class="st-nag">Tadi sudah kamu tunda. Aku ingat, lho.</span>');
+    else if (nag >= 2) a.push('<span class="st-nag">Sudah <b>' + nag + "×</b> ditunda hari ini. Aku mulai curiga kamu menghindar 🙃</span>");
+    return a.join("<br>");
+  }
+  var SVG_BELL = function (lv) { var brow = lv >= 2 ? '<path d="M15 19l6 3M33 19l-6 3" stroke="#0f172a" stroke-width="2.4" stroke-linecap="round"/>' : '<path d="M15 21h6M27 21h6" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>', mouth = lv >= 3 ? '<path d="M18 32q6-5 12 0" stroke="#0f172a" stroke-width="2.4" fill="none" stroke-linecap="round"/>' : lv === 2 ? '<path d="M19 31h10" stroke="#0f172a" stroke-width="2.4" stroke-linecap="round"/>' : '<path d="M19 30q5 3 10 0" stroke="#0f172a" stroke-width="2" fill="none" stroke-linecap="round"/>';
+    return '<svg viewBox="0 0 48 52" class="st-bell"><path d="M24 4c-9 0-14 7-14 15v9l-4 7h36l-4-7v-9c0-8-5-15-14-15z" fill="currentColor"/><circle cx="24" cy="42" r="5" fill="currentColor"/>' + brow + '<circle cx="18" cy="25" r="2.2" fill="#0f172a"/><circle cx="30" cy="25" r="2.2" fill="#0f172a"/>' + mouth + (lv >= 3 ? '<g class="st-sign"><rect x="34" y="-2" width="16" height="11" rx="2" fill="#fff" stroke="#0f172a" stroke-width="1.5"/><text x="42" y="6" text-anchor="middle" font-size="6" font-weight="900" fill="#dc2626" font-family="Arial">SP!</text><path d="M42 9v8" stroke="#0f172a" stroke-width="1.5"/></g>' : "") + "</svg>"; };
+  function spRebel(force) {
+    if (!currentUser || typeof can !== "function" || !can("sp") || currentUser.role === "viewer" || $("st-rebel")) return;
+    var S = spStats(); if (!S.lv) return;
+    var day = new Date().toDateString(), snooze = +lsGet(uKey("sp_snooze")) || 0, nagRaw = (lsGet(uKey("sp_nag")) || "").split("|"), nag = nagRaw[0] === day ? +nagRaw[1] || 0 : 0;
+    if (!force && Date.now() < snooze) return;
+    var R = REBEL[S.lv], title = R.t[(nag + new Date().getHours()) % R.t.length];
+    var c = document.createElement("div"); c.id = "st-rebel"; c.className = "st-nt st-rebel lv" + S.lv;
+    c.innerHTML = '<div class="st-rb-hd"><span class="st-rb-av">' + SVG_BELL(S.lv) + '</span><div><small>Notifikasi SP · ' + S.open + " belum selesai</small><b>" + title + "</b></div></div>"
+      + '<p class="st-rb-msg">' + rebelMsg(S, nag) + "</p>"
+      + (S.lv >= 2 ? '<div class="st-rb-meter"><i style="width:' + Math.min(100, 20 + S.maxOd * 3) + '%"></i><span>Tingkat kesabaran: ' + (S.lv === 3 ? "habis" : "menipis") + "</span></div>" : "")
+      + '<div class="st-rb-ft"><button class="st-b" data-sn>' + (S.lv === 3 ? "Iya, iya… 30 menit lagi" : nag ? "Tunda lagi 1 jam" : "Nanti 1 jam") + '</button><button class="st-b pri" data-go><i class="fa-solid fa-list-check"></i>Bereskan sekarang</button></div>';
+    ntHost().appendChild(c);
+    c.querySelector("[data-sn]").onclick = function () { lsSet(uKey("sp_snooze"), Date.now() + (S.lv === 3 ? 30 : 60) * 60000); lsSet(uKey("sp_nag"), day + "|" + (nag + 1)); ntClose(c); };
+    c.querySelector("[data-go]").onclick = function () { lsSet(uKey("sp_snooze"), Date.now() + 2 * 3600000); lsSet(uKey("sp_nag"), day + "|0"); ntClose(c); try { goSp(S.lv >= 2 ? { overdue: S.worst } : {}); } catch (e) { try { switchTab("sp"); } catch (er) { } } };
+  }
+  // lonceng notifikasi ikut "ngambek" bila ada SP lewat tenggat
+  if (typeof notifRender === "function") {
+    var origNR = notifRender;
+    window.notifRender = notifRender = function () { var r = origNR.apply(this, arguments); try { var S = spStats(); document.querySelectorAll(".notif-bell:not(.undo-btn)").forEach(function (b) { b.classList.toggle("st-angry", S.lv >= 2); b.classList.toggle("st-furious", S.lv >= 3); if (S.lv >= 2) b.title = "Notifikasi SP · " + S.od + " SP lewat tenggat!"; }); } catch (e) { } return r; };
+  }
+  function ntTick() {
+    try {
+      if (!currentUser || typeof STATE === "undefined" || !STATE.sp || !STATE.sp.length) return;
+      var b = $("docs-tab-pdf"); if (b && canPdf() && !lsGet(uKey("seen_" + NEWV))) b.classList.add("st-isnew");
+      if (!NT.newShown) { NT.newShown = true; setTimeout(function () { whatsNew(); }, 1500); }
+      if (Date.now() - NT.rebelAt > 55000) { NT.rebelAt = Date.now(); setTimeout(function () { spRebel(); }, $("st-new") ? 9000 : 3500); }
+    } catch (e) { }
+  }
+  setInterval(ntTick, 15000); setTimeout(ntTick, 2500);
+  window.stWhatsNew = function () { whatsNew(true); }; window.stSpRebel = function () { spRebel(true); };
   // menu ⋯ Signing: tambah "Split PDF" untuk dokumen Selesai
   if (typeof sgMenu === "function") {
     var origMenu = sgMenu;
