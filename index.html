@@ -9110,12 +9110,12 @@ body:has(#mig-ov) #st-nt{display:none!important}
   function stOf(r) {
     if (/^done$/i.test(r.it)) return "done";
     if (/cancel/i.test(r.it)) return "cancel";
-    if (/^Done Verifikasi$/i.test(r.verif)) return "done";   // Done Verifikasi = selesai
-    if (/^Done Email IT$/i.test(r.verif)) return "it";
-    if (VERIF_BAD.test(r.verif)) return "rev";
+    if (/^(Done Verifikasi|Done Email IT)$/i.test(r.verif)) return "done";   // sudah diverifikasi / sudah dikirim ke IT = selesai
+    if (/^Revisi/i.test(r.verif)) return "rev";
+    if (VERIF_BAD.test(r.verif)) return "bad";   // Tidak Sesuai / Done tidak sesuai prosedure
     return "wait";
   }
-  var ST = { wait: ["Menunggu verifikasi", "#d97706", "fa-hourglass-half"], rev: ["Revisi / tidak sesuai", "#e11d48", "fa-rotate-left"], it: ["Pending IT", "#2563eb", "fa-paper-plane"], done: ["Migrasi Done", "#059669", "fa-circle-check"], cancel: ["Batal (IT)", "#64748b", "fa-ban"] };
+  var ST = { wait: ["Menunggu verifikasi", "#d97706", "fa-hourglass-half"], rev: ["Revisi", "#ea580c", "fa-rotate-left"], bad: ["Tidak sesuai", "#e11d48", "fa-circle-xmark"], done: ["Selesai", "#059669", "fa-circle-check"], cancel: ["Batal (IT)", "#64748b", "fa-ban"] };
   function parseTs(s) { var m = String(s || "").match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/); return m ? new Date(+m[3], +m[2] - 1, +m[1], +(m[4] || 0), +(m[5] || 0)).getTime() : 0; }
   function ago(ts) { if (!ts) return ""; var d = Math.floor((Date.now() - ts) / 864e5); return d <= 0 ? "hari ini" : d + " hari"; }
   function chkOf(r) { return MIG.chk[r.ck] || {}; }
@@ -9279,14 +9279,14 @@ body:has(#mig-ov) #st-nt{display:none!important}
   function chip(k) { var s = ST[k]; return '<span class="mig-chip" style="--c:' + s[1] + '"><i class="fa-solid ' + s[2] + '"></i>' + s[0] + "</span>"; }
   function render() {
     var v = $("view-migrasi"); if (!v) return;
-    var cnt = { wait: 0, rev: 0, it: 0, done: 0, cancel: 0 }; MIG.rows.forEach(function (r) { cnt[stOf(r)]++; });
+    var cnt = { wait: 0, rev: 0, bad: 0, done: 0, cancel: 0 }; MIG.rows.forEach(function (r) { cnt[stOf(r)]++; });
     var L = filtered();
     var card = function (k) { var s = ST[k]; return '<button class="mig-card' + (MIG.f === k ? " on" : "") + '" data-f="' + k + '" style="--c:' + s[1] + '"><i class="fa-solid ' + s[2] + '"></i><b>' + cnt[k] + "</b><span>" + s[0] + "</span></button>"; };
     v.innerHTML = '<div class="glass-panel rounded-2xl p-4 mig-head"><div><h2>Migrasi IKR</h2><p>Verifikasi pengajuan perpindahan akun IKR dan Create Stasiun · data dari sheet <b>Migrasi IKR</b>' + (MIG.at ? " · dimuat " + new Date(MIG.at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) : "") + "</p></div>"
       + '<div class="mig-acts"><button class="btn btn-ghost" data-a="reload" title="Muat ulang"><i class="fa-solid fa-rotate"></i><span>Muat ulang</span></button><button class="btn btn-ghost" data-a="form"><i class="fa-solid fa-link"></i><span>Link form mitra</span></button><button class="btn btn-ghost" data-a="set"><i class="fa-solid fa-envelope"></i><span>Penerima email IT</span></button></div></div>'
       + (MIG.off ? '<div class="mig-off"><i class="fa-solid fa-plug-circle-xmark"></i><div><b>Server belum mendukung Migrasi IKR</b><p>Code.gs di Apps Script masih versi lama. Fitur ini aktif setelah Code.gs terbaru dipasang dan deployment diperbarui.</p></div></div>'
         : MIG.err ? '<div class="mig-err"><i class="fa-solid fa-triangle-exclamation"></i>Gagal memuat pengajuan: ' + E(MIG.err) + ' · klik Muat ulang untuk mencoba lagi</div>' : "")
-      + (MIG.off ? "" : '<div class="mig-cards">' + ["wait", "rev", "it", "done"].map(card).join("") + '<button class="mig-card' + (MIG.f === "all" ? " on" : "") + '" data-f="all" style="--c:#475569"><i class="fa-solid fa-layer-group"></i><b>' + MIG.rows.length + "</b><span>Semua</span></button></div>"
+      + (MIG.off ? "" : '<div class="mig-cards">' + ["wait", "rev", "bad", "done"].map(card).join("") + '<button class="mig-card' + (MIG.f === "all" ? " on" : "") + '" data-f="all" style="--c:#475569"><i class="fa-solid fa-layer-group"></i><b>' + MIG.rows.length + "</b><span>Semua</span></button></div>"
       + '<div class="glass-panel rounded-2xl p-4 space-y-3"><div class="flex flex-wrap gap-2"><div class="relative flex-1 min-w-[220px]"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i><input id="mig-q" class="field w-full pl-9" placeholder="Cari mitra, stasiun, No SPK, pengaju, email…" value="' + E(MIG.q) + '"></div><select id="mig-jenis" class="field"><option value="">Semua jenis</option><option' + (MIG.jenis === "Migrasi Akun IKR" ? " selected" : "") + '>Migrasi Akun IKR</option><option' + (MIG.jenis === "Create Stasiun (Stasiun Take Over)" ? " selected" : "") + ">Create Stasiun (Stasiun Take Over)</option></select></div>"
       + (!MIG.loaded ? '<div class="mig-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Memuat pengajuan…</div>' : L.length ? '<div class="mig-list">' + L.map(function (r) {
         var k = stOf(r), em = chkOf(r).emailAt ? Date.parse(chkOf(r).emailAt) : 0, late = k === "it" && em && Date.now() - em > 7 * 864e5;
