@@ -9464,10 +9464,9 @@ body:has(#mig-ov) #st-nt{display:none!important}
       var r = await callApi("mig.formkey", {}, 30000);
       var base = location.origin + location.pathname.replace(/[^\/]*$/, "");
       var url = base + "migrasi.html?k=" + r.key;
-      var M = modal('<div class="mig-mh"><div><h3>Link form pengajuan mitra</h3><p>Bagikan lewat WA. Mitra mengisi tanpa login; pengajuan masuk ke sheet Migrasi IKR.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div><div class="mig-pad"><input class="field w-full" readonly value="' + E(url) + '" id="mig-url"><div class="mig-dec"><button class="st-b" data-r><i class="fa-solid fa-arrows-rotate"></i>Ganti link (link lama tidak berlaku)</button><button class="st-b" data-o><i class="fa-solid fa-arrow-up-right-from-square"></i>Buka</button><button class="st-b pri" data-c><i class="fa-solid fa-copy"></i>Salin link</button></div></div>', "sm");
+      var M = modal('<div class="mig-mh"><div><h3>Link form pengajuan mitra</h3><p>Bagikan lewat WA. Mitra mengisi tanpa login; pengajuan masuk ke sheet Migrasi IKR.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div><div class="mig-pad"><input class="field w-full" readonly value="' + E(url) + '" id="mig-url"><div class="mig-dec"><button class="st-b" data-o><i class="fa-solid fa-arrow-up-right-from-square"></i>Buka</button><button class="st-b pri" data-c><i class="fa-solid fa-copy"></i>Salin link</button></div></div>', "sm");
       M.el.querySelector("[data-c]").onclick = function () { copyText(M.el.querySelector("#mig-url").value, "Link form disalin"); };
       M.el.querySelector("[data-o]").onclick = function () { window.open(M.el.querySelector("#mig-url").value, "_blank", "noopener"); };
-      M.el.querySelector("[data-r]").onclick = async function () { if (!confirm("Ganti link form? Link lama yang sudah dibagikan tidak bisa dipakai lagi.")) return; var x = await callApi("mig.formkey", { reset: true }, 30000); M.el.querySelector("#mig-url").value = base + "migrasi.html?k=" + x.key; toast("Link form diganti", "success"); };
     } catch (e) { toast(e.message, "error", 7000); }
   }
   function settings() {
