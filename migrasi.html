@@ -89,6 +89,7 @@ label.f em.warn{padding:8px 10px;border-radius:10px;background:var(--bads);color
 
   <div id="blocked" class="blocked" hidden></div>
 
+  <datalist id="dl-mitra"></datalist>
   <form id="f" novalidate hidden>
     <fieldset>
       <legend><span>1</span>Tujuan pengisian</legend>
@@ -111,8 +112,8 @@ label.f em.warn{padding:8px 10px;border-radius:10px;background:var(--bads);color
     <fieldset>
       <legend><span>3</span>Mitra dan stasiun</legend>
       <div class="grid">
-        <label class="f"><span class="req">Nama lengkap mitra lama</span><input type="text" name="lama" required></label>
-        <label class="f"><span class="req">Nama lengkap mitra pengganti</span><input type="text" name="baru" required><em>Tulis nama mitra lengkap, jangan disingkat.</em></label>
+        <label class="f"><span class="req">Nama lengkap mitra lama</span><input type="text" name="lama" list="dl-mitra" autocomplete="off" required><em>Ketik lalu pilih dari daftar (sesuai Info Perseroan).</em></label>
+        <label class="f"><span class="req">Nama lengkap mitra pengganti</span><input type="text" name="baru" list="dl-mitra" autocomplete="off" required><em>Ketik lalu pilih dari daftar (sesuai Info Perseroan) — nama lengkap, jangan disingkat.</em></label>
         <label class="f"><span class="req">Stasiun</span><input type="text" name="stasiun" required><em>Tulis nama stasiun lengkap, jangan disingkat.</em></label>
         <label class="f"><span class="req">Nomor SPK</span><input type="text" name="noSpk" placeholder="mis. 1547/PRJ/STARLITE/X/2026" required><em>Sesuai nomor di dokumen SPK, bukan nomor PO.</em></label>
       </div>
@@ -185,6 +186,18 @@ label.f em.warn{padding:8px 10px;border-radius:10px;background:var(--bads);color
   if (!key) block("Link form tidak lengkap. Minta link pengajuan terbaru ke Vendor Management.");
   else post("mig.check", { key: key }).then(function () { f.hidden = false; }).catch(function (e) { block(e.message); });
   f.addEventListener("input", function () { err.classList.remove("on"); });
+  // daftar nama mitra resmi dari sheet Info Perseroan (kolom B) — nama lama & pengganti wajib dipilih dari sini
+  var MITRA = [], SS = "1HPMGvFctunRQQcUY0TMiQBaNd6LJUfF-inXjI_r6jUE", GK = "AIzaSyCf0a0mIfjd14yopKY2Kw-vPLGruQRJ1tU";
+  var nmk = function (s) { return String(s || "").toUpperCase().replace(/\b(PT|CV|TBK)\b\.?/g, " ").replace(/[^A-Z0-9]+/g, ""); };
+  fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SS + "/values/" + encodeURIComponent("'Info Perseroan'!A2:I") + "?key=" + GK)
+    .then(function (r) { return r.json(); }).then(function (j) {
+      var seen = {}, act = [], oth = [];
+      (j.values || []).forEach(function (r) { var n = String(r[1] || r[0] || "").trim(); if (!n || seen[nmk(n)]) return; seen[nmk(n)] = 1; (/^aktif$/i.test(String(r[8] || "").trim()) ? act : oth).push(n); });
+      MITRA = act.sort().concat(oth.sort());
+      var dl = document.getElementById("dl-mitra"); MITRA.forEach(function (n) { var o = document.createElement("option"); o.value = n; dl.appendChild(o); });
+    }).catch(function () { MITRA = []; });
+  function official(v) { if (!MITRA.length) return v; var k = nmk(v); for (var i = 0; i < MITRA.length; i++) if (nmk(MITRA[i]) === k) return MITRA[i]; return null; }
+  ["lama", "baru"].forEach(function (k) { var el = f.querySelector('[name="' + k + '"]'); el.addEventListener("change", function () { var o = official(el.value.trim()); if (o) el.value = o; }); });
   document.querySelectorAll(".file input").forEach(function (inp) {
     inp.addEventListener("change", function () {
       var lab = inp.closest(".file"), sm = lab.querySelector("small"), file = inp.files[0];
@@ -212,6 +225,8 @@ label.f em.warn{padding:8px 10px;border-radius:10px;background:var(--bads);color
     var spkF = f.querySelector('[name="noSpk"]');
     if (/^PO[.\s]/i.test(d.noSpk)) { spkF.focus(); return show("Nomor SPK diisi nomor PO. Isi nomor SPK yang tertulis di dokumen SPK, mis. 1547/PRJ/STARLITE/X/2026."); }
     if (!/^\s*\d{1,5}\s*\/\s*PRJ\s*\/\s*STARLITE\s*\/\s*[IVX]{1,4}\s*\/\s*20\d\d\s*$/i.test(d.noSpk)) { spkF.focus(); return show("Format Nomor SPK belum benar. Contoh: 1547/PRJ/STARLITE/X/2026"); }
+    var bad2 = ["lama", "baru"].filter(function (k) { var o = official(d[k]); if (o) { d[k] = o; f.querySelector('[name="' + k + '"]').value = o; } return o === null; });
+    if (bad2.length) { f.querySelector('[name="' + bad2[0] + '"]').focus(); return show("Nama " + bad2.map(function (k) { return k === "lama" ? "mitra lama" : "mitra pengganti"; }).join(" & ") + " tidak ada di daftar Info Perseroan. Ketik lalu pilih dari daftar. Jika memang belum terdaftar, hubungi Vendor Management."); }
     var nm = function (s) { return s.toUpperCase().replace(/\b(PT|CV|TBK)\b\.?/g, "").replace(/[^A-Z0-9]/g, ""); };
     if (nm(d.lama) && nm(d.lama) === nm(d.baru)) { f.querySelector('[name="lama"]').focus(); return show("Mitra lama dan mitra pengganti tidak boleh sama."); }
     var ba = document.getElementById("ba").files[0], spk = document.getElementById("spk").files[0], kml = document.getElementById("kml").files[0];

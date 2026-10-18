@@ -9216,9 +9216,17 @@ body:has(#mig-ov) #st-nt{display:none!important}
   var today = function () { var d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
   // ---------- email ke IT ----------
   function mails(s) { return (String(s || "").match(/[^\s<>";,]+@[^\s<>";,]+/g) || []).filter(function (x, i, a) { return a.indexOf(x) === i; }); }
-  function itSubject(r) { return "PERPINDAHAN AKUN - " + r.baru + " - " + r.stasiun; }
+  // nama resmi mitra dari Info Perseroan (kolom B); bila tidak ketemu, pakai yang diisi mitra
+  function offName(x) {
+    var P = (STATE.perseroan || []), k = nm(x).replace(/ /g, ""), i;
+    if (!k) return x;
+    for (i = 0; i < P.length; i++) if (nm(P[i].nama).replace(/ /g, "") === k || nm(P[i].short).replace(/ /g, "") === k) return P[i].nama || x;
+    for (i = 0; i < P.length; i++) if (near1(P[i].nama, x)) return P[i].nama;
+    return x;
+  }
+  function itSubject(r) { return "PERPINDAHAN AKUN - " + offName(r.baru) + " - " + r.stasiun; }
   function itBody(r) {
-    return "Yth. Team IT\n\nBerikut permintaan perpindahan Akun:\n\nMitra Lama          : " + r.lama + "\nMitra Baru          : " + r.baru + "\nNama Stasiun        : " + r.stasiun + "\nNo SPK              : " + r.noSpk + (r.spk ? " (" + r.spk + ")" : "")
+    return "Yth. Team IT\n\nBerikut permintaan perpindahan Akun:\n\nMitra Lama          : " + offName(r.lama) + "\nMitra Baru          : " + offName(r.baru) + "\nNama Stasiun        : " + r.stasiun + "\nNo SPK              : " + r.noSpk + (r.spk ? " (" + r.spk + ")" : "")
       + "\n\nSebagai pemenuhan syarat administrasi, bersama email ini kami lampirkan dokumen-dokumen pendukung sebagai berikut:\n\n1. Berita Acara Pemindahan Akun IKR: Terlampir" + (r.ba ? " (" + r.ba + ")" : "")
       + "\n2. File KML stasiun yang dituju: " + (r.kml || "-") + "\n3. Akun email penampung: " + (r.sales || "-") + "\n4. Akun email Lead IKR mitra lama: " + (r.ikrLama || "-") + "\n5. Akun email Lead IKR mitra baru: " + (r.ikrBaru || "-")
       + "\n\nMohon untuk segera di proses perpindahan akun.\n\nBest Regards\nVendor Management";
