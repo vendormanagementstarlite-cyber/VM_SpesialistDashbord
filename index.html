@@ -4824,6 +4824,94 @@ body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka
 .st-umflow>span{flex:1 1 200px}
 .st-fu-pop textarea{min-height:150px;height:150px}
 .st-gh em,.st-pg>p em{font-style:normal;font-weight:700;opacity:.85}
+/* v21 · Migrasi IKR */
+.mig-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.mig-head h2{font-size:18px;font-weight:800;color:#0f172a}.dark .mig-head h2{color:#f1f5f9}
+.mig-head p{font-size:11.5px;color:#64748b;margin-top:2px}
+.mig-acts{display:flex;gap:6px;flex-wrap:wrap}
+.mig-err{padding:10px 12px;border-radius:12px;background:#fee2e2;color:#b91c1c;font-size:12px;font-weight:700}.mig-err i{margin-right:6px}
+.mig-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media(max-width:900px){.mig-cards{grid-template-columns:repeat(2,1fr)}}
+.mig-card{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;padding:12px 14px;border-radius:16px;border:0;background:#fff;box-shadow:inset 0 0 0 1px #e2e8f0;cursor:pointer;font:inherit;transition:box-shadow .15s}
+.dark .mig-card{background:#111a2c;box-shadow:inset 0 0 0 1px #24314a}
+.mig-card i{grid-row:span 2;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent)}
+.mig-card b{font-size:20px;font-weight:900;color:var(--c);line-height:1.1;font-variant-numeric:tabular-nums}
+.mig-card span{font-size:11px;font-weight:700;color:#475569}.dark .mig-card span{color:#94a3b8}
+.mig-card.on,.mig-card:hover{box-shadow:inset 0 0 0 2px var(--c)}
+.mig-list{display:flex;flex-direction:column;gap:6px}
+.mig-row{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:12px;border:0;background:#fff;box-shadow:inset 0 0 0 1px #e2e8f0;text-align:left;font:inherit;cursor:pointer;color:inherit}
+.dark .mig-row{background:#0b1220;box-shadow:inset 0 0 0 1px #24314a}
+.mig-row:hover{box-shadow:inset 0 0 0 1.5px #0891b2}
+.mig-d{width:84px;flex-shrink:0;font-size:11.5px;font-weight:800;font-variant-numeric:tabular-nums}.mig-d small{display:block;font-weight:600;color:#94a3b8;font-size:10px}
+.mig-m{flex:1;min-width:0}.mig-m b{display:block;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mig-m small{display:block;font-size:10.5px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mig-chip{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:800;color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);white-space:nowrap}
+.mig-late{flex-shrink:0;font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;background:#fee2e2;color:#b91c1c}
+.mig-empty{padding:28px;text-align:center;color:#64748b;font-size:12px}.mig-empty i{display:block;font-size:20px;margin-bottom:6px;color:#94a3b8}
+@media(max-width:640px){.mig-row{flex-wrap:wrap}.mig-d{width:auto}.mig-m{flex-basis:100%;order:3}}
+.mig-ov{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:16px;background:#0f172a8c;backdrop-filter:blur(4px)}
+.mig-card-m{width:min(560px,100%);max-height:calc(100dvh - 32px);display:flex;flex-direction:column;border-radius:20px;background:#fff;color:#0f172a;box-shadow:0 40px 80px -30px #000;font-size:12px;overflow:hidden}
+.mig-card-m.lg{width:min(1040px,100%)}.mig-card-m.md{width:min(760px,100%)}.mig-card-m.sm{width:min(560px,100%)}
+.dark .mig-card-m{background:#111a2c;color:#e2e8f0}
+.mig-mh{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;border-bottom:1px solid #e2e8f0}.dark .mig-mh{border-color:#24314a}
+.mig-mh>div{flex:1;min-width:0}.mig-mh small{font-size:10.5px;color:#64748b;font-weight:700}.mig-mh h3{font-size:15px;font-weight:800;margin:2px 0}.mig-mh p{font-size:11.5px;color:#64748b}
+.mig-mh .x{width:32px;height:32px;border:0;border-radius:9px;background:transparent;color:#94a3b8;cursor:pointer;flex-shrink:0}
+.mig-mb{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:16px 18px;overflow:auto;min-height:0}
+@media(max-width:800px){.mig-ov{padding:0;align-items:flex-end}.mig-card-m,.mig-card-m.lg,.mig-card-m.md{border-radius:20px 20px 0 0;max-height:94dvh;width:100%}.mig-mb{grid-template-columns:1fr}}
+.mig-col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.mig-col section h4{font-size:10.5px;font-weight:900;color:#0891b2;margin-bottom:6px}
+.mig-dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:11.5px}.mig-dl dt{color:#64748b;font-weight:700}.mig-dl dd{word-break:break-all}
+.mig-dl.wide{margin-bottom:10px}
+.mig-docs{display:flex;flex-wrap:wrap;gap:6px}
+.mig-lnk{display:inline-flex;align-items:center;gap:5px;color:#0369a1;font-weight:700;text-decoration:none}.mig-lnk:hover{text-decoration:underline}
+.mig-docs .mig-lnk,.mig-docs .mig-none{padding:5px 9px;border-radius:9px;background:#f0f9ff;font-size:11px}.dark .mig-docs .mig-lnk{background:#0369a122;color:#7dd3fc}
+.mig-none{color:#b91c1c;background:#fef2f2!important;font-weight:700}
+.mig-auto{display:flex;flex-direction:column;gap:4px}
+.mig-auto li{display:flex;gap:8px;align-items:flex-start;padding:6px 8px;border-radius:9px;background:#f8fafc}.dark .mig-auto li{background:#0b1220}
+.mig-auto li i{margin-top:2px}.mig-auto li.ok i{color:#059669}.mig-auto li.bad i{color:#e11d48}.mig-auto li.info i{color:#2563eb}
+.mig-auto li.bad{background:#fef2f2}.dark .mig-auto li.bad{background:#e11d4818}
+.mig-auto b{display:block;font-size:11.5px}.mig-auto small{display:block;font-size:10.5px;color:#64748b;word-break:break-word}
+.mig-hist li{font-size:11px;padding:4px 0;border-bottom:1px dashed #e2e8f0}.mig-hist small{color:#64748b}
+.mig-range{display:flex;gap:8px;margin-bottom:8px}.mig-range label{flex:1;display:flex;flex-direction:column;gap:3px;font-size:10.5px;font-weight:700;color:#64748b}
+.mig-portal{display:flex;flex-direction:column;gap:6px}.mig-portal .st-b{justify-content:flex-start}
+.mig-note{font-size:10.5px;color:#64748b;margin-top:6px}
+.mig-ck{display:flex;flex-direction:column;gap:6px}
+.mig-ck label,.mig-upd{display:flex;gap:9px;align-items:flex-start;padding:8px 10px;border-radius:10px;box-shadow:inset 0 0 0 1px #e2e8f0;cursor:pointer;font-size:11.5px;font-weight:600}
+.dark .mig-ck label,.dark .mig-upd{box-shadow:inset 0 0 0 1px #24314a}
+.mig-ck input,.mig-upd input{width:16px;height:16px;margin-top:1px;accent-color:#059669;flex-shrink:0}
+.mig-ck label:has(input:checked){background:#ecfdf5;box-shadow:inset 0 0 0 1px #a7f3d0}.dark .mig-ck label:has(input:checked){background:#05966918}
+.mig-hc{display:flex;flex-direction:column;gap:3px;margin-top:8px;font-size:10.5px;font-weight:700;color:#64748b}
+.mig-dec{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;margin-top:10px}
+.st-b.warn{color:#b45309;border-color:#fcd34d}.mig-dec .st-b.pri{background:linear-gradient(135deg,#059669,#047857)}
+.mig-st{font-size:10.5px;color:#64748b;margin-top:8px;text-align:right}
+.mig-pad{padding:16px 18px;overflow:auto}
+.mig-pre{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.5}
+.mig-upd{margin-top:10px}
+.mig-l{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:800;color:#475569;margin-bottom:10px}
+.mig-to-banner{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:12px;border:0;background:#f0f9ff;box-shadow:inset 0 0 0 1px #bae6fd;font:inherit;font-size:11.5px;font-weight:700;color:#075985;cursor:pointer;text-align:left}
+.mig-to-banner span:first-of-type{flex:1}.dark .mig-to-banner{background:#0369a122;color:#7dd3fc;box-shadow:inset 0 0 0 1px #0369a155}
+.mig-np{display:flex;align-items:center;gap:10px;width:calc(100% - 24px);margin:4px 12px 8px;padding:10px 12px;border-radius:12px;border:0;background:#fffbeb;box-shadow:inset 0 0 0 1px #fde68a;font:inherit;text-align:left;cursor:pointer;color:#92400e}
+.dark .mig-np{background:#d9770618;color:#fcd34d;box-shadow:inset 0 0 0 1px #d9770655}
+.mig-np span{flex:1}.mig-np b{display:block;font-size:12px}.mig-np small{font-size:10.5px}
+body:has(#mig-ov) #st-nt{display:none!important}
+
+.mig-off{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:14px;background:#fff7ed;box-shadow:inset 0 0 0 1px #fed7aa;color:#9a3412;font-size:12.5px}.mig-off i{font-size:18px;margin-top:2px}.mig-off p{margin-top:2px;color:#9a3412cc}
+.dark .mig-off{background:#2a1a0e;box-shadow:inset 0 0 0 1px #7c2d12;color:#fdba74}.dark .mig-off p{color:#fdba74cc}
+
+/* v21b · Migrasi: tombol di bar atas, tampilan salin lebih besar */
+.mig-tb{display:flex;gap:inherit;align-items:center}.mig-tb.hidden{display:none}
+@media(min-width:768px){.mig-head .mig-acts{display:none}}
+.mig-card-m.xl{width:min(1120px,100%)}
+.mig-big{font-size:13.5px!important;line-height:1.65!important;padding:14px 16px!important;min-height:42vh}
+.mig-cp{font-size:13px}.mig-cp dd{display:flex;align-items:flex-start;gap:8px}.mig-cp dd>span,.mig-cp dd>b{flex:1;min-width:0;word-break:break-word}
+.mig-cpb{flex:none;width:28px;height:28px;border-radius:8px;border:0;background:#f1f5f9;color:#475569;cursor:pointer}.mig-cpb:hover{background:#e0f2fe;color:#0369a1}
+.dark .mig-cpb{background:#1e293b;color:#94a3b8}
+
+.mig-batools{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.mig-drop{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px;border:2px dashed #cbd5e1;border-radius:16px;text-align:center;color:#475569;outline:none}
+.mig-drop>i{font-size:26px;color:#0891b2}.mig-drop small{color:#94a3b8}.mig-drop.on,.mig-drop:focus{border-color:#0891b2;background:#ecfeff}
+.dark .mig-drop{border-color:#334155;color:#cbd5e1}.dark .mig-drop.on,.dark .mig-drop:focus{background:#083344}
+.mig-addl{display:flex;flex-direction:column;gap:6px;margin:12px 0}.mig-addl li{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:#f8fafc}.dark .mig-addl li{background:#0b1220}
+.mig-addl li>i{color:#0891b2}.mig-addl li span{flex:1;min-width:0;word-break:break-all;font-weight:700}.mig-addl li small{display:block;font-weight:500;color:#94a3b8}
 
 </style>
 <script id="addon_v14">
@@ -6057,12 +6145,14 @@ body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka
       { ic: "fa-pen-to-square", t: "Lanjut edit", s: "edit teks, TTD & stempel di hasil gabungan", fn: function () { switchMode("edit"); } }
     ]);
     if (isEdit()) return menu(a, [
+      o.kind === "mig" ? { ic: "fa-floppy-disk", t: "Simpan sebagai BA pengajuan", s: "ganti BA di sheet Migrasi IKR (kolom M) · BA lama tetap di Drive", fn: backToForm } : null,
       o.kind === "submit" ? { ic: "fa-arrow-turn-down", t: "Pakai di form Submit PDF", s: "kembali ke form dengan PDF hasil edit", fn: backToForm } : null,
       o.kind === "sgw" ? { ic: "fa-arrow-turn-down", t: "Pakai di Signing Document", s: "kembali ke langkah unggah", fn: backToForm } : null,
       { ic: "fa-cloud-arrow-up", t: "Submit PDF…", s: "pasangkan ke PO / BAP / SPK + jenis dokumen", fn: submitMass, dis: !(typeof canUpload === "function" ? canUpload() : true) },
       o.kind === "sgw" ? null : { ic: "fa-file-signature", t: "Kirim ke Signing Document", s: "buat permintaan tanda tangan dari PDF ini", fn: toSigning, dis: !(typeof can === "function" && can("sirkulir")) }
     ]);
     menu(a, [
+      o.kind === "mig" ? { ic: "fa-floppy-disk", t: "Simpan sebagai BA pengajuan", s: "semua halaman digabung jadi 1 file", fn: backToForm } : null,
       o.kind === "submit" ? { ic: "fa-arrow-turn-down", t: "Pakai di form Submit PDF", s: "semua halaman digabung jadi 1 file", fn: backToForm } : null,
       o.kind === "sgw" ? { ic: "fa-arrow-turn-down", t: "Pakai di Signing Document", s: "semua halaman digabung jadi 1 file", fn: backToForm } : null,
       o.kind === "signing" ? { ic: "fa-brands fa-google-drive", t: "Simpan ke Drive…", s: "pilih: file utuh atau file hasil pecah", fn: driveSave } : null,
@@ -6092,6 +6182,7 @@ body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka
       var k = PE.origin.kind; peClose(true);
       if (k === "submit") { if (typeof onUpFile === "function") onUpFile([file]); toast("PDF hasil rapikan dipakai di form Submit", "success"); }
       else if (k === "sgw") { if (typeof sgPickPdf === "function") sgPickPdf(file); toast("PDF hasil rapikan dipakai di Signing Document", "success"); }
+      else if (k === "mig" && typeof window.__migBaSave === "function") window.__migBaSave(file, PE.origin.id);
     } catch (e) { busy(null); toast("Gagal: " + e.message, "error", 8000); }
   }
 
@@ -8221,6 +8312,7 @@ body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka
     $("pe-ttl").textContent = opt.title || MODE_T[PE.mode];
     render();
     if (opt.file) await addFiles([opt.file]);
+    if (opt.files && opt.files.length) await addFiles(opt.files);
     if (opt.bytes) { busy("Membuka dokumen…", 40); try { var pages = await addBytes(opt.bytes, opt.name || "Dokumen.pdf"); PE.pages = pages; PE.base = safeName(opt.name) || "Dokumen"; } catch (e) { toast(e.message, "error"); } busy(null); render(); }
   }
   function reset() { PE.docs = []; PE.pages = []; PE.cuts = new Set(); PE.names = {}; PE.pairs = {}; PE.sel = new Set(); PE.undo = []; PE.redo = []; PE.pattern = ""; PE.base = "Dokumen"; PE.mf = false; JS = {}; LIB = {}; LIBF = {}; PE.blankDoc = null; PE.mfiles = []; PE.mopt = { marks: true, flatten: true, a4: false, blank: false, inter: false, interRev: true, outName: "" }; ED.baseKey = null; SAVED = { docs: -1, imgs: -1 }; Object.keys(IMGS).forEach(function (k) { try { URL.revokeObjectURL(IMGS[k].url); } catch (e) { } }); IMGS = {}; THUMB = {}; TXT = {}; TXTI = {}; OCR = {}; MARKS = {}; PE.form = {}; FORMF = {}; LIBX = {}; PE.comp = 0; PE.pw = null; PE.conv = []; }
@@ -8235,6 +8327,7 @@ body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka
   }
   if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__peT = { ptr: function () { return [PTR.size, !!ED.pinch, ED.tool]; }, render: render, lines: function () { return ED.lines; }, PE: PE, ED: ED, segs: segs, buildPdf: buildPdf, finalNames: finalNames, IMGS: function () { return IMGS; }, exportDocx: exportDocx, exportXlsx: exportXlsx, OCR: function () { return OCR; }, qpdf: qpdf, finalPdf: finalPdf, spStats: function () { return spStats(); }, cvRun: cvRun };
   window.peOpen = function (mode) { peOpen({ kind: "tab", mode: mode }); };
+  window.__peOpenOpt = function (opt) { return peOpen(opt || {}); };
   window.peClose = peClose;
 
   // Rapikan PDF dari form Submit / langkah unggah Signing
@@ -8990,6 +9083,431 @@ body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka
   setInterval(function () { if (currentUser && document.visibilityState === "visible") fetchTon(false); }, 60000);
   setTimeout(function () { fetchTon(true); }, 3500);
   if (location.hostname === "localhost") window.__ton = { TON: TON, fetchTon: fetchTon, tonShow: tonShow, umCard: umCard, editor: editor, markRead: markRead };
+})();
+
+/* ===== v21 · Migrasi IKR (khusus Akun Utama) — verifikasi pengajuan dari sheet "Migrasi IKR" ===== */
+(function () {
+  var $ = function (i) { return document.getElementById(i); };
+  var E = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var toast = function (m, t, ms) { try { showToast(m, t || "info", ms); } catch (e) { } };
+  var isOwner = function () { return !!currentUser && currentUser.role === "owner"; };
+  var srv = function () { try { return typeof isServerMode === "function" && isServerMode(); } catch (e) { return false; } };
+  var nk = function (s) { return String(s || "").toUpperCase().replace(/\s+/g, ""); };
+  var nm = function (s) { return String(s || "").toUpperCase().replace(/\b(PT|CV|TBK|STASIUN|ST)\b\.?/g, " ").replace(/[^A-Z0-9]+/g, " ").trim(); };
+  var lev = function (a, b) { if (a === b) return 0; var m = a.length, n = b.length, d = []; for (var i = 0; i <= m; i++) { d[i] = [i]; } for (var j = 1; j <= n; j++) d[0][j] = j; for (i = 1; i <= m; i++) for (j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1)); return d[m][n]; };
+  var near1 = function (a, b) {   // toleran: spasi, PT/CV, salah ketik kecil (ALLIGATOR ~ ALIGATOR, OPTIK ~ OPTIC)
+    a = nm(a); b = nm(b); if (!a || !b) return false;
+    var ac = a.replace(/ /g, ""), bc = b.replace(/ /g, "");
+    if (ac === bc || ac.indexOf(bc) >= 0 || bc.indexOf(ac) >= 0) return true;
+    if (a.split(" ").sort().join(" ") === b.split(" ").sort().join(" ")) return true;   // urutan kata beda (KOPEGTEL)
+    var L = Math.max(ac.length, bc.length); return L >= 6 && lev(ac, bc) / L <= 0.15;
+  };
+  var near = function (cand, val) { return String(cand || "").split(/[,;\/]+/).some(function (c) { return near1(c, val); }); };
+  var PORTAL = "https://partner.starliteindonesia.com";
+  var MIG = { rows: [], chk: {}, settings: { to: "", cc: "" }, loaded: false, loading: null, f: "wait", jenis: "", q: "", at: 0 };
+  window.MIG = MIG;
+  var VERIF_BAD = /^(Revisi|Tidak Sesuai|Done tidak sesuai)/i;
+  function stOf(r) {
+    if (/^done$/i.test(r.it)) return "done";
+    if (/cancel/i.test(r.it)) return "cancel";
+    if (/^(Done Email IT|Done Verifikasi)$/i.test(r.verif)) return "it";
+    if (VERIF_BAD.test(r.verif)) return "rev";
+    return "wait";
+  }
+  var ST = { wait: ["Menunggu verifikasi", "#d97706", "fa-hourglass-half"], rev: ["Revisi / tidak sesuai", "#e11d48", "fa-rotate-left"], it: ["Pending IT", "#2563eb", "fa-paper-plane"], done: ["Migrasi Done", "#059669", "fa-circle-check"], cancel: ["Batal (IT)", "#64748b", "fa-ban"] };
+  function parseTs(s) { var m = String(s || "").match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/); return m ? new Date(+m[3], +m[2] - 1, +m[1], +(m[4] || 0), +(m[5] || 0)).getTime() : 0; }
+  function ago(ts) { if (!ts) return ""; var d = Math.floor((Date.now() - ts) / 864e5); return d <= 0 ? "hari ini" : d + " hari"; }
+  function chkOf(r) { return MIG.chk[r.ck] || {}; }
+  function rowKey(r) { return r.ts + "|" + nk(r.noSpk); }
+  // ---------- data ----------
+  async function load(force) {
+    if (!isOwner() || !srv() || MIG.off) return;
+    if (MIG.loading) return MIG.loading;
+    if (!force && MIG.loaded && Date.now() - MIG.at < 120000) return;
+    MIG.loading = (async function () {
+      try {
+        var r = await callApi("mig.list", {}, 60000);
+        MIG.rows = (r.rows || []).map(function (x) { x.tsMs = parseTs(x.ts); return x; });
+        MIG.chk = r.chk || {}; MIG.settings = r.settings || MIG.settings; MIG.hasKey = !!r.formKey;
+        MIG.loaded = true; MIG.at = Date.now(); MIG.err = "";
+      } catch (e) {
+        MIG.err = e.message; MIG.loaded = true; MIG.at = Date.now();   // berhenti memuat, tampilkan pesan sekali (tidak berulang)
+        if (/tidak dikenal|unknown action/i.test(e.message)) MIG.off = true;   // Code.gs di server belum versi Migrasi IKR
+      }
+      finally { MIG.loading = null; badge(); if (isOpen()) render(); }
+    })();
+    return MIG.loading;
+  }
+  async function keyOf(r) { return r.ck; }
+  async function keyAll() { for (var i = 0; i < MIG.rows.length; i++) await keyOf(MIG.rows[i]); }
+  // ---------- pencocokan dengan Data Mitra Takeover & Tracker ----------
+  var spkKey = function (s) { var k = nk(s); return /\d/.test(k) ? k : ""; };   // "-" / kosong bukan nomor SPK
+  // nomor urut SPK + tahun: "1547/PRJ/STARLITE/IX/2026", "1547 SPK TAKE OVER … .pdf", "1547/PRJ/STARLITE,'D0'2026" → 1547 (+2026)
+  var spkNum = function (s) { var m = String(s || "").match(/^\s*0*(\d{1,5})(?=\D|$)/); if (!m) return null; var y = String(s).match(/20\d\d(?!.*20\d\d)/); return { n: m[1], y: y ? y[0] : "" }; };
+  var poOf = function (s) { return (String(s || "").toUpperCase().match(/PO\.[A-Z0-9.]+/g) || []).map(function (p) { return p.replace(/\.+$/, ""); }); };
+  function matchBy(list, field, r) {
+    var k = spkKey(r.noSpk); if (!k) return { rows: [], how: "" };
+    var ex = list.filter(function (x) { return nk(x[field]) === k; }); if (ex.length) return { rows: ex, how: "" };
+    var a = spkNum(r.noSpk);
+    if (a) { var nu = list.filter(function (x) { var b = spkNum(x[field]); return b && b.n === a.n && (!a.y || !b.y || a.y === b.y); }); if (nu.length) return { rows: nu, how: "nomor" }; }
+    var ps = poOf(r.noSpk);   // mitra mengisi No PO di kolom No SPK
+    if (ps.length) { var pp = list.filter(function (x) { var q = poOf(x.po); return ps.some(function (p) { return q.indexOf(p) >= 0; }); }); if (pp.length) return { rows: pp, how: "po" }; }
+    return { rows: [], how: "" };
+  }
+  function toRows(r) { return matchBy(STATE.takeover || [], "att_spk", r).rows; }
+  function spkRows(r) { return matchBy(STATE.spk || [], "no_spk", r).rows; }
+  // Tracker All Starlite: PO dari SPK / Data Mitra Takeover + baris yang stasiunnya sama DAN mitranya = mitra lama / pengganti
+  function trkHp(pos, r) {
+    var rows = (typeof TRK !== "undefined" && TRK.rows) || [], set = {}, seen = {}, hit = [], byPo = 0, byNm = 0; pos.forEach(function (p) { set[nk(p)] = 1; });
+    rows.forEach(function (x) {
+      var k = nk(x.po), a = !!set[k], b = !!(r && x.stasiun && near1(x.stasiun, r.stasiun) && (near1(x.after, r.baru) || near1(x.after, r.lama) || near1(x.before, r.lama)));
+      if (!(a || b) || (k && seen[k])) return; if (k) seen[k] = 1; hit.push(x); if (a) byPo++; else byNm++;
+    });
+    return { n: hit.length, hp: hit.reduce(function (a, x) { return a + (+String(x.hp).replace(/[^\d]/g, "") || 0); }, 0), pos: hit.map(function (x) { return x.po + " (" + (+String(x.hp).replace(/[^\d]/g, "") || 0) + ")"; }), byPo: byPo, byNm: byNm };
+  }
+  // SPK lain yang cocok dengan stasiun + mitra pengganti pengajuan (saran bila No SPK salah / kosong)
+  function suggestSpk(r, exclude) {
+    var out = [], add = function (no, st, lama, baru) { var n = spkNum(no); if (!n) return; var lbl = /\/PRJ\//i.test(no) ? String(no).trim() : n.n; if (exclude && spkNum(exclude) && spkNum(exclude).n === n.n) return; if (out.some(function (o) { return spkNum(o.no).n === n.n; })) return; out.push({ no: lbl, txt: (lama || "-") + " → " + baru + " · " + st }); };
+    (STATE.spk || []).forEach(function (x) { if (near(x.stasiun, r.stasiun) && near(x.mitra, r.baru)) add(x.no_spk, x.stasiun, x.prev, x.mitra); });
+    (STATE.takeover || []).forEach(function (t) { if (near(t.stasiun, r.stasiun) && near(t.after, r.baru)) add(t.att_spk, t.stasiun, t.before, t.after); });
+    out.sort(function (a, b) { return (/,/.test(a.txt) ? 1 : 0) - (/,/.test(b.txt) ? 1 : 0); });
+    return out.slice(0, 3);
+  }
+  function holderOf(r) {   // SPK lain di stasiun yang sama dengan mitra pengganti = Mitra Lama pengajuan
+    var a = (STATE.spk || []).filter(function (x) { return near(x.stasiun, r.stasiun) && near(x.mitra, r.lama); }).map(function (x) { return String(x.no_spk).trim(); });
+    (STATE.takeover || []).forEach(function (t) { if (near(t.stasiun, r.stasiun) && near(t.after, r.lama) && spkNum(t.att_spk)) a.push(/\/PRJ\//i.test(t.att_spk) ? String(t.att_spk).trim() : spkNum(t.att_spk).n); });
+    var own = spkNum(r.noSpk); a = a.filter(function (x, i) { return x && a.indexOf(x) === i && !(own && spkNum(x) && spkNum(x).n === own.n); }); return a.slice(0, 3).join(", ");
+  }
+  function autoChecks(r) {
+    var mT = matchBy(STATE.takeover || [], "att_spk", r), mK = matchBy(STATE.spk || [], "no_spk", r), T = mT.rows, K = mK.rows, out = [];
+    // sumber 1: Data Mitra Takeover (kolom Q = No SPK) · sumber 2: All SPK (TRACKER SPK VM)
+    var src = T.length && K.length ? "Data Mitra Takeover & All SPK" : T.length ? "Data Mitra Takeover" : K.length ? "All SPK" : "";
+    var how = mK.how || mT.how;
+    var pos = []; T.concat(K).forEach(function (x) { poOf(x.po).forEach(function (p) { if (pos.indexOf(p) < 0) pos.push(p); }); });
+    var sug = function () { var s = suggestSpk(r, src ? r.noSpk : ""); return s.length ? " · SPK yang cocok dengan stasiun & mitra ini: " + s.map(function (x) { return x.no + " (" + x.txt + ")"; }).join("; ") : ""; };
+    if (src) out.push({ ok: how === "po" ? false : true, t: how === "po" ? "Kolom No SPK berisi nomor PO, bukan nomor SPK" : "No SPK ditemukan di " + src, d: (how === "nomor" ? "dicocokkan dari nomor urut (penulisan berbeda) · " : "") + (pos.length ? pos.length + " PO: " + pos.join(", ") : "tanpa nomor PO") + (how === "po" ? sug() : "") });
+    else out.push({ ok: false, t: r.noSpk && spkKey(r.noSpk) ? "No SPK tidak ditemukan di Data Mitra Takeover maupun All SPK" : "No SPK tidak diisi", d: (r.noSpk || "(kosong)") + sug() });
+    if (src) {
+      var uniq = function (a) { return a.filter(function (c, i) { return a.indexOf(c) === i; }); };
+      var lamaC = uniq(T.map(function (t) { return t.before; }).concat(K.map(function (x) { return x.prev; })).filter(function (x) { return x && x !== "-"; }));
+      var baruC = uniq(T.map(function (t) { return t.after; }).concat(K.map(function (x) { return x.mitra; })).filter(Boolean));
+      var stC = uniq(T.map(function (t) { return t.stasiun; }).concat(K.map(function (x) { return x.stasiun; })).filter(Boolean));
+      var hit = function (cands, val) { return cands.some(function (c) { return near(c, val); }); };
+      var chk = function (label, val, cands) { if (!cands.length) return { ok: null, t: label, d: val + " (pembanding tidak ada di data)" }; var ok = hit(cands, val); return { ok: ok, t: label, d: val + (ok ? "" : " ≠ di SPK: " + cands.join(" / ")) }; };
+      var cL = chk("Mitra Lama", r.lama, lamaC), cB = chk("Mitra Pengganti", r.baru, baruC), cS = chk("Stasiun", r.stasiun, stC);
+      if (cL.ok === false && cB.ok === false && hit(baruC, r.lama) && hit(lamaC, r.baru)) { out.push({ ok: false, t: "Mitra Lama & Mitra Pengganti tertukar", d: "Pengajuan: " + r.lama + " → " + r.baru + " · di SPK: " + lamaC.join(" / ") + " → " + baruC.join(" / ") }); }
+      else {
+        // Mitra Lama tak sama dengan "mitra sebelum" di SPK ini, tapi tercatat sebagai pemegang stasiun ini di SPK lain (rantai takeover)
+        if (near1(r.lama, r.baru)) { cL.ok = false; cL.t = "Mitra Lama sama dengan Mitra Pengganti"; cL.d = r.lama + " → " + r.baru + (lamaC.length ? " · di SPK mitra lama: " + lamaC.join(" / ") : ""); }
+        else if (cL.ok === false) { var hold = holderOf(r); if (hold) { cL.ok = null; cL.t = "Mitra Lama (perlu dicek)"; cL.d = r.lama + " tercatat memegang stasiun ini di SPK " + hold + " · di SPK pengajuan tertulis: " + lamaC.join(" / "); } }
+        out.push(cL); out.push(cB);
+      }
+      if (cS.ok === false) cS.d += sug();
+      out.push(cS);
+    }
+    var h = trkHp(pos, r);
+    out.push({ ok: null, t: "HP Actual (Tracker All Starlite, opsional)", d: h.n ? h.hp.toLocaleString("id-ID") + " HP dari " + h.n + " PO" + (h.n > 1 ? " (dijumlahkan)" : "") + ": " + h.pos.join(", ") + " · cocok " + [h.byPo ? h.byPo + " dari No SPK/Takeover" : "", h.byNm ? h.byNm + " dari nama mitra & stasiun" : ""].filter(Boolean).join(", ") : "Tidak ada PO di Tracker untuk stasiun " + r.stasiun + " dengan mitra lama / pengganti ini" });
+    out.push({ ok: /^https?:/i.test(r.ba), t: "BA Pemindahan Akun & capture dashboard", d: r.ba ? "terlampir" : "tidak ada" });
+    out.push({ ok: /^https?:/i.test(r.kml), t: "File KML stasiun tujuan", d: r.kml ? "terlampir" : "tidak ada" });
+    out.push({ ok: /^https?:/i.test(r.spk), t: "File SPK", d: r.spk ? "terlampir" : "tidak ada" });
+    return { list: out, T: T, K: K };
+  }
+  function hcStart(r, T, K) {
+    var ts = T.map(function (t) { return t.spk_ts || 0; }).concat((K || []).map(function (x) { return x.mail_ts || 0; })).filter(Boolean).sort()[0];
+    var d = ts ? new Date(ts) : new Date(r.tsMs || Date.now()); if (!ts) d.setDate(1);
+    return d.toISOString().slice(0, 10);
+  }
+  var today = function () { var d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
+  // ---------- email ke IT ----------
+  function mails(s) { return (String(s || "").match(/[^\s<>";,]+@[^\s<>";,]+/g) || []).filter(function (x, i, a) { return a.indexOf(x) === i; }); }
+  function itSubject(r) { return "PERPINDAHAN AKUN - " + r.baru + " - " + r.stasiun; }
+  function itBody(r) {
+    return "Yth. Team IT\n\nBerikut permintaan perpindahan Akun:\n\nMitra Lama          : " + r.lama + "\nMitra Baru          : " + r.baru + "\nNama Stasiun        : " + r.stasiun + "\nNo SPK              : " + r.noSpk + (r.spk ? " (" + r.spk + ")" : "")
+      + "\n\nSebagai pemenuhan syarat administrasi, bersama email ini kami lampirkan dokumen-dokumen pendukung sebagai berikut:\n\n1. Berita Acara Pemindahan Akun IKR: Terlampir" + (r.ba ? " (" + r.ba + ")" : "")
+      + "\n2. File KML stasiun yang dituju: " + (r.kml || "-") + "\n3. Akun email penampung: " + (r.sales || "-") + "\n4. Akun email Lead IKR mitra lama: " + (r.ikrLama || "-") + "\n5. Akun email Lead IKR mitra baru: " + (r.ikrBaru || "-")
+      + "\n\nMohon untuk segera di proses perpindahan akun.\n\nBest Regards\nVendor Management";
+  }
+  function side(url, name) {
+    var W = screen.availWidth || 1440, H = screen.availHeight || 900, w = Math.max(720, Math.round(W * 0.58)), l = (screen.availLeft || 0) + W - w, t = screen.availTop || 0;
+    var win = null; try { win = window.open(url, name, "popup=yes,width=" + w + ",height=" + H + ",left=" + l + ",top=" + t); } catch (e) { }
+    if (!win) { window.open(url, "_blank", "noopener"); toast("Browser memblokir jendela samping — izinkan pop-up untuk situs ini agar portal terbuka di samping aplikasi", "info", 8000); return; }
+    try { win.opener = null; win.focus(); } catch (e) { }
+  }
+  function outlookUrl(r) {
+    var q = "to=" + encodeURIComponent(mails(MIG.settings.to).join(";")) + "&cc=" + encodeURIComponent(mails(MIG.settings.cc).join(";")) + "&subject=" + encodeURIComponent(itSubject(r)) + "&body=" + encodeURIComponent(itBody(r));
+    var from = String(MIG.settings.from || "vendormanagement@pmosurge.co.id").trim();
+    return "https://outlook.office.com/mail/deeplink/compose?" + q + (from ? "&login_hint=" + encodeURIComponent(from) : "");
+  }
+  function waUrl(r, text) { var n = String(r.wa || "").replace(/\D/g, "").replace(/^0/, "62"); return "https://wa.me/" + n + "?text=" + encodeURIComponent(text); }
+  // ---------- tampilan ----------
+  function isOpen() { var v = $("view-migrasi"); return v && !v.classList.contains("hidden"); }
+  function ensureUi() {
+    if (!isOwner()) { var n0 = $("nav-migrasi"); n0 && n0.classList.add("hidden"); return; }
+    var nt = $("nav-takeover");
+    if (nt && !$("nav-migrasi")) {
+      var b = document.createElement("button"); b.id = "nav-migrasi"; b.title = "Migrasi IKR"; b.className = nt.className; b.setAttribute("onclick", "switchTab('migrasi')");
+      b.innerHTML = '<div class="flex items-center gap-3"><i class="fa-solid fa-people-arrows text-sm shrink-0 group-hover:scale-110 transition-transform"></i><span class="sidebar-text">Migrasi IKR</span></div><span id="sidebar-migrasi-badge" class="sidebar-text text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 hidden">0</span>';
+      nt.after(b);
+    }
+    var n = $("nav-migrasi"); n && n.classList.remove("hidden");
+    var th = document.querySelector('#desk-top .tb-actions [onclick^="toggleTheme"]');
+    if (th && !$("mig-tb")) {
+      var tb = document.createElement("div"); tb.id = "mig-tb"; tb.className = "mig-tb hidden";
+      tb.innerHTML = '<button class="tb-btn" data-t="reload" title="Muat ulang pengajuan"><i class="fa-solid fa-rotate"></i></button><button class="tb-btn" data-t="form" title="Link form mitra"><i class="fa-solid fa-link"></i></button><button class="tb-btn" data-t="set" title="Penerima email IT"><i class="fa-solid fa-envelope"></i></button>';
+      th.before(tb);
+      tb.querySelector('[data-t="reload"]').onclick = reloadNow; tb.querySelector('[data-t="form"]').onclick = function () { formLink(); }; tb.querySelector('[data-t="set"]').onclick = function () { settings(); };
+    }
+    var vt = $("view-takeover");
+    if (vt && !$("view-migrasi")) { var v = document.createElement("section"); v.id = "view-migrasi"; v.className = "tab-view hidden space-y-5"; vt.after(v); }
+  }
+  function reloadNow() { MIG.off = false; MIG.err = ""; MIG.loaded = false; render(); load(true).then(function () { if (!MIG.err) toast("Pengajuan Migrasi IKR dimuat ulang", "success"); }); }
+  function badge() { var b = $("sidebar-migrasi-badge"); if (!b) return; var n = MIG.rows.filter(function (r) { return stOf(r) === "wait"; }).length; b.textContent = n; b.classList.toggle("hidden", !n); }
+  function filtered() {
+    var q = MIG.q.toLowerCase();
+    return MIG.rows.filter(function (r) {
+      if (MIG.f !== "all" && stOf(r) !== MIG.f) return false;
+      if (MIG.jenis && r.tujuan !== MIG.jenis) return false;
+      if (q && [r.lama, r.baru, r.stasiun, r.noSpk, r.nama, r.email, r.sales, r.ikrBaru].join(" ").toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    }).sort(function (a, b) { return b.tsMs - a.tsMs; });
+  }
+  function chip(k) { var s = ST[k]; return '<span class="mig-chip" style="--c:' + s[1] + '"><i class="fa-solid ' + s[2] + '"></i>' + s[0] + "</span>"; }
+  function render() {
+    var v = $("view-migrasi"); if (!v) return;
+    var cnt = { wait: 0, rev: 0, it: 0, done: 0, cancel: 0 }; MIG.rows.forEach(function (r) { cnt[stOf(r)]++; });
+    var L = filtered();
+    var card = function (k) { var s = ST[k]; return '<button class="mig-card' + (MIG.f === k ? " on" : "") + '" data-f="' + k + '" style="--c:' + s[1] + '"><i class="fa-solid ' + s[2] + '"></i><b>' + cnt[k] + "</b><span>" + s[0] + "</span></button>"; };
+    v.innerHTML = '<div class="glass-panel rounded-2xl p-4 mig-head"><div><h2>Migrasi IKR</h2><p>Verifikasi pengajuan perpindahan akun IKR dan Create Stasiun · data dari sheet <b>Migrasi IKR</b>' + (MIG.at ? " · dimuat " + new Date(MIG.at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) : "") + "</p></div>"
+      + '<div class="mig-acts"><button class="btn btn-ghost" data-a="reload" title="Muat ulang"><i class="fa-solid fa-rotate"></i><span>Muat ulang</span></button><button class="btn btn-ghost" data-a="form"><i class="fa-solid fa-link"></i><span>Link form mitra</span></button><button class="btn btn-ghost" data-a="set"><i class="fa-solid fa-envelope"></i><span>Penerima email IT</span></button></div></div>'
+      + (MIG.off ? '<div class="mig-off"><i class="fa-solid fa-plug-circle-xmark"></i><div><b>Server belum mendukung Migrasi IKR</b><p>Code.gs di Apps Script masih versi lama. Fitur ini aktif setelah Code.gs terbaru dipasang dan deployment diperbarui.</p></div></div>'
+        : MIG.err ? '<div class="mig-err"><i class="fa-solid fa-triangle-exclamation"></i>Gagal memuat pengajuan: ' + E(MIG.err) + ' · klik Muat ulang untuk mencoba lagi</div>' : "")
+      + (MIG.off ? "" : '<div class="mig-cards">' + ["wait", "rev", "it", "done"].map(card).join("") + '<button class="mig-card' + (MIG.f === "all" ? " on" : "") + '" data-f="all" style="--c:#475569"><i class="fa-solid fa-layer-group"></i><b>' + MIG.rows.length + "</b><span>Semua</span></button></div>"
+      + '<div class="glass-panel rounded-2xl p-4 space-y-3"><div class="flex flex-wrap gap-2"><div class="relative flex-1 min-w-[220px]"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i><input id="mig-q" class="field w-full pl-9" placeholder="Cari mitra, stasiun, No SPK, pengaju, email…" value="' + E(MIG.q) + '"></div><select id="mig-jenis" class="field"><option value="">Semua jenis</option><option' + (MIG.jenis === "Migrasi Akun IKR" ? " selected" : "") + '>Migrasi Akun IKR</option><option' + (MIG.jenis === "Create Stasiun (Stasiun Take Over)" ? " selected" : "") + ">Create Stasiun (Stasiun Take Over)</option></select></div>"
+      + (!MIG.loaded ? '<div class="mig-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Memuat pengajuan…</div>' : L.length ? '<div class="mig-list">' + L.map(function (r) {
+        var k = stOf(r), em = chkOf(r).emailAt ? Date.parse(chkOf(r).emailAt) : 0, late = k === "it" && em && Date.now() - em > 7 * 864e5;
+        return '<button class="mig-row" data-row="' + r.row + '"><span class="mig-d">' + E(r.ts.split(" ")[0]) + "<small>" + ago(r.tsMs) + '</small></span><span class="mig-m"><b>' + E(r.baru || "-") + " · " + E(r.stasiun || "-") + "</b><small>dari " + E(r.lama || "-") + " · " + E(r.noSpk || "tanpa No SPK") + " · " + (/create/i.test(r.tujuan) ? "Create Stasiun" : "Migrasi Akun") + "</small></span>" + chip(k) + (late ? '<span class="mig-late" title="Status IT masih kosong > 7 hari setelah email">IT > 7 hari</span>' : "") + "</button>";
+      }).join("") + "</div>" : '<div class="mig-empty"><i class="fa-regular fa-folder-open"></i>Tidak ada pengajuan pada filter ini.</div>') + "</div>");
+    if (MIG.off) { v.querySelector('[data-a="reload"]').onclick = reloadNow; v.querySelector('[data-a="form"]').onclick = formLink; v.querySelector('[data-a="set"]').onclick = settings; return; }
+    v.querySelectorAll("[data-f]").forEach(function (b) { b.onclick = function () { MIG.f = b.dataset.f; render(); }; });
+    v.querySelectorAll("[data-row]").forEach(function (b) { b.onclick = function () { openDetail(+b.dataset.row); }; });
+    var t; $("mig-q").oninput = function () { clearTimeout(t); var x = this; t = setTimeout(function () { MIG.q = x.value.trim(); var pos = x.selectionStart; render(); var y = $("mig-q"); y.focus(); try { y.setSelectionRange(pos, pos); } catch (e) { } }, 200); };
+    $("mig-jenis").onchange = function () { MIG.jenis = this.value; render(); };
+    v.querySelector('[data-a="reload"]').onclick = reloadNow;
+    v.querySelector('[data-a="form"]').onclick = formLink;
+    v.querySelector('[data-a="set"]').onclick = settings;
+  }
+  // ---------- modal ----------
+  function modal(html, cls) {
+    var old = $("mig-ov"); old && old.remove();
+    var ov = document.createElement("div"); ov.id = "mig-ov"; ov.className = "mig-ov"; ov.innerHTML = '<div class="mig-card-m ' + (cls || "") + '" role="dialog" aria-modal="true">' + html + "</div>";
+    document.body.appendChild(ov);
+    var close = function () { ov.remove(); document.removeEventListener("keydown", esc); };
+    var esc = function (e) { if (e.key === "Escape") close(); }; document.addEventListener("keydown", esc);
+    ov.onclick = function (e) { if (e.target === ov) close(); };
+    ov.querySelectorAll("[data-x]").forEach(function (b) { b.onclick = close; });
+    return { el: ov, close: close };
+  }
+  async function openDetail(rowNo) {
+    var r = MIG.rows.filter(function (x) { return x.row === rowNo; })[0]; if (!r) return;
+    await keyOf(r);
+    var A = autoChecks(r), T = A.T, K = A.K, c = chkOf(r), it = c.items || {}, k = stOf(r);
+    var st = hcStart(r, T, K), en = today();
+    var lnk = function (u, t) { return u ? '<a href="' + E(u) + '" target="_blank" rel="noopener" class="mig-lnk"><i class="fa-solid fa-arrow-up-right-from-square"></i>' + t + "</a>" : '<span class="mig-none">' + t + " — tidak ada</span>"; };
+    var CK = [["hc", "HC sama persis dengan menu Pelanggan Aktif di portal (capture dashboard)"], ["ikr", "Akun Lead IKR mitra pengganti ada & aktif"], ["sales", "Akun Sales penampung ada & aktif"], ["dok", "BA, KML, dan SPK lengkap dan benar"]];
+    var M = modal('<div class="mig-mh"><div><small>' + E(r.tujuan) + " · diajukan " + E(r.ts) + "</small><h3>" + E(r.baru) + " · " + E(r.stasiun) + "</h3><p>dari <b>" + E(r.lama) + "</b> · No SPK <b>" + E(r.noSpk || "-") + "</b></p></div>" + chip(k) + '<button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
+      + '<div class="mig-mb"><div class="mig-col">'
+      + '<section><h4>Pengaju</h4><p><b>' + E(r.nama) + "</b> · " + E(r.jabatan) + "<br>" + E(r.email) + (r.wa ? ' · <a class="mig-lnk" target="_blank" rel="noopener" href="' + E(waUrl(r, "")) + '"><i class="fa-brands fa-whatsapp"></i>' + E(r.wa) + "</a>" : "") + "</p></section>"
+      + '<section><h4>Akun</h4><dl class="mig-dl"><dt>Sales penampung</dt><dd>' + E(r.sales || "-") + "</dd><dt>Lead IKR mitra lama</dt><dd>" + E(r.ikrLama || "-") + "</dd><dt>Lead IKR mitra pengganti</dt><dd>" + E(r.ikrBaru || "-") + "</dd></dl></section>"
+      + '<section><h4>Dokumen</h4><div class="mig-docs">' + lnk(r.ba, "BA & capture dashboard") + lnk(r.kml, "File KML") + lnk(r.spk, "SPK") + "</div>"
+      + '<div class="mig-batools"><button class="st-b" data-ba="edit"' + (r.ba ? "" : " disabled") + '><i class="fa-solid fa-pen-to-square"></i>Edit BA (PDF)</button><button class="st-b" data-ba="add"><i class="fa-solid fa-file-circle-plus"></i>Tambah file / capture ke BA</button></div></section>'
+      + '<section><h4>Cek otomatis</h4><ul class="mig-auto">' + A.list.map(function (x) { return '<li class="' + (x.ok === true ? "ok" : x.ok === false ? "bad" : "info") + '"><i class="fa-solid ' + (x.ok === true ? "fa-circle-check" : x.ok === false ? "fa-circle-xmark" : "fa-circle-info") + '"></i><span><b>' + E(x.t) + "</b><small>" + E(x.d) + "</small></span></li>"; }).join("") + "</ul></section>"
+      + (c.h && c.h.length ? '<section><h4>Riwayat</h4><ul class="mig-hist">' + c.h.slice().reverse().map(function (h) { return "<li><b>" + E(h.act) + "</b> · " + E(h.by) + " · " + E(new Date(h.at).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })) + (h.note ? "<br><small>" + E(h.note) + "</small>" : "") + "</li>"; }).join("") + "</ul></section>" : "")
+      + '</div><div class="mig-col">'
+      + '<section><h4>Cek di portal</h4><div class="mig-range"><label>Dari<input type="date" id="mig-d1" class="field" value="' + st + '"></label><label>Sampai<input type="date" id="mig-d2" class="field" value="' + en + '"></label></div>'
+      + '<div class="mig-portal"><button class="st-b" data-p="hc"><i class="fa-solid fa-users"></i>Cek HC · Pelanggan Aktif</button><button class="st-b" data-p="ikr"><i class="fa-solid fa-screwdriver-wrench"></i>Cek Lead IKR</button><button class="st-b" data-p="sales"><i class="fa-solid fa-user-tie"></i>Cek Lead Sales</button></div><p class="mig-note">Portal terbuka di jendela samping (aplikasi tetap terbuka) dengan login portal Anda — cukup login sekali. Untuk Lead IKR / Sales, email akunnya otomatis disalin — tempel di kolom cari portal.</p></section>'
+      + '<section><h4>Checklist verifikator</h4><div class="mig-ck">' + CK.map(function (x) { return '<label><input type="checkbox" data-ck="' + x[0] + '"' + (it[x[0]] === true ? " checked" : "") + "><span>" + x[1] + "</span></label>"; }).join("") + '</div><label class="mig-hc">HC di portal (opsional)<input id="mig-hcv" class="field" inputmode="numeric" placeholder="mis. 53" value="' + E(c.hc || "") + '"></label></section>'
+      + '<section><h4>Keputusan</h4><textarea id="mig-rem" class="field w-full" rows="3" placeholder="Catatan untuk mitra (wajib bila Revisi / Tidak Sesuai)">' + E(r.remark || "") + '</textarea><div class="mig-dec"><button class="st-b dng" data-d="Tidak Sesuai"><i class="fa-solid fa-ban"></i>Tidak Sesuai</button><button class="st-b warn" data-d="Revisi"><i class="fa-solid fa-rotate-left"></i>Revisi</button><button class="st-b pri" data-d="lolos"><i class="fa-solid fa-circle-check"></i>Lolos → Kirim ke IT</button></div><p class="mig-st">Status Verifikasi (kolom R): <b>' + E(r.verif || "—") + "</b> · Status IT (kolom S): <b>" + E(r.it || "—") + "</b></p></section>"
+      + "</div></div>", "lg");
+    var el = M.el, q = function (s) { return el.querySelector(s); };
+    var items = function () { var o = {}; el.querySelectorAll("[data-ck]").forEach(function (cb) { o[cb.dataset.ck] = cb.checked; }); return o; };
+    el.querySelectorAll("[data-p]").forEach(function (b) {
+      b.onclick = function () {
+        var p = b.dataset.p, url;
+        if (p === "hc") url = PORTAL + "/admin/customer-overview/active?date_start=" + q("#mig-d1").value + "&date_end=" + q("#mig-d2").value;
+        else { url = PORTAL + (p === "ikr" ? "/admin/ikr-management" : "/admin/sales-management"); var em = p === "ikr" ? r.ikrBaru : r.sales; if (em) { try { var pr = navigator.clipboard && navigator.clipboard.writeText(em); if (pr && pr.then) pr.then(function () { toast("Email " + em + " disalin — tempel di kolom cari portal", "info", 5000); }, function () { toast("Email akun: " + em, "info", 8000); }); } catch (e) { toast("Email akun: " + em, "info", 8000); } } }
+        side(url, "starlite-portal");
+      };
+    });
+    el.querySelectorAll("[data-ba]").forEach(function (b) { b.onclick = function () { if (b.dataset.ba === "edit") baEdit(r, []); else baAdd(r); }; });
+    var save = async function (verif, remark, extra) {
+      var res = await callApi("mig.save", Object.assign({ row: r.row, ts: r.ts, noSpk: r.noSpk, verif: verif, remark: remark, chk: items(), hc: q("#mig-hcv").value.trim() }, extra || {}), 60000);
+      if (res.item) { Object.assign(r, res.item); }
+      if (res.chk) { MIG.chk[res.chk.key] = res.chk.value; r.ck = res.chk.key; }
+      badge(); if (isOpen()) render();
+      return res;
+    };
+    el.querySelectorAll("[data-ck]").forEach(function (cb) { cb.onchange = function () { save(undefined, undefined).catch(function (e) { toast(e.message, "error", 7000); }); }; });
+    el.querySelectorAll("[data-d]").forEach(function (b) {
+      b.onclick = async function () {
+        var d = b.dataset.d, its = items(), miss = CK.filter(function (x) { return !its[x[0]]; });
+        if (d === "lolos") {
+          if (miss.length) return toast("Belum semua checklist dicentang: " + miss.map(function (x) { return x[1]; }).join("; "), "error", 7000);
+          return emailIt(r, T, function () { M.close(); });
+        }
+        var rem = q("#mig-rem").value.trim();
+        if (!rem) { rem = "Mohon diperbaiki: " + (miss.length ? miss.map(function (x) { return x[1]; }).join("; ") : "-"); q("#mig-rem").value = rem; return toast("Catatan terisi otomatis dari checklist — periksa lalu klik lagi", "info", 5000); }
+        b.disabled = true;
+        try {
+          await save(d, rem, { note: rem.slice(0, 200) });
+          toast("Status Verifikasi: " + d, "success");
+          var msg = "Yth. " + (r.nama || "Bapak/Ibu") + ",\n\nPengajuan " + r.tujuan + " " + r.baru + " – " + r.stasiun + " (No SPK " + r.noSpk + ") berstatus " + d.toUpperCase() + ".\nCatatan: " + rem + "\n\nMohon perbaiki dan ajukan ulang melalui link form.\n\nVendor Management";
+          M.close(); revisiShare(r, msg);
+        } catch (e) { b.disabled = false; toast(e.message, "error", 7000); }
+      };
+    });
+  }
+  // ---------- BA: edit di Edit PDF, tambah file / capture ----------
+  var b64ToFile = function (x) { var bin = atob(x.b64), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); var nm = x.name || "BA.pdf"; return new File([u], nm, { type: x.mime || (/\.pdf$/i.test(nm) ? "application/pdf" : "application/octet-stream") }); };
+  async function baFiles(r) {
+    if (!r.ba) return [];
+    var res = await callApi("mig.bafile", { row: r.row, ts: r.ts, noSpk: r.noSpk }, 120000);
+    return (res.files || []).map(b64ToFile);
+  }
+  async function baEdit(r, extra) {
+    if (typeof window.peOpen !== "function") return toast("Fitur Edit PDF tidak tersedia di akun ini", "error");
+    toast("Mengambil BA dari Drive…", "info", 3000);
+    try {
+      var files = (await baFiles(r)).concat(extra || []);
+      if (!files.length) return toast("Tidak ada BA / file untuk dibuka", "error");
+      var ov = $("mig-ov"); ov && ov.remove();
+      MIG.baRow = r.row;
+      window.__peOpenOpt({ kind: "mig", id: String(r.row), mode: "edit", files: files, title: "Edit BA · " + r.baru + " · " + r.stasiun });
+    } catch (e) { toast("Gagal membuka BA: " + e.message, "error", 8000); }
+  }
+  window.__migBaSave = async function (file, rowId) {
+    var r = MIG.rows.filter(function (x) { return String(x.row) === String(rowId); })[0]; if (!r) return toast("Pengajuan tidak ditemukan — klik Muat ulang", "error");
+    try {
+      var buf = new Uint8Array(await file.arrayBuffer()), bin = "", CH = 0x8000;
+      for (var i = 0; i < buf.length; i += CH) bin += String.fromCharCode.apply(null, buf.subarray(i, i + CH));
+      var res = await callApi("mig.ba", { row: r.row, ts: r.ts, noSpk: r.noSpk, fileBase64: btoa(bin) }, 180000);
+      if (res.item) Object.assign(r, res.item); if (res.chk) { MIG.chk[res.chk.key] = res.chk.value; r.ck = res.chk.key; }
+      toast("BA baru tersimpan di Drive & kolom M · BA lama tetap tersimpan", "success", 6000);
+      try { switchTab("migrasi"); } catch (e) { } openDetail(r.row);
+    } catch (e) { toast("Gagal menyimpan BA: " + e.message, "error", 9000); try { switchTab("migrasi"); } catch (er) { } openDetail(r.row); }
+  };
+  async function grabScreen() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) throw new Error("Browser ini tidak mendukung capture layar — pakai Win+Shift+S lalu tempel (Ctrl+V)");
+    var st = await navigator.mediaDevices.getDisplayMedia({ video: { displaySurface: "window" }, audio: false });
+    try {
+      var v = document.createElement("video"); v.muted = true; v.srcObject = st; await v.play(); await new Promise(function (r) { setTimeout(r, 400); });
+      var c = document.createElement("canvas"); c.width = v.videoWidth; c.height = v.videoHeight; c.getContext("2d").drawImage(v, 0, 0);
+      var blob = await new Promise(function (r) { c.toBlob(r, "image/png"); });
+      return new File([blob], "Capture " + new Date().toLocaleString("id-ID").replace(/[\/:]/g, ".") + ".png", { type: "image/png" });
+    } finally { st.getTracks().forEach(function (t) { t.stop(); }); }
+  }
+  function baAdd(r) {
+    var L = [];
+    var M = modal('<div class="mig-mh"><div><small>' + E(r.baru) + " · " + E(r.stasiun) + '</small><h3>Tambah file / capture ke BA</h3><p>File & capture ditambahkan sebagai halaman setelah BA, lalu dibuka di Edit PDF untuk dirapikan sebelum disimpan.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div>'
+      + '<div class="mig-pad"><div class="mig-drop" id="mig-drop" tabindex="0"><i class="fa-solid fa-cloud-arrow-up"></i><b>Seret file ke sini, atau tempel capture (Ctrl+V)</b><small>PDF, JPG, PNG</small><div class="mig-dec"><label class="st-b"><input type="file" id="mig-addf" class="hidden" multiple accept="application/pdf,.pdf,image/png,image/jpeg,.jpg,.jpeg,.png"><i class="fa-solid fa-folder-open"></i>Pilih file</label><button class="st-b" data-g><i class="fa-solid fa-camera"></i>Capture layar (mis. dashboard portal)</button></div></div>'
+      + '<ul class="mig-addl" id="mig-addl"></ul><div class="mig-dec"><button class="st-b" data-x>Batal</button><button class="st-b pri" data-go disabled><i class="fa-solid fa-pen-to-square"></i>Gabungkan ke BA &amp; buka Edit PDF</button></div></div>', "md");
+    var el = M.el, list = el.querySelector("#mig-addl"), go = el.querySelector("[data-go]");
+    var draw = function () {
+      list.innerHTML = L.map(function (f, i) { return '<li><i class="fa-solid ' + (/pdf/.test(f.type) ? "fa-file-pdf" : "fa-image") + '"></i><span>' + E(f.name) + "<small>" + Math.max(1, Math.round(f.size / 1024)) + ' KB</small></span><button class="mig-cpb" data-rm="' + i + '" title="Hapus"><i class="fa-solid fa-xmark"></i></button></li>'; }).join("");
+      list.querySelectorAll("[data-rm]").forEach(function (b) { b.onclick = function () { L.splice(+b.dataset.rm, 1); draw(); }; });
+      go.disabled = !L.length;
+    };
+    var add = function (fs) { Array.from(fs || []).forEach(function (f) { if (/pdf|image\/(png|jpe?g)/i.test(f.type) || /\.(pdf|png|jpe?g)$/i.test(f.name)) L.push(f); else toast('"' + f.name + '" dilewati — hanya PDF / JPG / PNG', "error", 5000); }); draw(); };
+    el.querySelector("#mig-addf").onchange = function () { add(this.files); this.value = ""; };
+    var dz = el.querySelector("#mig-drop");
+    dz.ondragover = function (e) { e.preventDefault(); dz.classList.add("on"); }; dz.ondragleave = function () { dz.classList.remove("on"); };
+    dz.ondrop = function (e) { e.preventDefault(); dz.classList.remove("on"); add(e.dataTransfer.files); };
+    var paste = function (e) { if (!document.body.contains(el)) return document.removeEventListener("paste", paste); var fs = Array.from((e.clipboardData || {}).items || []).filter(function (it) { return it.kind === "file"; }).map(function (it) { var f = it.getAsFile(); return f && /^image\//.test(f.type) && f.name === "image.png" ? new File([f], "Capture " + (L.length + 1) + ".png", { type: f.type }) : f; }).filter(Boolean); if (fs.length) { e.preventDefault(); add(fs); toast(fs.length + " capture ditempel", "success"); } };
+    document.addEventListener("paste", paste); dz.focus();
+    el.querySelector("[data-g]").onclick = async function () { try { add([await grabScreen()]); } catch (e) { if (e && e.name !== "NotAllowedError") toast(e.message, "error", 7000); } };
+    go.onclick = function () { document.removeEventListener("paste", paste); go.disabled = true; go.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Membuka…'; baEdit(r, L.slice()); };
+  }
+  function revisiShare(r, msg) {
+    var M = modal('<div class="mig-mh"><div><h3>Kabari mitra</h3><p>Status tersimpan di kolom R, catatan di kolom Q.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div><div class="mig-pad"><textarea class="field w-full mig-pre mig-big" rows="12" id="mig-msg">' + E(msg) + '</textarea><div class="mig-dec"><button class="st-b" data-c><i class="fa-solid fa-copy"></i>Salin pesan</button>' + (r.wa ? '<button class="st-b pri" data-w><i class="fa-brands fa-whatsapp"></i>Kirim WA ke ' + E(r.wa) + "</button>" : "") + "</div></div>", "md");
+    var t = function () { return M.el.querySelector("#mig-msg").value; };
+    M.el.querySelector("[data-c]").onclick = function () { copyText(t(), "Pesan disalin"); };
+    var w = M.el.querySelector("[data-w]"); if (w) w.onclick = function () { window.open(waUrl(r, t()), "_blank", "noopener"); };
+  }
+  function emailIt(r, T, done) {
+    var body = itBody(r), subj = itSubject(r);
+    var M = modal('<div class="mig-mh"><div><small>Lolos verifikasi</small><h3>Kirim ke Team IT</h3><p>Salin teks atau buka di Outlook Web, kirim, lalu tandai sudah dikirim.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div>'
+      + '<div class="mig-pad"><dl class="mig-dl wide mig-cp"><dt>To</dt><dd><span>' + E(MIG.settings.to) + '</span><button class="mig-cpb" data-cp="to" title="Salin To"><i class="fa-solid fa-copy"></i></button></dd><dt>Cc</dt><dd><span>' + E(MIG.settings.cc) + '</span><button class="mig-cpb" data-cp="cc" title="Salin Cc"><i class="fa-solid fa-copy"></i></button></dd><dt>Subjek</dt><dd><b>' + E(subj) + '</b><button class="mig-cpb" data-cp="subj" title="Salin subjek"><i class="fa-solid fa-copy"></i></button></dd></dl><textarea class="field w-full mig-pre mig-big" rows="22" id="mig-body">' + E(body) + "</textarea>"
+      + '<p class="mig-note"><i class="fa-solid fa-paperclip"></i> Lampirkan file BA dari Drive bila perlu: <a class="mig-lnk" target="_blank" rel="noopener" href="' + E(r.ba) + '">buka BA</a></p>'
+      + (T.length ? '<label class="mig-upd"><input type="checkbox" id="mig-updto" checked><span>Perbarui Data Mitra Takeover: <b>' + T.length + " PO</b> (" + E(T.map(function (t) { return t.po; }).join(", ")) + ") — kolom M jadi Done Email IT, kolom X tanggal hari ini (bila kosong)</span></label>" : "")
+      + '<div class="mig-dec"><button class="st-b" data-c><i class="fa-solid fa-copy"></i>Salin teks</button><button class="st-b" data-o><i class="fa-solid fa-envelope-open-text"></i>Buka di Outlook Web</button><button class="st-b pri" data-s><i class="fa-solid fa-check-double"></i>Tandai sudah dikirim ke IT</button></div></div>', "xl");
+    var el = M.el, txt = function () { return el.querySelector("#mig-body").value; };
+    el.querySelector("[data-c]").onclick = function () { copyText(txt(), "Teks email disalin"); };
+    el.querySelectorAll("[data-cp]").forEach(function (b) { b.onclick = function () { var k = b.dataset.cp; copyText(k === "subj" ? subj : mails(MIG.settings[k]).join("; "), (k === "subj" ? "Subjek" : k === "to" ? "To" : "Cc") + " disalin"); }; });
+    el.querySelector("[data-o]").onclick = function () { var u = outlookUrl(Object.assign({}, r)); if (txt() !== body) u = u.replace(/&body=[^&]*/, "&body=" + encodeURIComponent(txt())); side(u, "starlite-outlook"); };
+    el.querySelector("[data-s]").onclick = async function () {
+      var b = this; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Menyimpan…';
+      try {
+        var upd = el.querySelector("#mig-updto");
+        var res = await callApi("mig.save", { row: r.row, ts: r.ts, noSpk: r.noSpk, verif: "Done Email IT", updTakeover: upd ? upd.checked : false, toRows: T.map(function (t) { return t.row; }), note: "Email ke IT: " + subj }, 60000);
+        if (res.item) Object.assign(r, res.item); if (res.chk) { MIG.chk[res.chk.key] = res.chk.value; r.ck = res.chk.key; }
+        M.close(); if (done) done(); badge(); if (isOpen()) render();
+        toast("Status VM: Done Email IT" + (res.takeoverRows && res.takeoverRows.length ? " · Data Takeover " + res.takeoverRows.length + " PO diperbarui" : ""), "success", 6000);
+        try { if (res.takeoverRows && res.takeoverRows.length && typeof autoSyncGoogleSheets === "function") autoSyncGoogleSheets({ keys: ["takeover"], silent: true }); } catch (e) { }
+      } catch (e) { b.disabled = false; b.innerHTML = '<i class="fa-solid fa-check-double"></i>Tandai sudah dikirim ke IT'; toast(e.message, "error", 8000); }
+    };
+  }
+  async function formLink() {
+    try {
+      var r = await callApi("mig.formkey", {}, 30000);
+      var base = location.origin + location.pathname.replace(/[^\/]*$/, "");
+      var url = base + "migrasi.html?k=" + r.key;
+      var M = modal('<div class="mig-mh"><div><h3>Link form pengajuan mitra</h3><p>Bagikan lewat WA. Mitra mengisi tanpa login; pengajuan masuk ke sheet Migrasi IKR.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div><div class="mig-pad"><input class="field w-full" readonly value="' + E(url) + '" id="mig-url"><div class="mig-dec"><button class="st-b" data-r><i class="fa-solid fa-arrows-rotate"></i>Ganti link (link lama tidak berlaku)</button><button class="st-b" data-o><i class="fa-solid fa-arrow-up-right-from-square"></i>Buka</button><button class="st-b pri" data-c><i class="fa-solid fa-copy"></i>Salin link</button></div></div>', "sm");
+      M.el.querySelector("[data-c]").onclick = function () { copyText(M.el.querySelector("#mig-url").value, "Link form disalin"); };
+      M.el.querySelector("[data-o]").onclick = function () { window.open(M.el.querySelector("#mig-url").value, "_blank", "noopener"); };
+      M.el.querySelector("[data-r]").onclick = async function () { if (!confirm("Ganti link form? Link lama yang sudah dibagikan tidak bisa dipakai lagi.")) return; var x = await callApi("mig.formkey", { reset: true }, 30000); M.el.querySelector("#mig-url").value = base + "migrasi.html?k=" + x.key; toast("Link form diganti", "success"); };
+    } catch (e) { toast(e.message, "error", 7000); }
+  }
+  function settings() {
+    var M = modal('<div class="mig-mh"><div><h3>Penerima email ke Team IT</h3><p>Dipakai di tombol Salin teks dan Buka di Outlook Web.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div><div class="mig-pad"><label class="mig-l">Akun Outlook pengirim<input id="mig-from" class="field w-full" value="' + E(MIG.settings.from || "vendormanagement@pmosurge.co.id") + '"></label><label class="mig-l">To<textarea id="mig-to" class="field w-full" rows="2">' + E(MIG.settings.to) + '</textarea></label><label class="mig-l">Cc<textarea id="mig-cc" class="field w-full" rows="5">' + E(MIG.settings.cc) + '</textarea></label><div class="mig-dec"><button class="st-b" data-x>Batal</button><button class="st-b pri" data-s><i class="fa-solid fa-floppy-disk"></i>Simpan</button></div></div>', "sm");
+    M.el.querySelector("[data-s]").onclick = async function () { try { var r = await callApi("mig.settings", { save: { from: M.el.querySelector("#mig-from").value, to: M.el.querySelector("#mig-to").value, cc: M.el.querySelector("#mig-cc").value } }, 30000); MIG.settings = r.settings; M.close(); toast("Penerima email IT disimpan", "success"); } catch (e) { toast(e.message, "error", 7000); } };
+  }
+  // ---------- kait ke aplikasi ----------
+  if (typeof switchTab === "function") { var oST = switchTab; window.switchTab = switchTab = function (t) { ensureUi(); var r = oST.apply(this, arguments); try { var tb = $("mig-tb"); tb && tb.classList.toggle("hidden", t !== "migrasi"); } catch (e) { } try { if (t === "migrasi" && isOwner()) { render(); load(false); } } catch (e) { console.warn("mig", e); } return r; }; }
+  if (typeof applyPermissions === "function") { var oAP = applyPermissions; window.applyPermissions = applyPermissions = function () { var r = oAP.apply(this, arguments); try { ensureUi(); } catch (e) { } return r; }; }
+  // detail PO di Data Mitra Takeover: status migrasi PO itu
+  if (typeof renderTakeoverDetail === "function") {
+    var oRT = renderTakeoverDetail;
+    window.renderTakeoverDetail = renderTakeoverDetail = function (t) {
+      var r = oRT.apply(this, arguments);
+      try {
+        if (isOwner() && MIG.loaded && t && t.att_spk) {
+          var m = MIG.rows.filter(function (x) { return nk(x.noSpk) === nk(t.att_spk); }).sort(function (a, b) { return b.tsMs - a.tsMs; })[0];
+          var body = $("detail-modal-body");
+          if (m && body) { body.insertAdjacentHTML("afterbegin", '<button class="mig-to-banner" data-mrow="' + m.row + '"><i class="fa-solid fa-people-arrows"></i><span>Migrasi IKR · diajukan ' + E(m.ts.split(" ")[0]) + "</span>" + chip(stOf(m)) + "</button>"); body.querySelector("[data-mrow]").onclick = function () { try { closeDetailModal(); } catch (e) { } switchTab("migrasi"); setTimeout(function () { openDetail(m.row); }, 300); }; }
+        }
+      } catch (e) { }
+      return r;
+    };
+  }
+  // lonceng: bagian Migrasi IKR untuk Akun Utama
+  if (typeof notifPanel === "function") {
+    var oNP = notifPanel;
+    window.notifPanel = notifPanel = function () {
+      var r = oNP.apply(this, arguments);
+      try {
+        if (!isOwner() || !MIG.loaded) return r;
+        var w = MIG.rows.filter(function (x) { return stOf(x) === "wait"; }).length, late = MIG.rows.filter(function (x) { var c = chkOf(x); return stOf(x) === "it" && c.emailAt && Date.now() - Date.parse(c.emailAt) > 7 * 864e5; }).length;
+        if (!w && !late) return r;
+        var e = $("notif-panel"), ph = e && e.querySelector(".st-ph"); if (!ph) return r;
+        ph.insertAdjacentHTML("afterend", '<button class="mig-np" id="mig-np"><i class="fa-solid fa-people-arrows"></i><span><b>Migrasi IKR</b><small>' + (w ? w + " pengajuan menunggu verifikasi" : "") + (w && late ? " · " : "") + (late ? late + " Pending IT > 7 hari" : "") + '</small></span><i class="fa-solid fa-chevron-right"></i></button>');
+        $("mig-np").onclick = function (ev) { ev.stopPropagation(); try { notifClose(); } catch (er) { } switchTab("migrasi"); };
+      } catch (er) { }
+      return r;
+    };
+  }
+  try { if (typeof BUSY_SKIP !== "undefined" && BUSY_SKIP instanceof RegExp) { var bsT = RegExp.prototype.test; BUSY_SKIP.test = function (a) { return /^(mig\.(list|check|formkey|settings)|ton\.list|sign\.sbtoken)$/.test(a) || bsT.call(BUSY_SKIP, a); }; } } catch (e) { }
+  setInterval(function () { if (isOwner() && srv() && document.visibilityState === "visible") { ensureUi(); load(false); } }, 300000);
+  setTimeout(function () { if (isOwner() && srv()) { ensureUi(); load(false); } }, 5000);
+  if (location.hostname === "localhost") window.__mig = { MIG: MIG, load: load, render: render, openDetail: openDetail, autoChecks: autoChecks, itBody: itBody, itSubject: itSubject, outlookUrl: outlookUrl, keyOf: keyOf, ensureUi: ensureUi, stOf: stOf };
 })();
 
 </script>

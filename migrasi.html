@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pengajuan Migrasi IKR · STARLITE</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f5f4;--card:#ffffff;--ink:#0f172a;--mute:#64748b;--line:#dbe3e1;--soft:#f6faf9;--acc:#0e7c6b;--acc2:#0b5f53;--accs:#e3f3ef;--bad:#c2410c;--bads:#fff1e9;--ok:#047857}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1312;--card:#121d1b;--ink:#e7efed;--mute:#93a4a0;--line:#25332f;--soft:#0f1917;--acc:#34c3a8;--acc2:#5fd6bf;--accs:#123029;--bad:#fb923c;--bads:#2a1a10;--ok:#34d399}}
+:root[data-theme="dark"]{--bg:#0b1312;--card:#121d1b;--ink:#e7efed;--mute:#93a4a0;--line:#25332f;--soft:#0f1917;--acc:#34c3a8;--acc2:#5fd6bf;--accs:#123029;--bad:#fb923c;--bads:#2a1a10;--ok:#34d399}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:28px 16px 64px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.logo{width:40px;height:40px;border-radius:12px;background:var(--acc);display:grid;place-items:center;color:#fff;font-weight:800;font-size:18px;flex-shrink:0}
+header b{display:block;font-size:13px;letter-spacing:.02em}
+header small{color:var(--mute);font-size:12.5px}
+h1{font-size:26px;line-height:1.2;margin:0 0 6px;font-weight:800;letter-spacing:-.01em}
+.lead{color:var(--mute);margin:0 0 22px;max-width:60ch}
+form{display:flex;flex-direction:column;gap:16px}
+fieldset{border:0;margin:0;padding:20px;background:var(--card);border-radius:18px;box-shadow:0 0 0 1px var(--line)}
+legend{float:left;width:100%;padding:0;margin:0 0 14px;display:flex;align-items:baseline;gap:10px;font-size:16px;font-weight:800}
+legend span{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--accs);color:var(--acc2);display:inline-grid;place-items:center;font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;clear:both}
+.full{grid-column:1/-1}
+@media(max-width:560px){.grid{grid-template-columns:1fr}h1{font-size:22px}fieldset{padding:16px}}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700}
+label.f em{font-style:normal;font-weight:500;color:var(--mute);font-size:12px}
+input[type=text],input[type=email],input[type=tel],input[type=url]{font:inherit;font-size:15px;padding:11px 13px;border-radius:11px;border:1px solid var(--line);background:var(--soft);color:var(--ink);width:100%}
+input:focus{outline:2px solid var(--acc);outline-offset:1px;border-color:transparent}
+.req::after{content:" *";color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;clear:both}
+@media(max-width:560px){.opts{grid-template-columns:1fr}}
+.opt{position:relative;display:block;padding:14px 16px 14px 46px;border-radius:14px;border:1.5px solid var(--line);background:var(--soft);cursor:pointer}
+.opt input{position:absolute;left:16px;top:17px;width:18px;height:18px;accent-color:var(--acc)}
+.opt b{display:block;font-size:14px}.opt small{color:var(--mute);font-size:12.5px}
+.opt:has(input:checked){border-color:var(--acc);background:var(--accs)}
+.file{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1.5px dashed var(--line);background:var(--soft);cursor:pointer}
+.file input{position:absolute;opacity:0;width:1px;height:1px}
+.file .ic{flex:0 0 36px;width:36px;height:36px;border-radius:10px;background:var(--accs);color:var(--acc2);display:grid;place-items:center;font-weight:800;font-size:12px;flex-shrink:0}
+.file span:not(.ic){flex:1;min-width:0}.file b{display:block;font-size:13.5px}.file small{display:block;color:var(--mute);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file.has{border-style:solid;border-color:var(--acc)}
+.file:focus-within{outline:2px solid var(--acc);outline-offset:1px}
+.or{font-size:12px;color:var(--mute);margin:2px 0}
+.err{display:none;padding:12px 14px;border-radius:12px;background:var(--bads);color:var(--bad);font-weight:700;font-size:13.5px}
+.err.on{display:block}
+button.send{font:inherit;font-weight:800;font-size:15px;padding:14px 18px;border:0;border-radius:14px;background:var(--acc);color:#fff;cursor:pointer}
+button.send:hover{background:var(--acc2)}button.send:disabled{opacity:.6;cursor:wait}
+button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.note{color:var(--mute);font-size:12.5px;text-align:center}
+.done{display:none;padding:28px 22px;background:var(--card);border-radius:18px;box-shadow:0 0 0 1px var(--line);text-align:center}
+.done .ok{width:56px;height:56px;margin:0 auto 12px;border-radius:50%;background:var(--accs);color:var(--ok);display:grid;place-items:center;font-size:28px;font-weight:800}
+.done h2{margin:0 0 6px;font-size:20px}.done p{color:var(--mute);margin:0 0 6px}
+.done dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;text-align:left;max-width:440px;margin:16px auto;font-size:13.5px}.done dt{color:var(--mute)}.done dd{margin:0;font-weight:700;word-break:break-word}
+.blocked{padding:24px;background:var(--card);border-radius:18px;box-shadow:0 0 0 1px var(--line)}
+.prog{height:6px;border-radius:99px;background:var(--line);overflow:hidden;display:none}.prog i{display:block;height:100%;width:0;background:var(--acc);transition:width .3s}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="logo" aria-hidden="true">S</div><div><b>STARLITE · Vendor Management</b><small>PT Integrasi Jaringan Ekosistem</small></div></header>
+  <h1>Pengajuan Migrasi Akun IKR</h1>
+  <p class="lead">Isi data perpindahan akun atau pembuatan stasiun take over. Pengajuan langsung masuk ke Vendor Management untuk diverifikasi, lalu diteruskan ke Team IT.</p>
+
+  <div id="blocked" class="blocked" hidden></div>
+
+  <form id="f" novalidate hidden>
+    <fieldset>
+      <legend><span>1</span>Tujuan pengisian</legend>
+      <div class="opts" role="radiogroup" aria-label="Tujuan pengisian">
+        <label class="opt"><input type="radio" name="tujuan" value="Migrasi Akun IKR" checked><b>Migrasi Akun IKR</b><small>Pindah akun IKR dari mitra lama ke mitra pengganti</small></label>
+        <label class="opt"><input type="radio" name="tujuan" value="Create Stasiun (Stasiun Take Over)"><b>Create Stasiun</b><small>Pembuatan stasiun untuk stasiun take over</small></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span>2</span>Data pengaju</legend>
+      <div class="grid">
+        <label class="f"><span class="req">Alamat email</span><input type="email" name="email" autocomplete="email" required></label>
+        <label class="f"><span class="req">Nama pengaju</span><input type="text" name="nama" autocomplete="name" required></label>
+        <label class="f"><span class="req">Jabatan / posisi</span><input type="text" name="jabatan" required></label>
+        <label class="f"><span class="req">No WhatsApp</span><input type="tel" name="wa" inputmode="tel" placeholder="08…" required></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span>3</span>Mitra dan stasiun</legend>
+      <div class="grid">
+        <label class="f"><span class="req">Nama lengkap mitra lama</span><input type="text" name="lama" required></label>
+        <label class="f"><span class="req">Nama lengkap mitra pengganti</span><input type="text" name="baru" required></label>
+        <label class="f"><span class="req">Stasiun</span><input type="text" name="stasiun" required></label>
+        <label class="f"><span class="req">Nomor SPK</span><input type="text" name="noSpk" placeholder="mis. 1547/PRJ/STARLITE/X/2026" required></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span>4</span>Akun</legend>
+      <div class="grid">
+        <label class="f full"><span class="req">Akun email Sales penampung</span><input type="email" name="sales" required></label>
+        <label class="f"><span>Akun email Lead IKR mitra lama <em>(opsional)</em></span><input type="email" name="ikrLama"></label>
+        <label class="f"><span class="req">Akun email Lead IKR mitra pengganti</span><input type="email" name="ikrBaru" required></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span>5</span>Dokumen</legend>
+      <div class="grid">
+        <div class="full"><label class="file" data-for="ba"><input type="file" id="ba" accept=".pdf,image/*"><span class="ic">PDF</span><span><b class="req">BA Pemindahan Akun IKR & capture dashboard</b><small>PDF atau foto, maks 15 MB</small></span></label></div>
+        <div class="full"><label class="file" data-for="spk"><input type="file" id="spk" accept=".pdf,image/*"><span class="ic">SPK</span><span><b class="req">File SPK</b><small>PDF, maks 15 MB</small></span></label></div>
+        <div class="full"><label class="file" data-for="kml"><input type="file" id="kml" accept=".kml,.kmz"><span class="ic">KML</span><span><b class="req">File KML stasiun tujuan</b><small>.kml / .kmz, maks 15 MB</small></span></label>
+          <p class="or">atau tempel link Drive file KML:</p><input type="url" name="kmlLink" placeholder="https://drive.google.com/…" aria-label="Link Drive file KML"></div>
+      </div>
+    </fieldset>
+
+    <div class="err" id="err" role="alert"></div>
+    <div class="prog" id="prog"><i></i></div>
+    <button class="send" type="submit" id="send">Kirim pengajuan</button>
+    <p class="note">Data hanya dipakai untuk proses perpindahan akun oleh Vendor Management dan Team IT.</p>
+  </form>
+
+  <div class="done" id="done" role="status">
+    <div class="ok">✓</div>
+    <h2>Pengajuan terkirim</h2>
+    <p>Vendor Management akan memverifikasi dan mengabari lewat WhatsApp bila ada yang perlu diperbaiki.</p>
+    <dl id="sum"></dl>
+    <button class="send" type="button" id="again">Ajukan lagi</button>
+  </div>
+</div>
+<script>
+(function () {
+  "use strict";
+  // alamat server sama dengan aplikasi STARLITE VM
+  var API = "https://script.google.com/macros/s/AKfycbyys2ma_YnF1NXeDq8oCba3P8sMJZ_etKIR28bESqusBfQjffCa789yuUU6rog_vBsujA/exec";
+  var MAX = 15 * 1024 * 1024;
+  var key = new URLSearchParams(location.search).get("k") || "";
+  var f = document.getElementById("f"), err = document.getElementById("err"), send = document.getElementById("send");
+  var bar = document.getElementById("prog"), barI = bar.querySelector("i");
+  function post(action, body) {
+    return fetch(API, { method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(Object.assign({ action: action }, body)) })
+      .then(function (r) { return r.text(); }).then(function (t) { var j; try { j = JSON.parse(t); } catch (e) { throw new Error("Server sedang tidak bisa dihubungi. Coba lagi beberapa saat."); } if (!j.ok) throw new Error(j.error || "Gagal"); return j; });
+  }
+  function block(msg) { var b = document.getElementById("blocked"); b.hidden = false; b.textContent = msg; f.hidden = true; }
+  if (!key) block("Link form tidak lengkap. Minta link pengajuan terbaru ke Vendor Management.");
+  else post("mig.check", { key: key }).then(function () { f.hidden = false; }).catch(function (e) { block(e.message); });
+  f.addEventListener("input", function () { err.classList.remove("on"); });
+  document.querySelectorAll(".file input").forEach(function (inp) {
+    inp.addEventListener("change", function () {
+      var lab = inp.closest(".file"), sm = lab.querySelector("small"), file = inp.files[0];
+      if (!sm.dataset.def) sm.dataset.def = sm.textContent;
+      lab.classList.toggle("has", !!file);
+      sm.textContent = file ? file.name + " · " + (file.size / 1048576).toFixed(1) + " MB" : sm.dataset.def;
+    });
+  });
+  function readB64(file) {
+    return new Promise(function (ok, bad) {
+      if (!file) return ok(null);
+      if (file.size > MAX) return bad(new Error(file.name + " lebih dari 15 MB"));
+      var r = new FileReader(); r.onload = function () { ok({ name: file.name, mime: file.type || "application/octet-stream", b64: String(r.result).split(",")[1] }); }; r.onerror = function () { bad(new Error("Gagal membaca " + file.name)); }; r.readAsDataURL(file);
+    });
+  }
+  function show(m) { err.textContent = m; err.classList.add("on"); err.scrollIntoView({ behavior: "smooth", block: "center" }); }
+  var LABEL = { email: "Alamat email", nama: "Nama pengaju", jabatan: "Jabatan", wa: "No WhatsApp", lama: "Mitra lama", baru: "Mitra pengganti", stasiun: "Stasiun", noSpk: "Nomor SPK", sales: "Email Sales penampung", ikrBaru: "Email Lead IKR mitra pengganti" };
+  f.addEventListener("submit", function (ev) {
+    ev.preventDefault(); err.classList.remove("on");
+    var fd = new FormData(f), d = {}; fd.forEach(function (v, k) { d[k] = String(v).trim(); });
+    var miss = Object.keys(LABEL).filter(function (k) { return !d[k]; });
+    if (miss.length) { var first = f.querySelector('[name="' + miss[0] + '"]'); first && first.focus(); return show("Belum diisi: " + miss.map(function (k) { return LABEL[k]; }).join(", ")); }
+    var em = /^[^\s@]+@[^\s@]+\.[^\s@]+$/, bad = ["email", "sales", "ikrBaru", "ikrLama"].filter(function (k) { return d[k] && !em.test(d[k]); });
+    if (bad.length) return show("Format email belum benar: " + bad.map(function (k) { return LABEL[k] || "Email Lead IKR mitra lama"; }).join(", "));
+    var spkF = f.querySelector('[name="noSpk"]');
+    if (/^PO[.\s]/i.test(d.noSpk)) { spkF.focus(); return show("Nomor SPK diisi nomor PO. Isi nomor SPK yang tertulis di dokumen SPK, mis. 1547/PRJ/STARLITE/X/2026."); }
+    if (!/^\s*\d{1,5}\s*\/\s*PRJ\s*\/\s*STARLITE\s*\/\s*[IVX]{1,4}\s*\/\s*20\d\d\s*$/i.test(d.noSpk)) { spkF.focus(); return show("Format Nomor SPK belum benar. Contoh: 1547/PRJ/STARLITE/X/2026"); }
+    var nm = function (s) { return s.toUpperCase().replace(/\b(PT|CV|TBK)\b\.?/g, "").replace(/[^A-Z0-9]/g, ""); };
+    if (nm(d.lama) && nm(d.lama) === nm(d.baru)) { f.querySelector('[name="lama"]').focus(); return show("Mitra lama dan mitra pengganti tidak boleh sama."); }
+    var ba = document.getElementById("ba").files[0], spk = document.getElementById("spk").files[0], kml = document.getElementById("kml").files[0];
+    if (!ba) return show("Unggah BA Pemindahan Akun IKR & capture dashboard.");
+    if (!spk) return show("Unggah file SPK.");
+    if (!kml && !/^https?:\/\//i.test(d.kmlLink || "")) return show("Unggah file KML atau tempel link Drive-nya.");
+    send.disabled = true; send.textContent = "Mengunggah dokumen…"; bar.style.display = "block"; barI.style.width = "15%";
+    Promise.all([readB64(ba), readB64(spk), readB64(kml)]).then(function (x) {
+      barI.style.width = "45%"; send.textContent = "Mengirim pengajuan…";
+      return post("mig.submit", { key: key, data: d, files: { ba: x[0], spk: x[1], kml: x[2] } });
+    }).then(function () {
+      barI.style.width = "100%";
+      var sum = document.getElementById("sum"), rows = [["Tujuan", d.tujuan], ["Mitra pengganti", d.baru], ["Stasiun", d.stasiun], ["Nomor SPK", d.noSpk]];
+      sum.innerHTML = ""; rows.forEach(function (r) { var dt = document.createElement("dt"), dd = document.createElement("dd"); dt.textContent = r[0]; dd.textContent = r[1]; sum.appendChild(dt); sum.appendChild(dd); });
+      f.hidden = true; document.getElementById("done").style.display = "block"; window.scrollTo({ top: 0, behavior: "smooth" });
+    }).catch(function (e) { show(e.message); }).then(function () { send.disabled = false; send.textContent = "Kirim pengajuan"; setTimeout(function () { bar.style.display = "none"; barI.style.width = "0"; }, 400); });
+  });
+  document.getElementById("again").onclick = function () { f.reset(); document.querySelectorAll(".file").forEach(function (l) { l.classList.remove("has"); var sm = l.querySelector("small"); if (sm.dataset.def) sm.textContent = sm.dataset.def; }); document.getElementById("done").style.display = "none"; f.hidden = false; };
+})();
+</script>
+</body>
+</html>
