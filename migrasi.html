@@ -133,7 +133,7 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
     <ul class="prep">
       <li>BA Pemindahan Akun IKR yang sudah full sign + capture dashboard</li>
       <li>File KML stasiun tujuan (format .kml, bukan .kmz)</li>
-      <li>Nomor SPK (file SPK otomatis diambil dari All SPK bila sudah tercatat)</li>
+      <li>Nomor SPK (file SPK otomatis diambil dari All SPK)</li>
       <li>Akun email Sales penampung &amp; Lead IKR mitra pengganti di Dashboard Mitra Starlite</li>
     </ul>
   </section>
@@ -199,10 +199,9 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
     </fieldset>
 
     <fieldset class="card">
-      <div class="sec"><i>6</i><div><h2>KML dan SPK</h2></div></div>
+      <div class="sec"><i>6</i><div><h2>File KML</h2><small>File SPK tidak perlu diunggah — otomatis diambil dari All SPK sesuai Nomor SPK.</small></div></div>
       <div class="stack">
         <div class="drop" data-k="kml"><input type="file" id="kml" accept=".kml" aria-label="Unggah KML"><span class="ic">KML</span><span class="tx"><b class="req">File KML stasiun tujuan</b><small>Wajib format .kml (bukan .kmz), maks 15 MB</small></span><span class="go">Pilih file</span></div>
-        <div class="drop" data-k="spk"><input type="file" id="spk" accept=".pdf,image/*" aria-label="Unggah SPK"><span class="ic">SPK</span><span class="tx"><b class="req">File SPK (Surat Perintah Kerja)</b><small>Isi Nomor SPK dulu — bila sudah ada di All SPK, file terpasang otomatis</small></span><span class="go">Pilih file</span></div>
       </div>
     </fieldset>
 
@@ -268,7 +267,7 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
   function boxSet(cls, html) { box.className = "full spk on " + cls; box.innerHTML = html; }
   function lookup() {
     var v = fld("noSpk").value.trim();
-    if (v === spkQ) return; spkQ = v; SPK = null; spkAttach();
+    if (v === spkQ) return; spkQ = v; SPK = null;
     if (!v) { box.className = "full spk"; return; }
     if (/^PO[.\s]/i.test(v)) return boxSet("no", "<b class='t'>Ini nomor PO, bukan nomor SPK</b>Isi nomor SPK yang tertulis di dokumen SPK, mis. 1547/PRJ/STARLITE/X/2026.");
     if (!spkOk(v)) return boxSet("no", "<b class='t'>Format Nomor SPK belum benar</b>Contoh: 1547/PRJ/STARLITE/X/2026");
@@ -277,23 +276,22 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
     post("mig.spk", { key: key, noSpk: v }).then(function (r) {
       if (q !== spkQ) return;
       var rows = r.rows || [];
-      if (!rows.length) { boxSet("no", "<b class='t'>Nomor SPK belum tercatat di All SPK</b>Pastikan nomornya benar. Bila sudah benar, lanjutkan dan unggah file SPK di bagian 6."); return; }
+      if (!rows.length) { SPK = { none: true }; boxSet("no", "<b class='t'>Nomor SPK tidak ditemukan di All SPK</b>Periksa lagi nomornya sesuai dokumen SPK. Bila sudah benar, hubungi Vendor Management."); return; }
       var x = rows[0]; SPK = x;
       return mitraReady.then(function () {
         var fill = function (k, val) { var el = fld(k); if (!el.value.trim() && val) { el.value = official(val) || val; el.classList.remove("bad"); } };
         fill("lama", x.prev && x.prev !== "-" ? x.prev : ""); fill("baru", x.mitra);
         if (!fld("stasiun").value.trim() && x.stasiun && !/,/.test(x.stasiun)) fld("stasiun").value = x.stasiun;
-        boxSet("ok", "<b class='t'>✓ Ditemukan di All SPK</b><dl><dt>No SPK</dt><dd>" + esc(x.no) + "</dd><dt>Mitra lama</dt><dd>" + esc(x.prev || "-") + "</dd><dt>Mitra pengganti</dt><dd>" + esc(x.mitra || "-") + "</dd><dt>Stasiun</dt><dd>" + esc(x.stasiun || "-") + "</dd>" + (x.po ? "<dt>PO</dt><dd>" + esc(x.po) + "</dd>" : "") + "<dt>File SPK</dt><dd>" + (x.link ? "<a href='" + esc(x.link) + "' target='_blank' rel='noopener'>" + esc(x.att || "Buka file SPK") + "</a> — terpasang otomatis" : "belum ada di All SPK — unggah di bagian 6") + "</dd></dl>");
-        spkAttach();
+        boxSet("ok", "<b class='t'>✓ Ditemukan di All SPK</b><dl><dt>No SPK</dt><dd>" + esc(x.no) + "</dd><dt>Mitra lama</dt><dd>" + esc(x.prev || "-") + "</dd><dt>Mitra pengganti</dt><dd>" + esc(x.mitra || "-") + "</dd><dt>Stasiun</dt><dd>" + esc(x.stasiun || "-") + "</dd>" + (x.po ? "<dt>PO</dt><dd>" + esc(x.po) + "</dd>" : "") + (x.link ? "<dt>File SPK</dt><dd><a href='" + esc(x.link) + "' target='_blank' rel='noopener'>" + esc(x.att || "Buka file SPK") + "</a></dd>" : "") + "</dl>");
       });
-    }).catch(function () { if (q === spkQ) boxSet("no", "<b class='t'>All SPK tidak bisa dicek sekarang</b>Lanjutkan pengisian dan unggah file SPK di bagian 6."); });
+    }).catch(function () { if (q === spkQ) boxSet("no", "<b class='t'>All SPK tidak bisa dicek sekarang</b>Lanjutkan pengisian — Nomor SPK dicek ulang saat pengajuan dikirim."); });
   }
   fld("noSpk").addEventListener("input", function () { clearTimeout(spkT); spkT = setTimeout(lookup, 600); });
   fld("noSpk").addEventListener("blur", lookup);
 
   // ---------- unggah file: seret / pilih, animasi, hapus ----------
-  var FILES = {}, RULE = { ba: /\.(pdf|jpe?g|png|webp|heic)$/i, kml: /\.kml$/i, spk: /\.(pdf|jpe?g|png)$/i };
-  var MSG = { ba: "BA harus PDF atau foto", kml: "File KML wajib format .kml (bukan .kmz)", spk: "SPK harus PDF atau foto" };
+  var FILES = {}, RULE = { ba: /\.(pdf|jpe?g|png|webp|heic)$/i, kml: /\.kml$/i };
+  var MSG = { ba: "BA harus PDF atau foto", kml: "File KML wajib format .kml (bukan .kmz)" };
   function drawDrop(k) {
     var d = f.querySelector('.drop[data-k="' + k + '"]'), sm = d.querySelector("small"), go = d.querySelector(".go"), file = FILES[k];
     if (!sm.dataset.def) sm.dataset.def = sm.textContent;
@@ -304,11 +302,8 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
       var x = document.createElement("button"); x.type = "button"; x.className = "x"; x.title = "Hapus file"; x.textContent = "✕";
       x.onclick = function (e) { e.preventDefault(); e.stopPropagation(); delete FILES[k]; d.querySelector("input").value = ""; drawDrop(k); };
       d.appendChild(x);
-    } else if (k === "spk" && SPK && SPK.link) {
-      d.classList.remove("has"); d.classList.add("auto"); sm.textContent = "Dari All SPK: " + (SPK.att || "file SPK") + " — klik untuk mengganti"; go.textContent = "✓ Otomatis";
     } else { d.classList.remove("has"); sm.textContent = sm.dataset.def; go.textContent = "Pilih file"; }
   }
-  function spkAttach() { drawDrop("spk"); }
   function take(k, file) {
     var d = f.querySelector('.drop[data-k="' + k + '"]');
     if (!file) return;
@@ -355,29 +350,28 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
     if (nmk(d.lama) === nmk(d.baru)) return show("Mitra lama dan mitra pengganti tidak boleh sama.", fld("lama"));
     if (!FILES.ba) return show("Unggah BA Pemindahan Akun IKR & capture dashboard (bagian 5).");
     if (!FILES.kml) return show("Unggah file KML stasiun tujuan (bagian 6).");
-    if (!FILES.spk && !(SPK && SPK.link)) return show("Unggah file SPK (bagian 6) — lampiran SPK untuk nomor ini belum ada di All SPK.");
+    if (SPK && SPK.none) return show("Nomor SPK tidak ditemukan di All SPK. Periksa lagi nomornya atau hubungi Vendor Management.", fld("noSpk"));
     send.disabled = true; ovOpen(); step("read"); creep(18, 500);
-    var size = (FILES.ba.size + FILES.kml.size + (FILES.spk ? FILES.spk.size : 0)) / 1048576;
-    Promise.all([readB64(FILES.ba), readB64(FILES.spk || null), readB64(FILES.kml)]).then(function (x) {
+    var size = (FILES.ba.size + FILES.kml.size) / 1048576;
+    Promise.all([readB64(FILES.ba), Promise.resolve(null), readB64(FILES.kml)]).then(function (x) {
       setP(20); step("up"); creep(88, 2500 + size * 1800);
       var t = setTimeout(function () { step("save"); }, 1500 + size * 900);
-      return post("mig.submit", { key: key, data: d, files: { ba: x[0], spk: x[1], kml: x[2] } }).then(function (r) { clearTimeout(t); return r; }, function (e) { clearTimeout(t); throw e; });
+      return post("mig.submit", { key: key, data: d, files: { ba: x[0], kml: x[2] } }).then(function (r) { clearTimeout(t); return r; }, function (e) { clearTimeout(t); throw e; });
     }).then(function () {
       step("save"); clearInterval(tick); setP(100); ov.querySelectorAll(".steps li").forEach(function (li) { li.className = "ok"; }); $("ov-t").textContent = "Pengajuan tersimpan"; $("ov-s").textContent = "Membuka ringkasan…";
       setTimeout(function () {
         ovClose();
-        var sum = $("sum"), rows = [["Tujuan", d.tujuan], ["Mitra lama", d.lama], ["Mitra pengganti", d.baru], ["Stasiun", d.stasiun], ["Nomor SPK", d.noSpk], ["File SPK", FILES.spk ? FILES.spk.name : "dari All SPK"]];
+        var sum = $("sum"), rows = [["Tujuan", d.tujuan], ["Mitra lama", d.lama], ["Mitra pengganti", d.baru], ["Stasiun", d.stasiun], ["Nomor SPK", d.noSpk]];
         sum.innerHTML = ""; rows.forEach(function (r) { var dt = document.createElement("dt"), dd = document.createElement("dd"); dt.textContent = r[0]; dd.textContent = r[1]; sum.appendChild(dt); sum.appendChild(dd); });
         f.hidden = true; $("intro").hidden = true; $("done").classList.add("on"); window.scrollTo({ top: 0, behavior: "smooth" });
       }, 650);
     }).catch(function (e) {
       ovClose(); var m = e.message || "Gagal mengirim";
-      if (/File SPK wajib/i.test(m)) { SPK = null; spkAttach(); }
       show(m);
     }).then(function () { send.disabled = false; });
   });
   $("again").onclick = function () {
-    f.reset(); FILES = {}; SPK = null; spkQ = ""; box.className = "full spk"; ["ba", "kml", "spk"].forEach(drawDrop);
+    f.reset(); FILES = {}; SPK = null; spkQ = ""; box.className = "full spk"; ["ba", "kml"].forEach(drawDrop);
     $("done").classList.remove("on"); f.hidden = false; $("intro").hidden = false; window.scrollTo({ top: 0, behavior: "smooth" });
   };
 })();
