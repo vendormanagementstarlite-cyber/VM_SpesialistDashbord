@@ -59,13 +59,32 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .done dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;text-align:left;max-width:440px;margin:16px auto;font-size:13.5px}.done dt{color:var(--mute)}.done dd{margin:0;font-weight:700;word-break:break-word}
 .blocked{padding:24px;background:var(--card);border-radius:18px;box-shadow:0 0 0 1px var(--line)}
 .prog{height:6px;border-radius:99px;background:var(--line);overflow:hidden;display:none}.prog i{display:block;height:100%;width:0;background:var(--acc);transition:width .3s}
+.intro{background:var(--card);border-radius:18px;box-shadow:0 0 0 1px var(--line);padding:18px 20px;margin:0 0 18px;font-size:14px}
+.intro p{margin:0 0 8px}.prep{margin:4px 0 0;padding-left:20px;color:var(--mute)}.prep li{margin:2px 0}
+label.f em.how{line-height:1.5}label.f em b{color:var(--ink);font-weight:700}
+.ba{clear:both;display:flex;flex-direction:column;gap:12px}
+.tpl{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;border-radius:14px;background:var(--accs)}
+.tpl b{display:block;font-size:14px}.tpl small{color:var(--mute);font-size:12.5px}
+a.btn{display:inline-block;padding:10px 14px;border-radius:11px;background:var(--acc);color:#fff;font-weight:800;font-size:13.5px;text-decoration:none}a.btn:hover{background:var(--acc2)}
+.sub{margin:0;font-size:13px;font-weight:700}
+.ttd{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;counter-reset:t}
+.ttd li{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:var(--soft);box-shadow:0 0 0 1px var(--line);counter-increment:t}
+.ttd li::before{content:counter(t);width:22px;height:22px;border-radius:50%;background:var(--accs);color:var(--acc2);display:grid;place-items:center;font-size:12px;font-weight:800;flex-shrink:0}
+.ttd li span{flex:1}.ttd b{display:block;font-size:13.5px}.ttd small{color:var(--mute);font-size:12px}
+.ttd a,.cap a{color:var(--acc2);font-weight:800;font-size:13px}
+.cap{padding:12px 14px;border-radius:12px;background:var(--bads);font-size:13.5px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header><div class="logo" aria-hidden="true">S</div><div><b>STARLITE · Vendor Management</b><small>PT Integrasi Jaringan Ekosistem</small></div></header>
-  <h1>Pengajuan Migrasi Akun IKR</h1>
-  <p class="lead">Isi data perpindahan akun atau pembuatan stasiun take over. Pengajuan langsung masuk ke Vendor Management untuk diverifikasi, lalu diteruskan ke Team IT.</p>
+  <h1>Form Pengajuan Migrasi Akun IKR &amp; Create Stasiun (Stasiun Take Over)</h1>
+  <div class="intro">
+    <p>Form ini digunakan untuk mengajukan proses <b>Migrasi Akun IKR (ada HC)</b> dan/atau <b>Create Stasiun (no HC)</b> pada kebutuhan Stasiun Take Over.</p>
+    <p>Pastikan seluruh data yang diisi telah sesuai dan lengkap agar pengajuan dapat diproses tanpa kendala. Pengajuan yang tidak memenuhi persyaratan atau datanya tidak lengkap akan dikembalikan kepada mitra untuk diperbaiki.</p>
+    <p>Sebelum mengisi formulir, siapkan dulu seluruh dokumen pendukung:</p>
+    <ul class="prep"><li>BA Pemindahan Akun IKR yang sudah full sign + capture dashboard</li><li>File KML stasiun tujuan (format .kml, bukan .kmz)</li><li>File SPK dan nomor SPK</li><li>Akun email Sales penampung &amp; Lead IKR mitra pengganti yang sudah dibuat di Dashboard Mitra Starlite</li></ul>
+  </div>
 
   <div id="blocked" class="blocked" hidden></div>
 
@@ -73,18 +92,18 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
     <fieldset>
       <legend><span>1</span>Tujuan pengisian</legend>
       <div class="opts" role="radiogroup" aria-label="Tujuan pengisian">
-        <label class="opt"><input type="radio" name="tujuan" value="Migrasi Akun IKR" checked><b>Migrasi Akun IKR</b><small>Pindah akun IKR dari mitra lama ke mitra pengganti</small></label>
-        <label class="opt"><input type="radio" name="tujuan" value="Create Stasiun (Stasiun Take Over)"><b>Create Stasiun</b><small>Pembuatan stasiun untuk stasiun take over</small></label>
+        <label class="opt"><input type="radio" name="tujuan" value="Migrasi Akun IKR" checked><b>Migrasi Akun IKR</b><small>Stasiun sudah ada HC (home connect) — akun IKR dipindah ke mitra pengganti</small></label>
+        <label class="opt"><input type="radio" name="tujuan" value="Create Stasiun (Stasiun Take Over)"><b>Create Stasiun (Stasiun Take Over)</b><small>Stasiun belum ada HC — dibuatkan stasiun untuk mitra pengganti</small></label>
       </div>
     </fieldset>
 
     <fieldset>
       <legend><span>2</span>Data pengaju</legend>
       <div class="grid">
-        <label class="f"><span class="req">Alamat email</span><input type="email" name="email" autocomplete="email" required></label>
+        <label class="f"><span class="req">Email</span><input type="email" name="email" autocomplete="email" required></label>
         <label class="f"><span class="req">Nama pengaju</span><input type="text" name="nama" autocomplete="name" required></label>
-        <label class="f"><span class="req">Jabatan / posisi</span><input type="text" name="jabatan" required></label>
-        <label class="f"><span class="req">No WhatsApp</span><input type="tel" name="wa" inputmode="tel" placeholder="08…" required></label>
+        <label class="f"><span class="req">Sebagai apa (jabatan / posisi)</span><input type="text" name="jabatan" required></label>
+        <label class="f"><span class="req">No WhatsApp pengaju</span><input type="tel" name="wa" inputmode="tel" placeholder="08…" required></label>
       </div>
     </fieldset>
 
@@ -92,28 +111,44 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
       <legend><span>3</span>Mitra dan stasiun</legend>
       <div class="grid">
         <label class="f"><span class="req">Nama lengkap mitra lama</span><input type="text" name="lama" required></label>
-        <label class="f"><span class="req">Nama lengkap mitra pengganti</span><input type="text" name="baru" required></label>
-        <label class="f"><span class="req">Stasiun</span><input type="text" name="stasiun" required></label>
-        <label class="f"><span class="req">Nomor SPK</span><input type="text" name="noSpk" placeholder="mis. 1547/PRJ/STARLITE/X/2026" required></label>
+        <label class="f"><span class="req">Nama lengkap mitra pengganti</span><input type="text" name="baru" required><em>Tulis nama mitra lengkap, jangan disingkat.</em></label>
+        <label class="f"><span class="req">Stasiun</span><input type="text" name="stasiun" required><em>Tulis nama stasiun lengkap, jangan disingkat.</em></label>
+        <label class="f"><span class="req">Nomor SPK</span><input type="text" name="noSpk" placeholder="mis. 1547/PRJ/STARLITE/X/2026" required><em>Sesuai nomor di dokumen SPK, bukan nomor PO.</em></label>
       </div>
     </fieldset>
 
     <fieldset>
       <legend><span>4</span>Akun</legend>
       <div class="grid">
-        <label class="f full"><span class="req">Akun email Sales penampung</span><input type="email" name="sales" required></label>
+        <label class="f full"><span class="req">Akun email Sales penampung</span><input type="email" name="sales" required>
+          <em class="how">Belum punya? Buat dulu: buka Dashboard Mitra Starlite → menu <b>Management Sales</b> → <b>Tambah Sales</b> (kanan atas) → isi data dengan sesuai → selesai.</em></label>
         <label class="f"><span>Akun email Lead IKR mitra lama <em>(opsional)</em></span><input type="email" name="ikrLama"></label>
-        <label class="f"><span class="req">Akun email Lead IKR mitra pengganti</span><input type="email" name="ikrBaru" required></label>
+        <label class="f"><span class="req">Akun email Lead IKR mitra pengganti</span><input type="email" name="ikrBaru" required>
+          <em class="how">Belum punya? Buat dulu: Dashboard Mitra Starlite → menu <b>Management IKR</b> → <b>Tambah IKR</b> (kanan atas) → isi data → selesai.</em></label>
       </div>
     </fieldset>
 
     <fieldset>
-      <legend><span>5</span>Dokumen</legend>
+      <legend><span>5</span>Berita Acara Pemindahan Akun IKR &amp; capture dashboard</legend>
+      <div class="ba">
+        <div class="tpl"><div><b>Format BA Pemindahan Akun IKR</b><small>Unduh templatenya, isi, lalu mintakan tanda tangan.</small></div><a class="btn" href="https://docs.google.com/document/d/1yUGSmhfMniUf8DRPiXTfo0JMrJR4prMRApAmQWz6Ttg/export?format=docx" target="_blank" rel="noopener">Download template BA (.docx)</a></div>
+        <p class="sub">Tanda tangan BA:</p>
+        <ol class="ttd">
+          <li><span><b>Head Region</b><small>koordinasi ke coresite terkait</small></span></li>
+          <li><span><b>Hendra Yudhanto</b><small>Vendor Management</small></span><a href="https://wa.me/6287738060623" target="_blank" rel="noopener">Hubungi via WA</a></li>
+          <li><span><b>Acep Sanra</b><small>Head of Sales</small></span><a href="https://wa.me/628128022227" target="_blank" rel="noopener">Hubungi via WA</a></li>
+        </ol>
+        <div class="cap"><b>Capture dashboard wajib dilampirkan</b> (terutama mitra yang sudah ada home connect). Untuk capture dashboard, koordinasikan dengan Vendor Management: <a href="https://wa.me/628984623040?text=Silahkan%20untuk%20isi%20data%20berikut%3A%0AMitra%20Before%20%3A%0AMitra%20After%20%3A%0ANo%20PO%20%3A%0AStasiun%20%3A%0ANo%20SPK%20%3A" target="_blank" rel="noopener">Hubungi VM via WA</a></div>
+        <p class="sub">Jika BA sudah full sign dan capture dashboard sudah terlampir, unggah filenya di sini:</p>
+        <label class="file" data-for="ba"><input type="file" id="ba" accept=".pdf,image/*"><span class="ic">BA</span><span><b class="req">BA full sign + capture dashboard</b><small>PDF atau foto, maks 15 MB</small></span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span>6</span>KML dan SPK</legend>
       <div class="grid">
-        <div class="full"><label class="file" data-for="ba"><input type="file" id="ba" accept=".pdf,image/*"><span class="ic">PDF</span><span><b class="req">BA Pemindahan Akun IKR & capture dashboard</b><small>PDF atau foto, maks 15 MB</small></span></label></div>
-        <div class="full"><label class="file" data-for="spk"><input type="file" id="spk" accept=".pdf,image/*"><span class="ic">SPK</span><span><b class="req">File SPK</b><small>PDF, maks 15 MB</small></span></label></div>
-        <div class="full"><label class="file" data-for="kml"><input type="file" id="kml" accept=".kml,.kmz"><span class="ic">KML</span><span><b class="req">File KML stasiun tujuan</b><small>.kml / .kmz, maks 15 MB</small></span></label>
-          <p class="or">atau tempel link Drive file KML:</p><input type="url" name="kmlLink" placeholder="https://drive.google.com/…" aria-label="Link Drive file KML"></div>
+        <div class="full"><label class="file" data-for="kml"><input type="file" id="kml" accept=".kml"><span class="ic">KML</span><span><b class="req">File KML stasiun tujuan</b><small>Wajib format .kml (bukan .kmz), maks 15 MB</small></span></label></div>
+        <div class="full"><label class="file" data-for="spk"><input type="file" id="spk" accept=".pdf,image/*"><span class="ic">SPK</span><span><b class="req">File SPK (Surat Perintah Kerja)</b><small>PDF, maks 15 MB</small></span></label></div>
       </div>
     </fieldset>
 
@@ -180,7 +215,8 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
     var ba = document.getElementById("ba").files[0], spk = document.getElementById("spk").files[0], kml = document.getElementById("kml").files[0];
     if (!ba) return show("Unggah BA Pemindahan Akun IKR & capture dashboard.");
     if (!spk) return show("Unggah file SPK.");
-    if (!kml && !/^https?:\/\//i.test(d.kmlLink || "")) return show("Unggah file KML atau tempel link Drive-nya.");
+    if (!kml) return show("Unggah file KML stasiun tujuan.");
+    if (!/\.kml$/i.test(kml.name)) return show("File KML wajib format .kml (bukan .kmz).");
     send.disabled = true; send.textContent = "Mengunggah dokumen…"; bar.style.display = "block"; barI.style.width = "15%";
     Promise.all([readB64(ba), readB64(spk), readB64(kml)]).then(function (x) {
       barI.style.width = "45%"; send.textContent = "Mengirim pengajuan…";

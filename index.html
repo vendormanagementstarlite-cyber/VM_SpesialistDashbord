@@ -9212,11 +9212,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
     out.push({ ok: /^https?:/i.test(r.spk), t: "File SPK", d: r.spk ? "terlampir" : "tidak ada" });
     return { list: out, T: T, K: K };
   }
-  function hcStart(r, T, K) {
-    var ts = T.map(function (t) { return t.spk_ts || 0; }).concat((K || []).map(function (x) { return x.mail_ts || 0; })).filter(Boolean).sort()[0];
-    var d = ts ? new Date(ts) : new Date(r.tsMs || Date.now()); if (!ts) d.setDate(1);
-    return d.toISOString().slice(0, 10);
-  }
+  function hcStart() { return "2025-01-01"; }   // HC dihitung dari 1 Januari 2025 sampai hari ini
   var today = function () { var d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
   // ---------- email ke IT ----------
   function mails(s) { return (String(s || "").match(/[^\s<>";,]+@[^\s<>";,]+/g) || []).filter(function (x, i, a) { return a.indexOf(x) === i; }); }
@@ -9227,10 +9223,10 @@ body:has(#mig-ov) #st-nt{display:none!important}
       + "\n2. File KML stasiun yang dituju: " + (r.kml || "-") + "\n3. Akun email penampung: " + (r.sales || "-") + "\n4. Akun email Lead IKR mitra lama: " + (r.ikrLama || "-") + "\n5. Akun email Lead IKR mitra baru: " + (r.ikrBaru || "-")
       + "\n\nMohon untuk segera di proses perpindahan akun.\n\nBest Regards\nVendor Management";
   }
+  // buka di tab browser bernama (dipakai ulang tiap klik) — tanpa jendela pop-up berukuran khusus (pop-up layar penuh tampil hitam di sebagian laptop)
   function side(url, name) {
-    var W = screen.availWidth || 1440, H = screen.availHeight || 900, w = Math.max(720, Math.round(W * 0.58)), l = (screen.availLeft || 0) + W - w, t = screen.availTop || 0;
-    var win = null; try { win = window.open(url, name, "popup=yes,width=" + w + ",height=" + H + ",left=" + l + ",top=" + t); } catch (e) { }
-    if (!win) { window.open(url, "_blank", "noopener"); toast("Browser memblokir jendela samping — izinkan pop-up untuk situs ini agar portal terbuka di samping aplikasi", "info", 8000); return; }
+    var win = null; try { win = window.open(url, name); } catch (e) { }
+    if (!win) { window.open(url, "_blank", "noopener"); return; }
     try { win.opener = null; win.focus(); } catch (e) { }
   }
   function outlookUrl(r) {
@@ -9324,7 +9320,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
       + (c.h && c.h.length ? '<section><h4>Riwayat</h4><ul class="mig-hist">' + c.h.slice().reverse().map(function (h) { return "<li><b>" + E(h.act) + "</b> · " + E(h.by) + " · " + E(new Date(h.at).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })) + (h.note ? "<br><small>" + E(h.note) + "</small>" : "") + "</li>"; }).join("") + "</ul></section>" : "")
       + '</div><div class="mig-col">'
       + '<section><h4>Cek di portal</h4><div class="mig-range"><label>Dari<input type="date" id="mig-d1" class="field" value="' + st + '"></label><label>Sampai<input type="date" id="mig-d2" class="field" value="' + en + '"></label></div>'
-      + '<div class="mig-portal"><button class="st-b" data-p="hc"><i class="fa-solid fa-users"></i>Cek HC · Pelanggan Aktif</button><button class="st-b" data-p="ikr"><i class="fa-solid fa-screwdriver-wrench"></i>Cek Lead IKR</button><button class="st-b" data-p="sales"><i class="fa-solid fa-user-tie"></i>Cek Lead Sales</button></div><p class="mig-note">Portal terbuka di jendela samping (aplikasi tetap terbuka) dengan login portal Anda — cukup login sekali. Untuk Lead IKR / Sales, email akunnya otomatis disalin — tempel di kolom cari portal.</p></section>'
+      + '<div class="mig-portal"><button class="st-b" data-p="hc"><i class="fa-solid fa-users"></i>Cek HC · Pelanggan Aktif</button><button class="st-b" data-p="ikr"><i class="fa-solid fa-screwdriver-wrench"></i>Cek Lead IKR</button><button class="st-b" data-p="sales"><i class="fa-solid fa-user-tie"></i>Cek Lead Sales</button></div><p class="mig-note">Portal terbuka di tab browser tersendiri (tab yang sama dipakai ulang) dengan login portal Anda — cukup login sekali, aplikasi ini tetap terbuka di tab-nya. Untuk Lead IKR / Sales, email akunnya otomatis disalin — tempel di kolom cari portal.</p></section>'
       + '<section><h4>Checklist verifikator</h4><div class="mig-ck">' + CK.map(function (x) { return '<label><input type="checkbox" data-ck="' + x[0] + '"' + (it[x[0]] === true ? " checked" : "") + "><span>" + x[1] + "</span></label>"; }).join("") + '</div><label class="mig-hc">HC di portal (opsional)<input id="mig-hcv" class="field" inputmode="numeric" placeholder="mis. 53" value="' + E(c.hc || "") + '"></label></section>'
       + '<section><h4>Keputusan</h4><textarea id="mig-rem" class="field w-full" rows="3" placeholder="Catatan untuk mitra (wajib bila Revisi / Tidak Sesuai)">' + E(r.remark || "") + '</textarea><div class="mig-dec"><button class="st-b dng" data-d="Tidak Sesuai"><i class="fa-solid fa-ban"></i>Tidak Sesuai</button><button class="st-b warn" data-d="Revisi"><i class="fa-solid fa-rotate-left"></i>Revisi</button><button class="st-b pri" data-d="lolos"><i class="fa-solid fa-circle-check"></i>Lolos → Kirim ke IT</button></div><p class="mig-st">Status Verifikasi (kolom R): <b>' + E(r.verif || "—") + "</b> · Status IT (kolom S): <b>" + E(r.it || "—") + "</b></p></section>"
       + "</div></div>", "lg");
