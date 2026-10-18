@@ -9110,7 +9110,8 @@ body:has(#mig-ov) #st-nt{display:none!important}
   function stOf(r) {
     if (/^done$/i.test(r.it)) return "done";
     if (/cancel/i.test(r.it)) return "cancel";
-    if (/^(Done Email IT|Done Verifikasi)$/i.test(r.verif)) return "it";
+    if (/^Done Verifikasi$/i.test(r.verif)) return "done";   // Done Verifikasi = selesai
+    if (/^Done Email IT$/i.test(r.verif)) return "it";
     if (VERIF_BAD.test(r.verif)) return "rev";
     return "wait";
   }
