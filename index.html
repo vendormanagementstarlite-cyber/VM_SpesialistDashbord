@@ -9733,10 +9733,40 @@ body:has(#mig-ov) #st-nt{display:none!important}
   // ---------- 3) Tracker All Starlite: kolom dibaca dari JUDUL kolom (sheet sering berubah susunan) ----------
   // Coresite = kolom BK "PIC Coorsite", Admin IJE = kolom BL "PMO ADM"; HP = "Home Pass"
   if (typeof TRK !== "undefined" && typeof trkSlim === "function") {
-    try { if (TRK.key === "trk_cache_v3") { localStorage.removeItem("trk_cache_v3"); TRK.key = "trk_cache_v4"; } } catch (e) { }
+    try { if (/^trk_cache_v[34]$/.test(TRK.key)) { ["trk_cache_v3", "trk_cache_v4"].forEach(function (k) { localStorage.removeItem(k); }); TRK.key = "trk_cache_v5"; } } catch (e) { }
     try { TRK_COLS.pic = "BK"; TRK_COLS.admin = "BL"; TRK_COLS.hp = "AZ"; } catch (e) { }
     var MAP = [["before", /^mitra history$/, "A"], ["after", /^mitra update$/, "B"], ["item", /^hp po$/, "H"], ["region", /^regional$/, "I"], ["stasiun", /^stasiun$/, "J"], ["po", /^no\s*po\s*pembangunan$/, "L"],
                ["status", /^status$/, "R"], ["don", /^(donasi|nominal donasi|donation)$/, null], ["hp", /^home\s*pass$/, "AZ"], ["pic", /^pic\s*coo?re?site$/, "BK"], ["admin", /^(pmo\s*adm(in)?|admin\s*ije)$/, "BL"]];
+    // pengambilan per bagian kolom (lebih cepat dari CSV penuh): kolom ditentukan dari judul, bukan huruf tetap
+    var colL = function (i) { var t = ""; i++; while (i > 0) { var m = (i - 1) % 26; t = String.fromCharCode(65 + m) + t; i = Math.floor((i - 1) / 26); } return t; };
+    if (typeof trkFetchParts === "function" && typeof trkGetText === "function") {
+      window.trkFetchParts = trkFetchParts = async function () {
+        var t0 = Date.now(), got = 0, need = 0;
+        var tick = setInterval(function () { try { trkTick(t0, "Mengambil data Tracker… " + got + "/" + (need || "?") + " bagian", 0, 5 + (need ? got / need * 90 : 3)); } catch (e) { } }, 400);
+        try {
+          var top = trkParseCsv(await trkGetText(TRK.url + "&range=" + encodeURIComponent("A1:ZZ8")));
+          var h = top.findIndex(function (r) { return r.some(function (x) { return /^no\s*po\s*pembangunan$/i.test(String(x).trim()); }); });
+          if (h < 0) throw new Error("Judul kolom Tracker tidak ditemukan");
+          var H = top[h].map(function (x) { return String(x || "").replace(/\s+/g, " ").trim().toLowerCase(); }), ix = {};
+          MAP.forEach(function (m) { var i = H.findIndex(function (x) { return m[1].test(x); }); ix[m[0]] = i >= 0 ? i : m[2] ? trkLetter(m[2]) : -1; });
+          TRK.colsUsed = ix;
+          var keys = MAP.map(function (m) { return m[0]; }).filter(function (k) { return ix[k] >= 0; });
+          var cols = keys.map(function (k) { return ix[k]; }).filter(function (c, i, a) { return a.indexOf(c) === i; }).sort(function (a, b) { return a - b; });
+          var groups = []; cols.forEach(function (c) { var g = groups[groups.length - 1]; if (g && c - g[1] <= 3) g[1] = c; else groups.push([c, c]); });
+          need = groups.length;
+          var parts = await Promise.all(groups.map(function (g) { return trkGetText(TRK.url + "&range=" + encodeURIComponent(colL(g[0]) + ":" + colL(g[1]))).then(function (t) { got++; return trkParseCsv(t); }); }));
+          var at = function (r, c) { for (var i = 0; i < groups.length; i++) if (c >= groups[i][0] && c <= groups[i][1]) { var row = parts[i][r] || []; return row[c - groups[i][0]]; } return ""; };
+          var n = Math.max.apply(null, parts.map(function (p) { return p.length; })), sx = function (v) { return String(v == null ? "" : v).replace(/\s+/g, " ").trim(); }, out = [];
+          var g = function (r, k) { return ix[k] < 0 ? "" : at(r, ix[k]); };
+          for (var r = h + 1; r < n; r++) {
+            var st = sx(g(r, "stasiun")), po = sx(g(r, "po")); if (!st && !po) continue;
+            out.push([sx(g(r, "before")), sx(g(r, "after")), sx(g(r, "item")), sx(g(r, "region")), st, po, sx(g(r, "status")), parseNumber(g(r, "don")), parseNumber(g(r, "hp")), sx(g(r, "pic")), sx(g(r, "admin"))]);
+          }
+          if (!out.length) throw new Error("Tracker kosong");
+          return trkStore(out);
+        } finally { clearInterval(tick); }
+      };
+    }
     window.trkSlim = trkSlim = function (rows) {
       var h = rows.findIndex(function (r, i) { return i < 8 && r.some(function (x) { return /^no\s*po\s*pembangunan$/i.test(String(x).trim()); }); }); if (h < 0) h = 2;
       var H = (rows[h] || []).map(function (x) { return String(x || "").replace(/\s+/g, " ").trim().toLowerCase(); }), ix = {};
