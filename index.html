@@ -4912,6 +4912,14 @@ body:has(#mig-ov) #st-nt{display:none!important}
 .dark .mig-drop{border-color:#334155;color:#cbd5e1}.dark .mig-drop.on,.dark .mig-drop:focus{background:#083344}
 .mig-addl{display:flex;flex-direction:column;gap:6px;margin:12px 0}.mig-addl li{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:#f8fafc}.dark .mig-addl li{background:#0b1220}
 .mig-addl li>i{color:#0891b2}.mig-addl li span{flex:1;min-width:0;word-break:break-all;font-weight:700}.mig-addl li small{display:block;font-weight:500;color:#94a3b8}
+/* v22 · draf Edit Data */
+.rec-draftbar{display:flex;align-items:center;gap:10px;margin:10px 24px 0;padding:10px 12px;border-radius:12px;background:#ecfeff;color:#0e7490;font-size:12px}
+.rec-draftbar span{flex:1}.rec-draftbar small{display:block;color:#64748b}.rec-draftbar button{border:0;border-radius:8px;padding:6px 10px;background:#fff;color:#be123c;font-weight:700;cursor:pointer}
+.dark .rec-draftbar{background:#083344;color:#67e8f9}.dark .rec-draftbar button{background:#0f172a}
+.rec-draftoffer{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:95;display:flex;align-items:center;gap:10px;padding:10px 12px 10px 14px;border-radius:14px;background:#0f172a;color:#fff;font-size:12.5px;box-shadow:0 18px 40px -16px #0008;max-width:calc(100% - 24px)}
+.rec-draftoffer span{min-width:0}.rec-draftoffer small{display:block;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rec-draftoffer [data-go]{border:0;border-radius:9px;padding:7px 12px;background:#06b6d4;color:#0f172a;font-weight:800;cursor:pointer}.rec-draftoffer [data-x]{border:0;background:none;color:#94a3b8;cursor:pointer;font-size:14px}
+@keyframes recShake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}.rec-shake{animation:recShake .35s ease}
 
 </style>
 <script id="addon_v14">
@@ -9512,6 +9520,237 @@ body:has(#mig-ov) #st-nt{display:none!important}
   setInterval(function () { if (isOwner() && srv() && document.visibilityState === "visible") { ensureUi(); load(false); } }, 300000);
   setTimeout(function () { if (isOwner() && srv()) { ensureUi(); load(false); } }, 5000);
   if (location.hostname === "localhost") window.__mig = { MIG: MIG, load: load, render: render, openDetail: openDetail, autoChecks: autoChecks, itBody: itBody, itSubject: itSubject, outlookUrl: outlookUrl, keyOf: keyOf, ensureUi: ensureUi, stOf: stOf };
+})();
+
+/* ===== v22 · Keandalan: link lampiran Data Mitra Takeover, draf Edit Data, kolom Tracker All Starlite ===== */
+(function () {
+  "use strict";
+  var wait = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+  var toast = function (m, t, ms) { try { showToast(m, t || "info", ms); } catch (e) { } };
+  var keyOf = function (t) { return String(t.po || "").toUpperCase().trim() + "|" + String(t.bap_no || "").toUpperCase().trim(); };
+
+  // ---------- 1) link lampiran (kolom P–T): chip, hyperlink, link di teks ----------
+  // Sebelumnya: satu kegagalan 400 mematikan pembacaan chip untuk seluruh sesi, satu paket gagal = semua link hilang,
+  // dan link lama ditempel per NOMOR BARIS (salah tempel bila baris bergeser). Sekarang: per paket, diulang, dan dicocokkan per PO.
+  var MASK = ["sheets(data(startRow,rowData(values(formattedValue,hyperlink,textFormatRuns(format(link(uri))),chipRuns(chip(richLinkProperties(uri)))))))",
+              "sheets(data(startRow,rowData(values(formattedValue,hyperlink,textFormatRuns(format(link(uri)))))))"];
+  function cellLink(v) {
+    if (!v) return "";
+    var u = ""; try { u = extractLink(v); } catch (e) { }
+    if (u) return u;
+    var f = String(v.formattedValue || "").trim();
+    return /^https?:\/\/\S+$/i.test(f) ? f : "";
+  }
+  if (typeof fetchLinks === "function" && typeof apiGet === "function") {
+    window.fetchLinks = fetchLinks = async function (title, last, prog) {
+      var C = CONFIG.LINK_COLS, size = Math.min(CONFIG.LINK_CHUNK_ROWS || 2000, 1500), chunks = [], out = new Map();
+      for (var a = 2; a <= last; a += size) chunks.push([a, Math.min(a + size - 1, last)]);
+      out.failed = [];
+      await runPool(chunks.map(function (ch) {
+        return async function () {
+          var res = null;
+          for (var i = 0; i < 4 && !res; i++) {
+            for (var m = 0; m < MASK.length && !res; m++) {
+              try { res = await apiGet("", [["ranges", qSheet(title) + "!" + C.from + ch[0] + ":" + C.to + ch[1]], ["includeGridData", "true"], ["fields", MASK[m]]]); }
+              catch (e) { if (e && e.status !== 400) break; }
+            }
+            if (!res) await wait(1200 * (i + 1));
+          }
+          if (!res) { out.failed.push(ch); if (prog) prog(); return; }
+          var d = res.sheets && res.sheets[0] && res.sheets[0].data && res.sheets[0].data[0], st = (d && d.startRow != null ? d.startRow : ch[0] - 1) + 1;
+          ((d && d.rowData) || []).forEach(function (rd, i) { var L = (rd.values || []).map(cellLink); if (L.some(Boolean)) out.set(st + i, L); });
+          if (prog) prog();
+        };
+      }), CONFIG.CONCURRENCY || 3);
+      return out;
+    };
+  }
+  var LK = { tries: 0, timer: 0, last: null };
+  function prevLinks() { var m = new Map(); (STATE.takeover || []).forEach(function (t) { if (t.links && t.links.some(Boolean)) m.set(keyOf(t), t.links); }); return m; }
+  function afterLinks() {
+    try { renderTakeoverPage(); } catch (e) { } try { applyDocFilters(false); } catch (e) { } try { renderDashboard(); } catch (e) { } try { updateSyncLabels(); } catch (e) { } try { saveSnapshot(); } catch (e) { }
+    resolveNames();
+  }
+  if (typeof loadLinksInBackground === "function") {
+    window.loadLinksInBackground = loadLinksInBackground = async function (title, last) {
+      LK.last = [title, last]; clearTimeout(LK.timer);
+      var prev = prevLinks(), n = null;
+      try {
+        var tot = Math.ceil(Math.max(1, last - 1) / 1500), k = 0;
+        n = await fetchLinks(title, last, function () { k++; if (tot > 2) try { setProgress("Memuat link lampiran… (" + k + "/" + tot + ")", k / tot * 100); } catch (e) { } });
+      } catch (e) { console.warn("link lampiran:", e && e.message); }
+      try { setProgress(null); } catch (e) { }
+      var failed = n ? n.failed : [[2, last]];
+      var inFail = function (row) { return failed.some(function (r) { return row >= r[0] && row <= r[1]; }); };
+      (STATE.takeover || []).forEach(function (t) { t.links = n && !inFail(t.row) ? (n.get(t.row) || null) : (prev.get(keyOf(t)) || null); });
+      STATE.linksLoaded = !failed.length;
+      afterLinks();
+      if (failed.length) {
+        LK.tries++;
+        if (LK.tries <= 4) { LK.timer = setTimeout(function () { loadLinksInBackground(title, last); }, 20000 * LK.tries); }
+        if (LK.tries === 1) toast("Sebagian link lampiran belum terbaca — dicoba ulang otomatis (data lampiran sebelumnya tetap dipakai)", "info", 7000);
+      } else LK.tries = 0;
+    };
+  }
+  // sinkron penuh: link lama ditempel ulang per PO, bukan per nomor baris (baris bisa bergeser karena tambah / hapus baris)
+  if (typeof autoSyncGoogleSheets === "function") {
+    var oSync = autoSyncGoogleSheets;
+    window.autoSyncGoogleSheets = autoSyncGoogleSheets = async function () {
+      var prev = prevLinks(), rowKey = new Map((STATE.takeover || []).map(function (t) { return [t.row, keyOf(t)]; }));
+      try { return await oSync.apply(this, arguments); }
+      finally {
+        try {
+          var fixed = 0;
+          (STATE.takeover || []).forEach(function (t) { if (rowKey.has(t.row) && rowKey.get(t.row) === keyOf(t)) return; var l = prev.get(keyOf(t)) || null; if (t.links !== l) { t.links = l; fixed++; } });
+          if (fixed) { try { renderTakeoverPage(); applyDocFilters(false); } catch (e) { } }
+        } catch (e) { }
+      }
+    };
+  }
+  // kembali ke aplikasi: link yang belum terbaca dicoba lagi
+  document.addEventListener("visibilitychange", function () { if (!document.hidden && LK.last && STATE.linksLoaded === false && !STATE.syncing) { clearTimeout(LK.timer); loadLinksInBackground(LK.last[0], LK.last[1]); } });
+
+  // teks nama file tanpa link (chip tidak terbaca / ditulis manual) → dicari di Drive lewat server, hasil disimpan
+  var NM_KEY = "att_name_links_v1", NM = {};
+  try { NM = JSON.parse(localStorage.getItem(NM_KEY) || "{}"); } catch (e) { NM = {}; }
+  var fileish = function (s) { s = String(s || "").trim(); return s.length > 6 && !/^https?:/i.test(s) && (/\.(pdf|jpe?g|png|docx?)$/i.test(s) || /^(BA|BAP|BAST|BASTM|SPK)[\s_.-]/i.test(s)); };
+  var sameName = function (a, b) { var n = function (x) { return String(x || "").toLowerCase().replace(/\.pdf$/, "").replace(/\s+/g, " ").trim(); }; return n(a) === n(b); };
+  var DOCC = [[15, "att_ba"], [16, "att_spk"], [18, "att_bap"], [19, "att_bastm"]], RES = { busy: false };
+  function applyNames() {
+    var hit = 0;
+    (STATE.takeover || []).forEach(function (t) {
+      DOCC.forEach(function (d) {
+        var txt = String(t[d[1]] || "").trim(), i = d[0] - CONFIG.LINK_COLS.startIndex;
+        if (!txt || (t.links && t.links[i])) return;
+        var u = NM[txt.toLowerCase()]; if (!u || !u.url) return;
+        t.links = t.links ? t.links.slice() : []; t.links[i] = u.url; hit++;
+      });
+    });
+    return hit;
+  }
+  async function resolveNames() {
+    var applied = applyNames();
+    if (RES.busy || typeof isServerMode !== "function" || !isServerMode() || !currentUser) { if (applied) try { applyDocFilters(false); } catch (e) { } return; }
+    var want = [], seen = {}, now = Date.now();
+    (STATE.takeover || []).forEach(function (t) {
+      if (t.st === "cancel") return;
+      DOCC.forEach(function (d) {
+        var txt = String(t[d[1]] || "").trim(), i = d[0] - CONFIG.LINK_COLS.startIndex, k = txt.toLowerCase();
+        if (!fileish(txt) || (t.links && t.links[i]) || seen[k]) return;
+        var c = NM[k]; if (c && (c.url || now - c.at < 864e5)) return;   // "tidak ketemu" dicoba lagi besok
+        seen[k] = 1; want.push(txt);
+      });
+    });
+    if (!want.length) { if (applied) try { applyDocFilters(false); } catch (e) { } return; }
+    RES.busy = true;
+    try {
+      for (var i = 0; i < Math.min(want.length, 25); i++) {
+        var nm = want[i];
+        try { var r = await callApi("att.find", { name: nm }, 45000); NM[nm.toLowerCase()] = sameName(r.name, nm) ? { url: r.url, at: now } : { url: "", at: now }; }
+        catch (e) { NM[nm.toLowerCase()] = { url: "", at: now }; }
+      }
+      try { localStorage.setItem(NM_KEY, JSON.stringify(NM)); } catch (e) { }
+      if (applyNames() || applied) { try { renderTakeoverPage(); applyDocFilters(false); renderDashboard(); } catch (e) { } }
+    } finally { RES.busy = false; }
+  }
+  try { if (typeof BUSY_SKIP !== "undefined" && BUSY_SKIP instanceof RegExp) { var bt = BUSY_SKIP.test; BUSY_SKIP.test = function (a) { return a === "att.find" || bt.call(BUSY_SKIP, a); }; } } catch (e) { }
+  setTimeout(function () { try { if (STATE.linksLoaded) resolveNames(); } catch (e) { } }, 15000);
+
+  // ---------- 2) draf Edit / Tambah Data: tidak hilang saat pindah aplikasi / klik di luar jendela ----------
+  var DK = "rec_draft_v1", DAY = 3 * 864e5;
+  var getD = function () { try { var d = JSON.parse(localStorage.getItem(DK) || "null"); return d && Date.now() - d.at < DAY ? d : null; } catch (e) { return null; } };
+  var putD = function (d) { try { if (d) localStorage.setItem(DK, JSON.stringify(d)); else localStorage.removeItem(DK); } catch (e) { } };
+  var sameRec = function (d) { return d && typeof REC !== "undefined" && d.sheet === REC.sheet && d.mode === REC.mode && String(d.id || "") === String(REC.id || ""); };
+  var dirtyNow = function () { try { return Object.keys(recChanges()).length > 0; } catch (e) { return false; } };
+  var saveT = 0;
+  function saveDraft() {
+    if (typeof REC === "undefined" || !REC.sheet) return;
+    var vals = {}, n = 0;
+    document.querySelectorAll("#rec-body [data-c]").forEach(function (el) { var v = el.value; if (String(v).trim() !== String(el.dataset.orig || "").trim()) { vals[el.dataset.c] = v; n++; } });
+    if (!n) { var d0 = getD(); if (sameRec(d0)) putD(null); return; }
+    var lbl = ""; try { var it = REC.id && STATE.idx.byId.get(REC.id); lbl = it ? recLabel(REC.sheet, it) : ""; } catch (e) { }
+    putD({ sheet: REC.sheet, mode: REC.mode, id: REC.id || "", label: lbl, vals: vals, at: Date.now() });
+  }
+  document.addEventListener("input", function (e) { if (e.target && e.target.closest && e.target.closest("#rec-body") && e.target.dataset.c != null) { clearTimeout(saveT); saveT = setTimeout(saveDraft, 300); } }, true);
+  document.addEventListener("change", function (e) { if (e.target && e.target.closest && e.target.closest("#rec-body") && e.target.dataset.c != null) { clearTimeout(saveT); saveT = setTimeout(saveDraft, 100); } }, true);
+  window.addEventListener("pagehide", saveDraft); document.addEventListener("visibilitychange", function () { if (document.hidden) saveDraft(); });
+  // pulihkan saat form yang sama dibuka lagi
+  var restored = "";
+  function tryRestore() {
+    var d = getD(); if (!sameRec(d)) return;
+    var els = document.querySelectorAll("#rec-body [data-c]"); if (!els.length) return;
+    var sig = d.at + ":" + REC.sheet + ":" + REC.id; if (restored === sig) return; restored = sig;
+    var n = 0; els.forEach(function (el) { var v = d.vals[el.dataset.c]; if (v != null && el.value !== v && !el.disabled) { el.value = v; n++; } });
+    if (!n) return;
+    try { recDirty(); } catch (e) { }
+    var body = document.getElementById("rec-body"), old = document.getElementById("rec-draftbar"); old && old.remove();
+    var bar = document.createElement("div"); bar.id = "rec-draftbar"; bar.className = "rec-draftbar";
+    bar.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i><span><b>' + n + " isian yang belum disimpan dipulihkan</b><small>dari " + new Date(d.at).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) + ' — periksa lalu klik Simpan</small></span><button type="button">Buang</button>';
+    bar.querySelector("button").onclick = function () { putD(null); restored = ""; bar.remove(); var id = REC.id, sh = REC.sheet, md = REC.mode; try { REC.busy = false; closeRecModal(); } catch (e) { } setTimeout(function () { try { md === "add" ? openRecAdd(sh) : openRecEdit(id); } catch (e) { } }, 50); };
+    body.parentNode.insertBefore(bar, body);
+  }
+  var recM = document.getElementById("rec-modal");
+  if (recM && window.MutationObserver) new MutationObserver(function () { if (!recM.classList.contains("hidden")) setTimeout(tryRestore, 30); else restored = ""; }).observe(recM, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+  // klik di luar jendela / tombol tutup: jangan buang isian tanpa konfirmasi
+  if (recM) recM.setAttribute("onclick", "if(event.target===this && !REC.busy){ if(typeof recGuardClose==='function'){ recGuardClose(true); } else closeRecModal(); }");
+  window.recGuardClose = function (backdrop) {
+    if (!dirtyNow()) { putD(null); return closeRecModal(); }
+    saveDraft();
+    if (backdrop) { var c = document.getElementById("rec-card"); if (c) { c.classList.remove("rec-shake"); void c.offsetWidth; c.classList.add("rec-shake"); } return toast("Ada isian yang belum disimpan — klik Simpan, atau tombol Tutup untuk keluar", "info", 4500); }
+    if (confirm("Ada isian yang belum disimpan.\nOK = buang perubahan & tutup · Batal = kembali ke form")) { putD(null); restored = ""; closeRecModal(); }
+  };
+  if (typeof closeRecModal === "function") {
+    var oClose = closeRecModal;
+    window.closeRecModal = closeRecModal = function () {
+      // dipanggil dari tombol Tutup / Batal di form (bukan saat proses simpan) → minta konfirmasi bila ada perubahan
+      if (!REC.busy && !SAVING && !recGuardClose._inner && dirtyNow()) { recGuardClose._inner = true; try { return recGuardClose(false); } finally { recGuardClose._inner = false; } }
+      return oClose.apply(this, arguments);
+    };
+  }
+  var SAVING = false;
+  ["saveRecEdit", "saveRecAdd"].forEach(function (fn) {
+    if (typeof window[fn] !== "function") return;
+    var o = window[fn];
+    window[fn] = async function () {
+      var r; SAVING = true;
+      try { r = await o.apply(this, arguments); } finally { SAVING = false; }
+      try { var m = document.getElementById("rec-modal"), err = document.getElementById("rec-err"); if (m && (m.classList.contains("hidden") || (err && err.classList.contains("hidden") && !dirtyNow()))) { putD(null); restored = ""; } } catch (e) { }
+      return r;
+    };
+  });
+  // setelah aplikasi dibuka ulang: tawarkan lanjutkan draf
+  function offerDraft() {
+    var d = getD(); if (!d || !currentUser || document.getElementById("rec-draftoffer")) return;
+    var m = document.getElementById("rec-modal"); if (m && !m.classList.contains("hidden")) return;
+    var b = document.createElement("div"); b.id = "rec-draftoffer"; b.className = "rec-draftoffer";
+    b.innerHTML = '<i class="fa-solid fa-pen-to-square"></i><span><b>Edit yang belum disimpan</b><small>' + (d.mode === "add" ? "Tambah data · " : "") + (d.label || d.sheet) + " · " + Object.keys(d.vals).length + ' kolom</small></span><button data-go type="button">Lanjutkan</button><button data-x type="button" title="Buang">✕</button>';
+    b.querySelector("[data-go]").onclick = function () { b.remove(); try { d.mode === "add" ? openRecAdd(d.sheet) : openRecEdit(d.id); } catch (e) { toast("Data untuk draf ini tidak ditemukan", "error"); } };
+    b.querySelector("[data-x]").onclick = function () { if (confirm("Buang isian edit yang belum disimpan?")) { putD(null); b.remove(); } };
+    document.body.appendChild(b);
+  }
+  setTimeout(function loop() { try { if (STATE.takeover && STATE.takeover.length) return offerDraft(); } catch (e) { } setTimeout(loop, 3000); }, 4000);
+
+  // ---------- 3) Tracker All Starlite: kolom dibaca dari JUDUL kolom (sheet sering berubah susunan) ----------
+  // Coresite = kolom BK "PIC Coorsite", Admin IJE = kolom BL "PMO ADM"; HP = "Home Pass"
+  if (typeof TRK !== "undefined" && typeof trkSlim === "function") {
+    try { if (TRK.key === "trk_cache_v3") { localStorage.removeItem("trk_cache_v3"); TRK.key = "trk_cache_v4"; } } catch (e) { }
+    try { TRK_COLS.pic = "BK"; TRK_COLS.admin = "BL"; TRK_COLS.hp = "AZ"; } catch (e) { }
+    var MAP = [["before", /^mitra history$/, "A"], ["after", /^mitra update$/, "B"], ["item", /^hp po$/, "H"], ["region", /^regional$/, "I"], ["stasiun", /^stasiun$/, "J"], ["po", /^no\s*po\s*pembangunan$/, "L"],
+               ["status", /^status$/, "R"], ["don", /^(donasi|nominal donasi|donation)$/, null], ["hp", /^home\s*pass$/, "AZ"], ["pic", /^pic\s*coo?re?site$/, "BK"], ["admin", /^(pmo\s*adm(in)?|admin\s*ije)$/, "BL"]];
+    window.trkSlim = trkSlim = function (rows) {
+      var h = rows.findIndex(function (r, i) { return i < 8 && r.some(function (x) { return /^no\s*po\s*pembangunan$/i.test(String(x).trim()); }); }); if (h < 0) h = 2;
+      var H = (rows[h] || []).map(function (x) { return String(x || "").replace(/\s+/g, " ").trim().toLowerCase(); }), ix = {};
+      MAP.forEach(function (m) { var i = H.findIndex(function (x) { return m[1].test(x); }); ix[m[0]] = i >= 0 ? i : m[2] ? trkLetter(m[2]) : -1; });
+      TRK.colsUsed = ix;
+      var s = function (v) { return String(v == null ? "" : v).replace(/\s+/g, " ").trim(); }, g = function (r, k) { return ix[k] < 0 ? "" : r[ix[k]]; }, out = [];
+      for (var i = h + 1; i < rows.length; i++) {
+        var r = rows[i]; if (!r) continue;
+        var st = s(g(r, "stasiun")), po = s(g(r, "po")); if (!st && !po) continue;
+        out.push([s(g(r, "before")), s(g(r, "after")), s(g(r, "item")), s(g(r, "region")), st, po, s(g(r, "status")), parseNumber(g(r, "don")), parseNumber(g(r, "hp")), s(g(r, "pic")), s(g(r, "admin"))]);
+      }
+      return out;
+    };
+  }
 })();
 
 </script>
