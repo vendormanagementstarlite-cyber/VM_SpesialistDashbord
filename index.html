@@ -9659,12 +9659,13 @@ body:has(#mig-ov) #st-nt{display:none!important}
   // ---------- 2) draf Edit / Tambah Data: tidak hilang saat pindah aplikasi / klik di luar jendela ----------
   var DK = "rec_draft_v1", DAY = 3 * 864e5;
   var getD = function () { try { var d = JSON.parse(localStorage.getItem(DK) || "null"); return d && Date.now() - d.at < DAY ? d : null; } catch (e) { return null; } };
-  var putD = function (d) { try { if (d) localStorage.setItem(DK, JSON.stringify(d)); else localStorage.removeItem(DK); } catch (e) { } };
+  var putD = function (d) { if (!d) clearTimeout(saveT); try { if (d) localStorage.setItem(DK, JSON.stringify(d)); else localStorage.removeItem(DK); } catch (e) { } };
   var sameRec = function (d) { return d && typeof REC !== "undefined" && d.sheet === REC.sheet && d.mode === REC.mode && String(d.id || "") === String(REC.id || ""); };
   var dirtyNow = function () { try { return Object.keys(recChanges()).length > 0; } catch (e) { return false; } };
   var saveT = 0;
   function saveDraft() {
     if (typeof REC === "undefined" || !REC.sheet) return;
+    var mm = document.getElementById("rec-modal"); if (!mm || mm.classList.contains("hidden")) return;   // form sudah ditutup → jangan simpan lagi
     var vals = {}, n = 0;
     document.querySelectorAll("#rec-body [data-c]").forEach(function (el) { var v = el.value; if (String(v).trim() !== String(el.dataset.orig || "").trim()) { vals[el.dataset.c] = v; n++; } });
     if (!n) { var d0 = getD(); if (sameRec(d0)) putD(null); return; }
@@ -9676,21 +9677,24 @@ body:has(#mig-ov) #st-nt{display:none!important}
   window.addEventListener("pagehide", saveDraft); document.addEventListener("visibilitychange", function () { if (document.hidden) saveDraft(); });
   // pulihkan saat form yang sama dibuka lagi
   var restored = "";
+  // dicek SEKALI per form yang baru dirender (bukan tiap ketikan) — supaya isian yang sedang diketik tidak ditimpa
   function tryRestore() {
+    var body = document.getElementById("rec-body"); if (!body || body.dataset.draftChecked) return;
+    var els = body.querySelectorAll("[data-c]"); if (!els.length) return;
+    body.dataset.draftChecked = "1";
     var d = getD(); if (!sameRec(d)) return;
-    var els = document.querySelectorAll("#rec-body [data-c]"); if (!els.length) return;
-    var sig = d.at + ":" + REC.sheet + ":" + REC.id; if (restored === sig) return; restored = sig;
     var n = 0; els.forEach(function (el) { var v = d.vals[el.dataset.c]; if (v != null && el.value !== v && !el.disabled) { el.value = v; n++; } });
     if (!n) return;
     try { recDirty(); } catch (e) { }
     var body = document.getElementById("rec-body"), old = document.getElementById("rec-draftbar"); old && old.remove();
     var bar = document.createElement("div"); bar.id = "rec-draftbar"; bar.className = "rec-draftbar";
     bar.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i><span><b>' + n + " isian yang belum disimpan dipulihkan</b><small>dari " + new Date(d.at).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) + ' — periksa lalu klik Simpan</small></span><button type="button">Buang</button>';
-    bar.querySelector("button").onclick = function () { putD(null); restored = ""; bar.remove(); var id = REC.id, sh = REC.sheet, md = REC.mode; try { REC.busy = false; closeRecModal(); } catch (e) { } setTimeout(function () { try { md === "add" ? openRecAdd(sh) : openRecEdit(id); } catch (e) { } }, 50); };
+    bar.querySelector("button").onclick = function () { putD(null); restored = ""; bar.remove(); var id = REC.id, sh = REC.sheet, md = REC.mode; try { REC.busy = false; recGuardClose._inner = true; closeRecModal(); } catch (e) { } finally { recGuardClose._inner = false; } setTimeout(function () { try { md === "add" ? openRecAdd(sh) : openRecEdit(id); } catch (e) { } }, 50); };
     body.parentNode.insertBefore(bar, body);
   }
   var recM = document.getElementById("rec-modal");
-  if (recM && window.MutationObserver) new MutationObserver(function () { if (!recM.classList.contains("hidden")) setTimeout(tryRestore, 30); else restored = ""; }).observe(recM, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+  var recC = document.getElementById("rec-card");
+  if (recC && window.MutationObserver) new MutationObserver(function () { if (!recM.classList.contains("hidden")) setTimeout(tryRestore, 30); }).observe(recC, { childList: true });
   // klik di luar jendela / tombol tutup: jangan buang isian tanpa konfirmasi
   if (recM) recM.setAttribute("onclick", "if(event.target===this && !REC.busy){ if(typeof recGuardClose==='function'){ recGuardClose(true); } else closeRecModal(); }");
   window.recGuardClose = function (backdrop) {
