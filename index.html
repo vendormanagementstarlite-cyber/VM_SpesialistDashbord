@@ -4934,6 +4934,14 @@ body:has(#mig-ov) #st-nt{display:none!important}
 .bst-l .tx{flex:1;min-width:0}.bst-l .tx b{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bst-l .tx small{color:#64748b;font-size:11px}
 .bst-l .nw{font-size:10px;font-weight:800;color:#0e7490;background:#cffafe;padding:2px 7px;border-radius:999px}
 .bst-l i{color:#94a3b8;font-size:11px}
+/* v24 · Migrasi: ubah data pengajuan */
+.mig-ed{display:inline-flex;align-items:center;gap:6px;margin-left:auto;padding:7px 11px;border:0;border-radius:10px;background:#eef2ff;color:#3730a3;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.mig-ed:hover{background:#e0e7ff}.dark .mig-ed{background:#1e1b4b;color:#c7d2fe}
+.mig-efg{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+@media(max-width:640px){.mig-efg{grid-template-columns:1fr}}
+.mig-ef{display:flex;flex-direction:column;gap:5px;font-size:11.5px;font-weight:700;color:#475569;min-width:0}.mig-ef.w2{grid-column:1/-1}
+.dark .mig-ef{color:#94a3b8}.mig-ef .rq{color:#e11d48;font-style:normal}
+.mig-chg{box-shadow:0 0 0 2px #f59e0b inset!important;background:#fffbeb!important}.dark .mig-chg{background:#2a2110!important}
 
 </style>
 <script id="addon_v14">
@@ -9341,7 +9349,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
     var st = hcStart(r, T, K), en = today();
     var lnk = function (u, t) { return u ? '<a href="' + E(u) + '" target="_blank" rel="noopener" class="mig-lnk"><i class="fa-solid fa-arrow-up-right-from-square"></i>' + t + "</a>" : '<span class="mig-none">' + t + " — tidak ada</span>"; };
     var CK = [["hc", "HC sama persis dengan menu Pelanggan Aktif di portal (capture dashboard)"], ["ikr", "Akun Lead IKR mitra pengganti ada & aktif"], ["sales", "Akun Sales penampung ada & aktif"], ["dok", "BA, KML, dan SPK lengkap dan benar"]];
-    var M = modal('<div class="mig-mh"><div><small>' + E(r.tujuan) + " · diajukan " + E(r.ts) + "</small><h3>" + E(r.baru) + " · " + E(r.stasiun) + "</h3><p>dari <b>" + E(r.lama) + "</b> · No SPK <b>" + E(r.noSpk || "-") + "</b></p></div>" + chip(k) + '<button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
+    var M = modal('<div class="mig-mh"><div><small>' + E(r.tujuan) + " · diajukan " + E(r.ts) + "</small><h3>" + E(r.baru) + " · " + E(r.stasiun) + "</h3><p>dari <b>" + E(r.lama) + "</b> · No SPK <b>" + E(r.noSpk || "-") + "</b></p></div>" + chip(k) + '<button class="mig-ed" data-edit title="Ubah data pengajuan"><i class="fa-solid fa-pen"></i><span>Ubah data</span></button><button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
       + '<div class="mig-mb"><div class="mig-col">'
       + '<section><h4>Pengaju</h4><p><b>' + E(r.nama) + "</b> · " + E(r.jabatan) + "<br>" + E(r.email) + (r.wa ? ' · <a class="mig-lnk" target="_blank" rel="noopener" href="' + E(waUrl(r, "")) + '"><i class="fa-brands fa-whatsapp"></i>' + E(r.wa) + "</a>" : "") + "</p></section>"
       + '<section><h4>Akun</h4><dl class="mig-dl"><dt>Sales penampung</dt><dd>' + E(r.sales || "-") + "</dd><dt>Lead IKR mitra lama</dt><dd>" + E(r.ikrLama || "-") + "</dd><dt>Lead IKR mitra pengganti</dt><dd>" + E(r.ikrBaru || "-") + "</dd></dl></section>"
@@ -9365,6 +9373,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
         side(url, "starlite-portal");
       };
     });
+    el.querySelector("[data-edit]").onclick = function () { editData(r); };
     el.querySelectorAll("[data-ba]").forEach(function (b) { b.onclick = function () { if (b.dataset.ba === "edit") baEdit(r, []); else baAdd(r); }; });
     var save = async function (verif, remark, extra) {
       var res = await callApi("mig.save", Object.assign({ row: r.row, ts: r.ts, noSpk: r.noSpk, verif: verif, remark: remark, chk: items(), hc: q("#mig-hcv").value.trim() }, extra || {}), 60000);
@@ -9452,6 +9461,36 @@ body:has(#mig-ov) #st-nt{display:none!important}
     document.addEventListener("paste", paste); dz.focus();
     el.querySelector("[data-g]").onclick = async function () { try { add([await grabScreen()]); } catch (e) { if (e && e.name !== "NotAllowedError") toast(e.message, "error", 7000); } };
     go.onclick = function () { document.removeEventListener("paste", paste); go.disabled = true; go.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Membuka…'; baEdit(r, L.slice()); };
+  }
+  // ---------- ubah data pengajuan (akun Sales / Lead IKR, No SPK, mitra, stasiun, dll.) ----------
+  var EF = [["noSpk", "No SPK", "text", 1], ["tujuan", "Tujuan", "sel", 1], ["lama", "Mitra lama", "mitra", 1], ["baru", "Mitra pengganti", "mitra", 1], ["stasiun", "Stasiun", "text", 1],
+            ["sales", "Akun email Sales penampung", "email", 1], ["ikrBaru", "Akun email Lead IKR mitra pengganti", "email", 1], ["ikrLama", "Akun email Lead IKR mitra lama", "email", 0],
+            ["nama", "Nama pengaju", "text", 1], ["jabatan", "Jabatan", "text", 0], ["wa", "No WhatsApp", "text", 0], ["email", "Email pengaju", "email", 1], ["kml", "Link file KML", "url", 0], ["spk", "Link file SPK", "url", 0]];
+  function editData(r) {
+    var names = ((STATE.perseroan || []).map(function (x) { return x.nama; }).filter(Boolean)).filter(function (x, i, a) { return a.indexOf(x) === i; }).sort();
+    var fld = function (f) {
+      var v = E(r[f[0]] || ""), req = f[3] ? ' <i class="rq">*</i>' : "";
+      var inp = f[2] === "sel" ? '<select class="field w-full" data-k="tujuan"><option' + (r.tujuan === "Migrasi Akun IKR" ? " selected" : "") + '>Migrasi Akun IKR</option><option' + (/create/i.test(r.tujuan) ? " selected" : "") + ">Create Stasiun (Stasiun Take Over)</option></select>"
+        : '<input class="field w-full" data-k="' + f[0] + '" value="' + v + '"' + (f[2] === "email" ? ' type="email"' : "") + (f[2] === "mitra" ? ' list="mig-dlm"' : "") + (f[2] === "url" ? ' placeholder="https://drive.google.com/…"' : "") + ">";
+      return '<label class="mig-ef' + (/kml|spk|sales|ikr|stasiun/.test(f[0]) ? " w2" : "") + '"><span>' + f[1] + req + "</span>" + inp + "</label>";
+    };
+    var M = modal('<div class="mig-mh"><div><small>Pengajuan ' + E(r.ts) + '</small><h3>Ubah data pengajuan</h3><p>Perubahan langsung tersimpan di sheet Migrasi IKR dan tercatat di riwayat.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div>'
+      + '<div class="mig-pad"><datalist id="mig-dlm">' + names.map(function (n) { return '<option value="' + E(n) + '">'; }).join("") + '</datalist><div class="mig-efg">' + EF.map(fld).join("") + '</div><p class="mig-note" id="mig-efn"></p>'
+      + '<div class="mig-dec"><button class="st-b" data-x>Batal</button><button class="st-b pri" data-s><i class="fa-solid fa-floppy-disk"></i>Simpan perubahan</button></div></div>', "md");
+    var el = M.el, note = el.querySelector("#mig-efn");
+    var changes = function () { var o = {}; el.querySelectorAll("[data-k]").forEach(function (i) { var v = i.value.trim(); if (v !== String(r[i.dataset.k] || "").trim()) o[i.dataset.k] = v; }); return o; };
+    var upd = function () { var n = Object.keys(changes()).length; note.textContent = n ? n + " kolom diubah" : ""; el.querySelectorAll("[data-k]").forEach(function (i) { i.classList.toggle("mig-chg", i.value.trim() !== String(r[i.dataset.k] || "").trim()); }); };
+    el.addEventListener("input", upd); el.addEventListener("change", upd);
+    el.querySelector("[data-s]").onclick = async function () {
+      var ch = changes(); if (!Object.keys(ch).length) return toast("Belum ada yang diubah", "info");
+      var b = this; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Menyimpan…';
+      try {
+        var res = await callApi("mig.edit", { row: r.row, ts: r.ts, noSpk: r.noSpk, changes: ch }, 60000);
+        if (res.oldKey && res.oldKey !== res.chk.key) delete MIG.chk[res.oldKey];
+        Object.assign(r, res.item); MIG.chk[res.chk.key] = res.chk.value; r.ck = res.chk.key;
+        M.close(); toast("Data pengajuan diperbarui", "success"); badge(); if (isOpen()) render(); openDetail(r.row);
+      } catch (e) { b.disabled = false; b.innerHTML = '<i class="fa-solid fa-floppy-disk"></i>Simpan perubahan'; toast(e.message, "error", 7000); }
+    };
   }
   function revisiShare(r, msg) {
     var M = modal('<div class="mig-mh"><div><h3>Kabari mitra</h3><p>Status tersimpan di kolom R, catatan di kolom Q.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div><div class="mig-pad"><textarea class="field w-full mig-pre mig-big" rows="12" id="mig-msg">' + E(msg) + '</textarea><div class="mig-dec"><button class="st-b" data-c><i class="fa-solid fa-copy"></i>Salin pesan</button>' + (r.wa ? '<button class="st-b pri" data-w><i class="fa-brands fa-whatsapp"></i>Kirim WA ke ' + E(r.wa) + "</button>" : "") + "</div></div>", "md");
