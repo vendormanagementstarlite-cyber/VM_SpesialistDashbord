@@ -4921,6 +4921,19 @@ body:has(#mig-ov) #st-nt{display:none!important}
 .rec-draftoffer span{min-width:0}.rec-draftoffer small{display:block;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rec-draftoffer [data-go]{border:0;border-radius:9px;padding:7px 12px;background:#06b6d4;color:#0f172a;font-weight:800;cursor:pointer}.rec-draftoffer [data-x]{border:0;background:none;color:#94a3b8;cursor:pointer;font-size:14px}
 @keyframes recShake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}.rec-shake{animation:recShake .35s ease}
+/* v23 · BASTM beberapa bagian */
+.bst-n{display:inline-flex;align-items:center;margin-left:4px;padding:2px 7px;border-radius:999px;background:#0e7490;color:#fff;font-size:9.5px;font-weight:800;vertical-align:middle}
+.bst-box{margin-top:10px;padding:12px;border-radius:14px;background:#f0fdfa;box-shadow:inset 0 0 0 1px #99f6e4}
+.dark .bst-box{background:#042f2e;box-shadow:inset 0 0 0 1px #115e59}
+.bst-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px;font-size:12px;color:#0f766e}.bst-h small{color:#64748b;font-size:11px}.dark .bst-h{color:#5eead4}
+.bst-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.bst-l button{width:100%;display:flex;align-items:center;gap:10px;padding:8px 10px;border:0;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 1px #ccfbf1;text-align:left;font:inherit;cursor:pointer;color:inherit}
+.dark .bst-l button{background:#0b1220;box-shadow:inset 0 0 0 1px #134e4a}
+.bst-l button:hover{box-shadow:inset 0 0 0 1.5px #14b8a6}
+.bst-l .n{flex:0 0 22px;height:22px;border-radius:50%;background:#ccfbf1;color:#0f766e;display:grid;place-items:center;font-size:11px;font-weight:800}
+.bst-l .tx{flex:1;min-width:0}.bst-l .tx b{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bst-l .tx small{color:#64748b;font-size:11px}
+.bst-l .nw{font-size:10px;font-weight:800;color:#0e7490;background:#cffafe;padding:2px 7px;border-radius:999px}
+.bst-l i{color:#94a3b8;font-size:11px}
 
 </style>
 <script id="addon_v14">
@@ -9533,8 +9546,25 @@ body:has(#mig-ov) #st-nt{display:none!important}
   // ---------- 1) link lampiran (kolom P–T): chip, hyperlink, link di teks ----------
   // Sebelumnya: satu kegagalan 400 mematikan pembacaan chip untuk seluruh sesi, satu paket gagal = semua link hilang,
   // dan link lama ditempel per NOMOR BARIS (salah tempel bila baris bergeser). Sekarang: per paket, diulang, dan dicocokkan per PO.
-  var MASK = ["sheets(data(startRow,rowData(values(formattedValue,hyperlink,textFormatRuns(format(link(uri))),chipRuns(chip(richLinkProperties(uri)))))))",
-              "sheets(data(startRow,rowData(values(formattedValue,hyperlink,textFormatRuns(format(link(uri)))))))"];
+  var MASK = ["sheets(data(startRow,rowData(values(formattedValue,hyperlink,textFormatRuns(startIndex,format(link(uri))),chipRuns(startIndex,chip(richLinkProperties(uri)))))))",
+              "sheets(data(startRow,rowData(values(formattedValue,hyperlink,textFormatRuns(startIndex,format(link(uri)))))))"];
+  // semua link dalam satu sel (BASTM kolom T bisa berisi beberapa lampiran: take over ke mitra A, lalu mitra B, …)
+  function cellLinks(v) {
+    if (!v) return [];
+    var txt = String(v.formattedValue || ""), runs = [];
+    (v.textFormatRuns || []).forEach(function (r) { runs.push({ i: r.startIndex || 0, u: r.format && r.format.link && r.format.link.uri || "" }); });
+    (v.chipRuns || []).forEach(function (r) { var u = r.chip && r.chip.richLinkProperties && r.chip.richLinkProperties.uri; if (u) runs.push({ i: r.startIndex || 0, u: u, chip: 1 }); });
+    runs.sort(function (a, b) { return a.i - b.i; });
+    var out = [];
+    runs.forEach(function (r, k) {
+      var end = k + 1 < runs.length ? runs[k + 1].i : txt.length;
+      if (!r.u) return;
+      var t = txt.slice(r.i, end).replace(/\s+/g, " ").trim(), last = out[out.length - 1];
+      if (last && last.u === r.u) last.t = (last.t + " " + t).trim(); else out.push({ t: t, u: r.u });
+    });
+    if (!out.length && v.hyperlink) out.push({ t: txt.trim(), u: v.hyperlink });
+    return out;
+  }
   function cellLink(v) {
     if (!v) return "";
     var u = ""; try { u = extractLink(v); } catch (e) { }
@@ -9559,7 +9589,12 @@ body:has(#mig-ov) #st-nt{display:none!important}
           }
           if (!res) { out.failed.push(ch); if (prog) prog(); return; }
           var d = res.sheets && res.sheets[0] && res.sheets[0].data && res.sheets[0].data[0], st = (d && d.startRow != null ? d.startRow : ch[0] - 1) + 1;
-          ((d && d.rowData) || []).forEach(function (rd, i) { var L = (rd.values || []).map(cellLink); if (L.some(Boolean)) out.set(st + i, L); });
+          ((d && d.rowData) || []).forEach(function (rd, i) {
+            var vals = rd.values || [], L = vals.map(cellLink);
+            var multi = cellLinks(vals[4]);   // kolom T (BASTM)
+            if (multi.length > 1) { L[4] = multi[multi.length - 1].u; L[5] = JSON.stringify(multi); }   // dibuka default = lampiran terbaru
+            if (L.some(Boolean)) out.set(st + i, L);
+          });
           if (prog) prog();
         };
       }), CONFIG.CONCURRENCY || 3);
@@ -9784,6 +9819,56 @@ body:has(#mig-ov) #st-nt{display:none!important}
         out.push([s(g(r, "before")), s(g(r, "after")), s(g(r, "item")), s(g(r, "region")), st, po, s(g(r, "status")), parseNumber(g(r, "don")), parseNumber(g(r, "hp")), s(g(r, "pic")), s(g(r, "admin"))]);
       }
       return out;
+    };
+  }
+})();
+
+/* ===== v23 · BASTM (kolom T) berisi riwayat beberapa lampiran dalam satu kolom — tampil per bagian (mitra A, mitra B, …) ===== */
+(function () {
+  "use strict";
+  var E = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  function bastmList(t) {
+    if (!t) return [];
+    var L = t.links || [], list = [];
+    try { if (L[5]) list = JSON.parse(L[5]) || []; } catch (e) { list = []; }
+    if (!list.length && L[4]) list = [{ t: String(t.att_bastm || "BASTM").split("\n")[0], u: L[4] }];
+    if (L[4] && list.length && !list.some(function (x) { return x.u === L[4]; })) list.push({ t: "Lampiran baru", u: L[4] });   // baru diunggah, sebelum link dimuat ulang
+    return list;
+  }
+  window.bastmList = bastmList;
+  function label(x, i) {
+    var m = String(x.t || "").match(/ - ((?:PT|CV|PD|KOPERASI|UD)\.?\s[^-]+?)\s*-\s*(\d{2}-\d{2}-\d{4})/i);
+    if (m) return { a: m[1].trim(), b: m[2].replace(/-/g, "/") };
+    return { a: x.t || "Lampiran " + (i + 1), b: "" };
+  }
+  function open(u, ttl) { try { if (typeof sdPreviewUrl === "function") return sdPreviewUrl(u, ttl, "Kolom T"); } catch (e) { } window.open(u, "_blank", "noopener"); }
+  window.bastmOpen = function (id, i) { var t = STATE.idx.byId.get(id), l = bastmList(t)[i]; if (l) open(l.u, "BASTM · bagian " + (i + 1) + " · " + label(l, i).a); };
+  // tanda jumlah bagian di chip dokumen (tabel Status Dokumen, kartu, dll.)
+  if (typeof docChip === "function") {
+    var oChip = docChip;
+    window.docChip = docChip = function (e, t) {
+      var h = oChip.apply(this, arguments);
+      try { if (t === "BASTM") { var n = bastmList(e).length; if (n > 1) h += '<span class="bst-n" title="' + n + ' lampiran BASTM (riwayat take over)">' + n + " bagian</span>"; } } catch (er) { }
+      return h;
+    };
+  }
+  // detail PO: daftar bagian BASTM di bawah kartu dokumen
+  if (typeof renderTakeoverDetail === "function") {
+    var oRT = renderTakeoverDetail;
+    window.renderTakeoverDetail = renderTakeoverDetail = function (t) {
+      var r = oRT.apply(this, arguments);
+      try {
+        var list = bastmList(t), body = document.getElementById("detail-modal-body");
+        if (list.length > 1 && body && !body.querySelector(".bst-box")) {
+          var lab = [].filter.call(body.querySelectorAll("span"), function (s) { return s.textContent.trim() === "BASTM"; })[0];
+          var grid = lab && lab.closest(".grid");
+          var html = '<div class="bst-box"><div class="bst-h"><i class="fa-solid fa-layer-group"></i><b>BASTM · ' + list.length + ' bagian</b><small>riwayat take over, tersimpan dalam satu kolom T</small></div><ol class="bst-l">'
+            + list.map(function (x, i) { var lb = label(x, i); return '<li><button type="button" onclick="bastmOpen(\'' + t.id + "'," + i + ')"><span class="n">' + (i + 1) + '</span><span class="tx"><b>' + E(lb.a) + "</b>" + (lb.b ? "<small>" + E(lb.b) + "</small>" : "") + "</span>" + (i === list.length - 1 ? '<span class="nw">terbaru</span>' : "") + '<i class="fa-solid fa-arrow-up-right-from-square"></i></button></li>'; }).join("") + "</ol></div>";
+          if (grid) grid.insertAdjacentHTML("afterend", html); else body.insertAdjacentHTML("beforeend", html);
+          var card = lab && lab.closest(".rounded-lg"); if (card && !card.querySelector(".bst-n")) card.insertAdjacentHTML("beforeend", '<span class="bst-n">' + list.length + " bagian</span>");
+        }
+      } catch (e) { }
+      return r;
     };
   }
 })();
