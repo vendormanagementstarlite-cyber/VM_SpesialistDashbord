@@ -120,6 +120,12 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 @keyframes shake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
 @keyframes draw{to{stroke-dashoffset:0}}
 @media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}.tick path{stroke-dashoffset:0}}
+.wa-row{display:flex;gap:8px}.wa-row input{flex:1;min-width:0}
+.wa-test{flex:none;display:inline-flex;align-items:center;padding:0 14px;border-radius:12px;background:#25d366;color:#fff;font-weight:800;font-size:13px;text-decoration:none;transition:opacity .15s}
+.wa-test[aria-disabled="true"]{opacity:.35;pointer-events:none}
+#wa-st.ok{color:var(--ok);font-weight:700}#wa-st.no{color:var(--bad);font-weight:700}
+.wa-ok{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:13px;cursor:pointer;animation:pop .2s ease}
+.wa-ok input{margin-top:3px;width:17px;height:17px;accent-color:var(--acc);flex:none}
 </style>
 </head>
 <body>
@@ -156,7 +162,12 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
         <label class="f"><span class="req">Email</span><input type="email" name="email" autocomplete="email" placeholder="nama@perusahaan.co.id" required></label>
         <label class="f"><span class="req">Nama pengaju</span><input type="text" name="nama" autocomplete="name" required></label>
         <label class="f"><span class="req">Sebagai apa (jabatan / posisi)</span><input type="text" name="jabatan" placeholder="mis. Project Manager" required></label>
-        <label class="f"><span class="req">No WhatsApp pengaju</span><input type="tel" name="wa" inputmode="tel" placeholder="08…" required></label>
+        <div class="f full wa">
+          <label class="f"><span class="req">No WhatsApp pengaju</span>
+            <span class="wa-row"><input type="tel" name="wa" inputmode="tel" placeholder="mis. 0812 3456 7890" autocomplete="tel" required><a class="wa-test" id="wa-test" href="#" target="_blank" rel="noopener" aria-disabled="true">Cek di WhatsApp</a></span></label>
+          <small class="hint" id="wa-st">Nomor dipakai Vendor Management untuk mengabari hasil verifikasi.</small>
+          <label class="wa-ok" id="wa-okl" hidden><input type="checkbox" id="wa-ok"><span>Nomor ini aktif di WhatsApp dan bisa dihubungi (sudah dicek lewat tombol <b>Cek di WhatsApp</b>)</span></label>
+        </div>
       </div>
     </fieldset>
 
@@ -260,6 +271,21 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
   var fld = function (k) { return f.querySelector('[name="' + k + '"]'); };
   ["lama", "baru"].forEach(function (k) { var el = fld(k); el.addEventListener("change", function () { var o = official(el.value.trim()); if (o) el.value = o; }); });
 
+  // ---------- No WhatsApp: format nomor HP Indonesia + cek langsung di WhatsApp ----------
+  function waNorm(v) { var d = String(v || "").replace(/[^\d+]/g, "").replace(/^\+/, ""); if (/^62/.test(d)) d = "0" + d.slice(2); return d; }
+  var waOk = function (d) { return /^08[1-9]\d{7,10}$/.test(d); };
+  var waIn = fld("wa"), waSt = $("wa-st"), waT = $("wa-test"), waL = $("wa-okl"), waC = $("wa-ok");
+  function waCheck() {
+    var d = waNorm(waIn.value), good = waOk(d);
+    waT.setAttribute("aria-disabled", good ? "false" : "true"); waT.href = good ? "https://wa.me/62" + d.slice(1) : "#";
+    waL.hidden = !good; if (!good) waC.checked = false;
+    if (!waIn.value.trim()) { waSt.className = "hint"; waSt.textContent = "Nomor dipakai Vendor Management untuk mengabari hasil verifikasi."; }
+    else if (good) { waSt.className = "hint ok"; waSt.textContent = "✓ Format benar: +62 " + d.slice(1).replace(/(\d{3})(\d{4})(\d+)/, "$1-$2-$3") + " — klik Cek di WhatsApp untuk memastikan nomor aktif"; }
+    else { waSt.className = "hint no"; waSt.textContent = "Nomor HP belum benar — awali 08 atau +62 8, 10–13 digit"; }
+  }
+  waIn.addEventListener("input", waCheck); waIn.addEventListener("blur", function () { var d = waNorm(waIn.value); if (waOk(d)) waIn.value = d; waCheck(); });
+  waT.addEventListener("click", function () { setTimeout(function () { if (!waL.hidden) waL.classList.add("seen"); }, 400); });
+
   // ---------- Nomor SPK → All SPK (data + lampiran SPK) ----------
   var SPK = null, spkT = 0, spkQ = "", box = $("spk-box");
   var spkOk = function (v) { return /^\s*\d{1,5}\s*\/\s*PRJ\s*\/\s*STARLITE\s*\/\s*[IVX]{1,4}\s*\/\s*20\d\d\s*$/i.test(v); };
@@ -343,6 +369,9 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
     if (miss.length) return show("Belum diisi: " + miss.map(function (k) { return LABEL[k]; }).join(", "), fld(miss[0]));
     var em = /^[^\s@]+@[^\s@]+\.[^\s@]+$/, bad = ["email", "sales", "ikrBaru", "ikrLama"].filter(function (k) { return d[k] && !em.test(d[k]); });
     if (bad.length) return show("Format email belum benar: " + bad.map(function (k) { return LABEL[k] || "Email Lead IKR mitra lama"; }).join(", "), fld(bad[0]));
+    d.wa = waNorm(d.wa);
+    if (!waOk(d.wa)) return show("No WhatsApp belum benar — awali 08 atau +62 8, 10–13 digit.", fld("wa"));
+    if (!waC.checked) { waL.scrollIntoView({ behavior: "smooth", block: "center" }); return show("Pastikan nomor WhatsApp aktif: klik Cek di WhatsApp, lalu centang konfirmasi di bawah nomor."); }
     if (/^PO[.\s]/i.test(d.noSpk)) return show("Nomor SPK diisi nomor PO. Isi nomor SPK yang tertulis di dokumen SPK, mis. 1547/PRJ/STARLITE/X/2026.", fld("noSpk"));
     if (!spkOk(d.noSpk)) return show("Format Nomor SPK belum benar. Contoh: 1547/PRJ/STARLITE/X/2026", fld("noSpk"));
     var bad2 = ["lama", "baru"].filter(function (k) { var o = official(d[k]); if (o) { d[k] = o; fld(k).value = o; } return o === null; });
@@ -371,7 +400,7 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
     }).then(function () { send.disabled = false; });
   });
   $("again").onclick = function () {
-    f.reset(); FILES = {}; SPK = null; spkQ = ""; box.className = "full spk"; ["ba", "kml"].forEach(drawDrop);
+    f.reset(); waCheck(); FILES = {}; SPK = null; spkQ = ""; box.className = "full spk"; ["ba", "kml"].forEach(drawDrop);
     $("done").classList.remove("on"); f.hidden = false; $("intro").hidden = false; window.scrollTo({ top: 0, behavior: "smooth" });
   };
 })();

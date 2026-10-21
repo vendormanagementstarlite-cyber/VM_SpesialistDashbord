@@ -9298,7 +9298,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
   function reloadNow() { MIG.off = false; MIG.err = ""; MIG.loaded = false; render(); load(true).then(function () { if (!MIG.err) toast("Pengajuan Migrasi IKR dimuat ulang", "success"); }); }
   function badge() { var b = $("sidebar-migrasi-badge"); if (!b) return; var n = MIG.rows.filter(function (r) { return stOf(r) === "wait"; }).length; b.textContent = n; b.classList.toggle("hidden", !n); }
   function filtered() {
-    var q = MIG.q.toLowerCase();
+    var q = String(MIG.q || "").trim().toLowerCase().replace(/\s+/g, " ");
     return MIG.rows.filter(function (r) {
       if (MIG.f !== "all" && stOf(r) !== MIG.f) return false;
       if (MIG.jenis && r.tujuan !== MIG.jenis) return false;
@@ -9325,7 +9325,10 @@ body:has(#mig-ov) #st-nt{display:none!important}
     if (MIG.off) { v.querySelector('[data-a="reload"]').onclick = reloadNow; v.querySelector('[data-a="form"]').onclick = formLink; v.querySelector('[data-a="set"]').onclick = settings; return; }
     v.querySelectorAll("[data-f]").forEach(function (b) { b.onclick = function () { MIG.f = b.dataset.f; render(); }; });
     v.querySelectorAll("[data-row]").forEach(function (b) { b.onclick = function () { openDetail(+b.dataset.row); }; });
-    var t; $("mig-q").oninput = function () { clearTimeout(t); var x = this; t = setTimeout(function () { MIG.q = x.value.trim(); var pos = x.selectionStart; render(); var y = $("mig-q"); y.focus(); try { y.setSelectionRange(pos, pos); } catch (e) { } }, 200); };
+    var t; $("mig-q").oninput = function () {
+      clearTimeout(t); var x = this; MIG.q = x.value;   // spasi tetap (tidak di-trim saat mengetik)
+      t = setTimeout(function () { var pos = x.selectionStart, end = x.selectionEnd; render(); var y = $("mig-q"); y.value = MIG.q; y.focus(); try { y.setSelectionRange(pos, end); } catch (e) { } }, 250);
+    };
     $("mig-jenis").onchange = function () { MIG.jenis = this.value; render(); };
     v.querySelector('[data-a="reload"]').onclick = reloadNow;
     v.querySelector('[data-a="form"]').onclick = formLink;
@@ -9396,7 +9399,8 @@ body:has(#mig-ov) #st-nt{display:none!important}
         try {
           await save(d, rem, { note: rem.slice(0, 200) });
           toast("Status Verifikasi: " + d, "success");
-          var msg = "Yth. " + (r.nama || "Bapak/Ibu") + ",\n\nPengajuan " + r.tujuan + " " + r.baru + " – " + r.stasiun + " (No SPK " + r.noSpk + ") berstatus " + d.toUpperCase() + ".\nCatatan: " + rem + "\n\nMohon perbaiki dan ajukan ulang melalui link form.\n\nVendor Management";
+          var link = await formUrl();
+          var msg = "Yth. " + (r.nama || "Bapak/Ibu") + ",\n\nPengajuan " + r.tujuan + " " + r.baru + " – " + r.stasiun + " (No SPK " + r.noSpk + ") berstatus " + d.toUpperCase() + ".\nCatatan: " + rem + "\n\nMohon perbaiki dan ajukan ulang melalui link berikut:\n" + (link || "(link form pengajuan)") + "\n\nVendor Management";
           M.close(); revisiShare(r, msg);
         } catch (e) { b.disabled = false; toast(e.message, "error", 7000); }
       };
@@ -9500,10 +9504,11 @@ body:has(#mig-ov) #st-nt{display:none!important}
   }
   function emailIt(r, T, done) {
     var body = itBody(r), subj = itSubject(r);
-    var M = modal('<div class="mig-mh"><div><small>Lolos verifikasi</small><h3>Kirim ke Team IT</h3><p>Salin teks atau buka di Outlook Web, kirim, lalu tandai sudah dikirim.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div>'
+    var isCreate = /create/i.test(r.tujuan), fin = isCreate ? "Done Verifikasi" : "Done Email IT";
+    var M = modal('<div class="mig-mh"><div><small>Lolos verifikasi · status akhir: ' + fin + '</small><h3>Kirim ke Team IT</h3><p>Salin teks atau buka di Outlook Web, kirim, lalu tandai sudah dikirim.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div>'
       + '<div class="mig-pad"><dl class="mig-dl wide mig-cp"><dt>To</dt><dd><span>' + E(MIG.settings.to) + '</span><button class="mig-cpb" data-cp="to" title="Salin To"><i class="fa-solid fa-copy"></i></button></dd><dt>Cc</dt><dd><span>' + E(MIG.settings.cc) + '</span><button class="mig-cpb" data-cp="cc" title="Salin Cc"><i class="fa-solid fa-copy"></i></button></dd><dt>Subjek</dt><dd><b>' + E(subj) + '</b><button class="mig-cpb" data-cp="subj" title="Salin subjek"><i class="fa-solid fa-copy"></i></button></dd></dl><textarea class="field w-full mig-pre mig-big" rows="22" id="mig-body">' + E(body) + "</textarea>"
       + '<p class="mig-note"><i class="fa-solid fa-paperclip"></i> Lampirkan file BA dari Drive bila perlu: <a class="mig-lnk" target="_blank" rel="noopener" href="' + E(r.ba) + '">buka BA</a></p>'
-      + (T.length ? '<label class="mig-upd"><input type="checkbox" id="mig-updto" checked><span>Perbarui Data Mitra Takeover: <b>' + T.length + " PO</b> (" + E(T.map(function (t) { return t.po; }).join(", ")) + ") — kolom M jadi Done Email IT, kolom X tanggal hari ini (bila kosong)</span></label>" : "")
+      + (T.length ? '<label class="mig-upd"><input type="checkbox" id="mig-updto" checked><span>Perbarui Data Mitra Takeover: <b>' + T.length + " PO</b> (" + E(T.map(function (t) { return t.po; }).join(", ")) + ") — kolom M jadi <b>" + fin + "</b>" + (isCreate ? "" : ", kolom X tanggal hari ini (bila kosong)") + "</span></label>" : "")
       + '<div class="mig-dec"><button class="st-b" data-c><i class="fa-solid fa-copy"></i>Salin teks</button><button class="st-b" data-o><i class="fa-solid fa-envelope-open-text"></i>Buka di Outlook Web</button><button class="st-b pri" data-s><i class="fa-solid fa-check-double"></i>Tandai sudah dikirim ke IT</button></div></div>', "xl");
     var el = M.el, txt = function () { return el.querySelector("#mig-body").value; };
     el.querySelector("[data-c]").onclick = function () { copyText(txt(), "Teks email disalin"); };
@@ -9513,13 +9518,16 @@ body:has(#mig-ov) #st-nt{display:none!important}
       var b = this; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Menyimpan…';
       try {
         var upd = el.querySelector("#mig-updto");
-        var res = await callApi("mig.save", { row: r.row, ts: r.ts, noSpk: r.noSpk, verif: "Done Email IT", updTakeover: upd ? upd.checked : false, toRows: T.map(function (t) { return t.row; }), note: "Email ke IT: " + subj }, 60000);
+        var res = await callApi("mig.save", { row: r.row, ts: r.ts, noSpk: r.noSpk, verif: fin, updTakeover: upd ? upd.checked : false, toRows: T.map(function (t) { return t.row; }), note: "Email ke IT: " + subj }, 60000);
         if (res.item) Object.assign(r, res.item); if (res.chk) { MIG.chk[res.chk.key] = res.chk.value; r.ck = res.chk.key; }
         M.close(); if (done) done(); badge(); if (isOpen()) render();
-        toast("Status VM: Done Email IT" + (res.takeoverRows && res.takeoverRows.length ? " · Data Takeover " + res.takeoverRows.length + " PO diperbarui" : ""), "success", 6000);
+        toast("Status VM: " + fin + (res.takeoverRows && res.takeoverRows.length ? " · Data Takeover " + res.takeoverRows.length + " PO diperbarui" : ""), "success", 6000);
         try { if (res.takeoverRows && res.takeoverRows.length && typeof autoSyncGoogleSheets === "function") autoSyncGoogleSheets({ keys: ["takeover"], silent: true }); } catch (e) { }
       } catch (e) { b.disabled = false; b.innerHTML = '<i class="fa-solid fa-check-double"></i>Tandai sudah dikirim ke IT'; toast(e.message, "error", 8000); }
     };
+  }
+  async function formUrl() {   // link form pengajuan mitra (dengan kunci) — untuk pesan pengajuan ulang
+    try { if (!MIG.formKey) { var r = await callApi("mig.formkey", {}, 30000); MIG.formKey = r.key; } return location.origin + location.pathname.replace(/[^\/]*$/, "") + "migrasi.html?k=" + MIG.formKey; } catch (e) { return ""; }
   }
   async function formLink() {
     try {
@@ -9812,10 +9820,10 @@ body:has(#mig-ov) #st-nt{display:none!important}
   // ---------- 3) Tracker All Starlite: kolom dibaca dari JUDUL kolom (sheet sering berubah susunan) ----------
   // Coresite = kolom BK "PIC Coorsite", Admin IJE = kolom BL "PMO ADM"; HP = "Home Pass"
   if (typeof TRK !== "undefined" && typeof trkSlim === "function") {
-    try { if (/^trk_cache_v[34]$/.test(TRK.key)) { ["trk_cache_v3", "trk_cache_v4"].forEach(function (k) { localStorage.removeItem(k); }); TRK.key = "trk_cache_v5"; } } catch (e) { }
+    try { if (/^trk_cache_v[345]$/.test(TRK.key)) { ["trk_cache_v3", "trk_cache_v4", "trk_cache_v5"].forEach(function (k) { localStorage.removeItem(k); }); TRK.key = "trk_cache_v6"; } } catch (e) { }
     try { TRK_COLS.pic = "BK"; TRK_COLS.admin = "BL"; TRK_COLS.hp = "AZ"; } catch (e) { }
     var MAP = [["before", /^mitra history$/, "A"], ["after", /^mitra update$/, "B"], ["item", /^hp po$/, "H"], ["region", /^regional$/, "I"], ["stasiun", /^stasiun$/, "J"], ["po", /^no\s*po\s*pembangunan$/, "L"],
-               ["status", /^status$/, "R"], ["don", /^(donasi|nominal donasi|donation)$/, null], ["hp", /^home\s*pass$/, "AZ"], ["pic", /^pic\s*coo?re?site$/, "BK"], ["admin", /^(pmo\s*adm(in)?|admin\s*ije)$/, "BL"]];
+               ["status", /^status$/, "R"], ["don", /^(donasi|nominal donasi|donation|nilai donasi)$/, "AC"], ["hp", /^home\s*pass$/, "AZ"], ["pic", /^pic\s*coo?re?site$/, "BK"], ["admin", /^(pmo\s*adm(in)?|admin\s*ije)$/, "BL"]];
     // pengambilan per bagian kolom (lebih cepat dari CSV penuh): kolom ditentukan dari judul, bukan huruf tetap
     var colL = function (i) { var t = ""; i++; while (i > 0) { var m = (i - 1) % 26; t = String.fromCharCode(65 + m) + t; i = Math.floor((i - 1) / 26); } return t; };
     if (typeof trkFetchParts === "function" && typeof trkGetText === "function") {
