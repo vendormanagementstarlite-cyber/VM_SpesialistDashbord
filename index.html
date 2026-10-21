@@ -9920,6 +9920,52 @@ body:has(#mig-ov) #st-nt{display:none!important}
   }
 })();
 
+/* ===== v24: PO Close tidak dihitung "belum selesai" ===== */
+(function () {
+  if (typeof computeStatus !== "function" || typeof STATUS === "undefined") return;
+  var RX = /\bpo\s*-?\s*clos|\bclosed?\b/i;
+  var isClose = function (v) { return !!v && RX.test(String(v)); };
+  window.isPoClose = isClose;
+  if (!STATUS.close) {
+    STATUS.close = { label: "PO Close", color: "#0ea5e9", icon: "fa-lock", badge: "bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/40", dot: "bg-sky-500", desc: "PO sudah Close — tidak dihitung belum selesai" };
+    var ci = STATUS_ORDER.indexOf("cancel");
+    STATUS_ORDER.splice(ci < 0 ? STATUS_ORDER.length : ci, 0, "close");
+  }
+  var base = computeStatus;
+  window.computeStatus = computeStatus = function (k, l, m, j) {
+    if (isCancel(j) || isCancel(k) || isCancel(l) || isCancel(m)) return "cancel";
+    if (isClose(j) || isClose(k) || isClose(l) || isClose(m)) return "close";
+    return base(k, l, m, j);
+  };
+  var agg = aggregate;
+  window.aggregate = aggregate = function (rows) {
+    var t = agg(rows);
+    try { t.close = (rows || []).filter(function (e) { return e.st === "close"; }).length; } catch (e) { t.close = 0; }
+    return t;
+  };
+  if (typeof renderPicTable === "function") {
+    var pic = renderPicTable;
+    window.renderPicTable = renderPicTable = function (rows) {
+      return pic((rows || []).map(function (e) { return e.st === "close" ? Object.assign({}, e, { st: "selesai" }) : e; }));
+    };
+  }
+  function addOpt() {
+    var s = document.getElementById("takeover-status-filter");
+    if (s && !s.querySelector('option[value="close"]')) {
+      var o = document.createElement("option"); o.value = "close"; o.textContent = "PO Close";
+      var c = s.querySelector('option[value="cancel"]'); s.insertBefore(o, c || null);
+    }
+  }
+  function recompute() {
+    try {
+      var ch = false;
+      (STATE.takeover || []).forEach(function (e) { var st = computeStatus(e.k, e.l, e.m, e.status_to); if (st !== e.st) { e.st = st; ch = true; } });
+      if (ch && typeof refreshAll === "function") refreshAll();
+    } catch (e) { }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { addOpt(); recompute(); }); else { addOpt(); recompute(); }
+})();
+
 </script>
 </body>
 </html>
