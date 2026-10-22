@@ -2591,7 +2591,7 @@ const LOGO_SRC = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABc
 <script>
 function optEsc_(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function toAllFill(){var a=$("takeover-all-filter"),v=a.value,g=function(l,o){return o.length?'<optgroup label="'+l+'">'+o.map(function(x){return '<option value="'+optEsc_(x[0])+'">'+(x[0].charAt(0)==='d'?x[1]:optEsc_(x[1]))+'</option>'}).join('')+'</optgroup>':''},f=function(id,p){return Array.from($(id).options).filter(function(o){return o.value}).map(function(o){return [p+o.value,o.textContent]})};
-a.innerHTML='<option value="">Semua Status</option>'+g('Status Take Over',f('takeover-status-filter','s:'))+g('Dokumen',[['d:noBapDoc','BAP PO belum'],['d:noBastmDoc','BASTM belum'],['d:noBapBastm','BAP PO belum &amp; BASTM belum'],['d:noMigrasi','Migrasi belum']])+g('Status Material',f('takeover-material-filter','x:'))+g('Status Mitra',f('takeover-mitrastatus-filter','m:'))+g('Region',f('takeover-region-filter','r:'))+g('PIC',f('takeover-pic-filter','p:'));a.value=v}
+a.innerHTML='<option value="">Semua Status</option>'+g('Status Take Over',f('takeover-status-filter','s:'))+g('Dokumen',[['d:noBapDoc','BAP PO belum'],['d:noBastmDoc','BASTM belum'],['d:noBapBastm','BAP PO belum &amp; BASTM belum'],['d:noMigrasi','Migrasi belum']])+g('SPK',[['d:noSpkDoc','Belum ada No SPK'],['d:noSpkPdf','No SPK ada, PDF SPK belum diupload'],['d:noSpkDate','Belum ada Tanggal Rilis SPK']])+g('Status Material',f('takeover-material-filter','x:'))+g('Status Mitra',f('takeover-mitrastatus-filter','m:'))+g('Region',f('takeover-region-filter','r:'))+g('PIC',f('takeover-pic-filter','p:'));a.value=v}
 function toAllApply(v){$("takeover-region-filter").value="";$("takeover-pic-filter").value="";$("takeover-status-filter").value="";$("takeover-mitrastatus-filter").value="";$("takeover-material-filter").value="";VS_TO.special="";var k=v.slice(0,2),x=v.slice(2);
 if(k==="r:")$("takeover-region-filter").value=x;else if(k==="s:")$("takeover-status-filter").value=x;else if(k==="m:")$("takeover-mitrastatus-filter").value=x;else if(k==="x:")$("takeover-material-filter").value=x;else if(k==="p:")$("takeover-pic-filter").value=x;else if(k==="d:")VS_TO.special=x;applyTakeoverFilters(true)}
 </script>
@@ -2755,7 +2755,7 @@ function trkReport(){
   /* ---------- 2) filter: chip, kombinasi, ingat ---------- */
   var FP = {};            // halaman → konfigurasi
   var TO_MAP = { "s:": "takeover-status-filter", "x:": "takeover-material-filter", "m:": "takeover-mitrastatus-filter", "r:": "takeover-region-filter", "p:": "takeover-pic-filter" };
-  var TO_DOC = { noBapDoc: "BAP PO belum", noBastmDoc: "BASTM belum", noBapBastm: "BAP PO & BASTM belum", noMigrasi: "Migrasi belum" };
+  var TO_DOC = { noBapDoc: "BAP PO belum", noBastmDoc: "BASTM belum", noBapBastm: "BAP PO & BASTM belum", noMigrasi: "Migrasi belum", noSpkDoc: "Belum ada No SPK", noSpkPdf: "PDF SPK belum diupload", noSpkDate: "Belum ada Tanggal Rilis SPK" };
   var labelOf = function (sel) { var o = sel && sel.options[0]; return o && !o.value ? o.textContent.replace(/^Semua\s*/i, "") : ""; };
   function pageSetup() {
     FP.takeover = { all: "takeover-all-filter", apply: "applyTakeoverFilters", ids: ["takeover-status-filter", "takeover-material-filter", "takeover-mitrastatus-filter", "takeover-region-filter", "takeover-pic-filter"], special: true };
