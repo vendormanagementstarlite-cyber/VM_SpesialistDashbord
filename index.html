@@ -10129,6 +10129,13 @@ html.dark #sgv-thumbs button span { color: #cbd5e1; }
 .sgv-rj-ct b.over { color: #e11d48; }
 .sgv-rjv { display: flex; flex-direction: column; gap: 2px; }
 .sgv-hp { display: inline-block; margin-right: 6px; padding: 0 6px; border-radius: 6px; background: rgba(124,58,237,.14); color: #5b21b6; font-size: 10px; }
+
+/* ===== v25.2 · penyederhanaan: hanya TTD & paraf ===== */
+.sgv-side .sgv-kgrid.two { grid-template-columns: repeat(2, 1fr); }
+.sgv-simple { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 10px 12px; border-radius: 12px; background: rgba(124,58,237,.08); border: 1px solid rgba(124,58,237,.22); }
+.sgv-simple p { margin: 0; font-size: 12px; color: #4c1d95; display: flex; align-items: center; gap: 7px; }
+.sgv-simple .btn { padding: 8px 14px; font-size: 12px; }
+html.dark .sgv-simple p { color: #ddd6fe; }
 </style>
 <script id="addon_v25">
 /* ===================== STARLITE v25 · Signing v2 + tabel tanpa pager =====================
@@ -10148,7 +10155,7 @@ const MM = 72 / 25.4;                       // 1 mm dalam point PDF
 const PARAF_MM = { w: 22, h: 12 }, GAP_MM = 2;
 const KINDS = {
     sign: { label: 'Tanda tangan', short: 'TTD', ic: 'fa-signature', mm: null, req: true },
-    paraf: { label: 'Paraf', short: 'Paraf', ic: 'fa-pen-fancy', mm: [22, 12], req: true },
+    paraf: { label: 'Paraf', short: 'Paraf', ic: 'fa-pen-fancy', mm: [22, 12], req: false },
     date: { label: 'Tanggal', short: 'Tanggal', ic: 'fa-calendar-day', mm: [42, 6.5], req: false },
     text: { label: 'Isian teks', short: 'Isian', ic: 'fa-i-cursor', mm: [60, 7], req: true },
     check: { label: 'Centang', short: 'Centang', ic: 'fa-square-check', mm: [6, 6], req: false }
@@ -10161,8 +10168,26 @@ const tglPanjang = iso => { const d = iso ? new Date(iso) : new Date(); return d
 const b64png = s => String(s || '').replace(/^data:image\/png;base64,/, '');
 const dataPng = s => !s ? '' : /^data:/.test(s) ? s : 'data:image/png;base64,' + s;
 const extOf = (sigs, sid) => (sigs && sigs.__ext && sigs.__ext[sid]) || null;
+// paraf milik penanda tangan (opsional, dipasang oleh penanda tangan sendiri) → kotak semu per halaman
+function parafExtra(doc, sigs) {
+    const out = [];
+    for (const g of (doc && doc.signers) || []) {
+        const ext = extOf(sigs, g.id); if (!ext || !ext.paraf || !ext.parafPos || g.status !== 'selesai') continue;
+        for (const [pg, r] of Object.entries(ext.parafPos)) if (r && +pg > 0) out.push({ id: 'pf:' + g.id + ':' + pg, signer: g.id, page: +pg, x: +r.x, y: +r.y, w: +r.w, h: +r.h, type: 'paraf', pseudo: true });
+    }
+    return out;
+}
+function drawParafExtra(layer, n, doc, sigs) {
+    layer.querySelectorAll('.sgv-pfx').forEach(e => e.remove());
+    parafExtra(doc, sigs).filter(f => f.page === n).forEach(f => {
+        const el = document.createElement('div'), ext = extOf(sigs, f.signer) || {};
+        el.className = 'sg-field sgv t-paraf signed sgv-par sgv-pfx';
+        Object.assign(el.style, { left: f.x * 100 + '%', top: f.y * 100 + '%', width: f.w * 100 + '%', height: f.h * 100 + '%' });
+        el.innerHTML = `<img src="${dataPng(ext.paraf)}" alt="paraf">`; layer.appendChild(el);
+    });
+}
 const sbHas = () => typeof sbOn === 'function' && sbOn();
-window.SGV2 = { KINDS, ftype, freq, MM, PARAF_MM, GAP_MM, TEXT_KINDS, tglPanjang, extOf, dataPng, b64png, E, toast, $id };
+window.SGV2 = { parafExtra, drawParafExtra, KINDS, ftype, freq, MM, PARAF_MM, GAP_MM, TEXT_KINDS, tglPanjang, extOf, dataPng, b64png, E, toast, $id };
 
 /* =====================================================================
    PDF FINAL — semua jenis kotak. Urutan: teks dokumen → stempel → coretan TTD.
@@ -10185,11 +10210,11 @@ sgStamp = async function (bytes, doc, signatures) {
     const fitText = (t, f, w, h, max) => { let size = Math.min(max || 11, h * 0.78); while (size > 4 && f.widthOfTextAtSize(t, size) > w - 2) size -= 0.25; return size; };
     // 1) stempel lebih dulu (di bawah coretan) · 2) gambar & teks
     const later = [];
-    for (const f of doc.fields || []) {
+    for (const f of (doc.fields || []).concat(parafExtra(doc, sigs))) {
         const pg = pages[f.page - 1], g = byId[f.signer]; if (!pg || !g) continue;
         const main = sigs[f.signer], ext = extOf(sigs, f.signer) || {}, t = ftype(f);
         if (!main && !ext.v) continue;                                  // belum tanda tangan
-        if (ext.filled && ['sign', 'paraf', 'stamp'].includes(t) && !ext.filled.includes(f.id)) continue;   // kotak opsional yang dikosongkan
+        if (!f.pseudo && ext.filled && ['sign', 'paraf', 'stamp'].includes(t) && !ext.filled.includes(f.id)) continue;   // kotak opsional yang dikosongkan
         const { width: W, height: H } = pg.getSize();
         const bx = f.x * W, bw = f.w * W, bh = f.h * H, by = H - (f.y + f.h) * H;
         if (t === 'sign') {
@@ -10268,13 +10293,13 @@ sgOwnerView = async function (id) {
         const part = doc.signers.filter(g => g.status !== 'selesai' && g.draft).map(g => `${g.name} sebagian ${g.draft.n}/${g.draft.total}`);
         $id('sg-ov-sub').textContent = `${n}/${doc.signers.length} sudah tanda tangan${part.length ? ' · ' + part.join(' · ') : ''} — isian yang sudah masuk ditampilkan`;
         const byId = Object.fromEntries(doc.signers.map(g => [g.id, g]));
-        await sgRenderPdf($id('sg-ov-pages'), bytes, 860, (pg, p) => doc.fields.filter(x => x.page === p).forEach(x => {
+        await sgRenderPdf($id('sg-ov-pages'), bytes, 860, (pg, p) => { drawParafExtra(pg.layer, p, doc, sigs); doc.fields.filter(x => x.page === p).forEach(x => {
             const g = byId[x.signer] || {}, el = document.createElement('div');
             Object.assign(el.style, { left: x.x * 100 + '%', top: x.y * 100 + '%', width: x.w * 100 + '%', height: x.h * 100 + '%' });
             if (g.status === 'selesai' && (sigs[x.signer] || extOf(sigs, x.signer))) { const o = signedHtml(x, g, sigs); el.className = 'sg-field sgv t-' + ftype(x) + ' ' + o.cls; el.innerHTML = o.html; }
             else { el.className = 'sg-field other sgv t-' + ftype(x); el.innerHTML = pendingHtml(x, g); }
             pg.layer.appendChild(el);
-        }));
+        }); });
         const dl = $id('sg-ov-dl'); dl.disabled = false;
         dl.onclick = async () => { try { sgSaveBlob(await sgStamp(bytes, doc, sigs), d.name + (n === doc.signers.length ? ' - TTD Lengkap.pdf' : ` - TTD ${n} dari ${doc.signers.length}.pdf`)); } catch (e) { toast(e.message, 'error'); } };
     } catch (e) { $id('sg-ov-pages').innerHTML = `<p class="p-6 text-center text-rose-600 text-[12px]">${E(e.message)}</p>`; }
@@ -10383,7 +10408,7 @@ setTimeout(() => {
 /* =====================================================================
    F1 · HALAMAN PENANDA TANGAN — semua jenis kotak, sebagian / semua, simpan sementara
    ===================================================================== */
-const SGV = { id: '', sig: null, paraf: null, stamp: null, filled: new Set(), vals: {}, stampOff: new Set(), stampPos: {}, mode: 'all', dirty: false, stamps: null, zoom: 1, savedAt: '', remember: true, timer: 0 };
+const SGV = { id: '', sig: null, paraf: null, stamp: null, filled: new Set(), vals: {}, stampOff: new Set(), stampPos: {}, mode: 'all', dirty: false, stamps: null, zoom: 1, savedAt: '', remember: false, timer: 0, parafOn: false, parafPos: {} };
 window.SGV2.state = SGV;
 const curDoc = () => SGP.data && SGP.data.doc;
 const curMe = () => SGP.data && SGP.data.me;
@@ -10400,17 +10425,18 @@ function textDefault(f) { const me = curMe() || {}; return f.kind === 'nama' ? m
 function prepare(r) {
     if (!r || !r.doc || !r.me) return;
     if (SGV.id === r.doc.id && SGV.signer === r.me.id) return;
-    Object.assign(SGV, { id: r.doc.id, signer: r.me.id, sig: null, paraf: null, stamp: null, filled: new Set(), vals: {}, stampOff: new Set(), stampPos: {}, mode: 'all', dirty: false, savedAt: '', resumed: null });
+    Object.assign(SGV, { id: r.doc.id, signer: r.me.id, sig: null, paraf: null, stamp: null, filled: new Set(), vals: {}, stampOff: new Set(), stampPos: {}, mode: 'pick', dirty: false, savedAt: '', resumed: null, parafOn: false, parafPos: {} });
     const mine = r.doc.fields.filter(f => f.signer === r.me.id);
     mine.forEach(f => { if (ftype(f) === 'text') SGV.vals[f.id] = textDefault(f); if (ftype(f) === 'check') SGV.vals[f.id] = 'false'; });
     const dr = r.draft;
     if (dr && typeof dr === 'object') {
         const ids = new Set(mine.map(f => f.id));
         SGV.sig = dr.sig || null; SGV.paraf = dr.paraf || null;
+        if (dr.parafOn && dr.paraf && dr.parafPos && typeof dr.parafPos === 'object') { SGV.parafOn = true; SGV.parafPos = dr.parafPos; }
         (dr.filled || []).forEach(id => ids.has(id) && SGV.filled.add(id));
         Object.entries(dr.vals || {}).forEach(([k, v]) => { if (ids.has(k)) SGV.vals[k] = String(v); });
         (dr.stampOff || []).forEach(id => SGV.stampOff.add(id));
-        SGV.stampPos = dr.stampPos || {}; SGV.mode = dr.mode === 'pick' ? 'pick' : 'all';
+        SGV.stampPos = dr.stampPos || {}; SGV.mode = 'pick';
         SGV.resumed = { n: dr.n, total: dr.total };
         if (SGV.sig) { SGP.sig = SGV.sig; SGP.lastSig = SGP.lastSig || SGV.sig; }
     }
@@ -10469,6 +10495,7 @@ function decorate(pg, n) {
         if (own && active()) { paintOwn(el, f); return; }
         if (!own) { el = asDiv(el); el.className = 'sg-field other sgv t-' + t; el.innerHTML = pendingHtml(f, g); }
     });
+    drawParafExtra(pg.layer, n, d, sigs); paintMyParaf(pg.layer, n);
 }
 function repaint() {
     if (!active()) return;
@@ -10534,9 +10561,9 @@ async function signAll() {
     if (!active()) return;
     const L = myFields(), has = t => L.some(f => ftype(f) === t && (freq(f) || t !== 'stamp'));
     if (has('sign') && !(await ensureSig())) return;
-    if (L.some(f => ftype(f) === 'paraf') && !(await ensureParaf())) return;
-    L.forEach(f => { const t = ftype(f); if (t === 'sign' || t === 'paraf') SGV.filled.add(f.id); });
-    SGV.mode = 'all'; changed();
+    const parOk = L.some(f => ftype(f) === 'paraf') ? await ensureParaf() : false;   // paraf opsional: dilewati bila dibatalkan
+    L.forEach(f => { const t = ftype(f); if (t === 'sign' || (t === 'paraf' && parOk)) SGV.filled.add(f.id); });
+    changed();
     const p = progress();
     if (p.left.length) { toast('Lengkapi isian yang ditandai merah', 'info', 5000); jumpTo(p.left[0]); }
     else { toast('Semua kotak terisi — periksa lalu klik Kirim', 'success'); const go = $id('sg-go'); if (go) go.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
@@ -10561,44 +10588,111 @@ function boxMenu(f, el) {
 }
 addEventListener('scroll', () => { const x = $id('sgv-menu'); if (x && Date.now() - (+x.dataset.at || 0) > 450) closeMenu(); }, { passive: true });
 
+
+/* ---------- paraf opsional (hanya dari penanda tangan) ---------- */
+let PFPAGES = null;      // { bytes, pages:[{w,h,page,vp}] }
+async function pfPages() {
+    if (PFPAGES && PFPAGES.bytes === SGP.bytes) return PFPAGES.pages;
+    const doc = await (await loadPdfJs()).getDocument({ data: SGP.bytes.slice(0) }).promise, pages = [];
+    for (let i = 1; i <= doc.numPages; i++) { const pg = await doc.getPage(i), vp = pg.getViewport({ scale: 1 }); pages.push({ w: vp.width, h: vp.height, page: pg, vp }); }
+    PFPAGES = { bytes: SGP.bytes, pages }; return pages;
+}
+async function pfText(s) {
+    const out = [];
+    try {
+        const tc = await s.page.getTextContent();
+        tc.items.filter(it => it.str && it.str.trim()).forEach(it => {
+            const t = it.transform, h = Math.abs(it.height || t[3] || 8), w = it.width || 0;
+            const r = s.vp.convertToViewportRectangle([t[4], t[5] - h * 0.25, t[4] + w, t[5] + h]);
+            out.push({ x0: Math.min(r[0], r[2]) / s.w, x1: Math.max(r[0], r[2]) / s.w, y0: Math.min(r[1], r[3]) / s.h, y1: Math.max(r[1], r[3]) / s.h });
+        });
+    } catch (e) { }
+    return out;
+}
+// paraf hanya di halaman yang tidak punya kotak tanda tangan; di pinggir, tidak menutupi tulisan
+async function calcParafPos() {
+    const d = curDoc(), S = await pfPages(), res = {}, sigs = SGP.sigs || {}, others = parafExtra(d, sigs);
+    const ov = (a, b, pad) => !(a.x1 + pad < b.x0 || b.x1 + pad < a.x0 || a.y1 + pad < b.y0 || b.y1 + pad < a.y0);
+    for (let p = 1; p <= S.length; p++) {
+        if (d.fields.some(f => f.page === p && ftype(f) === 'sign')) continue;
+        const s = S[p - 1], w = Math.min(0.95, PARAF_MM.w * MM / s.w), h = Math.min(0.95, PARAF_MM.h * MM / s.h);
+        const mx = 10 * MM / s.w, my = 8 * MM / s.h, step = 14 * MM / s.h, pad = 1.2 * MM / s.w;
+        const c = [];
+        for (let k = 0; k < 5; k++) c.push([1 - mx - w, 1 - my - h - k * step]);
+        c.push([mx, 1 - my - h], [(1 - w) / 2, 1 - my - h], [1 - mx - w, my], [mx, my]);
+        const txt = await pfText(s);
+        const obs = txt.concat(d.fields.concat(others).filter(f => f.page === p).map(f => ({ x0: f.x, y0: f.y, x1: f.x + f.w, y1: f.y + f.h })));
+        let pick = c.find(([x, y]) => x >= 0 && y >= 0 && x + w <= 1 && y + h <= 1 && !obs.some(b => ov({ x0: x, y0: y, x1: x + w, y1: y + h }, b, pad)));
+        if (!pick) pick = c[0];
+        res[p] = { x: +pick[0].toFixed(4), y: +pick[1].toFixed(4), w: +w.toFixed(4), h: +h.toFixed(4) };
+    }
+    return res;
+}
+function paintMyParaf(layer, n) {
+    layer.querySelectorAll('.sgv-mine').forEach(e => e.remove());
+    if (!active() || !SGV.parafOn || !SGV.paraf || !SGV.parafPos[n]) return;
+    const r = SGV.parafPos[n], el = document.createElement('div');
+    el.className = 'sg-field own2 sgv t-paraf filled sgv-mine';
+    Object.assign(el.style, { left: r.x * 100 + '%', top: r.y * 100 + '%', width: r.w * 100 + '%', height: r.h * 100 + '%' });
+    el.innerHTML = `<img src="${SGV.paraf}" alt="paraf">`;
+    el.onclick = ev => { ev.stopPropagation(); parafMenu(el); };
+    layer.appendChild(el);
+}
+function paintAllParaf() { document.querySelectorAll('#sg-pages .sg-page').forEach(pg => paintMyParaf(pg.querySelector('.sg-layer'), +pg.dataset.page)); }
+function parafMenu(el) {
+    closeMenu();
+    const items = [['fa-eraser', 'Hapus paraf', () => setParaf(false)], ['fa-pen-fancy', 'Ganti paraf', async () => { if (await ensureParaf(true)) { changed(); paintAllParaf(); } }]];
+    const m = document.createElement('div'); m.id = 'sgv-menu'; m.dataset.at = Date.now();
+    m.innerHTML = items.map(([ic, l], i) => `<button data-i="${i}"><i class="fa-solid ${ic}"></i>${E(l)}</button>`).join('');
+    document.body.appendChild(m);
+    m.querySelectorAll('[data-i]').forEach(b => b.onclick = ev => { ev.stopPropagation(); closeMenu(); items[+b.dataset.i][2](); });
+    const r = el.getBoundingClientRect(), w = m.offsetWidth, h = m.offsetHeight;
+    m.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.left)) + 'px';
+    m.style.top = (r.bottom + h + 8 > innerHeight ? Math.max(8, r.top - h - 6) : r.bottom + 6) + 'px';
+    setTimeout(() => document.addEventListener('click', closeMenu, { once: true }), 0);
+}
+async function setParaf(on) {
+    if (!active()) return;
+    if (!on) { SGV.parafOn = false; SGV.parafPos = {}; changed(); paintAllParaf(); tools(); return; }
+    if (!(await ensureParaf())) return;
+    let pos = {};
+    try { pos = await calcParafPos(); } catch (e) { console.warn(e); }
+    const n = Object.keys(pos).length;
+    if (!n) return toast('Semua halaman sudah ada kotak tanda tangan — tidak perlu paraf', 'info', 5000);
+    SGV.parafOn = true; SGV.parafPos = pos; changed(); paintAllParaf(); tools();
+    toast(`Paraf dipasang di ${n} halaman (hanya halaman tanpa tanda tangan). Ketuk paraf untuk menghapus.`, 'success', 6000);
+}
+
 /* ---------- alat & bar bawah ---------- */
 function tools() {
     const card = document.querySelector('.sg-main .sg-card'); if (!card) return;
     let t = card.querySelector('.sgv-tools');
     if (!active()) { if (t) t.remove(); return; }
-    const L = myFields(), p = progress(), d = curDoc();
-    const kinds = [...new Set(L.map(ftype))].filter(k => k !== 'date');
-    const pages = [...new Set(d.fields.map(f => f.page))].sort((a, b) => a - b), N = d.pages || pages[pages.length - 1] || 1;
-    const myPages = new Set(L.map(f => f.page));
+    const L = myFields(), p = progress();
+    const hasPar = L.some(f => ftype(f) === 'paraf');
+    const parBtn = hasPar ? '' : (SGV.parafOn ? `<button type="button" data-a="pfoff" class="btn btn-ghost"><i class="fa-solid fa-xmark"></i>Hapus paraf</button>` : `<button type="button" data-a="pfon" class="btn btn-ghost"><i class="fa-solid fa-pen-fancy"></i>Tambah paraf <small>(opsional)</small></button>`);
     const html = `${SGV.resumed ? `<div class="sgv-resume"><i class="fa-solid fa-clock-rotate-left"></i>Melanjutkan isian yang tersimpan (${SGV.resumed.n}/${SGV.resumed.total} kotak).</div>` : ''}
-        <div class="sgv-modes"><button data-a="all" class="${SGV.mode === 'all' ? 'on' : ''}"><i class="fa-solid fa-bolt"></i><span><b>Tanda tangani semua</b><small>Isi semua kotak sekaligus</small></span></button>
-            <button data-a="pick" class="${SGV.mode === 'pick' ? 'on' : ''}"><i class="fa-solid fa-hand-pointer"></i><span><b>Pilih kotak</b><small>Isi satu per satu, lanjut nanti</small></span></button></div>
-        <div class="sgv-row">
-            <span class="sgv-kinds">${kinds.map(k => `<span><i class="fa-solid ${KINDS[k].ic}"></i>${L.filter(f => ftype(f) === k).length} ${E(KINDS[k].short)}</span>`).join('')}</span>
-            <button data-a="list" class="sgv-chip"><i class="fa-solid fa-list-check"></i>Daftar kotak ${p.n}/${p.total}</button>
-            ${N > 1 ? `<select data-a="page" class="field sgv-pg"><option value="">Halaman…</option>${Array.from({ length: N }, (_, i) => i + 1).map(i => `<option value="${i}">Hal ${i}${myPages.has(i) ? ' • kotak Anda' : ''}</option>`).join('')}</select>` : ''}
-            <span class="sgv-zoom"><button data-z="-1" title="Perkecil"><i class="fa-solid fa-minus"></i></button><b>${Math.round(SGV.zoom * 100)}%</b><button data-z="1" title="Perbesar"><i class="fa-solid fa-plus"></i></button></span>
-        </div>`;
+        <div class="sgv-simple"><p><i class="fa-solid fa-hand-pointer"></i>Ketuk kotak berwarna di dokumen untuk <b>tanda tangan</b>${hasPar ? ' dan <b>paraf</b> <small>(paraf boleh dilewati)</small>' : ''}.</p>
+        ${p.total > 1 && p.n < p.total ? `<button type="button" data-a="all" class="btn btn-primary"><i class="fa-solid fa-bolt"></i>Tanda tangani semua</button>` : ''}${parBtn}</div>`;
     if (!t) { t = document.createElement('div'); t.className = 'sgv-tools'; const ban = card.querySelector('.sg-banner'); (ban || card.lastElementChild).insertAdjacentElement('afterend', t); }
-    t.innerHTML = html;
-    t.querySelector('[data-a="all"]').onclick = () => { SGV.mode = 'all'; signAll(); tools(); };
-    t.querySelector('[data-a="pick"]').onclick = () => setMode('pick');
-    t.querySelector('[data-a="list"]').onclick = boxList;
-    const ps = t.querySelector('[data-a="page"]'); if (ps) ps.onchange = () => { const el = document.querySelector(`#sg-pages .sg-page[data-page="${ps.value}"]`); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); ps.value = ''; };
-    t.querySelectorAll('[data-z]').forEach(b => b.onclick = () => { SGV.zoom = Math.max(0.5, Math.min(2, Math.round((SGV.zoom + 0.25 * +b.dataset.z) * 100) / 100)); applyZoom(); tools(); });
+    if (t.dataset.h === html) return;
+    t.dataset.h = html; t.innerHTML = html;
+    const po = t.querySelector('[data-a="pfon"]'); if (po) po.onclick = () => setParaf(true);
+    const pf = t.querySelector('[data-a="pfoff"]'); if (pf) pf.onclick = () => setParaf(false);
+    const all = t.querySelector('[data-a="all"]'); if (all) all.onclick = async () => { await signAll(); tools(); };
 }
 function applyZoom() { const p = $id('sg-pages'); if (!p) return; p.style.zoom = SGV.zoom === 1 ? '' : SGV.zoom; p.classList.toggle('sgv-zoomed', SGV.zoom > 1); }
 function bar() {
     const txt = $id('sg-bar-txt'), go = $id('sg-go'); if (!txt || !go || !active()) return;
     const p = progress();
-    txt.innerHTML = !p.left.length ? `<i class="fa-solid fa-circle-check text-emerald-600"></i> Semua kotak terisi — siap dikirim` : `${p.n} / ${p.total} kotak terisi · <b class="text-rose-600">${p.left.length} wajib lagi</b>`;
+    txt.innerHTML = !p.left.length ? `<i class="fa-solid fa-circle-check text-emerald-600"></i> ${p.n < p.total ? 'Siap dikirim · paraf boleh dilewati' : 'Semua kotak terisi — siap dikirim'}` : `${p.n} / ${p.total} kotak terisi · <b class="text-rose-600">${p.left.length} wajib lagi</b>`;
     go.disabled = !!p.left.length;
     let sv = $id('sgv-save');
     if (p.n && p.left.length) {
         if (!sv) { go.insertAdjacentHTML('beforebegin', `<button id="sgv-save" type="button" class="btn btn-ghost" title="Simpan isian, lanjutkan nanti dari HP mana pun"><i class="fa-solid fa-floppy-disk"></i><span>Simpan sementara</span></button>`); sv = $id('sgv-save'); sv.onclick = () => saveDraft(false); }
     } else if (sv) sv.remove();
     jump();
-    const t = document.querySelector('.sgv-tools [data-a="list"]'); if (t) t.innerHTML = `<i class="fa-solid fa-list-check"></i>Daftar kotak ${p.n}/${p.total}`;
+    tools();
 }
 function jumpTo(f) {
     const el = document.querySelector(`#sg-pages [data-fid="${CSS.escape(f.id)}"]`); if (!el) return;
@@ -10635,6 +10729,7 @@ function afterRender() {
 function payload() {
     return {
         sig: SGV.sig || null, paraf: SGV.paraf || null,
+        parafOn: !!(SGV.parafOn && SGV.paraf), parafPos: SGV.parafOn && SGV.paraf ? SGV.parafPos : {},
         filled: [...SGV.filled], vals: SGV.vals, stampOff: [...SGV.stampOff], stampPos: SGV.stampPos, mode: SGV.mode
     };
 }
@@ -10671,7 +10766,7 @@ sgPublicConfirm = function () {
     if (p.left.length) { toast(`Masih ada ${p.left.length} kotak wajib yang belum diisi`, 'error'); return jumpTo(p.left[0]); }
     SGP.sig = SGV.sig;
     const d = curDoc(), me = curMe(), L = myFields();
-    const prev = [SGV.sig && L.some(f => ftype(f) === 'sign' && SGV.filled.has(f.id)) ? ['Tanda tangan', SGV.sig] : null, SGV.paraf && L.some(f => ftype(f) === 'paraf' && SGV.filled.has(f.id)) ? ['Paraf', SGV.paraf] : null].filter(Boolean);
+    const prev = [SGV.sig && L.some(f => ftype(f) === 'sign' && SGV.filled.has(f.id)) ? ['Tanda tangan', SGV.sig] : null, SGV.paraf && (SGV.parafOn || L.some(f => ftype(f) === 'paraf' && SGV.filled.has(f.id))) ? ['Paraf', SGV.paraf] : null].filter(Boolean);
     const m = document.createElement('div'); m.id = 'sg-confirm'; m.className = 'fixed inset-0 z-[95] flex items-center justify-center p-4 bg-cyberDark/60 backdrop-blur-sm';
     m.innerHTML = `<div class="proc-card" style="max-width:460px">
         <h3 class="text-base font-extrabold text-slate-900 dark:text-white"><i class="fa-solid fa-shield-halved text-cyan-600 mr-1.5"></i>Konfirmasi Tanda Tangan</h3>
@@ -10691,7 +10786,7 @@ async function preview() {
         d.signers.forEach(g => { if (g.id === me.id) { g.status = 'selesai'; g.signedAt = now; } });
         const sigs = Object.assign({}, SGP.sigs || {}); sigs.__ext = Object.assign({}, (SGP.sigs || {}).__ext || {});
         const pl = payload();
-        sigs[me.id] = b64png(SGV.sig || SGV.paraf || ''); sigs.__ext[me.id] = { v: 2, paraf: b64png(SGV.paraf || ''), filled: pl.filled, vals: pl.vals, stampOff: pl.stampOff, stampPos: pl.stampPos };
+        sigs[me.id] = b64png(SGV.sig || SGV.paraf || ''); sigs.__ext[me.id] = { v: 2, paraf: b64png(SGV.paraf || ''), parafPos: pl.parafPos, filled: pl.filled, vals: pl.vals, stampOff: pl.stampOff, stampPos: pl.stampPos };
         const out = await sgStamp(SGP.bytes, d, sigs);
         const url = URL.createObjectURL(new Blob([out], { type: 'application/pdf' }));
         if (w) w.location = url; else sgSaveBlob(out, d.name + ' - pratinjau.pdf');
@@ -10730,6 +10825,11 @@ function vmWaUrl(ctx) {
     const msg = `Halo Tim Vendor Management, saya ${ctx && ctx.name || '(nama penanda tangan)'} lupa PIN tanda tangan${title ? ' untuk dokumen "' + title + '"' : ''}. Mohon dibantu reset PIN. Terima kasih.`;
     return `https://wa.me/${VM_WA}?text=${encodeURIComponent(msg)}`;
 }
+// PIN WAJIB setiap kali membuka link: tidak ada login tersimpan / perangkat yang diingat
+SGA.get = () => null; SGA.set = () => { };
+sgMeGet = () => null;
+try { Object.keys(localStorage).filter(k => /^sgauth_/.test(k) || k === SGME.key).forEach(k => localStorage.removeItem(k)); } catch (e) { }
+let PINCTX = null;
 const isTok = p => /^dv:/.test(String(p || ''));
 const isPin = p => /^\d{4}$/.test(String(p || ''));
 function devLabel() {
@@ -10780,20 +10880,18 @@ sgMeSet = function (name, pin) {
 // layar PIN: centang "ingat perangkat", "Lupa PIN?", hitung mundur saat terkunci
 function pinExtras(ctx) {
     const go = $id('sg-pgo'); if (!go || go.parentNode.querySelector('.sgv-rem')) return;
-    go.insertAdjacentHTML('beforebegin', `<label class="sgv-rem"><input type="checkbox" ${SGV.remember ? 'checked' : ''}><span>Ingat perangkat ini 90 hari <small>(tidak perlu PIN lagi di HP / laptop ini)</small></span></label>`);
-    go.parentNode.querySelector('.sgv-rem input').onchange = e => { SGV.remember = e.target.checked; };
-    if (ctx.devExpired) go.parentNode.querySelector('.sgv-rem').insertAdjacentHTML('beforebegin', `<p class="sgv-note"><i class="fa-solid fa-mobile-screen"></i>Perangkat ini perlu PIN lagi (sudah lebih dari 90 hari atau dikeluarkan).</p>`);
+    PINCTX = ctx;
     const old = [...go.parentNode.querySelectorAll('p')].find(p => /Lupa PIN/.test(p.textContent));
     const html = `<button type="button" class="sgv-forgot"><i class="fa-solid fa-circle-question"></i>Lupa PIN?</button>`;
     if (old) old.outerHTML = html; else if (!ctx.create) go.insertAdjacentHTML('afterend', html);
     const fb = go.parentNode.querySelector('.sgv-forgot'); if (fb) fb.onclick = () => forgot(ctx);
-    if (fb && !ctx.create && !go.parentNode.querySelector('.sgv-vmwa')) fb.insertAdjacentHTML('afterend', `<a class="sgv-vmwa" target="_blank" rel="noopener" href="${vmWaUrl(ctx)}"><i class="fa-brands fa-whatsapp"></i>Hubungi Vendor Management</a>`);
     countdown();
 }
 function countdown() {
     const e = $id('sg-perr'), go = $id('sg-pgo'); if (!e || !go) return;
     const m = /dalam (\d+) detik/.exec(e.textContent || ''); if (!m) return;
     let n = +m[1]; go.disabled = true; clearInterval(countdown.t);
+    if (!document.querySelector('.sgv-vmwa')) { let nm = ''; try { nm = (PINCTX && PINCTX.name) || SGP.data.me.name || ''; } catch (x) { } e.insertAdjacentHTML('afterend', `<a class="sgv-vmwa big" target="_blank" rel="noopener" href="${vmWaUrl({ name: nm })}"><i class="fa-brands fa-whatsapp"></i><span><b>Hubungi Vendor Management</b><small>Salah PIN 5 kali — minta bantuan reset lewat WhatsApp</small></span></a>`); }
     const tick = () => {
         if (!document.body.contains(go)) return clearInterval(countdown.t);
         if (n <= 0) { clearInterval(countdown.t); go.disabled = false; e.textContent = 'Silakan masukkan PIN lagi'; e.classList.remove('hidden'); return; }
@@ -10827,7 +10925,7 @@ function countdown() {
         sgPublicError = function (msg) {
             const out = be.apply(this, arguments);
             const m = /dalam (\d+) detik/.exec(String(msg || ''));
-            if (m) { const btn = document.querySelector('.sg-main .sg-card button'); let n = +m[1]; if (btn) { btn.disabled = true; const t = setInterval(() => { if (--n <= 0 || !document.body.contains(btn)) { clearInterval(t); btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-rotate"></i>Coba lagi'; return; } btn.innerHTML = `<i class="fa-solid fa-hourglass-half"></i>Coba lagi dalam ${n} detik`; }, 1000); } }
+            if (m) { const btn = document.querySelector('.sg-main .sg-card button'); let n = +m[1]; if (btn && !document.querySelector('.sgv-vmwa')) btn.insertAdjacentHTML('afterend', `<a class="sgv-vmwa big" target="_blank" rel="noopener" href="${vmWaUrl({})}"><i class="fa-brands fa-whatsapp"></i><span><b>Hubungi Vendor Management</b><small>Salah PIN 5 kali — minta bantuan reset lewat WhatsApp</small></span></a>`); if (btn) { btn.disabled = true; const t = setInterval(() => { if (--n <= 0 || !document.body.contains(btn)) { clearInterval(t); btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-rotate"></i>Coba lagi'; return; } btn.innerHTML = `<i class="fa-solid fa-hourglass-half"></i>Coba lagi dalam ${n} detik`; }, 1000); } }
             return out;
         };
     }
@@ -10842,8 +10940,6 @@ async function forgot(ctx) {
     m.onclick = e => { if (e.target === m) m.remove(); };
     const who = ctx.createdBy ? String(ctx.createdBy).replace(/\s*\(.*\)$/, '') : 'pengirim dokumen';
     m.innerHTML = `<div class="proc-card sgv-card"><div class="flex items-center gap-2"><h3 class="text-base font-extrabold text-slate-900 dark:text-white flex-1"><i class="fa-solid fa-key text-amber-500 mr-1.5"></i>Lupa PIN</h3><button onclick="$('sgv-fp').remove()" class="icon-btn"><i class="fa-solid fa-xmark"></i></button></div>
-        <a class="sgv-vmwa big" target="_blank" rel="noopener" href="${vmWaUrl(ctx)}"><i class="fa-brands fa-whatsapp"></i><span><b>Hubungi Vendor Management</b><small>Chat WhatsApp 0898-4623-040 — pesan sudah terisi, tinggal kirim</small></span></a>
-        <p class="text-[11px] text-slate-400 text-center my-2">atau cara lain</p>
         ${mail ? `<div class="sgv-fp-box"><p class="text-[12px] text-slate-600 dark:text-slate-300">Kirim kode ke email terdaftar <b>${E(mail)}</b>, lalu buat PIN baru.</p>
             <button id="sgv-fp-send" class="btn btn-primary w-full mt-2"><i class="fa-solid fa-envelope"></i>Kirim kode ke email</button>
             <div id="sgv-fp-step" class="hidden mt-3 space-y-2"><input id="sgv-fp-code" class="field w-full text-center tracking-[.4em]" inputmode="numeric" maxlength="6" placeholder="Kode 6 angka dari email" autocomplete="one-time-code">
@@ -10970,32 +11066,10 @@ async function stripSpot(page, n, pref) {
     }
     const [x, y] = cands[pref ? 1 : 0]; return { x, y, one, gap, ok: false };
 }
-async function placeParafAll(pref) {
-    const S = await pageSizes(); if (!S.length) return toast('PDF belum siap', 'error');
-    const who = SGW.signers.filter(parafOn); if (!who.length) return toast('Centang minimal satu penanda tangan yang memaraf', 'error');
-    SGW.fields = SGW.fields.filter(f => ftype(f) !== 'paraf');
-    const warn = [], skip = [];
-    for (let p = 1; p <= S.length; p++) {
-        if (hasSignOn(p)) { skip.push(p); continue; }
-        const sp = await stripSpot(p, who.length, pref); if (!sp) continue;
-        if (!sp.ok) warn.push(p);
-        who.forEach((g, i) => SGW.fields.push({ id: 'f' + sgNewId(), signer: g.id, page: p, x: sp.x + i * (sp.one.w + sp.gap), y: sp.y, w: sp.one.w, h: sp.one.h, type: 'paraf', grp: 'strip' }));
-    }
-    sgDrawFields(); sgRenderWho(); sideRefresh();
-    toast(`Paraf dipasang di ${S.length - skip.length} halaman${skip.length ? ` (halaman ${skip.join(', ')} dilewati karena ada tanda tangan)` : ''}`, 'success', 6000);
-    if (warn.length) toast(`Halaman ${warn.join(', ')}: tidak ada area kosong di margin — paraf mungkin menutupi teks, geser manual`, 'error', 9000);
-}
-async function sameParafPos(fromPage) {
-    const f = SGW.fields.find(x => ftype(x) === 'paraf' && x.page === fromPage); if (!f) return;
-    const strip = SGW.fields.filter(x => ftype(x) === 'paraf' && x.page === fromPage).sort((a, b) => a.x - b.x);
-    await placeParafAll({ x: strip[0].x, y: strip[0].y });
-}
-
 sgAddField = async function (e, page) {
     if (e.target !== e.currentTarget) return;
     const r = e.currentTarget.getBoundingClientRect(), t = SGW.ftype || 'sign', k = KINDS[t];
     const S = await pageSizes(), s = S[page - 1];
-    if (t === 'paraf' && hasSignOn(page)) return toast(`Halaman ${page} sudah ada kotak tanda tangan — paraf hanya untuk halaman tanpa tanda tangan`, 'error', 6000);
     let w = 0.24, h = 0.075;
     if (k.mm && s) { const z = mmFrac(s, k.mm[0], k.mm[1]); w = z.w; h = z.h; }
     const x = Math.max(0, Math.min(1 - w, (e.clientX - r.left) / r.width - w / 2)), y = Math.max(0, Math.min(1 - h, (e.clientY - r.top) / r.height - h / 2));
@@ -11003,10 +11077,6 @@ sgAddField = async function (e, page) {
     if (t !== 'sign') f.type = t;
     if (t === 'text') { f.kind = SGW.tkind || 'jabatan'; f.label = TEXT_KINDS[f.kind]; f.req = true; }
     if (t === 'check') { f.label = 'Setuju'; f.req = false; }
-    if (t === 'sign') {
-        const drop = SGW.fields.filter(x => x.page === page && ftype(x) === 'paraf');
-        if (drop.length) { SGW.fields = SGW.fields.filter(x => !drop.includes(x)); toast(`Paraf di halaman ${page} dihapus — halaman ini sekarang ada tanda tangan`, 'info', 6000); }
-    }
     SGW.fields.push(f);
     sgDrawFields(); sgRenderWho(); sideRefresh();
 };
@@ -11073,21 +11143,7 @@ function fieldOpts(f) {
     };
 }
 // panel samping langkah 3
-function sideHtml() {
-    const kinds = Object.entries(KINDS);
-    const pages = SGW.count || 0, np = SGW.fields.filter(f => ftype(f) === 'paraf').length;
-    return `<div class="sgv-side">
-        <p class="text-[11px] font-bold text-slate-500 mt-3 mb-1.5">Jenis kotak</p>
-        <div class="sgv-kgrid">${kinds.map(([k, v]) => `<button type="button" data-k="${k}" class="${SGW.ftype === k ? 'on' : ''}"><i class="fa-solid ${v.ic}"></i>${E(v.short)}</button>`).join('')}</div>
-        ${SGW.ftype === 'text' ? `<select id="sgv-tk" class="field w-full mt-1.5">${Object.entries(TEXT_KINDS).map(([k, l]) => `<option value="${k}" ${(SGW.tkind || 'jabatan') === k ? 'selected' : ''}>Isian: ${l}</option>`).join('')}</select>` : ''}
-        <p class="text-[10.5px] text-slate-500 mt-1.5 leading-relaxed">${({ sign: 'Klik di halaman untuk menaruh kotak tanda tangan.', paraf: 'Paraf hanya untuk halaman tanpa tanda tangan · maks 22 × 12 mm.', date: 'Terisi otomatis tanggal saat tanda tangan.', text: 'Isian yang diketik penanda tangan (Nama / Jabatan terisi otomatis).', check: 'Kotak centang (mis. Setuju / Mengetahui).' })[SGW.ftype]}</p>
-        <div class="sgv-paraf"><p class="text-[11px] font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-pen-fancy mr-1 text-indigo-500"></i>Paraf semua halaman</p>
-            <p class="text-[10.5px] text-slate-500 mb-1.5">Yang memaraf:</p>
-            ${SGW.signers.map(g => `<label class="sgv-pw"><input type="checkbox" data-pg="${g.id}" ${parafOn(g) ? 'checked' : ''}><span class="w-2.5 h-2.5 rounded-full" style="background:${E(g.color)}"></span>${E(g.name)}</label>`).join('')}
-            <button type="button" data-a="paraf" class="btn btn-ghost w-full mt-2 !py-2"><i class="fa-solid fa-wand-magic-sparkles"></i>Pasang di ${pages ? 'halaman tanpa TTD' : 'semua halaman'}</button>
-            ${np ? `<div class="sgv-sbtns"><button type="button" data-a="same" class="sgv-sbtn" title="Pakai posisi paraf halaman yang terakhir digeser untuk semua halaman"><i class="fa-solid fa-clone"></i>Samakan posisi</button><button type="button" data-a="clear" class="sgv-sbtn danger"><i class="fa-solid fa-eraser"></i>Hapus paraf</button></div><p class="text-[10px] text-slate-400 mt-1">${np} kotak paraf · geser satu kotak = satu strip ikut bergeser</p>` : ''}
-        </div></div>`;
-}
+function sideHtml() { SGW.ftype = 'sign'; return '<div class="sgv-side"></div>'; }
 function sideRefresh() {
     const side = document.querySelector('.sg-place-side'); if (!side || SGW.step !== 3) return;
     let box = side.querySelector('.sgv-side');
@@ -11096,13 +11152,9 @@ function sideRefresh() {
     box = side.querySelector('.sgv-side');
     box.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { SGW.ftype = b.dataset.k; sideRefresh(); });
     const tk = box.querySelector('#sgv-tk'); if (tk) tk.onchange = () => { SGW.tkind = tk.value; };
-    box.querySelectorAll('[data-pg]').forEach(c => c.onchange = () => { const g = signerOf(c.dataset.pg); g.paraf = c.checked; });
-    box.querySelector('[data-a="paraf"]').onclick = () => placeParafAll();
-    const sm = box.querySelector('[data-a="same"]'); if (sm) sm.onclick = () => { const p = SGW.lastParafPage || (SGW.fields.find(f => ftype(f) === 'paraf') || {}).page; if (p) sameParafPos(p); };
-    const cl = box.querySelector('[data-a="clear"]'); if (cl) cl.onclick = () => { SGW.fields = SGW.fields.filter(f => ftype(f) !== 'paraf'); sgDrawFields(); sgRenderWho(); sideRefresh(); };
     // keterangan di panel bawaan
     const tip = [...side.querySelectorAll('p')].find(p => /Klik di halaman untuk menaruh kotak/.test(p.textContent));
-    if (tip) tip.innerHTML = '<b>3.</b> Klik di halaman untuk menaruh kotak sesuai jenis yang dipilih. Geser untuk memindah, tarik sudut kanan-bawah untuk ukuran, <i class="fa-solid fa-xmark"></i> untuk menghapus, <i class="fa-solid fa-gear"></i> untuk pengaturan.';
+    if (tip) tip.innerHTML = '<b>3.</b> Klik di halaman untuk menaruh kotak <b>tanda tangan</b> penanda tangan yang dipilih. Geser untuk memindah, tarik sudut kanan-bawah untuk ukuran, <i class="fa-solid fa-xmark"></i> untuk menghapus.';
 }
 (function hookWizard() {
     const base = sgWizard;
@@ -11110,9 +11162,7 @@ function sideRefresh() {
         const r = base.apply(this, arguments);
         try {
             if (SGW.step === 3 && !SGW.created) {
-                // centang paraf dari template
-                if (SGW.tplId && SG.tpls) { const t = SG.tpls.find(x => x.id === SGW.tplId); if (t) SGW.signers.forEach((g, i) => { if (g.paraf === undefined && t.signers[i] && t.signers[i].paraf === false) g.paraf = false; }); }
-                sideRefresh(); pageSizes().catch(() => { });
+                sideRefresh();
             }
             if (SGW.step === 4 && !SGW.created) {
                 const host = $id('sgw-body') && $id('sgw-body').querySelector('.max-w-xl');
@@ -11125,14 +11175,10 @@ function sideRefresh() {
     // langkah 3 → 4: tiap penanda tangan minimal satu kotak (jenis apa pun)
     const bs = sgStep;
     sgStep = async function (dir) {
-        if (SGW.step === 3 && dir > 0) {
-            const bad = SGW.fields.filter(f => ftype(f) === 'paraf' && hasSignOn(f.page));
-            if (bad.length) { SGW.fields = SGW.fields.filter(f => !bad.includes(f)); toast(`${bad.length} kotak paraf di halaman bertanda tangan dihapus`, 'info'); }
-        }
         return bs.apply(this, arguments);
     };
     const bn = sgNew;
-    sgNew = function () { SGW.ftype = 'sign'; SGW.lastParafPage = 0; const r = bn.apply(this, arguments); return r; };
+    sgNew = function () { SGW.ftype = 'sign'; const r = bn.apply(this, arguments); return r; };
 })();
 // kirim & template: sertakan jenis kotak (type / req / label / kind) dan centang paraf
 const fieldExtra = f => Object.assign({}, f.type && f.type !== 'sign' ? { type: f.type } : {}, f.req !== undefined ? { req: !!f.req } : {}, f.label ? { label: f.label } : {}, f.kind ? { kind: f.kind } : {});
@@ -11146,7 +11192,7 @@ const fieldExtra = f => Object.assign({}, f.type && f.type !== 'sign' ? { type: 
             }
             if (fn === 'sg_tpl_save' && body && body.p_tpl) {
                 if (Array.isArray(body.p_tpl.fields) && body.p_tpl.fields.length === SGW.fields.length) body.p_tpl.fields = body.p_tpl.fields.map((f, i) => Object.assign({}, f, fieldExtra(SGW.fields[i])));
-                if (Array.isArray(body.p_tpl.signers)) body.p_tpl.signers = body.p_tpl.signers.map((g, i) => Object.assign({}, g, { paraf: SGW.signers[i] ? parafOn(SGW.signers[i]) : true }));
+                if (Array.isArray(body.p_tpl.signers)) body.p_tpl.signers = body.p_tpl.signers.map((g, i) => Object.assign({}, g, {}));
             }
         } catch (e) { console.warn('sgv payload', e); }
         return base.apply(this, arguments);
@@ -11183,7 +11229,7 @@ const waNum = v => { let s = String(v || '').replace(/[^0-9]/g, ''); if (s.start
 
 // reset PIN: PIN tidak pernah ditampilkan; perangkat yang diingat ikut dikeluarkan; kirim WhatsApp
 async function resetPin(o) {      // o: { name, pid, docId, signerId, link }
-    if (!confirm(`Reset PIN ${o.name}?\n\nPIN lama & semua perangkat yang diingat tidak berlaku lagi. ${o.name} membuat PIN baru sendiri saat membuka link.`)) return;
+    if (!confirm(`Reset PIN ${o.name}?\n\nPIN lama tidak berlaku lagi. ${o.name} membuat PIN baru sendiri saat membuka link.`)) return;
     try {
         let r;
         if (o.pid) r = await sbOwner('sg_signer_pin', { p_id: o.pid, p_pin: '' });
@@ -11208,7 +11254,7 @@ async function sendReset(o) {
     }
     let link = o.link || '';
     if (!link) { try { const r = await sbOwner('sg_plink', { p_name: o.name, p_app_url: APP_PUBLIC_URL }); link = r.link || ''; } catch (e) { } }
-    const msg = `Halo ${o.name}, PIN tanda tangan Anda sudah direset.\nBuka link berikut lalu buat PIN baru (4 angka):\n${link}\n\nCentang "Ingat perangkat ini" supaya tidak perlu PIN lagi di HP ini.`;
+    const msg = `Halo ${o.name}, PIN tanda tangan Anda sudah direset.\nBuka link berikut lalu buat PIN baru (4 angka):\n${link}`;
     window.open(`https://wa.me/${waNum(wa)}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 window.SGV2.resetPin = resetPin;
