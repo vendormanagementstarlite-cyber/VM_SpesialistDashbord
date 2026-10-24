@@ -9982,54 +9982,102 @@ body:has(#mig-ov) #st-nt{display:none!important}
 .dark .sp1-now-tx small{color:#a8a29e}
 .sp1-now:has(input:not(:checked)){opacity:.75}
 
-/* v26b: Gabung PO kembar */
+
+/* v26b: PO kembar — tombol, baris gabungan, ringkasan gabungan */
 .grp-tg{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;margin-left:6px;border-radius:999px;border:1px solid rgba(100,116,139,.3);background:transparent;color:#64748b;font-size:10.5px;font-weight:700;cursor:pointer;transition:background .15s,color .15s,border-color .15s;vertical-align:middle;white-space:nowrap}
 .grp-tg i{font-size:10px}
 .grp-tg.on{border-color:rgba(8,145,178,.4);background:rgba(8,145,178,.1);color:#0e7490}
 .grp-tg:hover{border-color:rgba(8,145,178,.6)}
 .grp-tg:focus-visible{outline:2px solid #0891b2;outline-offset:2px}
-.dark .grp-tg{color:#94a3b8;border-color:rgba(148,163,184,.3)}
-.dark .grp-tg.on{color:#67e8f9;background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.35)}
+html.dark .grp-tg{color:#94a3b8;border-color:rgba(148,163,184,.3)}
+html.dark .grp-tg.on{color:#67e8f9;background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.35)}
 tr.grp-head{cursor:pointer;background:rgba(8,145,178,.045)}
 tr.grp-head:hover{background:rgba(8,145,178,.09)}
 tr.grp-head:focus-visible{outline:2px solid #0891b2;outline-offset:-2px}
-.dark tr.grp-head{background:rgba(34,211,238,.05)}
-.dark tr.grp-head:hover{background:rgba(34,211,238,.1)}
-tr.grp-head.grp-open{background:rgba(8,145,178,.08)}
-.dark tr.grp-head.grp-open{background:rgba(34,211,238,.09)}
+html.dark tr.grp-head{background:rgba(34,211,238,.05)}
+html.dark tr.grp-head:hover{background:rgba(34,211,238,.1)}
 .grp-line{display:flex;align-items:center;gap:6px}
-.grp-chev{font-size:9px;color:#0891b2;transition:transform .18s ease;width:10px}
-tr.grp-open .grp-chev{transform:rotate(90deg)}
-.grp-pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;background:#0891b2;color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.01em}
+.grp-pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;background:#0891b2;color:#fff;font-size:10.5px;font-weight:800}
 .grp-pill i{font-size:9px;opacity:.85}
-.dark .grp-pill{background:#0e7490}
+html.dark .grp-pill{background:#0e7490}
 .grp-sub{margin-top:3px;font-size:10px;color:#64748b;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dark .grp-sub{color:#94a3b8}
+html.dark .grp-sub{color:#94a3b8}
 .grp-prog{margin-top:3px;font-size:9.5px;font-weight:700;color:#64748b}
-.grp-mix{display:inline-block;padding:1px 7px;border-radius:6px;border:1px dashed rgba(100,116,139,.45);font-size:10px;color:#64748b;white-space:nowrap}
-.dark .grp-mix{color:#94a3b8;border-color:rgba(148,163,184,.4)}
 .grp-sts{display:flex;flex-direction:column;align-items:center;gap:3px}
-tr.grp-child.grp-hide{display:none}
-tr.grp-child>td:first-child{box-shadow:inset 3px 0 0 rgba(8,145,178,.55)}
-tr.grp-child>td{background:rgba(8,145,178,.02)}
-.dark tr.grp-child>td{background:rgba(34,211,238,.025)}
-tr.grp-child.grp-last>td{border-bottom:2px solid rgba(8,145,178,.2)}
-@media (prefers-reduced-motion:reduce){.grp-chev,.grp-tg{transition:none}}
+.pog-dcs{display:flex;flex-wrap:wrap;gap:4px;max-width:170px}
+.pog-dc{padding:1px 6px;border-radius:6px;font-size:9.5px;font-weight:800;font-family:ui-monospace,monospace;background:rgba(225,29,72,.08);color:#be123c;white-space:nowrap}
+.pog-dc.part{background:rgba(217,119,6,.1);color:#b45309}
+.pog-dc.ok{background:rgba(5,150,105,.1);color:#047857}
+html.dark .pog-dc{color:#fda4af}html.dark .pog-dc.part{color:#fcd34d}html.dark .pog-dc.ok{color:#6ee7b7}
+/* bar di rincian satu PO */
+.pog-bar{display:flex;flex-direction:column;gap:8px;padding:10px 12px;margin-bottom:14px;border-radius:14px;background:rgba(8,145,178,.07);border:1px solid rgba(8,145,178,.22)}
+.pog-bt{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#155e75}
+.pog-bt i{color:#0891b2}
+.pog-pos{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pog-pill{padding:4px 10px;border-radius:999px;border:1px solid rgba(8,145,178,.3);background:#fff;font-family:ui-monospace,monospace;font-size:11px;font-weight:700;color:#0e7490;cursor:pointer}
+.pog-pill.on{background:#0891b2;border-color:#0891b2;color:#fff;cursor:default}
+.pog-all{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;border:0;background:#0e7490;color:#fff;font-size:11px;font-weight:700;cursor:pointer}
+.pog-pill:focus-visible,.pog-all:focus-visible{outline:2px solid #0891b2;outline-offset:2px}
+html.dark .pog-bar{background:rgba(34,211,238,.07);border-color:rgba(34,211,238,.22)}
+html.dark .pog-bt{color:#a5f3fc}
+html.dark .pog-pill{background:transparent;color:#67e8f9;border-color:rgba(34,211,238,.35)}
+html.dark .pog-pill.on{background:#0e7490;color:#fff}
+/* ringkasan gabungan */
+.pog{display:flex;flex-direction:column;gap:14px}
+.pog-head{display:flex;flex-direction:column;gap:8px}
+.pog-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(100,116,139,.1);font-size:10.5px;font-weight:700;color:#334155}
+.pog-chip i{font-size:9px;color:#0891b2}
+html.dark .pog-chip{color:#cbd5e1;background:rgba(148,163,184,.12)}
+.pog-sts{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pog-st{display:inline-flex;align-items:center;gap:4px}
+.pog-st b{font-size:11px;font-family:ui-monospace,monospace;color:#334155}
+html.dark .pog-st b{color:#e2e8f0}
+.pog-warn{font-size:10.5px;font-weight:700;color:#be123c}
+.pog-warn i{margin-right:4px}
+.pog-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.pog-kpi{padding:10px 12px;border-radius:12px;background:rgba(241,245,249,.8);border:1px solid rgba(148,163,184,.25)}
+.pog-kpi span{display:block;font-size:10px;font-weight:700;color:#64748b}
+.pog-kpi b{display:block;margin-top:2px;font-size:13px;font-family:ui-monospace,monospace;color:#0f172a}
+html.dark .pog-kpi{background:rgba(30,41,59,.6);border-color:rgba(148,163,184,.15)}
+html.dark .pog-kpi b{color:#fff}
+.pog-h{font-size:11px;font-weight:800;color:#475569}
+html.dark .pog-h{color:#cbd5e1}
+.pog-list{display:flex;flex-direction:column;gap:10px}
+.pog-card{padding:12px 14px;border-radius:14px;border:1px solid rgba(148,163,184,.3);background:#fff}
+.pog-card.on{border-color:#0891b2;box-shadow:0 0 0 2px rgba(8,145,178,.15)}
+html.dark .pog-card{background:#0f172a;border-color:rgba(148,163,184,.18)}
+.pog-ch{display:flex;gap:10px;align-items:flex-start}
+.pog-po{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.pog-po b{font-size:13px;color:#0e7490}
+.pog-po span{font-size:10.5px;color:#64748b}
+html.dark .pog-po b{color:#67e8f9}
+.pog-sub{margin-top:2px;font-size:11px;color:#64748b}
+.pog-sub b{color:#047857}
+html.dark .pog-sub b{color:#5eead4}
+.pog-step{margin-top:10px}
+.pog-fin{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;padding-top:8px;border-top:1px dashed rgba(148,163,184,.35);font-size:10.5px;color:#64748b}
+.pog-fin b{font-family:ui-monospace,monospace;color:#0f172a;font-weight:700}
+.pog-fin em{font-style:normal;color:#be123c}
+html.dark .pog-fin b{color:#e2e8f0}
+.pog-act{margin-top:8px;display:flex;justify-content:flex-end}
+.pog-trow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid rgba(148,163,184,.3);background:transparent;cursor:pointer}
+.pog-trow:hover{background:rgba(8,145,178,.06)}
+.pog-trow b{display:block;font-size:12px;color:#0e7490}
+.pog-trow small{display:block;font-size:10.5px;color:#64748b}
 @media (max-width:767px){
   .data-table tbody tr.grp-head{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;padding:12px 14px;margin:10px 8px;border:1px solid rgba(8,145,178,.35);border-radius:16px;background:rgba(8,145,178,.06);box-shadow:0 6px 18px -12px rgba(15,23,42,.35)}
   html.dark .data-table tbody tr.grp-head{background:rgba(34,211,238,.07);border-color:rgba(34,211,238,.25)}
   .data-table tbody tr.grp-head td{display:block;padding:0!important;border:0!important;min-width:0;position:static!important;background:transparent!important;white-space:normal!important;overflow-wrap:anywhere;text-align:left!important}
   .data-table tbody tr.grp-head td::before{content:attr(data-label);display:block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin-bottom:2px}
-  .data-table tbody tr.grp-head td[data-label=""]::before{display:none}
+  .data-table tbody tr.grp-head td[data-label=""]::before,.data-table tbody tr.grp-head td:first-child::before{display:none}
   .data-table tbody tr.grp-head td:first-child{grid-column:1/-1}
-  .data-table tbody tr.grp-head td:first-child::before{display:none}
-  .data-table tbody tr.grp-head td:has(> .grp-mix:only-child){display:none}
+  .data-table tbody tr.grp-head td.cell-act{grid-column:1/-1;text-align:right!important}
   .data-table tbody tr.grp-head .grp-sub{max-width:none}
-  .data-table tbody tr.grp-head .grp-sts{align-items:flex-start}
-  .data-table tbody tr.grp-child{margin-left:24px!important;border-left:3px solid rgba(8,145,178,.55)!important}
-  .data-table tbody tr.grp-child>td:first-child{box-shadow:none}
-  .data-table tbody tr.grp-child.grp-last>td{border-bottom:0!important}
+  .pog-all{margin-left:0}
+  .pog-ch{flex-direction:column;gap:6px}
+  .pog-ch>.text-right{text-align:left!important}
 }
+@media (prefers-reduced-motion:reduce){.grp-tg{transition:none}}
 
 </style>
 <script id="addon_v26">
@@ -10094,79 +10142,105 @@ tr.grp-child.grp-last>td{border-bottom:2px solid rgba(8,145,178,.2)}
   };
 })();
 
-/* ===== v26b: Gabung PO kembar (stasiun + Mitra Before) — Data Mitra Takeover & Tracker All Starlite ===== */
+/* ===== v26b: PO kembar (stasiun + Mitra Before sama) — Data Mitra Takeover & Tracker All Starlite =====
+   Bawaan: satu PO per baris. Rincian PO menampilkan PO lain di stasiun & Mitra Before yang sama + "Ringkasan gabungan".
+   Opsi "Gabung PO": satu baris per stasiun + Mitra Before; diklik → ringkasan gabungan lengkap (status, dokumen, keuangan). */
 (function () {
   if (typeof renderTakeoverPage !== "function") return;
-  var LS = "po_group_v1";
-  var isOn = function () { try { return localStorage.getItem(LS) !== "0"; } catch (e) { return true; } };
+  var LS = "po_group_v2";
+  var isOn = function () { try { return localStorage.getItem(LS) === "1"; } catch (e) { return false; } };
   var setOn = function (v) { try { localStorage.setItem(LS, v ? "1" : "0"); } catch (e) { } };
   var norm = function (v) { return String(v == null ? "" : v).trim().toLowerCase().replace(/\s+/g, " "); };
   var E = function (v) { return typeof esc === "function" ? esc(v) : String(v == null ? "" : v); };
-  var OPEN = { to: new Set(), trk: new Set() };
+  var J = function (v) { return JSON.stringify(String(v)); };
   var RANK = { need: 0, belum: 1, proses: 2, hold: 3, selesai: 4, close: 5, cancel: 6 };
-
+  var keyOf = function (t) { var s = norm(t.stasiun), b = norm(t.before); return s && b ? s + "|" + b : ""; };
+  var uniq = function (items, f) { return Array.from(new Set(items.map(f).filter(function (v) { return !isEmpty(v); }))); };
+  var sum = function (items, f) { return items.reduce(function (a, t) { return a + (Number(f(t)) || 0); }, 0); };
+  var fin = function () { try { return can("finance"); } catch (e) { return false; } };
+  function siblings(t) { var k = keyOf(t); return k ? STATE.takeover.filter(function (x) { return keyOf(x) === k; }) : [t]; }
+  function worst(items) {
+    var act = items.filter(function (t) { return t.st !== "cancel"; }), pool = act.length ? act : items;
+    return pool.reduce(function (w, t) { return (RANK[t.st] == null ? 1 : RANK[t.st]) < (RANK[w] == null ? 1 : RANK[w]) ? t.st : w; }, pool[0].st);
+  }
   function build(list) {
     var map = new Map(), out = [];
     list.forEach(function (t) {
-      var s = norm(t.stasiun), b = norm(t.before), k = s && b ? s + "|" + b : "";
+      var k = keyOf(t);
       if (!k) { out.push({ k: "", items: [t] }); return; }
-      var g = map.get(k);
-      if (!g) { g = { k: k, items: [] }; map.set(k, g); out.push(g); }
+      var g = map.get(k); if (!g) { g = { k: k, items: [] }; map.set(k, g); out.push(g); }
       g.items.push(t);
     });
     return out;
   }
-  function heads(theadId) {
-    try { return Array.from(document.querySelectorAll("#" + theadId + " th")).map(function (h) { return h.textContent.trim(); }); } catch (e) { return []; }
+  var GK = new Map();               // kunci grup → id PO (untuk klik)
+
+  // ---------- ringkasan gabungan (modal rincian) ----------
+  function openGroup(ids, focusId) {
+    var items = ids.map(function (id) { return STATE.idx.byId.get(id); }).filter(Boolean);
+    if (!items.length) return;
+    if (items.length === 1) return openRecord(items[0].id);
+    var t0 = items[0], st = worst(items), aft = uniq(items, function (t) { return t.after; }), reg = uniq(items, function (t) { return t.region; });
+    var cnt = {}; items.forEach(function (t) { cnt[t.st] = (cnt[t.st] || 0) + 1; });
+    var done = items.filter(function (t) { return t.st === "selesai" || t.st === "close"; }).length, tot = items.filter(function (t) { return t.st !== "cancel"; }).length;
+    setModalHead("fa-solid fa-layer-group text-cyan-400", "Ringkasan gabungan · " + items.length + " PO", "Stasiun " + t0.stasiun + " · Mitra Before " + t0.before, "");
+    var money = function (v) { return v ? fmtRp(v) : '<span class="text-slate-400">-</span>'; };
+    var kpi = function (l, v, cls) { return '<div class="pog-kpi"><span>' + l + '</span><b class="' + (cls || "") + '">' + v + "</b></div>"; };
+    var totals = '<div class="pog-kpis">' + kpi("Selesai", done + "/" + tot + " PO") + kpi("HP PO → Actual", fmtInt(sum(items, function (t) { return t.hp_po; })) + " → " + fmtInt(sum(items, function (t) { return t.hp_act; })), "text-emerald-700 dark:text-emerald-400") + kpi("HC", fmtInt(sum(items, function (t) { return t.hc; })))
+      + (fin() ? kpi("DP diterima", money(sum(items, function (t) { return t.dp; })), "text-emerald-700 dark:text-emerald-400") + kpi("BAST", money(sum(items, function (t) { return t.bast_n; }))) + kpi("Retensi", money(sum(items, function (t) { return t.ret; }))) + kpi("Nominal HC", money(sum(items, function (t) { return t.nhc; }))) + kpi("Donasi", money(sum(items, function (t) { return t.don; }))) : "") + "</div>";
+    var unpaid = items.filter(function (t) { return t.st !== "cancel" && !t.dp; }).length;
+    var head = '<div class="pog-head"><div class="flex flex-wrap items-center gap-2">' + statusBadge(st)
+      + '<span class="pog-chip"><i class="fa-solid fa-location-dot"></i>' + E(t0.stasiun) + (reg.length ? " · " + E(reg.join(", ")) : "") + "</span>"
+      + '<span class="pog-chip"><i class="fa-solid fa-building"></i>Before: ' + E(t0.before) + "</span>"
+      + '<span class="pog-chip"><i class="fa-solid fa-arrow-right"></i>After: ' + E(aft.join(", ") || "-") + "</span></div>"
+      + '<div class="pog-sts">' + Object.keys(cnt).sort(function (a, b) { return (RANK[a] || 0) - (RANK[b] || 0); }).map(function (k) { return '<span class="pog-st">' + statusBadge(k) + "<b>" + cnt[k] + "</b></span>"; }).join("")
+      + (fin() && unpaid ? '<span class="pog-warn"><i class="fa-solid fa-circle-exclamation"></i>' + unpaid + " PO DP belum diterima</span>" : "") + "</div></div>";
+    var cards = items.map(function (t) {
+      var spk = isEmpty(t.att_spk) ? '<span class="text-slate-400">SPK: -</span>' : '<span class="font-mono">' + E(t.att_spk) + "</span>";
+      return '<div class="pog-card' + (t.id === focusId ? " on" : "") + '" data-id="' + E(t.id) + '">'
+        + '<div class="pog-ch"><div class="min-w-0 flex-1"><p class="pog-po"><b class="font-mono">' + E(t.po) + "</b>" + (isEmpty(t.bap_no) ? "" : '<span class="font-mono">' + E(t.bap_no) + "</span>") + "</p>"
+        + '<p class="pog-sub">After: <b>' + E(t.after || "-") + "</b> · " + spk + (t.spk_ts ? " · " + E(fmtDate(t.spk_ts)) : "") + " · PIC " + E(t.pic || "-") + "</p></div>"
+        + '<div class="text-right shrink-0">' + statusBadge(t.st) + (typeof toPendingLine === "function" ? toPendingLine(t) : "") + "</div></div>"
+        + (typeof stepper === "function" ? '<div class="pog-step">' + stepper(t) + "</div>" : "")
+        + '<div class="pog-fin"><span>HP <b>' + fmtInt(t.hp_po || 0) + " → " + fmtInt(t.hp_act || 0) + "</b></span><span>HC <b>" + fmtInt(t.hc || 0) + "</b></span>"
+        + (fin() ? "<span>DP <b>" + (t.dp ? fmtRp(t.dp) : '<em>Unpaid</em>') + "</b></span><span>BAST <b>" + money(t.bast_n) + "</b></span><span>Retensi <b>" + money(t.ret) + "</b></span><span>Nominal HC <b>" + money(t.nhc) + "</b></span><span>Donasi <b>" + money(t.don) + "</b></span>" : "")
+        + '</div><div class="pog-act"><button type="button" class="btn btn-ghost !py-1.5" onclick="event.stopPropagation();openRecord(' + E(J(t.id)) + ')"><i class="fa-solid fa-eye"></i>Rincian lengkap PO ini</button></div></div>';
+    }).join("");
+    $("detail-modal-body").innerHTML = '<div class="pog">' + head + totals + '<p class="pog-h">Rincian per PO</p><div class="pog-list">' + cards + "</div></div>";
+    try { MODAL.stack = []; } catch (e) { }
+    $("detail-modal-back").classList.add("hidden");
+    $("detail-modal").classList.remove("hidden");
+    $("detail-modal-body").scrollTop = 0;
+    if (focusId) { var f = document.querySelector('.pog-card[data-id="' + focusId + '"]'); if (f) f.scrollIntoView({ block: "nearest" }); }
   }
-  function mixCell(n) { return '<td class="px-3 py-2.5"><span class="grp-mix" title="Isinya berbeda antar PO — buka grup untuk melihat rinciannya">' + n + " PO berbeda</span></td>"; }
-  function poCell(items, extra, sticky) {
-    var pos = items.map(function (t) { return t.po; }).filter(function (p) { return !isEmpty(p); });
-    var list = pos.slice(0, 3).map(E).join(", ") + (pos.length > 3 ? " +" + (pos.length - 3) : "");
-    return '<td class="' + (sticky ? "sticky-col " : "") + 'px-3 py-2.5 grp-po"><div class="grp-line"><i class="fa-solid fa-chevron-right grp-chev" aria-hidden="true"></i>'
-      + '<span class="grp-pill"><i class="fa-solid fa-layer-group"></i>' + items.length + ' PO</span></div>'
-      + '<div class="grp-sub font-mono" title="' + E(pos.join(", ")) + '">' + list + "</div>" + (extra || "") + "</td>";
+  window.openPoGroup = function (id) { var t = STATE.idx.byId.get(id); if (t) openGroup(siblings(t).map(function (x) { return x.id; }), id); };
+
+  // ---------- di rincian satu PO: PO lain di stasiun & Mitra Before yang sama ----------
+  if (typeof renderTakeoverDetail === "function") {
+    var oRT = renderTakeoverDetail;
+    window.renderTakeoverDetail = renderTakeoverDetail = function (t) {
+      var r = oRT.apply(this, arguments);
+      try {
+        var sib = siblings(t);
+        if (sib.length > 1) {
+          var body = $("detail-modal-body");
+          var bar = '<div class="pog-bar"><div class="pog-bt"><i class="fa-solid fa-layer-group"></i><span><b>' + sib.length + " PO</b> di stasiun " + E(t.stasiun) + " dengan Mitra Before yang sama</span></div>"
+            + '<div class="pog-pos">' + sib.map(function (x) { return '<button type="button" class="pog-pill' + (x.id === t.id ? " on" : "") + '" onclick="event.stopPropagation();openRecord(' + E(J(x.id)) + ')"' + (x.id === t.id ? ' aria-current="true"' : "") + ">" + E(x.po) + "</button>"; }).join("")
+            + '<button type="button" class="pog-all" onclick="event.stopPropagation();openPoGroup(' + E(J(t.id)) + ')"><i class="fa-solid fa-table-cells-large"></i>Ringkasan gabungan</button></div></div>';
+          body.insertAdjacentHTML("afterbegin", bar);
+        }
+      } catch (e) { }
+      return r;
+    };
   }
-  function cellsFor(cols, items, custom) {
-    return cols.map(function (c, i) {
-      if (custom[c.key]) return custom[c.key](items, i);
-      var hs = items.map(function (t) { return c.td(t); });
-      return hs.every(function (h) { return h === hs[0]; }) ? hs[0] : mixCell(items.length);
-    });
-  }
-  function label(rowHtml, labels) {
-    var i = 0;
-    return rowHtml.replace(/<td(\s|>)/g, function (m, a) { var l = labels[i++] || ""; return '<td data-label="' + E(l) + '"' + a; });
-  }
-  function bindToggle(bodyId, key, rerender) {
-    var b = document.getElementById(bodyId);
-    if (!b || b.dataset.grpBound) return;
-    b.dataset.grpBound = "1";
-    b.addEventListener("click", function (ev) {
-      var tr = ev.target.closest("tr.grp-head");
-      if (!tr || ev.target.closest("a,button,input")) return;
-      ev.stopPropagation();
-      var k = tr.dataset.grp, kk = tr.dataset.auto ? "x:" + k : k;
-      OPEN[key].has(kk) ? OPEN[key].delete(kk) : OPEN[key].add(kk);
-      // gambar ulang dari data (tabel bisa digambar sebagian/virtual) — posisi layar dijaga pada baris yang diklik
-      var top = tr.getBoundingClientRect().top;
-      try { rerender(); } catch (e) { }
-      var again = null;
-      b.querySelectorAll("tr.grp-head").forEach(function (h) { if (h.dataset.grp === k) again = h; });
-      if (again) { var d = again.getBoundingClientRect().top - top; if (Math.abs(d) > 1) window.scrollBy(0, d); try { again.focus({ preventScroll: true }); } catch (e) { } }
-    }, true);
-    b.addEventListener("keydown", function (ev) {
-      if ((ev.key === "Enter" || ev.key === " ") && ev.target.matches && ev.target.matches("tr.grp-head")) { ev.preventDefault(); ev.target.click(); }
-    });
-  }
+
+  // ---------- tombol Gabung / Pisah ----------
   function toggleBtn(anchorId, id) {
-    var a = document.getElementById(anchorId);
-    if (!a) return;
+    var a = document.getElementById(anchorId); if (!a) return;
     var b = document.getElementById(id);
     if (!b) {
-      b = document.createElement("button");
-      b.type = "button"; b.id = id; b.className = "grp-tg";
-      b.title = "Gabungkan PO dengan stasiun dan Mitra Before yang sama menjadi satu baris";
+      b = document.createElement("button"); b.type = "button"; b.id = id; b.className = "grp-tg";
+      b.title = "Gabungkan PO yang stasiun dan Mitra Before-nya sama menjadi satu baris";
       b.addEventListener("click", function () {
         setOn(!isOn());
         try { renderTakeoverPage(); } catch (e) { }
@@ -10176,23 +10250,26 @@ tr.grp-child.grp-last>td{border-bottom:2px solid rgba(8,145,178,.2)}
     }
     var on = isOn();
     b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false");
-    b.innerHTML = '<i class="fa-solid ' + (on ? "fa-layer-group" : "fa-list") + '"></i><span>' + (on ? "PO digabung" : "PO terpisah") + "</span>";
+    b.innerHTML = '<i class="fa-solid ' + (on ? "fa-layer-group" : "fa-list") + '"></i><span>' + (on ? "Gabung PO: aktif" : "Gabung PO") + "</span>";
   }
-  function uniq(items, f) { return Array.from(new Set(items.map(f).filter(function (v) { return !isEmpty(v); }))); }
-  function stasiunCell(items, w) {
-    var reg = uniq(items, function (t) { return t.region; });
-    return '<td class="px-3 py-2.5">' + cLine(cTxt(items[0].stasiun, "font-bold text-slate-900 dark:text-white", w)) + cSub(cTxt(reg.join(", "), "", w)) + "</td>";
+  function heads(theadId) { try { return Array.from(document.querySelectorAll("#" + theadId + " th")).map(function (h) { return h.textContent.trim(); }); } catch (e) { return []; } }
+  function label(html, labels) { var i = 0; return html.replace(/<td(\s|>)/g, function (m, a) { return '<td data-label="' + E(labels[i++] || "") + '"' + a; }); }
+  var muted = function (t) { return '<span class="text-slate-400">' + t + "</span>"; };
+  function poCell(items, extra, sticky) {
+    var pos = items.map(function (t) { return t.po; }).filter(function (p) { return !isEmpty(p); });
+    return '<td class="' + (sticky ? "sticky-col " : "") + 'px-3 py-2.5"><div class="grp-line"><span class="grp-pill"><i class="fa-solid fa-layer-group"></i>' + items.length + " PO</span></div>"
+      + '<div class="grp-sub font-mono" title="' + E(pos.join(", ")) + '">' + pos.slice(0, 3).map(E).join(", ") + (pos.length > 3 ? " +" + (pos.length - 3) : "") + "</div>" + (extra || "") + "</td>";
   }
+  function stasiunCell(items, w) { return '<td class="px-3 py-2.5">' + cLine(cTxt(items[0].stasiun, "font-bold text-slate-900 dark:text-white", w)) + cSub(cTxt(uniq(items, function (t) { return t.region; }).join(", "), "", w)) + "</td>"; }
   function afterCell(items, w, dari) {
     var af = uniq(items, function (t) { return t.after; });
-    var top = af.length <= 1 ? cTxt(af[0] || "", "font-bold text-emerald-700 dark:text-cyan-400", w)
-      : '<span class="grp-mix" title="' + E(af.join(", ")) + '">' + af.length + " mitra pengganti</span>";
+    var top = af.length <= 1 ? cTxt(af[0] || "", "font-bold text-emerald-700 dark:text-cyan-400", w) : '<span class="font-bold text-emerald-700 dark:text-cyan-400" title="' + E(af.join(", ")) + '">' + af.length + " mitra pengganti</span>";
     return '<td class="px-3 py-2.5">' + cLine(top) + cSub((dari ? '<span class="text-slate-400 mr-1">dari</span>' : "") + cTxt(items[0].before, "", w - (dari ? 25 : 0))) + "</td>";
   }
-  function worst(items) {
-    var act = items.filter(function (t) { return t.st !== "cancel"; });
-    var pool = act.length ? act : items;
-    return pool.reduce(function (w, t) { return (RANK[t.st] == null ? 1 : RANK[t.st]) < (RANK[w] == null ? 1 : RANK[w]) ? t.st : w; }, pool[0].st);
+  function docSum(items) {
+    var c = function (k) { return items.filter(function (t) { try { return docState(t, k) === "ok"; } catch (e) { return false; } }).length; };
+    var n = items.length, chip = function (l, v) { return '<span class="pog-dc' + (v === n ? " ok" : v ? " part" : "") + '">' + l + " " + v + "/" + n + "</span>"; };
+    return '<td class="px-3 py-2.5"><div class="pog-dcs">' + chip("BA", c("BA_CANCEL")) + chip("BAP", c("BAP_PO")) + chip("BASTM", c("BASTM")) + chip("SPK", items.filter(function (t) { return !isEmpty(t.att_spk); }).length) + "</div></td>";
   }
 
   // ---------- Data Mitra Takeover ----------
@@ -10200,98 +10277,98 @@ tr.grp-child.grp-last>td{border-bottom:2px solid rgba(8,145,178,.2)}
   window.renderTakeoverPage = renderTakeoverPage = function () {
     var a = (typeof VS_TO !== "undefined" && VS_TO.filtered) || [];
     var g = isOn() && a.length ? build(a) : null;
-    if (!g || g.every(function (x) { return x.items.length === 1; })) {
-      var r = baseTo.apply(this, arguments);
-      toggleBtn("takeover-count-badge", "to-grp-tg");
-      return r;
-    }
+    if (!g || g.every(function (x) { return x.items.length === 1; })) { var r = baseTo.apply(this, arguments); toggleBtn("takeover-count-badge", "to-grp-tg"); return r; }
     var cols = toCols();
     renderThead("takeover-thead", cols, VS_TO, function () { applyTakeoverFilters(false); });
     var body = $("takeover-table-body"), labels = heads("takeover-thead");
     var multi = g.filter(function (x) { return x.items.length > 1; }).length;
-    $("takeover-count-badge").textContent = fmtInt(a.length) + " Baris · " + fmtInt(multi) + " grup";
-    var pages = Math.max(1, Math.ceil(g.length / VS_TO.size));
-    if (VS_TO.page > pages) VS_TO.page = pages;
-    var autoOpen = !!(VS_TO.q || VS_TO.special || VS_TO.mitraKey);
+    $("takeover-count-badge").textContent = fmtInt(a.length) + " Baris · " + fmtInt(multi) + " gabungan";
+    var pages = Math.max(1, Math.ceil(g.length / VS_TO.size)); if (VS_TO.page > pages) VS_TO.page = pages;
     var custom = {
       po: function (items) { return poCell(items, "", false); },
       stasiun: function (items) { return stasiunCell(items, 76); },
       after: function (items) { return afterCell(items, 100, false); },
-      st: function (items) {
-        var st = worst(items), tot = items.filter(function (t) { return t.st !== "cancel"; }).length;
-        var done = items.filter(function (t) { return t.st === "selesai" || t.st === "close"; }).length;
-        return '<td class="px-3 py-3 text-center">' + statusBadge(st) + '<p class="grp-prog">' + (tot ? done + "/" + tot + " selesai" : "semua cancel") + "</p></td>";
-      }
+      spk_ts: function (items) { var p = uniq(items, function (t) { return t.pic; }), n = items.filter(function (t) { return !isEmpty(t.att_spk); }).length; return '<td class="px-3 py-2.5">' + cLine(cTxt(p.length > 1 ? p.length + " PIC" : (p[0] || ""), "font-semibold", 84)) + cSub(n + "/" + items.length + " SPK") + "</td>"; },
+      st: function (items) { var st = worst(items), tot = items.filter(function (t) { return t.st !== "cancel"; }).length, d = items.filter(function (t) { return t.st === "selesai" || t.st === "close"; }).length; return '<td class="px-3 py-3 text-center">' + statusBadge(st) + '<p class="grp-prog">' + (tot ? d + "/" + tot + " selesai" : "semua cancel") + "</p></td>"; },
+      remark: function (items) { var rm = uniq(items, function (t) { return t.remark; }); return '<td class="px-3 py-2.5" style="min-width:122px">' + (rm.length ? '<span class="rmk-txt" style="max-width:126px" title="' + E(rm.join(" | ")) + '">' + E(rm[0]) + "</span>" + (rm.length > 1 ? cSub("+" + (rm.length - 1) + " catatan lain") : "") : muted("-")) + "</td>"; },
+      docs: docSum,
+      hp_act: function (items) { return '<td class="px-3 py-2.5 text-right font-mono whitespace-nowrap">' + cLine(fmtInt(sum(items, function (t) { return t.hp_po; })) + " → " + '<b class="text-emerald-700 dark:text-emerald-400">' + fmtInt(sum(items, function (t) { return t.hp_act; })) + "</b>") + cSub("HC " + fmtInt(sum(items, function (t) { return t.hc; }))) + "</td>"; },
+      dp: function (items) { var d = sum(items, function (t) { return t.dp; }), u = items.filter(function (t) { return t.st !== "cancel" && !t.dp; }).length; return '<td class="px-3 py-2.5 font-mono whitespace-nowrap">' + cLine("DP " + (d ? fmtRpShort(d) : "-")) + cSub(u ? '<span class="text-rose-600">' + u + " PO belum DP</span>" : "Ret " + fmtRpShort(sum(items, function (t) { return t.ret; })) + " · Don " + fmtRpShort(sum(items, function (t) { return t.don; })) ) + "</td>"; },
+      _rec: function (items) { return '<td class="px-3 py-2.5 text-right cell-act"><button type="button" class="icon-btn" title="Ringkasan gabungan" data-grp-open="1"><i class="fa-solid fa-layer-group"></i></button></td>'; }
     };
+    GK.clear();
     var s = (VS_TO.page - 1) * VS_TO.size;
     body.innerHTML = g.slice(s, s + VS_TO.size).map(function (grp) {
-      var rowOf = function (t, extra, gk, hide) {
-        return '<tr data-id="' + t.id + '" class="hover:bg-cyan-500/10 dark:hover:bg-slate-800/60 cursor-pointer transition-colors' + extra + (hide ? " grp-hide" : "") + '"' + (gk ? ' data-gk="' + E(gk) + '"' : "") + ">" + cols.map(function (c) { return c.td(t); }).join("") + "</tr>";
-      };
-      if (grp.items.length === 1) return rowOf(grp.items[0], "", "", false);
-      var open = autoOpen ? !OPEN.to.has("x:" + grp.k) : OPEN.to.has(grp.k);
-      var head = '<tr class="grp-head' + (open ? " grp-open" : "") + '" ' + (autoOpen ? 'data-auto="1" ' : "") + 'data-grp="' + E(grp.k) + '" tabindex="0" aria-expanded="' + (open ? "true" : "false") + '" title="Klik untuk ' + (open ? "menutup" : "membuka") + ' rincian PO">'
-        + cellsFor(cols, grp.items, custom).join("") + "</tr>";
-      return label(head, labels) + grp.items.map(function (t, i) { return rowOf(t, " grp-child" + (i === grp.items.length - 1 ? " grp-last" : ""), grp.k, !open); }).join("");
+      if (grp.items.length === 1) { var t = grp.items[0]; return '<tr data-id="' + t.id + '" class="hover:bg-cyan-500/10 dark:hover:bg-slate-800/60 cursor-pointer transition-colors">' + cols.map(function (c) { return c.td(t); }).join("") + "</tr>"; }
+      GK.set(grp.k, grp.items.map(function (t) { return t.id; }));
+      var cells = cols.map(function (c) {
+        if (custom[c.key]) return custom[c.key](grp.items);
+        var hs = grp.items.map(function (t) { return c.td(t); });
+        return hs.every(function (h) { return h === hs[0]; }) ? hs[0] : '<td class="px-3 py-2.5">' + muted("lihat ringkasan") + "</td>";
+      });
+      return label('<tr class="grp-head" data-grp="' + E(grp.k) + '" tabindex="0" title="Klik untuk melihat ringkasan gabungan">' + cells.join("") + "</tr>", labels);
     }).join("");
     renderPager("takeover-pager", VS_TO, a.length, function () { renderTakeoverPage(); $("takeover-table-body").closest(".data-scroll").scrollTop = 0; });
     try { labelCards("takeover-table-body"); } catch (e) { }
-    bindToggle("takeover-table-body", "to", function () { renderTakeoverPage(); });
+    bind("takeover-table-body", function (k) { var ids = GK.get(k); if (ids) openGroup(ids); });
     toggleBtn("takeover-count-badge", "to-grp-tg");
   };
+  function bind(bodyId, open) {
+    var b = document.getElementById(bodyId); if (!b || b.dataset.grpBound) return;
+    b.dataset.grpBound = "1";
+    b.addEventListener("click", function (ev) {
+      var tr = ev.target.closest("tr.grp-head"); if (!tr) return;
+      if (ev.target.closest("a") || (ev.target.closest("button") && !ev.target.closest("[data-grp-open]"))) return;
+      ev.stopPropagation(); open(tr.dataset.grp);
+    }, true);
+    b.addEventListener("keydown", function (ev) { if ((ev.key === "Enter" || ev.key === " ") && ev.target.matches && ev.target.matches("tr.grp-head")) { ev.preventDefault(); open(ev.target.dataset.grp); } });
+  }
 
   // ---------- Tracker All Starlite ----------
   if (typeof trkPage === "function" && typeof TRK_COLS_UI !== "undefined") {
+    var TG = new Map();
+    function trkGroup(ids) {
+      var items = ids.map(function (i) { return TRK.rows[i]; }).filter(Boolean); if (!items.length) return;
+      try { trkDetailClose(); } catch (e) { }
+      var hp = sum(items, function (t) { return t.hp; }), dn = sum(items, function (t) { return t.don; }), af = uniq(items, function (t) { return t.after; });
+      var m = document.createElement("div"); m.id = "trk-modal"; m.className = "trk-modal"; m.onclick = function (e) { if (e.target === m) trkDetailClose(); };
+      m.innerHTML = '<div class="trk-sheet glass-panel"><div class="flex items-start gap-3 p-5 pb-3"><span class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 bg-cyan-500/15 text-cyan-700"><i class="fa-solid fa-layer-group"></i></span>'
+        + '<div class="min-w-0 flex-1"><p class="text-[15px] font-extrabold text-slate-900 dark:text-white truncate">' + E(items[0].stasiun) + " · " + items.length + ' PO</p><p class="text-[11px] text-slate-500">Mitra Before ' + E(items[0].before) + " → " + E(af.join(", ") || "-") + "</p></div>"
+        + '<button onclick="trkDetailClose()" class="w-8 h-8 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800 text-slate-500" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
+        + '<div class="grid grid-cols-2 gap-2 px-5"><div class="trk-kpi"><span>HP Actual</span><b class="text-emerald-600">' + (hp ? fmtInt(hp) : "-") + '</b></div><div class="trk-kpi"><span>Donasi</span><b>' + (dn ? fmtInt(dn) : "-") + "</b></div></div>"
+        + '<div class="p-5 pt-3 space-y-2">' + items.map(function (t) {
+          return '<button type="button" class="pog-trow" onclick="trkDetail(' + t.id + ')"><span class="min-w-0 flex-1"><b class="font-mono">' + E(t.po || "-") + '</b><small>Item ' + E(t.item || "-") + " · HP " + (t.hp ? fmtInt(t.hp) : "-") + " · Donasi " + (t.don ? fmtInt(t.don) : "-") + " · " + E(t.pic || "-") + "</small></span>" + trkBadge(t.status) + '<i class="fa-solid fa-chevron-right text-slate-400"></i></button>';
+        }).join("") + "</div></div>";
+      document.body.appendChild(m);
+    }
     var baseTrk = window.trkPage;
     window.trkPage = trkPage = function () {
       var vs = TRK.vs, col = TRK_COLS_UI.find(function (t) { return t.key === vs.sortKey; });
       var a = col ? sortData(TRK.view, col, vs.sortDir) : TRK.view;
       var g = isOn() && a.length ? build(a) : null;
-      if (!g || g.every(function (x) { return x.items.length === 1; })) {
-        var r = baseTrk.apply(this, arguments);
-        toggleBtn("trk-count", "trk-grp-tg");
-        return r;
-      }
+      if (!g || g.every(function (x) { return x.items.length === 1; })) { var r = baseTrk.apply(this, arguments); toggleBtn("trk-count", "trk-grp-tg"); return r; }
       renderThead("trk-thead", TRK_COLS_UI, vs, function () { trkPage(); });
-      var labels = heads("trk-thead");
-      var pages = Math.max(1, Math.ceil(g.length / vs.size));
-      if (vs.page > pages) vs.page = pages;
-      var q = ($("trk-search") && $("trk-search").value || "").trim();
+      var labels = heads("trk-thead"), pages = Math.max(1, Math.ceil(g.length / vs.size)); if (vs.page > pages) vs.page = pages;
       var sticky = function (h) { return h.replace('<td class="', '<td class="sticky-col '); };
       var custom = {
-        po: function (items) {
-          var hp = items.reduce(function (s, t) { return s + (t.hp || 0); }, 0);
-          return poCell(items, '<div class="grp-sub"><span class="text-slate-400">HP Actual:</span> <span class="font-mono ' + (hp ? "font-bold text-emerald-600" : "text-slate-400") + '">' + (hp ? fmtInt(hp) : "-") + "</span></div>", true);
-        },
+        po: function (items) { var hp = sum(items, function (t) { return t.hp; }); return poCell(items, '<div class="grp-sub"><span class="text-slate-400">HP Actual:</span> <span class="font-mono ' + (hp ? "font-bold text-emerald-600" : "text-slate-400") + '">' + (hp ? fmtInt(hp) : "-") + "</span></div>", true); },
         stasiun: function (items) { return stasiunCell(items, 170); },
         after: function (items) { return afterCell(items, 170, true); },
-        don: function (items) {
-          var d = items.reduce(function (s, t) { return s + (t.don || 0); }, 0);
-          return '<td class="px-3 py-2.5 text-center font-mono whitespace-nowrap ' + (d ? "" : "text-slate-400") + '">' + (d ? fmtInt(d) : "-") + "</td>";
-        },
-        status: function (items) {
-          var st = Array.from(new Set(items.map(function (t) { return t.status || ""; })));
-          if (st.length === 1) return '<td class="px-2 py-2.5 text-center">' + trkBadge(st[0]) + "</td>";
-          return '<td class="px-2 py-2.5 text-center"><div class="grp-sts">' + st.slice(0, 2).map(function (x) { return trkBadge(x); }).join("") + (st.length > 2 ? '<span class="grp-mix">+' + (st.length - 2) + "</span>" : "") + "</div></td>";
-        }
+        don: function (items) { var d = sum(items, function (t) { return t.don; }); return '<td class="px-3 py-2.5 text-center font-mono whitespace-nowrap ' + (d ? "" : "text-slate-400") + '">' + (d ? fmtInt(d) : "-") + "</td>"; },
+        status: function (items) { var st = uniq(items, function (t) { return t.status; }); return '<td class="px-2 py-2.5 text-center">' + (st.length <= 1 ? trkBadge(st[0] || "") : '<div class="grp-sts">' + st.slice(0, 2).map(function (x) { return trkBadge(x); }).join("") + (st.length > 2 ? muted("+" + (st.length - 2)) : "") + "</div>") + "</td>"; },
+        pic: function (items) { var p = uniq(items, function (t) { return t.pic; }), ad = uniq(items, function (t) { return t.admin; }); return '<td class="px-3 py-2.5">' + cLine(cTxt(p.length > 1 ? p.length + " PIC" : (p[0] || ""), "font-semibold", 150)) + cSub(cTxt(ad.length > 1 ? ad.length + " admin" : (ad[0] || ""), "", 150)) + "</td>"; }
       };
+      TG.clear();
       var s = (vs.page - 1) * vs.size;
       $("trk-body").innerHTML = g.slice(s, s + vs.size).map(function (grp) {
-        var rowOf = function (t, extra, gk, hide) {
-          return '<tr data-id="' + t.id + '" class="trk-row cursor-pointer' + extra + (hide ? " grp-hide" : "") + '"' + (gk ? ' data-gk="' + E(gk) + '"' : "") + ' onclick="trkDetail(' + t.id + ')">'
-            + TRK_COLS_UI.map(function (c, i) { return i === 0 ? sticky(c.td(t)) : c.td(t); }).join("") + "</tr>";
-        };
-        if (grp.items.length === 1) return rowOf(grp.items[0], "", "", false);
-        var open = q ? !OPEN.trk.has("x:" + grp.k) : OPEN.trk.has(grp.k);
-        var head = '<tr class="grp-head' + (open ? " grp-open" : "") + '" ' + (q ? 'data-auto="1" ' : "") + 'data-grp="' + E(grp.k) + '" tabindex="0" aria-expanded="' + (open ? "true" : "false") + '">'
-          + cellsFor(TRK_COLS_UI, grp.items, custom).join("") + "</tr>";
-        return label(head, labels) + grp.items.map(function (t, i) { return rowOf(t, " grp-child" + (i === grp.items.length - 1 ? " grp-last" : ""), grp.k, !open); }).join("");
+        if (grp.items.length === 1) { var t = grp.items[0]; return '<tr data-id="' + t.id + '" class="trk-row cursor-pointer" onclick="trkDetail(' + t.id + ')">' + TRK_COLS_UI.map(function (c, i) { return i === 0 ? sticky(c.td(t)) : c.td(t); }).join("") + "</tr>"; }
+        TG.set(grp.k, grp.items.map(function (t) { return t.id; }));
+        return label('<tr class="grp-head trk-row" data-grp="' + E(grp.k) + '" tabindex="0" title="Klik untuk melihat semua PO di stasiun ini">' + TRK_COLS_UI.map(function (c) { if (custom[c.key]) return custom[c.key](grp.items); var hs = grp.items.map(function (t) { return c.td(t); }); return hs.every(function (h) { return h === hs[0]; }) ? hs[0] : '<td class="px-3 py-2.5">' + muted("lihat ringkasan") + "</td>"; }).join("") + "</tr>", labels);
       }).join("");
       renderPager("trk-pager", vs, a.length, function () { trkPage(); var b = $("trk-body"); b && b.closest(".glass-panel").scrollIntoView({ block: "start", behavior: "smooth" }); });
       try { labelCards("trk-body"); } catch (e) { }
-      var multi = g.filter(function (x) { return x.items.length > 1; }).length;
-      var c = $("trk-count"); if (c) c.textContent = fmtInt(a.length) + " site · " + fmtInt(multi) + " grup";
-      bindToggle("trk-body", "trk", function () { trkPage(); });
+      var multi = g.filter(function (x) { return x.items.length > 1; }).length, c = $("trk-count"); if (c) c.textContent = fmtInt(a.length) + " site · " + fmtInt(multi) + " gabungan";
+      bind("trk-body", function (k) { var ids = TG.get(k); if (ids) trkGroup(ids); });
       toggleBtn("trk-count", "trk-grp-tg");
     };
   }
@@ -11775,6 +11852,80 @@ html.dark .sgb-dh{color:#e2e8f0}
 @keyframes sgbUp{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.sgb-ocard{animation:none}}
 
+/* v26d: tampilan penanda tangan — langkah, identitas, kotak PIN per angka, Lupa PIN */
+.sgs{display:flex;align-items:center;gap:6px;margin:14px 0 4px;padding:0;list-style:none;font-size:10.5px;font-weight:700;color:#94a3b8}
+.sgs li{display:flex;align-items:center;gap:6px;flex:1;min-width:0;white-space:nowrap}
+.sgs li:not(:last-child)::after{content:"";flex:1;height:2px;border-radius:2px;background:rgba(148,163,184,.3);margin-left:2px}
+.sgs li span{flex:none;width:20px;height:20px;border-radius:999px;display:grid;place-items:center;font-size:10px;background:rgba(148,163,184,.18);color:#64748b}
+.sgs li.on{color:#3558c8}.sgs li.on span{background:#3558c8;color:#fff}
+.sgs li.done{color:#0f766e}.sgs li.done span{background:rgba(13,148,136,.15);color:#0f766e}
+.sgs li.done:not(:last-child)::after{background:rgba(13,148,136,.4)}
+html.dark .sgs li.on{color:#a5b4fc}html.dark .sgs li.on span{background:#6366f1}
+html.dark .sgs li.done{color:#5eead4}
+.sgh{display:flex;gap:12px;align-items:flex-start}
+.sgh-ic{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(225,29,72,.09);color:#e11d48;font-size:16px}
+.sgh-t{font-size:13.5px;font-weight:800;color:#0f172a;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sgh-s{margin-top:2px;font-size:11px;color:#64748b}
+html.dark .sgh-t{color:#fff}
+.sgp-me{display:flex;align-items:center;gap:10px;margin-top:14px;padding:10px 12px;border-radius:14px;background:rgba(53,88,200,.06);border:1px solid rgba(53,88,200,.14)}
+.sgp-av{flex:none;width:36px;height:36px;border-radius:999px;display:grid;place-items:center;background:linear-gradient(135deg,#3558c8,#0891b2);color:#fff;font-size:12px;font-weight:800}
+.sgp-n{font-size:13px;font-weight:800;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sgp-r{font-size:10.5px;color:#64748b}
+.sgp-sw{flex:none;border:0;background:none;padding:4px 2px;font-size:11px;font-weight:700;color:#3558c8;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+html.dark .sgp-me{background:rgba(99,102,241,.1);border-color:rgba(99,102,241,.25)}
+html.dark .sgp-n{color:#fff}html.dark .sgp-sw{color:#a5b4fc}
+.sgp-entry{margin-top:18px}
+.sgp-h{font-size:15px;font-weight:800;color:#0f172a}
+.sgp-p{margin-top:3px;font-size:11.5px;color:#64748b;line-height:1.5}
+.sgp-l{margin:14px 0 6px;font-size:11px;font-weight:700;color:#475569}
+html.dark .sgp-h{color:#fff}html.dark .sgp-l{color:#cbd5e1}
+.sgp-entry .sgp-p+.sgd{margin-top:14px}
+.sgd{display:flex;gap:10px;justify-content:center}
+.sgd.wide{gap:7px}
+.sgd-c{width:52px;height:58px;border-radius:14px;border:1.5px solid rgba(148,163,184,.5);background:#fff;text-align:center;font-size:22px;font-weight:800;color:#0f172a;font-family:ui-monospace,monospace;outline:none;transition:border-color .15s,box-shadow .15s}
+.sgd.wide .sgd-c{width:44px;height:52px;font-size:20px}
+.sgd-c:focus{border-color:#3558c8;box-shadow:0 0 0 4px rgba(53,88,200,.15)}
+.sgd.full .sgd-c{border-color:rgba(53,88,200,.55)}
+html.dark .sgd-c{background:#0f172a;color:#fff;border-color:rgba(148,163,184,.35)}
+html.dark .sgd-c:focus{border-color:#818cf8;box-shadow:0 0 0 4px rgba(129,140,248,.2)}
+.sgd.err{animation:sgdShake .4s ease}.sgd.err .sgd-c{border-color:#e11d48}
+@keyframes sgdShake{0%,100%{transform:none}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.sgd-src{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important;padding:0!important;border:0!important}
+.sgp-entry #sg-perr{margin-top:12px;text-align:center}
+.sgp-entry #sg-pgo{margin-top:16px;min-height:46px;font-size:13px}
+.sgp .sgv-forgot,.sgp-entry .sgv-forgot{display:block;margin:12px auto 0;border:0;background:none;color:#3558c8;font-size:12px;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+html.dark .sgp-entry .sgv-forgot{color:#a5b4fc}
+.sgp .sgb-box{margin-top:16px}
+.sgk .sgp-h{font-size:14px}
+.sgk .sg-name{border-radius:14px}
+/* lembar Lupa PIN */
+.sgf h3{display:flex;align-items:center;gap:10px}
+.sgf h3 b{display:block;font-size:15px;color:#0f172a}
+.sgf h3 small{display:block;font-size:11px;font-weight:500;color:#64748b;margin-top:1px}
+html.dark .sgf h3 b{color:#fff}
+.sgf-ic{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(217,119,6,.12);color:#d97706;font-size:16px}
+.sgf .sgf-opt{margin-top:12px;padding:14px;border-radius:16px;border:1px solid rgba(148,163,184,.3);background:#fff}
+html.dark .sgf .sgf-opt{background:rgba(15,23,42,.7);border-color:rgba(148,163,184,.18)}
+.sgf-oh{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+.sgf-oh b{display:block;font-size:13px;color:#0f172a}
+.sgf-oh small{display:block;margin-top:2px;font-size:11.5px;color:#64748b;line-height:1.45}
+.sgf-oh strong{color:#0f172a}
+html.dark .sgf-oh b,html.dark .sgf-oh strong{color:#fff}
+.sgf-oi{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:15px}
+.sgf-oi.mail{background:rgba(53,88,200,.1);color:#3558c8}
+.sgf-oi.wa{background:rgba(5,150,105,.12);color:#059669}
+.sgf #sgv-fp-send{min-height:42px}
+.sgf-step .sgd{justify-content:flex-start}
+.sgf-step #sgv-fp-go{margin-top:16px;min-height:42px}
+.sgf #sgv-fp-msg{margin-top:10px}
+.sgf-wa{display:flex;align-items:center;justify-content:center;gap:8px;min-height:42px;color:#047857;border:1.5px solid rgba(5,150,105,.35)}
+html.dark .sgf-wa{color:#6ee7b7}
+@media (max-width:360px){.sgd-c{width:46px;height:52px}.sgd.wide .sgd-c{width:38px;height:46px;font-size:18px}.sgs li{font-size:9.5px}}
+@media (prefers-reduced-motion:reduce){.sgd.err{animation:none}.sgd-c{transition:none}}
+.sgk-note{display:flex;gap:8px;align-items:flex-start;margin-top:12px;padding:9px 11px;border-radius:12px;background:rgba(217,119,6,.08);color:#78350f;font-size:11.5px;line-height:1.45}
+.sgk-note i{color:#d97706;margin-top:2px}
+html.dark .sgk-note{background:rgba(245,158,11,.1);color:#fde68a}
+
 </style>
 <script id="addon_v26_sg">
 /* ===================== STARLITE v26c · Signing: sidik jari / Face ID, PIN opsional =====================
@@ -11883,11 +12034,14 @@ async function bioCreate(ctx, btn) {
 
 // ---------- tampilan di layar PIN ----------
 async function bioUI(ctx) {
-    const go = $id("sg-pgo"); if (!go || go.parentNode.querySelector(".sgb-box")) return;
-    const card = go.parentNode;
+    const go = $id("sg-pgo"); if (!go) return;
+    const card = go.closest(".sg-card") || go.parentNode;
+    if (card.querySelector(".sgb-box")) return;
     const ok = await plat();
     if (!document.body.contains(go)) return;
     const hidePin = () => {
+        const en = card.querySelector(".sgp-entry");
+        if (en) { [...en.children].forEach(c => { if (!c.matches("#sg-perr,.sgv-forgot,.sgv-vmwa")) c.classList.add("sgb-hide"); }); return; }
         ["sg-pin", "sg-pin2"].forEach(id => { const i = $id(id); if (i) { i.classList.add("sgb-hide"); const l = i.previousElementSibling; if (l && l.tagName === "LABEL") l.classList.add("sgb-hide"); } });
         card.querySelectorAll("label.ulabel").forEach(l => { if (/PIN/i.test(l.textContent)) l.classList.add("sgb-hide"); });
         card.querySelectorAll("p").forEach(p => { if (/PIN 4 angka yang Anda buat|buat PIN 4 angka/i.test(p.textContent)) p.classList.add("sgb-hide"); });
@@ -11899,7 +12053,7 @@ async function bioUI(ctx) {
         box.innerHTML = ok
             ? `<p class="sgb-note"><i class="fa-solid fa-shield-halved"></i>Akun Anda memakai sidik jari / Face ID — PIN tidak diperlukan.</p><button type="button" class="btn btn-primary w-full sgb-go">${BIO_IC}Buka dengan sidik jari / Face ID</button><p class="sgb-hint">Di perangkat lain? Pakai perangkat yang sudah didaftarkan, atau buat PIN lewat <b>Lupa PIN</b>.</p>`
             : `<p class="sgb-note warn"><i class="fa-solid fa-triangle-exclamation"></i>Akun Anda memakai sidik jari / Face ID, tetapi perangkat ini belum didaftarkan atau tidak mendukung.</p><p class="sgb-hint">Buka dari perangkat yang sudah didaftarkan, atau buat PIN lewat <b>Lupa PIN</b>.</p>`;
-        const first = card.querySelector("label.ulabel") || go;
+        const first = card.querySelector(".sgp-entry") || card.querySelector("label.ulabel") || go;
         first.insertAdjacentElement("beforebegin", box);
         if (ctx.mode === "person" && !card.querySelector(".sgv-forgot") && window.SGV2 && SGV2.forgot) {
             go.insertAdjacentHTML("afterend", `<button type="button" class="sgv-forgot"><i class="fa-solid fa-circle-question"></i>Lupa PIN?</button>`);
@@ -11908,7 +12062,7 @@ async function bioUI(ctx) {
     } else if (!ctx.create) {
         if (!ok || !(ctx.bio || localHas(ctx.name))) return;
         box.innerHTML = `<button type="button" class="btn btn-primary w-full sgb-go">${BIO_IC}Buka dengan sidik jari / Face ID</button><p class="sgb-or"><span>atau masukkan PIN</span></p>`;
-        const first = card.querySelector("label.ulabel") || go;
+        const first = card.querySelector(".sgp-entry") || card.querySelector("label.ulabel") || go;
         first.insertAdjacentElement("beforebegin", box);
     } else {                                   // tanda tangan pertama: pilih PIN atau sidik jari
         if (!ok) return;
@@ -11936,11 +12090,160 @@ async function offer(ctx) {
 }
 
 // ---------- kaitkan ke layar PIN yang sudah ada ----------
+// ---------- tampilan penanda tangan: langkah, kotak PIN per angka, Lupa PIN ----------
+const initials = n => { try { if (typeof userInitials === "function") return userInitials(n); } catch (e) { } return String(n || "?").split(/\s+/).map(w => w[0] || "").join("").slice(0, 2).toUpperCase(); };
+function stepsHtml(cur, S) {
+    S = S || ["Pilih nama", "Verifikasi", "Tanda tangan"];
+    return `<ol class="sgs" aria-label="Langkah tanda tangan">${S.map((s, i) => `<li class="${i < cur ? "done" : i === cur ? "on" : ""}"${i === cur ? ' aria-current="step"' : ""}><span>${i < cur ? '<i class="fa-solid fa-check"></i>' : i + 1}</span>${s}</li>`).join("")}</ol>`;
+}
+function docHead(doc, sub) {
+    const from = String((doc && doc.createdBy) || "").replace(/\s*\(.*\)$/, "");
+    return `<div class="sgh"><span class="sgh-ic"><i class="fa-solid ${doc ? "fa-file-signature" : "fa-inbox"}"></i></span><div class="min-w-0"><p class="sgh-t">${E(doc ? doc.name || "Dokumen" : "Dokumen untuk Anda")}</p><p class="sgh-s">${E(sub || (from ? "Dari " + from : "Masuk untuk melihat dan menandatangani"))}</p></div></div>`;
+}
+function digits(src, n, opt) {
+    if (!src || src.dataset.dg) return null;
+    opt = opt || {}; src.dataset.dg = "1";
+    const w = document.createElement("div"); w.className = "sgd" + (opt.wide ? " wide" : ""); w.setAttribute("role", "group"); w.setAttribute("aria-label", opt.label || "PIN");
+    const boxes = [];
+    for (let i = 0; i < n; i++) {
+        const b = document.createElement("input");
+        b.type = opt.secret ? "password" : "text"; b.inputMode = "numeric"; b.maxLength = 1; b.className = "sgd-c";
+        b.autocomplete = i === 0 && opt.otp ? "one-time-code" : "off"; b.setAttribute("aria-label", (opt.label || "PIN") + " angka " + (i + 1));
+        boxes.push(b); w.appendChild(b);
+    }
+    const sync = () => { src.value = boxes.map(b => b.value).join(""); src.dispatchEvent(new Event("input", { bubbles: true })); w.classList.toggle("full", src.value.length === n); };
+    boxes.forEach((b, i) => {
+        b.addEventListener("input", () => {
+            const v = b.value.replace(/\D/g, "");
+            if (v.length > 1) { v.slice(0, n - i).split("").forEach((d, k) => { boxes[i + k].value = d; }); const nx = boxes[Math.min(n - 1, i + v.length)]; nx.focus(); }
+            else { b.value = v; if (v && i < n - 1) boxes[i + 1].focus(); }
+            sync();
+            if (src.value.length === n && document.activeElement === boxes[n - 1]) {      // grup penuh → lanjut ke isian berikutnya
+                const all = [...(w.closest(".proc-card,.sg-card") || document).querySelectorAll(".sgd")], nx = all[all.indexOf(w) + 1];
+                if (nx) { const f = [...nx.querySelectorAll(".sgd-c")].find(x => !x.value); if (f) f.focus(); }
+            }
+        });
+        b.addEventListener("keydown", e => {
+            if (e.key === "Backspace" && !b.value && i > 0) { boxes[i - 1].value = ""; boxes[i - 1].focus(); sync(); e.preventDefault(); }
+            else if (e.key === "ArrowLeft" && i > 0) boxes[i - 1].focus();
+            else if (e.key === "ArrowRight" && i < n - 1) boxes[i + 1].focus();
+            else if (e.key === "Enter") { e.preventDefault(); src.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })); if (opt.onEnter) opt.onEnter(); }
+        });
+        b.addEventListener("focus", () => { try { b.select(); } catch (x) { } });
+    });
+    src.classList.add("sgd-src"); src.tabIndex = -1; src.setAttribute("aria-hidden", "true");
+    src.addEventListener("focus", () => { const f = boxes.find(b => !b.value) || boxes[n - 1]; f.focus(); });
+    src.insertAdjacentElement("beforebegin", w);
+    w.clear = () => { boxes.forEach(b => { b.value = ""; }); sync(); boxes[0].focus(); };
+    return w;
+}
+function shakeOnError(card) {
+    const e = card.querySelector("#sg-perr"); if (!e) return;
+    new MutationObserver(() => {
+        if (e.classList.contains("hidden") || !e.textContent.trim()) return;
+        const g = card.querySelector(".sgp-entry .sgd"); if (!g) return;
+        g.classList.remove("err"); void g.offsetWidth; g.classList.add("err");
+        if (/PIN salah|Ulangi PIN tidak sama/i.test(e.textContent)) setTimeout(() => card.querySelectorAll(".sgp-entry .sgd").forEach(x => x.clear && x.clear()), 350);
+    }).observe(e, { attributes: true, childList: true, characterData: true, subtree: true });
+}
+function polishPin(ctx, doc) {
+    const go = $id("sg-pgo"); if (!go) return;
+    const card = go.closest(".sg-card"); if (!card || card.dataset.pol) return;
+    card.dataset.pol = "1"; card.classList.add("sgp");
+    const head = card.firstElementChild;
+    const back = [...card.querySelectorAll("button")].find(b => /Bukan saya/i.test(b.textContent));
+    const top = document.createElement("div"); top.className = "sgp-top";
+    top.innerHTML = docHead(doc) + (doc ? stepsHtml(1) : stepsHtml(0, ["Verifikasi", "Pilih dokumen", "Tanda tangan"]))
+        + `<div class="sgp-me"><span class="sgp-av" aria-hidden="true">${E(initials(ctx.name))}</span><div class="min-w-0 flex-1"><p class="sgp-n">${E(ctx.name || "")}</p><p class="sgp-r">${ctx.create ? "Tanda tangan pertama Anda" : "Penanda tangan"}</p></div>${back ? '<button type="button" class="sgp-sw">Bukan Anda?</button>' : ""}</div>`;
+    if (head && head.classList.contains("text-center")) head.replaceWith(top); else card.insertAdjacentElement("afterbegin", top);
+    if (back) { back.classList.add("sgb-hide"); top.querySelector(".sgp-sw").onclick = () => back.click(); }
+    card.querySelectorAll("label.ulabel").forEach(l => l.remove());
+    card.querySelectorAll("p").forEach(p => { if (!p.closest(".sgp-top") && /buat PIN 4 angka|PIN 4 angka yang Anda buat|Lupa PIN\? Hubungi/i.test(p.textContent)) p.remove(); });
+    const entry = document.createElement("div"); entry.className = "sgp-entry";
+    entry.innerHTML = ctx.create
+        ? `<h3 class="sgp-h">Buat PIN Anda</h3><p class="sgp-p">4 angka, cukup dibuat sekali. PIN ini dipakai untuk semua dokumen Anda berikutnya.</p>`
+        : `<h3 class="sgp-h">Masukkan PIN</h3><p class="sgp-p">4 angka yang Anda buat saat pertama kali tanda tangan.</p>`;
+    top.insertAdjacentElement("afterend", entry);
+    const pin = $id("sg-pin"), pin2 = $id("sg-pin2"), err = $id("sg-perr"), forgot = card.querySelector(".sgv-forgot");
+    const lab = t => { const l = document.createElement("p"); l.className = "sgp-l"; l.textContent = t; return l; };
+    if (pin) { if (pin2) entry.appendChild(lab("PIN baru")); entry.appendChild(pin); digits(pin, 4, { secret: true, label: pin2 ? "PIN baru" : "PIN" }); }
+    if (pin2) { entry.appendChild(lab("Ulangi PIN")); entry.appendChild(pin2); digits(pin2, 4, { secret: true, label: "Ulangi PIN" }); }
+    if (err) entry.appendChild(err);
+    entry.appendChild(go);
+    if (forgot) { forgot.innerHTML = 'Lupa PIN?'; entry.appendChild(forgot); }
+    go.innerHTML = ctx.create ? '<i class="fa-solid fa-lock"></i>Simpan PIN &amp; buka dokumen' : '<i class="fa-solid fa-unlock"></i>Buka dokumen';
+    if (!doc) go.innerHTML = ctx.create ? '<i class="fa-solid fa-lock"></i>Simpan PIN &amp; lanjut' : '<i class="fa-solid fa-unlock"></i>Lanjut';
+    shakeOnError(card);
+    setTimeout(() => { const f = entry.querySelector(".sgd-c"); if (f && !card.querySelector(".sgb-box .sgb-go")) f.focus(); }, 80);
+}
+(function hookPick() {
+    if (typeof sgPublicPickName !== "function") return;
+    const base = sgPublicPickName;
+    sgPublicPickName = function () {
+        const out = base.apply(this, arguments);
+        try {
+            const card = document.querySelector(".sg-main .sg-card"); if (!card || card.dataset.pol) return out;
+            card.dataset.pol = "1"; card.classList.add("sgk");
+            const head = card.firstElementChild, d = SGP.lite || {};
+            if (head && head.classList.contains("text-center")) {
+                const note = d.note ? `<p class="sgk-note"><i class="fa-solid fa-note-sticky"></i>${E(d.note)}</p>` : "";
+                head.outerHTML = `<div class="sgp-top">${docHead(d)}${note}${stepsHtml(0)}</div>`;
+            } else if (head) head.insertAdjacentHTML("afterend", stepsHtml(0));
+            const lbl = [...card.querySelectorAll("p.ulabel")].find(p => /Pilih nama/i.test(p.textContent)); if (lbl) { lbl.className = "sgp-h mt-4"; lbl.textContent = "Siapa Anda?"; lbl.insertAdjacentHTML("afterend", '<p class="sgp-p">Pilih nama Anda untuk mulai tanda tangan.</p>'); }
+            const foot = [...card.querySelectorAll("p")].find(p => /Hanya nama yang terdaftar/i.test(p.textContent));
+            if (foot) foot.innerHTML = '<i class="fa-solid fa-shield-halved mr-1"></i>Nama Anda tidak ada di daftar? Hubungi pengirim dokumen.';
+        } catch (e) { }
+        return out;
+    };
+})();
+// Lupa PIN: lembar pilihan email / WhatsApp yang lebih ramah
+const VM_WA = "628984623040";
+function polishForgot(m) {
+    if (!m || m.dataset.pol) return; m.dataset.pol = "1";
+    const card = m.querySelector(".proc-card"); if (!card) return;
+    card.classList.add("sgf");
+    const h = card.querySelector("h3");
+    if (h) h.innerHTML = '<span class="sgf-ic" aria-hidden="true"><i class="fa-solid fa-key"></i></span><span class="min-w-0"><b>Lupa PIN? Tidak masalah</b><small>Pilih salah satu cara untuk membuat PIN baru.</small></span>';
+    const boxes = [...card.querySelectorAll(".sgv-fp-box")];
+    const send = $id("sgv-fp-send");
+    const mailBox = send ? send.closest(".sgv-fp-box") : null;
+    if (mailBox) {
+        mailBox.classList.add("sgf-opt");
+        const p = mailBox.querySelector("p"); const mail = p && p.querySelector("b") ? p.querySelector("b").textContent : "";
+        if (p) p.outerHTML = `<div class="sgf-oh"><span class="sgf-oi mail"><i class="fa-solid fa-envelope"></i></span><div class="min-w-0"><b>Lewat email</b><small>Kami kirim kode 6 angka ke <strong>${E(mail)}</strong>. Berlaku 10 menit.</small></div></div>`;
+        send.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Kirim kode';
+        const step = $id("sgv-fp-step");
+        const lab = t => { const l = document.createElement("p"); l.className = "sgp-l"; l.textContent = t; return l; };
+        const code = $id("sgv-fp-code"), p1 = $id("sgv-fp-p1"), p2 = $id("sgv-fp-p2"), go = $id("sgv-fp-go");
+        if (code) { code.insertAdjacentElement("beforebegin", lab("Kode dari email")); digits(code, 6, { otp: true, label: "Kode dari email", wide: true }); }
+        if (p1) { p1.insertAdjacentElement("beforebegin", lab("PIN baru")); digits(p1, 4, { secret: true, label: "PIN baru" }); }
+        if (p2) { p2.insertAdjacentElement("beforebegin", lab("Ulangi PIN baru")); digits(p2, 4, { secret: true, label: "Ulangi PIN baru", onEnter: () => go && go.click() }); }
+        if (go) go.innerHTML = '<i class="fa-solid fa-check"></i>Simpan PIN baru';
+        if (step) step.classList.add("sgf-step");
+        const mm = $id("sgv-fp-msg");
+        if (mm) new MutationObserver(() => {
+            const t = mm.textContent, r = /^Kode dikirim ke (.+?)\. Cek kotak masuk \/ spam/.exec(t);
+            if (r) mm.textContent = "Kode sudah dikirim ke " + r[1] + ". Cek kotak masuk atau folder spam. Kode berlaku 10 menit.";
+        }).observe(mm, { childList: true, characterData: true, subtree: true });
+    }
+    const or = [...card.querySelectorAll("p")].find(p => p.textContent.trim() === "atau"); if (or) or.className = "sgb-or sgf-or";
+    const waBox = boxes.find(b => b !== mailBox);
+    if (waBox) {
+        waBox.classList.add("sgf-opt");
+        let name = ""; try { name = (SGP.data && SGP.data.me && SGP.data.me.name) || LAST.name || ""; } catch (e) { }
+        let title = ""; try { const d = SGP.data && SGP.data.doc; title = (d && (d.title || d.name)) || (SGP.lite && SGP.lite.name) || ""; } catch (e) { }
+        const msg = `Halo Tim Vendor Management, saya ${name || "(nama penanda tangan)"} lupa PIN tanda tangan${title ? ' untuk dokumen "' + title + '"' : ""}. Mohon dibantu reset PIN. Terima kasih.`;
+        waBox.innerHTML = `<div class="sgf-oh"><span class="sgf-oi wa"><i class="fa-brands fa-whatsapp"></i></span><div class="min-w-0"><b>Lewat WhatsApp</b><small>Tidak bisa membuka email? Minta tim Vendor Management mereset PIN Anda. Setelah itu buka link ini lagi dan buat PIN baru.</small></div></div>
+            <a class="btn btn-ghost w-full sgf-wa" target="_blank" rel="noopener" href="https://wa.me/${VM_WA}?text=${encodeURIComponent(msg)}"><i class="fa-brands fa-whatsapp"></i>Chat Vendor Management</a>`;
+    }
+}
+new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.id === "sgv-fp") polishForgot(n); }).observe(document.body, { childList: true });
 const LAST = { name: "" };
 (function hook() {
     const baseStep = sgPublicPinStep;
     sgPublicPinStep = function (r) {
         const out = baseStep.apply(this, arguments);
+        try { polishPin({ name: (r.me || {}).name, create: !!r.pinCreate }, r.doc); } catch (e) { console.warn(e); }
         try { const me = r.me || {}; LAST.name = me.name || ""; bioUI({ mode: "doc", t: SGP.t, signer: me.id, name: me.name, create: !!r.pinCreate, needBio: !!r.needBio, bio: !!me.bio }); } catch (e) { }
         return out;
     };
@@ -11948,6 +12251,7 @@ const LAST = { name: "" };
         const basePP = sgPersonPin;
         sgPersonPin = function (p) {
             const out = basePP.apply(this, arguments);
+            try { polishPin({ name: p.name, create: !p.hasPin && !p.bio }, null); } catch (e) { console.warn(e); }
             try { LAST.name = p.name || ""; bioUI({ mode: "person", t: SGP.home || SGP.t, signer: null, name: p.name, create: !p.hasPin && !p.bio, needBio: !p.hasPin && !!p.bio, bio: !!p.bio }); } catch (e) { }
             return out;
         };
