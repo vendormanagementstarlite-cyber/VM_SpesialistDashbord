@@ -11962,6 +11962,27 @@ html.dark .sgi-done summary{color:#cbd5e1}
 .sgi .sg-ibx-item{margin:0!important}
 .sgi .sg-ibx-h{margin:10px 2px 0!important}
 .sgi .sgi-done{margin-top:10px}
+/* v26f: kontak penanda tangan */
+.sgc-hint{margin-top:8px;font-size:10.5px;color:#64748b;line-height:1.45}
+.sgc-hint i{color:#0891b2;margin-right:4px}
+.sgc-miss{color:#b45309;font-weight:700}
+.sgc-miss i{margin-right:3px}
+.sgc-card{width:min(440px,100%)}
+.sgc-card h3{font-size:15px;font-weight:800;color:#0f172a}
+.sgc-card p{font-size:11.5px;color:#64748b;line-height:1.45;margin-top:2px}
+html.dark .sgc-card h3{color:#fff}
+.sgc-ic{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(53,88,200,.1);color:#3558c8;font-size:16px}
+.sgc-body{margin-top:14px;display:flex;flex-direction:column;gap:12px}
+.sgc-f span{display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:5px}
+.sgc-f small{display:block;margin-top:4px;font-size:10.5px;color:#64748b}
+html.dark .sgc-f span{color:#cbd5e1}
+.sgc-f .field{min-height:44px;font-size:14px}
+.sgc-err{margin-top:10px;padding:8px 10px;border-radius:10px;background:rgba(225,29,72,.08);color:#be123c;font-size:11.5px;font-weight:600}
+.sgc-act{display:flex;gap:8px;margin-top:14px}
+.sgc-act .btn{min-height:44px}
+.sgc-dev{display:flex;align-items:center;gap:10px;width:100%;margin-top:12px;padding:11px 12px;border-radius:12px;border:1px solid rgba(148,163,184,.3);background:transparent;font-size:12px;font-weight:700;color:#334155;cursor:pointer}
+.sgc-dev i:last-child{margin-left:auto;font-size:10px;color:#94a3b8}
+html.dark .sgc-dev{color:#e2e8f0;border-color:rgba(148,163,184,.2)}
 
 </style>
 <script id="addon_v26_sg">
@@ -12383,6 +12404,108 @@ const LAST = { name: "" };
         const m = $id("sgv-dev"); const old = m && m.querySelector(".sgb-dev"); if (old) old.remove(); paint();
         return out;
     };
+})();
+
+// ---------- kontak penanda tangan (No WhatsApp & email) ----------
+const waNorm = v => { let d = String(v || "").replace(/\D/g, ""); if (/^62/.test(d)) d = "0" + d.slice(2); else if (/^8/.test(d)) d = "0" + d; return d; };
+const waOk = v => /^08[1-9]\d{7,11}$/.test(waNorm(v));
+const mailOk = v => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(v || "").trim());
+// (a) Daftar Penanda Tangan (pengirim): kontak lengkap hanya untuk Akun Utama sistem; tambah baru dianjurkan isi kontak
+new MutationObserver(() => {
+    const m = $id("sg-people"); if (!m) return;
+    const add = m.querySelector("#sgp-add"), wa = m.querySelector("#sgp-wa"), em = m.querySelector("#sgp-email");
+    if (!add || !wa || add.dataset.sgc) return;
+    add.dataset.sgc = "1";
+    const id = (/Simpan\s+(\S+)/.exec(add.textContent) || [])[1] || "";
+    const p = id && (SG.signers || []).find(x => x.id === id);
+    wa.placeholder = "No WhatsApp (disarankan)";
+    if (em) em.placeholder = "Email (disarankan · untuk lupa PIN)";
+    if (p && p.masked) {
+        if (p.hasWa) { wa.value = ""; wa.disabled = true; wa.placeholder = "WA tersimpan " + (p.waMask || "") + " · hanya Akun Utama"; }
+        if (em && p.hasEmail) { em.value = ""; em.disabled = true; em.placeholder = "Email tersimpan " + (p.emailMask || "") + " · hanya Akun Utama"; }
+    }
+    const form = m.querySelector(".sgp-form");
+    if (form && !m.querySelector(".sgc-hint")) form.insertAdjacentHTML("afterend", '<p class="sgc-hint"><i class="fa-solid fa-circle-info"></i>Disarankan isi <b>No WhatsApp</b> atau <b>email</b> — dipakai untuk mengirim link & reset PIN. Kontak hanya bisa dilihat Akun Utama.</p>');
+    add.addEventListener("click", ev => {
+        const w = wa.disabled ? "" : wa.value.trim(), e = em && !em.disabled ? em.value.trim() : "";
+        if (w && !waOk(w)) { ev.stopImmediatePropagation(); ev.preventDefault(); toast("Nomor WhatsApp tidak valid. Contoh: 0812xxxxxxxx", "error", 6000); wa.focus(); return; }
+        if (e && !mailOk(e)) { ev.stopImmediatePropagation(); ev.preventDefault(); toast("Format email tidak valid", "error", 6000); em.focus(); return; }
+        if (w) wa.value = waNorm(w);
+        const hasNow = !!(w || e || (p && (p.hasWa || p.hasEmail)));
+        if (!id && !hasNow && !confirm("No WhatsApp dan email masih kosong.\n\nDisarankan diisi agar penanda tangan bisa menerima link dan reset PIN sendiri.\n\nSimpan tanpa kontak?")) { ev.stopImmediatePropagation(); ev.preventDefault(); wa.focus(); }
+    }, true);
+}).observe(document.body, { childList: true, subtree: true });
+new MutationObserver(() => {
+    const m = $id("sg-people"); if (!m) return;
+    m.querySelectorAll(".sgp-row").forEach(row => {
+        if (row.dataset.sgc) return; row.dataset.sgc = "1";
+        const id = ((row.querySelector("[data-e]") || {}).dataset || {}).e; const p = id && (SG.signers || []).find(x => x.id === id); if (!p) return;
+        const sm = row.querySelector("small"); if (!sm) return;
+        if (!p.hasWa && !p.hasEmail && p.hasWa !== undefined) sm.insertAdjacentHTML("beforeend", ' · <span class="sgc-miss"><i class="fa-solid fa-triangle-exclamation"></i>belum ada kontak</span>');
+        else if (p.masked) sm.insertAdjacentHTML("beforeend", (p.hasWa ? ' · <i class="fa-brands fa-whatsapp"></i> tersimpan' : "") + (p.hasEmail ? ' · <i class="fa-solid fa-envelope"></i> tersimpan' : ""));
+    });
+}).observe(document.body, { childList: true, subtree: true });
+
+// (b) penanda tangan: pengingat lengkapi kontak + ikon pengaturan
+const CSKIP = "sgc_skip_v1";
+async function contactGet() {
+    const c = typeof sgCred === "function" ? sgCred() : null; if (!c) return null;
+    try { const r = await sbRpc("sg_me_contact", c, 20000); return Object.assign(r, { c }); } catch (e) { return null; }
+}
+function contactSheet(info, mode) {        // mode: "ask" (lengkapi) | "edit" (pengaturan)
+    const old = $id("sgc-sheet"); if (old) old.remove();
+    const m = document.createElement("div"); m.id = "sgc-sheet"; m.className = "fixed inset-0 z-[96] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-cyberDark/60 backdrop-blur-sm";
+    m.onclick = e => { if (e.target === m) m.remove(); };
+    const ask = mode === "ask";
+    const fld = (k, label, ph, cur, type) => `<label class="sgc-f"><span>${label}</span><input id="sgc-${k}" class="field w-full" type="${type}" inputmode="${k === "wa" ? "tel" : "email"}" autocomplete="${k === "wa" ? "tel" : "email"}" placeholder="${E(ph)}">${cur ? `<small>Tersimpan: ${E(cur)}${ask ? "" : " — isi untuk mengganti"}</small>` : ""}</label>`;
+    const showWa = !ask || !info.hasWa, showMail = !ask || !info.hasEmail;
+    m.innerHTML = `<div class="proc-card sgc-card"><div class="flex items-start gap-3"><span class="sgc-ic"><i class="fa-solid ${ask ? "fa-address-card" : "fa-gear"}"></i></span><div class="min-w-0 flex-1"><h3>${ask ? "Lengkapi kontak Anda" : "Pengaturan kontak"}</h3><p>${ask ? "Supaya link dokumen dan reset PIN bisa dikirim langsung ke Anda. Cukup sekali." : "Ubah No WhatsApp atau email yang dipakai untuk link dokumen dan reset PIN."}</p></div><button class="icon-btn" data-x aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div>
+        <div class="sgc-body">${showWa ? fld("wa", "No WhatsApp", "0812xxxxxxxx", info.hasWa ? info.wa : "", "tel") : ""}${showMail ? fld("mail", "Email", "nama@email.com", info.hasEmail ? info.email : "", "email") : ""}</div>
+        <p id="sgc-err" class="hidden sgc-err"></p>
+        <div class="sgc-act">${ask ? '<button class="btn btn-ghost" data-later>Nanti saja</button>' : ""}<button class="btn btn-primary flex-1" data-save><i class="fa-solid fa-check"></i>Simpan</button></div>
+        ${ask ? "" : '<button class="sgc-dev" data-dev><i class="fa-solid fa-mobile-screen"></i>Perangkat & sidik jari / Face ID<i class="fa-solid fa-chevron-right"></i></button>'}</div>`;
+    document.body.appendChild(m);
+    const err = t => { const e = $id("sgc-err"); e.textContent = t; e.classList.remove("hidden"); };
+    m.querySelector("[data-x]").onclick = () => m.remove();
+    const later = m.querySelector("[data-later]"); if (later) later.onclick = () => { const k = lsGet(CSKIP); k[nk(LAST.name || "")] = Date.now(); lsSet(CSKIP, k); m.remove(); };
+    const dev = m.querySelector("[data-dev]"); if (dev) dev.onclick = () => { m.remove(); if (window.SGV2 && SGV2.devices) SGV2.devices(); };
+    const save = m.querySelector("[data-save]");
+    save.onclick = async () => {
+        const w = ($id("sgc-wa") || {}).value, e = ($id("sgc-mail") || {}).value;
+        const wv = String(w || "").trim(), ev = String(e || "").trim();
+        if (!wv && !ev) return err(ask ? "Isi minimal salah satu: No WhatsApp atau email." : "Isi No WhatsApp atau email yang baru.");
+        if (wv && !waOk(wv)) return err("Nomor WhatsApp tidak valid. Contoh: 0812xxxxxxxx");
+        if (ev && !mailOk(ev)) return err("Format email tidak valid");
+        busy(save, true, '<i class="fa-solid fa-circle-notch fa-spin"></i>Menyimpan…');
+        try {
+            const r = await sbRpc("sg_me_contact", Object.assign({}, info.c, { p_wa: wv ? waNorm(wv) : null, p_email: ev || null }), 20000);
+            m.remove(); toast("Kontak tersimpan", "success"); Object.assign(info, r);
+        } catch (x) { busy(save, false, '<i class="fa-solid fa-check"></i>Simpan'); err(x.message); }
+    };
+    setTimeout(() => { const f = m.querySelector("input"); if (f) f.focus(); }, 60);
+}
+window.SGBIO.contact = async () => { const i = await contactGet(); if (!i) return toast("Masuk dengan PIN / sidik jari terlebih dahulu", "error"); if (!i.canEdit) return toast("Kontak Anda belum terdaftar di daftar penanda tangan — hubungi pengirim dokumen", "info", 7000); contactSheet(i, "edit"); };
+function gearBtn() {
+    const card = document.querySelector(".sg-main .sg-card"); if (!card || card.querySelector(".sgc-gear")) return;
+    const c = typeof sgCred === "function" ? sgCred() : null; if (!c) return;
+    const anchor = card.querySelector(".sgv-devbtn") || card.querySelector("button.icon-btn");
+    const html = '<button type="button" class="icon-btn shrink-0 sgc-gear" title="Pengaturan kontak" aria-label="Pengaturan kontak" onclick="SGBIO.contact()"><i class="fa-solid fa-gear"></i></button>';
+    if (anchor) anchor.insertAdjacentHTML("beforebegin", html); else (card.querySelector(".flex.items-start") || card).insertAdjacentHTML("beforeend", html);
+}
+let askedAt = 0;
+async function contactNudge() {
+    try {
+        gearBtn();
+        if (Date.now() - askedAt < 60000 || $id("sgc-sheet") || $id("sgb-offer")) return;
+        const k = lsGet(CSKIP)[nk(LAST.name || "")]; if (k && Date.now() - k < 3 * 864e5) return;
+        const i = await contactGet(); if (!i || !i.canEdit || (i.hasWa && i.hasEmail)) return;
+        askedAt = Date.now();
+        setTimeout(() => { if (!$id("sgb-offer") && !$id("sgc-sheet")) contactSheet(i, "ask"); }, 1500);
+    } catch (e) { }
+}
+(function hookContact() {
+    if (typeof sgPublicRender === "function") { const b = sgPublicRender; sgPublicRender = async function () { const o = await b.apply(this, arguments); try { if (SGP.data && SGP.data.me) LAST.name = SGP.data.me.name || LAST.name; contactNudge(); } catch (e) { } return o; }; }
+    if (typeof sgInboxRender === "function") { const b = sgInboxRender; sgInboxRender = function () { const o = b.apply(this, arguments); try { if (SGP.me) LAST.name = SGP.me.name || LAST.name; contactNudge(); } catch (e) { } return o; }; }
 })();
 })();
 
