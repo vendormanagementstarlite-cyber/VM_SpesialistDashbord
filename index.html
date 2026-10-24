@@ -12410,6 +12410,11 @@ const LAST = { name: "" };
 const waNorm = v => { let d = String(v || "").replace(/\D/g, ""); if (/^62/.test(d)) d = "0" + d.slice(2); else if (/^8/.test(d)) d = "0" + d; return d; };
 const waOk = v => /^08[1-9]\d{7,11}$/.test(waNorm(v));
 const mailOk = v => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(v || "").trim());
+// kolom "perusahaan" tidak dipakai di penanda tangan
+new MutationObserver(() => {
+    document.querySelectorAll('input[placeholder="Jabatan / perusahaan"]').forEach(i => { i.placeholder = "Jabatan"; });
+    document.querySelectorAll("#sgp-co").forEach(i => i.classList.add("sgb-hide"));
+}).observe(document.body, { childList: true, subtree: true });
 // (a) Daftar Penanda Tangan (pengirim): kontak lengkap hanya untuk Akun Utama sistem; tambah baru dianjurkan isi kontak
 new MutationObserver(() => {
     const m = $id("sg-people"); if (!m) return;
