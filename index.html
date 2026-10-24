@@ -12418,6 +12418,7 @@ new MutationObserver(() => {
     add.dataset.sgc = "1";
     const id = (/Simpan\s+(\S+)/.exec(add.textContent) || [])[1] || "";
     const p = id && (SG.signers || []).find(x => x.id === id);
+    const co = m.querySelector("#sgp-co"); if (co) co.classList.add("sgb-hide");       // kolom Perusahaan tidak dipakai
     wa.placeholder = "No WhatsApp (disarankan)";
     if (em) em.placeholder = "Email (disarankan · untuk lupa PIN)";
     if (p && p.masked) {
@@ -12441,6 +12442,7 @@ new MutationObserver(() => {
         if (row.dataset.sgc) return; row.dataset.sgc = "1";
         const id = ((row.querySelector("[data-e]") || {}).dataset || {}).e; const p = id && (SG.signers || []).find(x => x.id === id); if (!p) return;
         const sm = row.querySelector("small"); if (!sm) return;
+        if (p.company) { const t = E(p.company); sm.innerHTML = sm.innerHTML.replace(" · " + t, "").replace(t + " · ", "").replace(t, ""); }
         if (!p.hasWa && !p.hasEmail && p.hasWa !== undefined) sm.insertAdjacentHTML("beforeend", ' · <span class="sgc-miss"><i class="fa-solid fa-triangle-exclamation"></i>belum ada kontak</span>');
         else if (p.masked) sm.insertAdjacentHTML("beforeend", (p.hasWa ? ' · <i class="fa-brands fa-whatsapp"></i> tersimpan' : "") + (p.hasEmail ? ' · <i class="fa-solid fa-envelope"></i> tersimpan' : ""));
     });
