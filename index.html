@@ -11742,5 +11742,267 @@ function fmtReason(h) {
 })();
 
 </script>
+<style id="addon_v26_sg_css">
+/* v26c: sidik jari / Face ID */
+.sgb-hide{display:none!important}
+.sgb-box{margin-top:14px}
+.sgb-box .sgb-go{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;font-size:13px}
+.sgb-box .sgb-go i{font-size:17px}
+.sgb-box .sgb-alt{border:1.5px dashed rgba(53,88,200,.45);color:#3558c8}
+.sgb-note{display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;padding:9px 11px;border-radius:12px;background:rgba(13,148,136,.09);color:#0f766e;font-size:11.5px;font-weight:600;line-height:1.45}
+.sgb-note.warn{background:rgba(217,119,6,.1);color:#92400e}
+.sgb-note i{margin-top:2px}
+.sgb-hint{margin-top:8px;font-size:10.5px;color:#64748b;line-height:1.45;text-align:center}
+.sgb-or{display:flex;align-items:center;gap:10px;margin:12px 0 2px;font-size:10.5px;color:#94a3b8}
+.sgb-or::before,.sgb-or::after{content:"";flex:1;height:1px;background:rgba(148,163,184,.35)}
+html.dark .sgb-note{background:rgba(45,212,191,.1);color:#5eead4}
+html.dark .sgb-note.warn{background:rgba(245,158,11,.12);color:#fcd34d}
+html.dark .sgb-box .sgb-alt{color:#a5b4fc;border-color:rgba(165,180,252,.4)}
+.sgb-offer{position:fixed;left:0;right:0;bottom:0;z-index:97;display:flex;justify-content:center;padding:12px;pointer-events:none}
+.sgb-ocard{pointer-events:auto;display:flex;gap:12px;align-items:flex-start;width:min(440px,100%);padding:14px 16px;border-radius:18px;background:#fff;border:1px solid rgba(53,88,200,.25);box-shadow:0 18px 40px -16px rgba(15,23,42,.45);animation:sgbUp .22s ease-out}
+.sgb-ocard b{font-size:13px;color:#0f172a}
+.sgb-ocard p{font-size:11.5px;color:#475569;margin-top:3px;line-height:1.45}
+.sgb-oic{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(53,88,200,.12);color:#3558c8;font-size:18px}
+.sgb-oact{display:flex;gap:8px;margin-top:10px}
+.sgb-oerr{color:#e11d48!important;font-weight:600}
+html.dark .sgb-ocard{background:#111a2e;border-color:rgba(165,180,252,.25)}
+html.dark .sgb-ocard b{color:#fff}
+html.dark .sgb-ocard p{color:#cbd5e1}
+html.dark .sgb-oic{background:rgba(165,180,252,.15);color:#c7d2fe}
+.sgb-dev{margin-top:14px;padding-top:12px;border-top:1px dashed rgba(148,163,184,.4)}
+.sgb-dh{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;color:#334155;margin-bottom:6px}
+html.dark .sgb-dh{color:#e2e8f0}
+@keyframes sgbUp{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.sgb-ocard{animation:none}}
+
+</style>
+<script id="addon_v26_sg">
+/* ===================== STARLITE v26c · Signing: sidik jari / Face ID, PIN opsional =====================
+   - Layar PIN: tombol "Buka dengan sidik jari / Face ID" bila sudah aktif.
+   - Setelah PIN benar: tawaran aktifkan sidik jari / Face ID di perangkat ini.
+   - Tanda tangan pertama: boleh pakai sidik jari / Face ID tanpa membuat PIN.
+   - Orang yang hanya memakai sidik jari: PIN tidak diminta; perangkat lain → "Lupa PIN" (kode email).
+   Verifikasi di server: Supabase Edge Function "sg-passkey" → token perangkat 12 jam (dipakai seperti PIN). */
+(function () {
+"use strict";
+if (typeof sgPublicPinStep !== "function" || typeof SB === "undefined") return;
+const $id = x => document.getElementById(x);
+const E = s => (typeof esc === "function" ? esc(s) : String(s == null ? "" : s));
+const toast = (m, t, ms) => { try { showToast(m, t || "info", ms); } catch (e) { } };
+const URLF = () => window.SG_PK_URL || (SB.url + "/functions/v1/sg-passkey");
+const supported = () => !!(window.PublicKeyCredential && navigator.credentials && window.isSecureContext);
+let platP = null;
+const plat = () => platP || (platP = (async () => { try { return supported() && !!(await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); } catch (e) { return false; } })());
+const nk = n => String(n || "").trim().replace(/\s+/g, " ").toLowerCase();
+const LS = "sgpk_v1", SKIP = "sgpk_skip_v1";
+const lsGet = k => { try { return JSON.parse(localStorage.getItem(k) || "{}") || {}; } catch (e) { return {}; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } };
+const localHas = name => !!(lsGet(LS)[nk(name)] || []).length;
+const localAdd = (name, id) => { const m = lsGet(LS), k = nk(name); m[k] = Array.from(new Set([id].concat(m[k] || []))).slice(0, 5); lsSet(LS, m); };
+const localDel = (name) => { const m = lsGet(LS); delete m[nk(name)]; lsSet(LS, m); };
+const skipped = name => { const t = lsGet(SKIP)[nk(name)]; return t && Date.now() - t < 30 * 864e5; };
+const skip = name => { const m = lsGet(SKIP); m[nk(name)] = Date.now(); lsSet(SKIP, m); };
+function enc(b) { const u = new Uint8Array(b); let s = ""; for (let i = 0; i < u.length; i++) s += String.fromCharCode(u[i]); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+function dec(s) { const t = String(s || "").replace(/-/g, "+").replace(/_/g, "/"); const b = atob(t + "===".slice((t.length + 3) % 4)); const u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+function devLabel() {
+    const u = navigator.userAgent;
+    const b = /Edg\//.test(u) ? "Edge" : /SamsungBrowser/.test(u) ? "Samsung Internet" : /CriOS|Chrome\//.test(u) ? "Chrome" : /FxiOS|Firefox\//.test(u) ? "Firefox" : /Safari\//.test(u) ? "Safari" : "Browser";
+    const o = /iPhone/.test(u) ? "iPhone" : /iPad/.test(u) ? "iPad" : /Android/.test(u) ? "Android" : /Windows/.test(u) ? "Windows" : /Mac OS X/.test(u) ? "Mac" : /Linux/.test(u) ? "Linux" : "";
+    return b + (o ? " · " + o : "");
+}
+async function api(action, body) {
+    const h = { "Content-Type": "application/json", apikey: SB.key };
+    if (/^eyJ/.test(SB.key)) h.Authorization = "Bearer " + SB.key;
+    let r, j = null;
+    try { r = await fetch(URLF(), { method: "POST", headers: h, body: JSON.stringify(Object.assign({ action }, body || {})) }); } catch (e) { throw new Error("Server sidik jari tidak terjangkau — gunakan PIN"); }
+    try { j = await r.json(); } catch (e) { }
+    if (!j || j.ok === false) throw new Error((j && j.error) || "Server sidik jari bermasalah (HTTP " + r.status + ") — gunakan PIN");
+    return j;
+}
+const cancelled = e => e && (e.name === "NotAllowedError" || e.name === "AbortError");
+const niceErr = e => cancelled(e) ? "Dibatalkan atau waktu habis. Coba lagi, atau gunakan PIN."
+    : e && e.name === "InvalidStateError" ? "Perangkat ini sudah terdaftar." : (e && e.message) || String(e);
+
+async function register(ctx) {          // ctx: { t, signer, pin, name }
+    const b = await api("reg-begin", { t: ctx.t, signer: ctx.signer || "", pin: ctx.pin || "" });
+    const cred = await navigator.credentials.create({ publicKey: {
+        challenge: dec(b.challenge), rp: { id: b.rpId, name: "STARLITE VM · Signing" },
+        user: { id: dec(b.userId), name: b.name || ctx.name, displayName: b.name || ctx.name },
+        pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+        authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required", residentKey: "preferred" },
+        excludeCredentials: (b.creds || []).map(id => ({ type: "public-key", id: dec(id) })), attestation: "none", timeout: 60000 } });
+    const r = cred.response;
+    if (typeof r.getPublicKey !== "function" || !r.getPublicKey()) throw new Error("Browser ini belum mendukung sidik jari / Face ID untuk tanda tangan. Perbarui browser, atau tetap pakai PIN.");
+    const out = await api("reg-finish", { challengeId: b.id, id: enc(cred.rawId), clientDataJSON: enc(r.clientDataJSON), authenticatorData: enc(r.getAuthenticatorData()),
+        publicKey: enc(r.getPublicKey()), alg: r.getPublicKeyAlgorithm(), label: devLabel() });
+    localAdd(ctx.name, enc(cred.rawId));
+    return out.tok;
+}
+async function authenticate(ctx) {      // ctx: { t, signer, name }
+    const b = await api("auth-begin", { t: ctx.t, signer: ctx.signer || "" });
+    const a = await navigator.credentials.get({ publicKey: { challenge: dec(b.challenge), rpId: b.rpId, userVerification: "required", timeout: 60000,
+        allowCredentials: (b.creds || []).map(id => ({ type: "public-key", id: dec(id), transports: ["internal", "hybrid"] })) } });
+    const r = a.response;
+    const out = await api("auth-finish", { challengeId: b.id, id: enc(a.rawId), clientDataJSON: enc(r.clientDataJSON), authenticatorData: enc(r.authenticatorData), signature: enc(r.signature) });
+    localAdd(ctx.name, enc(a.rawId));
+    return out.tok;
+}
+window.SGBIO = { register, authenticate, plat, localHas };
+
+// ---------- buka dokumen / inbox memakai token hasil sidik jari ----------
+async function openWithTok(ctx, tok) {
+    if (ctx.mode === "person") {
+        const n = await sbRpc("sg_inbox", { p_t: ctx.t, p_pin: tok }, 30000);
+        if (n.pinCreate || n.needPin || n.needBio) throw new Error("Verifikasi belum diterima, coba lagi");
+        SGP.me = { key: n.me.key, name: n.me.name, pin: tok };
+        try { sgMeSet(n.me.name, tok); } catch (e) { }
+        SGP.inbox = n; return sgInboxShow(false);
+    }
+    const n = await sgFetch({ signer: ctx.signer, pin: tok });
+    if (n.pinCreate || n.needPin) throw new Error("Verifikasi belum diterima, coba lagi");
+    SGP.pin = tok;
+    sgPublicShell('<div class="sg-card text-center py-14"><p id="sg-wait" class="text-[12.5px] text-slate-600 dark:text-slate-300"></p></div>');
+    return sgPublicRoute(n);
+}
+function setErr(m) { const e = $id("sg-perr"); if (e) { e.textContent = m; e.classList.remove("hidden"); } else toast(m, "error", 7000); }
+function busy(btn, on, html) { if (!btn) return; btn.disabled = on; if (html) btn.innerHTML = html; }
+const BIO_IC = '<i class="fa-solid fa-fingerprint"></i>';
+
+async function bioOpen(ctx, btn) {
+    const old = btn ? btn.innerHTML : "";
+    busy(btn, true, '<i class="fa-solid fa-circle-notch fa-spin"></i>Menunggu sidik jari / Face ID…');
+    try { const tok = await authenticate(ctx); busy(btn, true, '<i class="fa-solid fa-circle-notch fa-spin"></i>Membuka…'); await openWithTok(ctx, tok); }
+    catch (e) { busy(btn, false, old); setErr(niceErr(e)); }
+}
+async function bioCreate(ctx, btn) {
+    const old = btn ? btn.innerHTML : "";
+    busy(btn, true, '<i class="fa-solid fa-circle-notch fa-spin"></i>Menunggu sidik jari / Face ID…');
+    try { const tok = await register(ctx); toast("Sidik jari / Face ID aktif di perangkat ini", "success"); busy(btn, true, '<i class="fa-solid fa-circle-notch fa-spin"></i>Membuka…'); await openWithTok(ctx, tok); }
+    catch (e) { busy(btn, false, old); setErr(niceErr(e)); }
+}
+
+// ---------- tampilan di layar PIN ----------
+async function bioUI(ctx) {
+    const go = $id("sg-pgo"); if (!go || go.parentNode.querySelector(".sgb-box")) return;
+    const card = go.parentNode;
+    const ok = await plat();
+    if (!document.body.contains(go)) return;
+    const hidePin = () => {
+        ["sg-pin", "sg-pin2"].forEach(id => { const i = $id(id); if (i) { i.classList.add("sgb-hide"); const l = i.previousElementSibling; if (l && l.tagName === "LABEL") l.classList.add("sgb-hide"); } });
+        card.querySelectorAll("label.ulabel").forEach(l => { if (/PIN/i.test(l.textContent)) l.classList.add("sgb-hide"); });
+        card.querySelectorAll("p").forEach(p => { if (/PIN 4 angka yang Anda buat|buat PIN 4 angka/i.test(p.textContent)) p.classList.add("sgb-hide"); });
+        go.classList.add("sgb-hide");
+    };
+    const box = document.createElement("div"); box.className = "sgb-box";
+    if (ctx.needBio) {                         // akun hanya sidik jari / Face ID (tanpa PIN)
+        hidePin();
+        box.innerHTML = ok
+            ? `<p class="sgb-note"><i class="fa-solid fa-shield-halved"></i>Akun Anda memakai sidik jari / Face ID — PIN tidak diperlukan.</p><button type="button" class="btn btn-primary w-full sgb-go">${BIO_IC}Buka dengan sidik jari / Face ID</button><p class="sgb-hint">Di perangkat lain? Pakai perangkat yang sudah didaftarkan, atau buat PIN lewat <b>Lupa PIN</b>.</p>`
+            : `<p class="sgb-note warn"><i class="fa-solid fa-triangle-exclamation"></i>Akun Anda memakai sidik jari / Face ID, tetapi perangkat ini belum didaftarkan atau tidak mendukung.</p><p class="sgb-hint">Buka dari perangkat yang sudah didaftarkan, atau buat PIN lewat <b>Lupa PIN</b>.</p>`;
+        const first = card.querySelector("label.ulabel") || go;
+        first.insertAdjacentElement("beforebegin", box);
+        if (ctx.mode === "person" && !card.querySelector(".sgv-forgot") && window.SGV2 && SGV2.forgot) {
+            go.insertAdjacentHTML("afterend", `<button type="button" class="sgv-forgot"><i class="fa-solid fa-circle-question"></i>Lupa PIN?</button>`);
+            card.querySelector(".sgv-forgot").onclick = () => SGV2.forgot({ t: ctx.t, signer: null, name: ctx.name, person: true, create: false });
+        }
+    } else if (!ctx.create) {
+        if (!ok || !(ctx.bio || localHas(ctx.name))) return;
+        box.innerHTML = `<button type="button" class="btn btn-primary w-full sgb-go">${BIO_IC}Buka dengan sidik jari / Face ID</button><p class="sgb-or"><span>atau masukkan PIN</span></p>`;
+        const first = card.querySelector("label.ulabel") || go;
+        first.insertAdjacentElement("beforebegin", box);
+    } else {                                   // tanda tangan pertama: pilih PIN atau sidik jari
+        if (!ok) return;
+        box.innerHTML = `<p class="sgb-or"><span>atau</span></p><button type="button" class="btn btn-ghost w-full sgb-go sgb-alt">${BIO_IC}Pakai sidik jari / Face ID tanpa PIN</button><p class="sgb-hint">Lebih cepat: berikutnya cukup sentuh sidik jari atau lihat kamera. PIN tetap bisa dibuat nanti lewat <b>Lupa PIN</b>.</p>`;
+        go.insertAdjacentElement("afterend", box);
+    }
+    const b = box.querySelector(".sgb-go");
+    if (b) b.onclick = () => (ctx.create ? bioCreate(ctx, b) : bioOpen(ctx, b));
+}
+
+// ---------- tawaran aktifkan setelah PIN benar ----------
+async function offer(ctx) {
+    if (!(await plat()) || localHas(ctx.name) || skipped(ctx.name) || $id("sgb-offer")) return;
+    const m = document.createElement("div"); m.id = "sgb-offer"; m.className = "sgb-offer"; m.setAttribute("role", "dialog"); m.setAttribute("aria-label", "Aktifkan sidik jari / Face ID");
+    m.innerHTML = `<div class="sgb-ocard"><span class="sgb-oic">${BIO_IC}</span><div class="min-w-0 flex-1"><b>Aktifkan sidik jari / Face ID?</b><p>Berikutnya dokumen terbuka cukup dengan sidik jari atau wajah di perangkat ini. PIN tetap bisa dipakai.</p>
+        <p id="sgb-oerr" class="sgb-oerr hidden"></p><div class="sgb-oact"><button type="button" class="btn btn-primary !py-1.5" data-y>Aktifkan</button><button type="button" class="btn btn-ghost !py-1.5" data-n>Nanti saja</button></div></div></div>`;
+    document.body.appendChild(m);
+    m.querySelector("[data-n]").onclick = () => { skip(ctx.name); m.remove(); };
+    const y = m.querySelector("[data-y]");
+    y.onclick = async () => {
+        busy(y, true, '<i class="fa-solid fa-circle-notch fa-spin"></i>Menunggu…');
+        try { await register(ctx); m.remove(); toast("Sidik jari / Face ID aktif — berikutnya tidak perlu PIN", "success", 6000); }
+        catch (e) { busy(y, false, "Coba lagi"); const er = $id("sgb-oerr"); er.textContent = niceErr(e); er.classList.remove("hidden"); }
+    };
+}
+
+// ---------- kaitkan ke layar PIN yang sudah ada ----------
+const LAST = { name: "" };
+(function hook() {
+    const baseStep = sgPublicPinStep;
+    sgPublicPinStep = function (r) {
+        const out = baseStep.apply(this, arguments);
+        try { const me = r.me || {}; LAST.name = me.name || ""; bioUI({ mode: "doc", t: SGP.t, signer: me.id, name: me.name, create: !!r.pinCreate, needBio: !!r.needBio, bio: !!me.bio }); } catch (e) { }
+        return out;
+    };
+    if (typeof sgPersonPin === "function") {
+        const basePP = sgPersonPin;
+        sgPersonPin = function (p) {
+            const out = basePP.apply(this, arguments);
+            try { LAST.name = p.name || ""; bioUI({ mode: "person", t: SGP.home || SGP.t, signer: null, name: p.name, create: !p.hasPin && !p.bio, needBio: !p.hasPin && !!p.bio, bio: !!p.bio }); } catch (e) { }
+            return out;
+        };
+    }
+    const wrapGo = (name, mode) => {
+        const b = window[name]; if (typeof b !== "function") return;
+        window[name] = async function (create) {
+            const pin = (($id("sg-pin") || {}).value || "").trim();
+            const ctx = mode === "person" ? { t: SGP.home || SGP.t, signer: null, name: LAST.name || (SGP.person && SGP.person.name) || "" }
+                : { t: SGP.t, signer: SGP.signer, name: LAST.name || (SGP.data && SGP.data.me && SGP.data.me.name) || "" };
+            const r = await b.apply(this, arguments);
+            try {
+                if (/^\d{4}$/.test(pin) && !$id("sg-pgo")) {             // berhasil: layar PIN sudah berganti
+                    if (!ctx.name) ctx.name = mode === "person" ? (SGP.me && SGP.me.name) || "" : (SGP.data && SGP.data.me && SGP.data.me.name) || "";
+                    ctx.pin = pin; setTimeout(() => offer(ctx), 1200);
+                }
+            } catch (e) { }
+            return r;
+        };
+    };
+    wrapGo("sgPinGo", "doc"); wrapGo("sgPersonGo", "person");
+})();
+
+// ---------- daftar perangkat: sidik jari / Face ID ikut ditampilkan & bisa dicabut ----------
+(function hookDevices() {
+    if (!window.SGV2 || typeof SGV2.devices !== "function") return;
+    const base = SGV2.devices;
+    SGV2.devices = async function () {
+        const out = base.apply(this, arguments);
+        const c = typeof sgCred === "function" ? sgCred() : null; if (!c) return out;
+        let keys = null, err = "";
+        const paint = () => {
+            const m = $id("sgv-dev"); if (!m) return;
+            const card = m.querySelector(".proc-card"); if (!card || card.querySelector(".sgb-dev")) return;
+            const s = document.createElement("div"); s.className = "sgb-dev";
+            s.innerHTML = `<p class="sgb-dh">${BIO_IC}Sidik jari / Face ID terdaftar</p>` + (err ? `<p class="text-[11px] text-rose-600">${E(err)}</p>` : keys === null ? '<p class="text-[11px] text-slate-400">Memuat…</p>'
+                : keys.length ? keys.map(k => `<div class="sgv-dv"><i class="fa-solid fa-fingerprint"></i><span class="min-w-0 flex-1"><b>${E(k.label || "Perangkat")}</b><small>Didaftarkan ${E(sgTime(k.created))}${k.lastUsed ? " · terakhir dipakai " + E(sgTime(k.lastUsed)) : ""}</small></span><button data-pk="${E(k.id)}" class="btn btn-ghost !py-1 text-rose-600">Cabut</button></div>`).join("")
+                : '<p class="text-[11px] text-slate-400">Belum ada. Aktifkan saat membuka dokumen dengan PIN.</p>');
+            card.appendChild(s);
+            s.querySelectorAll("[data-pk]").forEach(b => b.onclick = async () => {
+                if (!confirm("Cabut sidik jari / Face ID dari perangkat ini? Berikutnya perlu PIN atau aktifkan ulang.")) return;
+                try { const r = await sbRpc("sg_pk_list", Object.assign({}, c, { p_revoke: b.dataset.pk }), 20000); keys = r.keys || []; if (!keys.length) { try { localDel((SGP.data && SGP.data.me && SGP.data.me.name) || (SGP.me && SGP.me.name) || ""); } catch (e) { } } }
+                catch (e) { err = e.message; }
+                const old = card.querySelector(".sgb-dev"); if (old) old.remove(); paint();
+            });
+        };
+        const mo = new MutationObserver(paint); const m0 = $id("sgv-dev"); if (m0) mo.observe(m0, { childList: true, subtree: false });
+        paint();
+        try { const r = await sbRpc("sg_pk_list", c, 20000); keys = r.keys || []; } catch (e) { err = e.message; }
+        const m = $id("sgv-dev"); const old = m && m.querySelector(".sgb-dev"); if (old) old.remove(); paint();
+        return out;
+    };
+})();
+})();
+
+</script>
 </body>
 </html>
