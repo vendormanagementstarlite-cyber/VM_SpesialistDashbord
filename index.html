@@ -11925,6 +11925,43 @@ html.dark .sgf-wa{color:#6ee7b7}
 .sgk-note{display:flex;gap:8px;align-items:flex-start;margin-top:12px;padding:9px 11px;border-radius:12px;background:rgba(217,119,6,.08);color:#78350f;font-size:11.5px;line-height:1.45}
 .sgk-note i{color:#d97706;margin-top:2px}
 html.dark .sgk-note{background:rgba(245,158,11,.1);color:#fde68a}
+/* v26e: kotak masuk penanda tangan — padat */
+.sgi .sg-card{padding:14px 16px}
+.sgi .sg-ibx-h{margin:16px 2px 8px;font-size:11.5px;font-weight:800;color:#334155;text-transform:none;letter-spacing:0}
+.sgi .sg-ibx-h b{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;margin-left:4px;border-radius:999px;background:#e11d48;color:#fff;font-size:10.5px}
+html.dark .sgi .sg-ibx-h{color:#e2e8f0}
+.sgi .sg-ibx-item{padding:10px 12px;gap:10px;margin-bottom:6px;border-radius:14px}
+.sgi .sg-ibx-ic{width:32px;height:32px;font-size:13px;border-radius:10px}
+.sgi .sg-ibx-t{font-size:12.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sgi .sg-ibx-s{font-size:10.5px;margin-top:2px}
+.sgi .sg-ibx-note{font-size:10.5px;margin-top:4px}
+.sgi .sg-ibx-st{margin-top:5px;font-size:10px}
+.sgi-empty{display:flex;align-items:center;gap:12px;margin-top:12px;padding:14px 16px;border-radius:16px;background:rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.2)}
+.sgi-empty span{flex:none;width:34px;height:34px;border-radius:999px;display:grid;place-items:center;background:rgba(13,148,136,.15);color:#0f766e;font-size:16px}
+.sgi-empty b{display:block;font-size:13px;color:#0f172a}
+.sgi-empty small{display:block;font-size:11px;color:#64748b}
+html.dark .sgi-empty b{color:#fff}
+.sgi-done{margin-top:16px;border-radius:14px;border:1px solid rgba(148,163,184,.3);background:rgba(255,255,255,.6)}
+html.dark .sgi-done{background:rgba(15,23,42,.5);border-color:rgba(148,163,184,.18)}
+.sgi-done summary{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;list-style:none;font-size:12px;font-weight:700;color:#475569}
+.sgi-done summary::-webkit-details-marker{display:none}
+.sgi-done summary span{flex:1}
+.sgi-done summary b{min-width:22px;height:20px;padding:0 6px;border-radius:999px;display:grid;place-items:center;background:rgba(100,116,139,.15);font-size:10.5px}
+.sgi-done summary:focus-visible{outline:2px solid #3558c8;outline-offset:2px;border-radius:12px}
+.sgi-chev{font-size:10px;transition:transform .2s}
+.sgi-done[open] .sgi-chev{transform:rotate(180deg)}
+html.dark .sgi-done summary{color:#cbd5e1}
+.sgi-list{padding:0 10px 10px}
+.sgi-list .sg-ibx-item{margin-bottom:6px;background:transparent}
+@media (prefers-reduced-motion:reduce){.sgi-chev{transition:none}}
+.sgi .sg-ibx-item{margin:0 0 8px!important;padding:10px 12px!important}
+.sgi .sg-ibx-item .btn{padding:.38rem .8rem!important;min-height:0!important;font-size:11.5px!important;border-radius:10px}
+.sgi .sg-ibx-item .flex{gap:6px}
+.sgi .sg-ibx-h{margin-top:14px}
+.sg-main.sgi{gap:8px}
+.sgi .sg-ibx-item{margin:0!important}
+.sgi .sg-ibx-h{margin:10px 2px 0!important}
+.sgi .sgi-done{margin-top:10px}
 
 </style>
 <script id="addon_v26_sg">
@@ -12238,6 +12275,48 @@ function polishForgot(m) {
     }
 }
 new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.id === "sgv-fp") polishForgot(n); }).observe(document.body, { childList: true });
+
+// ---------- kotak masuk penanda tangan: yang belum TTD diutamakan, yang sudah TTD dilipat, tampilan padat ----------
+(function hookInbox() {
+    if (typeof sgInboxRender !== "function") return;
+    const base = sgInboxRender;
+    const OPEN = "sgi_done_open";
+    sgInboxRender = function () {
+        const out = base.apply(this, arguments);
+        try {
+            const main = document.querySelector(".sg-main"); if (!main || main.dataset.sgi) return out;
+            main.dataset.sgi = "1"; main.classList.add("sgi");
+            const heads = [...main.querySelectorAll("p.sg-ibx-h")];
+            const hp = heads.find(h => /Menunggu/i.test(h.textContent)), hd = heads.find(h => /Sudah Anda/i.test(h.textContent));
+            const pend = (SGP.inbox && SGP.inbox.pending) || [];
+            if (hp) hp.innerHTML = `Perlu ditandatangani <b>${pend.length}</b>`;
+            if (hd) {
+                const items = []; let n = hd.nextElementSibling;
+                while (n && n.classList.contains("sg-ibx-item")) { items.push(n); n = n.nextElementSibling; }
+                const det = document.createElement("details"); det.className = "sgi-done";
+                let open = false; try { open = sessionStorage.getItem(OPEN) === "1"; } catch (e) { }
+                det.open = open;
+                det.innerHTML = `<summary><i class="fa-solid fa-clock-rotate-left"></i><span>Lihat dokumen yang sudah Anda tanda tangani</span><b>${items.length}</b><i class="fa-solid fa-chevron-down sgi-chev"></i></summary><div class="sgi-list"></div>`;
+                const list = det.querySelector(".sgi-list"); items.forEach(it => list.appendChild(it));
+                det.addEventListener("toggle", () => { try { sessionStorage.setItem(OPEN, det.open ? "1" : "0"); } catch (e) { } });
+                hd.replaceWith(det);
+            }
+        } catch (e) { console.warn(e); }
+        return out;
+    };
+})();
+// hapus dokumen di Signing → arsipnya ikut disembunyikan dari kotak masuk penanda tangan
+(function hookDelete() {
+    try {
+        if (typeof callApi !== "function") return;
+        const base = callApi;
+        callApi = async function (action) {
+            const r = await base.apply(this, arguments);
+            if (action === "sign.delete" && r && r.deleted && r.deleted.length && typeof sbOwner === "function") { try { await sbOwner("sg_done_hide", { p_ids: r.deleted }); } catch (e) { } }
+            return r;
+        };
+    } catch (e) { }
+})();
 const LAST = { name: "" };
 (function hook() {
     const baseStep = sgPublicPinStep;
