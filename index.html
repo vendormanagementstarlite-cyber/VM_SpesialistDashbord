@@ -9967,6 +9967,338 @@ body:has(#mig-ov) #st-nt{display:none!important}
 })();
 
 </script>
+<style id="addon_v26_css">
+
+/* v26a: Tambah SP → Generate SP-1 */
+.sp1-now{display:flex;align-items:flex-start;gap:10px;margin:0 0 12px;padding:10px 12px;border-radius:14px;border:1px solid rgba(217,119,6,.28);background:rgba(217,119,6,.07);cursor:pointer;user-select:none}
+.sp1-now input{margin-top:3px;width:16px;height:16px;accent-color:#d97706;flex:none;cursor:pointer}
+.sp1-now-ic{flex:none;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(217,119,6,.15);color:#b45309;font-size:12px}
+.sp1-now-tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.sp1-now-tx b{font-size:12px;color:#92400e}
+.sp1-now-tx small{font-size:10.5px;line-height:1.4;color:#78716c}
+.dark .sp1-now{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)}
+.dark .sp1-now-ic{background:rgba(245,158,11,.18);color:#fbbf24}
+.dark .sp1-now-tx b{color:#fcd34d}
+.dark .sp1-now-tx small{color:#a8a29e}
+.sp1-now:has(input:not(:checked)){opacity:.75}
+
+/* v26b: Gabung PO kembar */
+.grp-tg{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;margin-left:6px;border-radius:999px;border:1px solid rgba(100,116,139,.3);background:transparent;color:#64748b;font-size:10.5px;font-weight:700;cursor:pointer;transition:background .15s,color .15s,border-color .15s;vertical-align:middle;white-space:nowrap}
+.grp-tg i{font-size:10px}
+.grp-tg.on{border-color:rgba(8,145,178,.4);background:rgba(8,145,178,.1);color:#0e7490}
+.grp-tg:hover{border-color:rgba(8,145,178,.6)}
+.grp-tg:focus-visible{outline:2px solid #0891b2;outline-offset:2px}
+.dark .grp-tg{color:#94a3b8;border-color:rgba(148,163,184,.3)}
+.dark .grp-tg.on{color:#67e8f9;background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.35)}
+tr.grp-head{cursor:pointer;background:rgba(8,145,178,.045)}
+tr.grp-head:hover{background:rgba(8,145,178,.09)}
+tr.grp-head:focus-visible{outline:2px solid #0891b2;outline-offset:-2px}
+.dark tr.grp-head{background:rgba(34,211,238,.05)}
+.dark tr.grp-head:hover{background:rgba(34,211,238,.1)}
+tr.grp-head.grp-open{background:rgba(8,145,178,.08)}
+.dark tr.grp-head.grp-open{background:rgba(34,211,238,.09)}
+.grp-line{display:flex;align-items:center;gap:6px}
+.grp-chev{font-size:9px;color:#0891b2;transition:transform .18s ease;width:10px}
+tr.grp-open .grp-chev{transform:rotate(90deg)}
+.grp-pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;background:#0891b2;color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.01em}
+.grp-pill i{font-size:9px;opacity:.85}
+.dark .grp-pill{background:#0e7490}
+.grp-sub{margin-top:3px;font-size:10px;color:#64748b;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dark .grp-sub{color:#94a3b8}
+.grp-prog{margin-top:3px;font-size:9.5px;font-weight:700;color:#64748b}
+.grp-mix{display:inline-block;padding:1px 7px;border-radius:6px;border:1px dashed rgba(100,116,139,.45);font-size:10px;color:#64748b;white-space:nowrap}
+.dark .grp-mix{color:#94a3b8;border-color:rgba(148,163,184,.4)}
+.grp-sts{display:flex;flex-direction:column;align-items:center;gap:3px}
+tr.grp-child.grp-hide{display:none}
+tr.grp-child>td:first-child{box-shadow:inset 3px 0 0 rgba(8,145,178,.55)}
+tr.grp-child>td{background:rgba(8,145,178,.02)}
+.dark tr.grp-child>td{background:rgba(34,211,238,.025)}
+tr.grp-child.grp-last>td{border-bottom:2px solid rgba(8,145,178,.2)}
+@media (prefers-reduced-motion:reduce){.grp-chev,.grp-tg{transition:none}}
+@media (max-width:767px){
+  .data-table tbody tr.grp-head{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;padding:12px 14px;margin:10px 8px;border:1px solid rgba(8,145,178,.35);border-radius:16px;background:rgba(8,145,178,.06);box-shadow:0 6px 18px -12px rgba(15,23,42,.35)}
+  html.dark .data-table tbody tr.grp-head{background:rgba(34,211,238,.07);border-color:rgba(34,211,238,.25)}
+  .data-table tbody tr.grp-head td{display:block;padding:0!important;border:0!important;min-width:0;position:static!important;background:transparent!important;white-space:normal!important;overflow-wrap:anywhere;text-align:left!important}
+  .data-table tbody tr.grp-head td::before{content:attr(data-label);display:block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin-bottom:2px}
+  .data-table tbody tr.grp-head td[data-label=""]::before{display:none}
+  .data-table tbody tr.grp-head td:first-child{grid-column:1/-1}
+  .data-table tbody tr.grp-head td:first-child::before{display:none}
+  .data-table tbody tr.grp-head td:has(> .grp-mix:only-child){display:none}
+  .data-table tbody tr.grp-head .grp-sub{max-width:none}
+  .data-table tbody tr.grp-head .grp-sts{align-items:flex-start}
+  .data-table tbody tr.grp-child{margin-left:24px!important;border-left:3px solid rgba(8,145,178,.55)!important}
+  .data-table tbody tr.grp-child>td:first-child{box-shadow:none}
+  .data-table tbody tr.grp-child.grp-last>td{border-bottom:0!important}
+}
+
+</style>
+<script id="addon_v26">
+
+/* ===== v26a: Tambah Data Monitoring SP → langsung Generate SP-1 ===== */
+(function () {
+  if (typeof recFormEnhance !== "function" || typeof saveRecAdd !== "function") return;
+  var LS = "sp1_now_v1";
+  var pref = function () { try { return localStorage.getItem(LS) !== "0"; } catch (e) { return true; } };
+  var setPref = function (v) { try { localStorage.setItem(LS, v ? "1" : "0"); } catch (e) { } };
+  var norm = function (v) { return String(v == null ? "" : v).trim().toLowerCase().replace(/\s+/g, " "); };
+  var canGen = function () { try { return can("generate"); } catch (e) { return false; } };
+  var isSpAdd = function () { return typeof REC !== "undefined" && REC.sheet === "sp" && REC.mode === "add"; };
+
+  var oEnh = recFormEnhance;
+  window.recFormEnhance = recFormEnhance = function () {
+    var r = oEnh.apply(this, arguments);
+    try {
+      if (!isSpAdd() || !canGen()) return r;
+      var body = document.getElementById("rec-body");
+      if (!body || document.getElementById("sp1-now")) return r;
+      var box = document.createElement("label");
+      box.className = "sp1-now"; box.setAttribute("for", "sp1-now-cb");
+      box.id = "sp1-now";
+      box.innerHTML = '<input type="checkbox" id="sp1-now-cb"' + (pref() ? " checked" : "") + '>'
+        + '<span class="sp1-now-ic"><i class="fa-solid fa-wand-magic-sparkles"></i></span>'
+        + '<span class="sp1-now-tx"><b>Langsung buat SP-1 setelah disimpan</b>'
+        + '<small>Data yang Anda isi otomatis terbawa ke Generate SP-1 untuk ditinjau. Tidak perlu mengetik ulang.</small></span>';
+      body.insertBefore(box, body.firstChild);
+      box.querySelector("input").addEventListener("change", function () { setPref(this.checked); });
+    } catch (e) { }
+    return r;
+  };
+
+  var oSave = saveRecAdd;
+  window.saveRecAdd = saveRecAdd = async function () {
+    var cb = document.getElementById("sp1-now-cb");
+    var want = isSpAdd() && cb && cb.checked && canGen();
+    var no = "";
+    if (want) {
+      var inp = document.querySelector('#rec-body [data-c="0"]');
+      no = inp ? String(inp.value || "").trim() : "";
+      if (!no) return recError("Isi Letter No SP1 (kolom A) untuk membuat SP-1, atau hapus centang \"Langsung buat SP-1\".");
+      var dup = (STATE.sp || []).find(function (s) { return norm(s.sp1) === norm(no); });
+      if (dup) return recError("Nomor " + no + " sudah dipakai di baris " + dup.row + " (" + (dup.mitra || dup.site || dup.po || "-") + "). Ganti nomornya supaya SP-1 tidak ganda.");
+    }
+    var res = await oSave.apply(this, arguments);
+    if (!want) return res;
+    try {
+      var m = document.getElementById("rec-modal");
+      if (!m || !m.classList.contains("hidden")) return res;          // gagal simpan → form tetap terbuka
+      var rec = (STATE.sp || []).find(function (s) { return norm(s.sp1) === norm(no); });
+      if (!rec) return res;
+      setTimeout(function () {
+        try {
+          openGenerate("SP1", rec.sp1);
+          showToast("Data SP tersimpan. Tinjau SP-1 lalu klik Generate.", "success", 6e3);
+        } catch (e) { }
+      }, 120);
+    } catch (e) { }
+    return res;
+  };
+})();
+
+/* ===== v26b: Gabung PO kembar (stasiun + Mitra Before) — Data Mitra Takeover & Tracker All Starlite ===== */
+(function () {
+  if (typeof renderTakeoverPage !== "function") return;
+  var LS = "po_group_v1";
+  var isOn = function () { try { return localStorage.getItem(LS) !== "0"; } catch (e) { return true; } };
+  var setOn = function (v) { try { localStorage.setItem(LS, v ? "1" : "0"); } catch (e) { } };
+  var norm = function (v) { return String(v == null ? "" : v).trim().toLowerCase().replace(/\s+/g, " "); };
+  var E = function (v) { return typeof esc === "function" ? esc(v) : String(v == null ? "" : v); };
+  var OPEN = { to: new Set(), trk: new Set() };
+  var RANK = { need: 0, belum: 1, proses: 2, hold: 3, selesai: 4, close: 5, cancel: 6 };
+
+  function build(list) {
+    var map = new Map(), out = [];
+    list.forEach(function (t) {
+      var s = norm(t.stasiun), b = norm(t.before), k = s && b ? s + "|" + b : "";
+      if (!k) { out.push({ k: "", items: [t] }); return; }
+      var g = map.get(k);
+      if (!g) { g = { k: k, items: [] }; map.set(k, g); out.push(g); }
+      g.items.push(t);
+    });
+    return out;
+  }
+  function heads(theadId) {
+    try { return Array.from(document.querySelectorAll("#" + theadId + " th")).map(function (h) { return h.textContent.trim(); }); } catch (e) { return []; }
+  }
+  function mixCell(n) { return '<td class="px-3 py-2.5"><span class="grp-mix" title="Isinya berbeda antar PO — buka grup untuk melihat rinciannya">' + n + " PO berbeda</span></td>"; }
+  function poCell(items, extra, sticky) {
+    var pos = items.map(function (t) { return t.po; }).filter(function (p) { return !isEmpty(p); });
+    var list = pos.slice(0, 3).map(E).join(", ") + (pos.length > 3 ? " +" + (pos.length - 3) : "");
+    return '<td class="' + (sticky ? "sticky-col " : "") + 'px-3 py-2.5 grp-po"><div class="grp-line"><i class="fa-solid fa-chevron-right grp-chev" aria-hidden="true"></i>'
+      + '<span class="grp-pill"><i class="fa-solid fa-layer-group"></i>' + items.length + ' PO</span></div>'
+      + '<div class="grp-sub font-mono" title="' + E(pos.join(", ")) + '">' + list + "</div>" + (extra || "") + "</td>";
+  }
+  function cellsFor(cols, items, custom) {
+    return cols.map(function (c, i) {
+      if (custom[c.key]) return custom[c.key](items, i);
+      var hs = items.map(function (t) { return c.td(t); });
+      return hs.every(function (h) { return h === hs[0]; }) ? hs[0] : mixCell(items.length);
+    });
+  }
+  function label(rowHtml, labels) {
+    var i = 0;
+    return rowHtml.replace(/<td(\s|>)/g, function (m, a) { var l = labels[i++] || ""; return '<td data-label="' + E(l) + '"' + a; });
+  }
+  function bindToggle(bodyId, key, rerender) {
+    var b = document.getElementById(bodyId);
+    if (!b || b.dataset.grpBound) return;
+    b.dataset.grpBound = "1";
+    b.addEventListener("click", function (ev) {
+      var tr = ev.target.closest("tr.grp-head");
+      if (!tr || ev.target.closest("a,button,input")) return;
+      ev.stopPropagation();
+      var k = tr.dataset.grp, kk = tr.dataset.auto ? "x:" + k : k;
+      OPEN[key].has(kk) ? OPEN[key].delete(kk) : OPEN[key].add(kk);
+      // gambar ulang dari data (tabel bisa digambar sebagian/virtual) — posisi layar dijaga pada baris yang diklik
+      var top = tr.getBoundingClientRect().top;
+      try { rerender(); } catch (e) { }
+      var again = null;
+      b.querySelectorAll("tr.grp-head").forEach(function (h) { if (h.dataset.grp === k) again = h; });
+      if (again) { var d = again.getBoundingClientRect().top - top; if (Math.abs(d) > 1) window.scrollBy(0, d); try { again.focus({ preventScroll: true }); } catch (e) { } }
+    }, true);
+    b.addEventListener("keydown", function (ev) {
+      if ((ev.key === "Enter" || ev.key === " ") && ev.target.matches && ev.target.matches("tr.grp-head")) { ev.preventDefault(); ev.target.click(); }
+    });
+  }
+  function toggleBtn(anchorId, id) {
+    var a = document.getElementById(anchorId);
+    if (!a) return;
+    var b = document.getElementById(id);
+    if (!b) {
+      b = document.createElement("button");
+      b.type = "button"; b.id = id; b.className = "grp-tg";
+      b.title = "Gabungkan PO dengan stasiun dan Mitra Before yang sama menjadi satu baris";
+      b.addEventListener("click", function () {
+        setOn(!isOn());
+        try { renderTakeoverPage(); } catch (e) { }
+        try { if (typeof trkPage === "function" && document.getElementById("trk-body")) trkPage(); } catch (e) { }
+      });
+      a.insertAdjacentElement("afterend", b);
+    }
+    var on = isOn();
+    b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false");
+    b.innerHTML = '<i class="fa-solid ' + (on ? "fa-layer-group" : "fa-list") + '"></i><span>' + (on ? "PO digabung" : "PO terpisah") + "</span>";
+  }
+  function uniq(items, f) { return Array.from(new Set(items.map(f).filter(function (v) { return !isEmpty(v); }))); }
+  function stasiunCell(items, w) {
+    var reg = uniq(items, function (t) { return t.region; });
+    return '<td class="px-3 py-2.5">' + cLine(cTxt(items[0].stasiun, "font-bold text-slate-900 dark:text-white", w)) + cSub(cTxt(reg.join(", "), "", w)) + "</td>";
+  }
+  function afterCell(items, w, dari) {
+    var af = uniq(items, function (t) { return t.after; });
+    var top = af.length <= 1 ? cTxt(af[0] || "", "font-bold text-emerald-700 dark:text-cyan-400", w)
+      : '<span class="grp-mix" title="' + E(af.join(", ")) + '">' + af.length + " mitra pengganti</span>";
+    return '<td class="px-3 py-2.5">' + cLine(top) + cSub((dari ? '<span class="text-slate-400 mr-1">dari</span>' : "") + cTxt(items[0].before, "", w - (dari ? 25 : 0))) + "</td>";
+  }
+  function worst(items) {
+    var act = items.filter(function (t) { return t.st !== "cancel"; });
+    var pool = act.length ? act : items;
+    return pool.reduce(function (w, t) { return (RANK[t.st] == null ? 1 : RANK[t.st]) < (RANK[w] == null ? 1 : RANK[w]) ? t.st : w; }, pool[0].st);
+  }
+
+  // ---------- Data Mitra Takeover ----------
+  var baseTo = window.renderTakeoverPage;
+  window.renderTakeoverPage = renderTakeoverPage = function () {
+    var a = (typeof VS_TO !== "undefined" && VS_TO.filtered) || [];
+    var g = isOn() && a.length ? build(a) : null;
+    if (!g || g.every(function (x) { return x.items.length === 1; })) {
+      var r = baseTo.apply(this, arguments);
+      toggleBtn("takeover-count-badge", "to-grp-tg");
+      return r;
+    }
+    var cols = toCols();
+    renderThead("takeover-thead", cols, VS_TO, function () { applyTakeoverFilters(false); });
+    var body = $("takeover-table-body"), labels = heads("takeover-thead");
+    var multi = g.filter(function (x) { return x.items.length > 1; }).length;
+    $("takeover-count-badge").textContent = fmtInt(a.length) + " Baris · " + fmtInt(multi) + " grup";
+    var pages = Math.max(1, Math.ceil(g.length / VS_TO.size));
+    if (VS_TO.page > pages) VS_TO.page = pages;
+    var autoOpen = !!(VS_TO.q || VS_TO.special || VS_TO.mitraKey);
+    var custom = {
+      po: function (items) { return poCell(items, "", false); },
+      stasiun: function (items) { return stasiunCell(items, 76); },
+      after: function (items) { return afterCell(items, 100, false); },
+      st: function (items) {
+        var st = worst(items), tot = items.filter(function (t) { return t.st !== "cancel"; }).length;
+        var done = items.filter(function (t) { return t.st === "selesai" || t.st === "close"; }).length;
+        return '<td class="px-3 py-3 text-center">' + statusBadge(st) + '<p class="grp-prog">' + (tot ? done + "/" + tot + " selesai" : "semua cancel") + "</p></td>";
+      }
+    };
+    var s = (VS_TO.page - 1) * VS_TO.size;
+    body.innerHTML = g.slice(s, s + VS_TO.size).map(function (grp) {
+      var rowOf = function (t, extra, gk, hide) {
+        return '<tr data-id="' + t.id + '" class="hover:bg-cyan-500/10 dark:hover:bg-slate-800/60 cursor-pointer transition-colors' + extra + (hide ? " grp-hide" : "") + '"' + (gk ? ' data-gk="' + E(gk) + '"' : "") + ">" + cols.map(function (c) { return c.td(t); }).join("") + "</tr>";
+      };
+      if (grp.items.length === 1) return rowOf(grp.items[0], "", "", false);
+      var open = autoOpen ? !OPEN.to.has("x:" + grp.k) : OPEN.to.has(grp.k);
+      var head = '<tr class="grp-head' + (open ? " grp-open" : "") + '" ' + (autoOpen ? 'data-auto="1" ' : "") + 'data-grp="' + E(grp.k) + '" tabindex="0" aria-expanded="' + (open ? "true" : "false") + '" title="Klik untuk ' + (open ? "menutup" : "membuka") + ' rincian PO">'
+        + cellsFor(cols, grp.items, custom).join("") + "</tr>";
+      return label(head, labels) + grp.items.map(function (t, i) { return rowOf(t, " grp-child" + (i === grp.items.length - 1 ? " grp-last" : ""), grp.k, !open); }).join("");
+    }).join("");
+    renderPager("takeover-pager", VS_TO, a.length, function () { renderTakeoverPage(); $("takeover-table-body").closest(".data-scroll").scrollTop = 0; });
+    try { labelCards("takeover-table-body"); } catch (e) { }
+    bindToggle("takeover-table-body", "to", function () { renderTakeoverPage(); });
+    toggleBtn("takeover-count-badge", "to-grp-tg");
+  };
+
+  // ---------- Tracker All Starlite ----------
+  if (typeof trkPage === "function" && typeof TRK_COLS_UI !== "undefined") {
+    var baseTrk = window.trkPage;
+    window.trkPage = trkPage = function () {
+      var vs = TRK.vs, col = TRK_COLS_UI.find(function (t) { return t.key === vs.sortKey; });
+      var a = col ? sortData(TRK.view, col, vs.sortDir) : TRK.view;
+      var g = isOn() && a.length ? build(a) : null;
+      if (!g || g.every(function (x) { return x.items.length === 1; })) {
+        var r = baseTrk.apply(this, arguments);
+        toggleBtn("trk-count", "trk-grp-tg");
+        return r;
+      }
+      renderThead("trk-thead", TRK_COLS_UI, vs, function () { trkPage(); });
+      var labels = heads("trk-thead");
+      var pages = Math.max(1, Math.ceil(g.length / vs.size));
+      if (vs.page > pages) vs.page = pages;
+      var q = ($("trk-search") && $("trk-search").value || "").trim();
+      var sticky = function (h) { return h.replace('<td class="', '<td class="sticky-col '); };
+      var custom = {
+        po: function (items) {
+          var hp = items.reduce(function (s, t) { return s + (t.hp || 0); }, 0);
+          return poCell(items, '<div class="grp-sub"><span class="text-slate-400">HP Actual:</span> <span class="font-mono ' + (hp ? "font-bold text-emerald-600" : "text-slate-400") + '">' + (hp ? fmtInt(hp) : "-") + "</span></div>", true);
+        },
+        stasiun: function (items) { return stasiunCell(items, 170); },
+        after: function (items) { return afterCell(items, 170, true); },
+        don: function (items) {
+          var d = items.reduce(function (s, t) { return s + (t.don || 0); }, 0);
+          return '<td class="px-3 py-2.5 text-center font-mono whitespace-nowrap ' + (d ? "" : "text-slate-400") + '">' + (d ? fmtInt(d) : "-") + "</td>";
+        },
+        status: function (items) {
+          var st = Array.from(new Set(items.map(function (t) { return t.status || ""; })));
+          if (st.length === 1) return '<td class="px-2 py-2.5 text-center">' + trkBadge(st[0]) + "</td>";
+          return '<td class="px-2 py-2.5 text-center"><div class="grp-sts">' + st.slice(0, 2).map(function (x) { return trkBadge(x); }).join("") + (st.length > 2 ? '<span class="grp-mix">+' + (st.length - 2) + "</span>" : "") + "</div></td>";
+        }
+      };
+      var s = (vs.page - 1) * vs.size;
+      $("trk-body").innerHTML = g.slice(s, s + vs.size).map(function (grp) {
+        var rowOf = function (t, extra, gk, hide) {
+          return '<tr data-id="' + t.id + '" class="trk-row cursor-pointer' + extra + (hide ? " grp-hide" : "") + '"' + (gk ? ' data-gk="' + E(gk) + '"' : "") + ' onclick="trkDetail(' + t.id + ')">'
+            + TRK_COLS_UI.map(function (c, i) { return i === 0 ? sticky(c.td(t)) : c.td(t); }).join("") + "</tr>";
+        };
+        if (grp.items.length === 1) return rowOf(grp.items[0], "", "", false);
+        var open = q ? !OPEN.trk.has("x:" + grp.k) : OPEN.trk.has(grp.k);
+        var head = '<tr class="grp-head' + (open ? " grp-open" : "") + '" ' + (q ? 'data-auto="1" ' : "") + 'data-grp="' + E(grp.k) + '" tabindex="0" aria-expanded="' + (open ? "true" : "false") + '">'
+          + cellsFor(TRK_COLS_UI, grp.items, custom).join("") + "</tr>";
+        return label(head, labels) + grp.items.map(function (t, i) { return rowOf(t, " grp-child" + (i === grp.items.length - 1 ? " grp-last" : ""), grp.k, !open); }).join("");
+      }).join("");
+      renderPager("trk-pager", vs, a.length, function () { trkPage(); var b = $("trk-body"); b && b.closest(".glass-panel").scrollIntoView({ block: "start", behavior: "smooth" }); });
+      try { labelCards("trk-body"); } catch (e) { }
+      var multi = g.filter(function (x) { return x.items.length > 1; }).length;
+      var c = $("trk-count"); if (c) c.textContent = fmtInt(a.length) + " site · " + fmtInt(multi) + " grup";
+      bindToggle("trk-body", "trk", function () { trkPage(); });
+      toggleBtn("trk-count", "trk-grp-tg");
+    };
+  }
+  try { if (typeof VS_TO !== "undefined" && VS_TO.filtered && VS_TO.filtered.length) renderTakeoverPage(); } catch (e) { }
+})();
+
+</script>
 <style id="addon_v25_css">
 /* ===== STARLITE v25 · Signing v2 + tabel tanpa pager ===== */
 /* F3 tabel */
