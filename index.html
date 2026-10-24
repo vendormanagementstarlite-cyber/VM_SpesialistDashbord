@@ -11983,6 +11983,7 @@ html.dark .sgc-f span{color:#cbd5e1}
 .sgc-dev{display:flex;align-items:center;gap:10px;width:100%;margin-top:12px;padding:11px 12px;border-radius:12px;border:1px solid rgba(148,163,184,.3);background:transparent;font-size:12px;font-weight:700;color:#334155;cursor:pointer}
 .sgc-dev i:last-child{margin-left:auto;font-size:10px;color:#94a3b8}
 html.dark .sgc-dev{color:#e2e8f0;border-color:rgba(148,163,184,.2)}
+.sgc-tr{display:flex;align-items:center;gap:8px}
 
 </style>
 <script id="addon_v26_sg">
@@ -12493,11 +12494,12 @@ function contactSheet(info, mode) {        // mode: "ask" (lengkapi) | "edit" (p
 }
 window.SGBIO.contact = async () => { const i = await contactGet(); if (!i) return toast("Masuk dengan PIN / sidik jari terlebih dahulu", "error"); if (!i.canEdit) return toast("Kontak Anda belum terdaftar di daftar penanda tangan — hubungi pengirim dokumen", "info", 7000); contactSheet(i, "edit"); };
 function gearBtn() {
-    const card = document.querySelector(".sg-main .sg-card"); if (!card || card.querySelector(".sgc-gear")) return;
+    const top = document.querySelector("header.sg-top"); if (!top || top.querySelector(".sgc-gear")) return;
     const c = typeof sgCred === "function" ? sgCred() : null; if (!c) return;
-    const anchor = card.querySelector(".sgv-devbtn") || card.querySelector("button.icon-btn");
-    const html = '<button type="button" class="icon-btn shrink-0 sgc-gear" title="Pengaturan kontak" aria-label="Pengaturan kontak" onclick="SGBIO.contact()"><i class="fa-solid fa-gear"></i></button>';
-    if (anchor) anchor.insertAdjacentHTML("beforebegin", html); else (card.querySelector(".flex.items-start") || card).insertAdjacentHTML("beforeend", html);
+    const theme = top.querySelector('button[title="Tema"]') || top.querySelector("button");
+    const html = '<button type="button" class="icon-btn sgc-gear" title="Pengaturan kontak" aria-label="Pengaturan kontak" onclick="SGBIO.contact()"><i class="fa-solid fa-gear"></i></button>';
+    if (theme) { if (!theme.parentNode.classList.contains("sgc-tr")) { const w = document.createElement("div"); w.className = "sgc-tr"; theme.replaceWith(w); w.appendChild(theme); } theme.insertAdjacentHTML("beforebegin", html); }
+    else top.insertAdjacentHTML("beforeend", html);
 }
 let askedAt = 0;
 async function contactNudge() {
