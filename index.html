@@ -11997,6 +11997,14 @@ html.dark .sga-chip{color:#fcd34d}
 .sgp-row.sga-pend [data-pin],.sgp-row.sga-pend [data-m]{display:none}
 .sga-acts{flex-basis:100%;display:flex;justify-content:flex-end;gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(217,119,6,.35)}
 .sga-no{width:auto;display:inline-flex;align-items:center;gap:5px;padding:0 10px;font-size:11px;font-weight:800}
+/* v26h: kontak saat pertama membuka link */
+.sgn-box{margin-top:16px;padding:12px 14px;border-radius:14px;background:rgba(53,88,200,.05);border:1px solid rgba(53,88,200,.15);display:flex;flex-direction:column;gap:10px}
+html.dark .sgn-box{background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.22)}
+.sgn-h{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#0f172a}
+.sgn-h i{color:#3558c8}
+.sgn-h span{margin-left:auto;padding:1px 8px;border-radius:999px;background:rgba(53,88,200,.12);color:#3558c8;font-size:9.5px;font-weight:800}
+html.dark .sgn-h{color:#fff}html.dark .sgn-h span{color:#a5b4fc}
+.sgn-p{font-size:11px;color:#64748b;margin-top:-6px}
 
 </style>
 <script id="addon_v26_sg">
@@ -12100,7 +12108,8 @@ async function bioOpen(ctx, btn) {
 async function bioCreate(ctx, btn) {
     const old = btn ? btn.innerHTML : "";
     busy(btn, true, '<i class="fa-solid fa-circle-notch fa-spin"></i>Menunggu sidik jari / Face ID…');
-    try { const tok = await register(ctx); toast("Sidik jari / Face ID aktif di perangkat ini", "success"); busy(btn, true, '<i class="fa-solid fa-circle-notch fa-spin"></i>Membuka…'); await openWithTok(ctx, tok); }
+    const nc = newContact(); if (nc.err) { setErr(nc.err); return; }
+    try { const tok = await register(ctx); toast("Sidik jari / Face ID aktif di perangkat ini", "success"); saveNewContact({ p_t: ctx.t, p_signer: ctx.signer || "", p_pin: tok }, nc); busy(btn, true, '<i class="fa-solid fa-circle-notch fa-spin"></i>Membuka…'); await openWithTok(ctx, tok); }
     catch (e) { busy(btn, false, old); setErr(niceErr(e)); }
 }
 
@@ -12240,6 +12249,13 @@ function polishPin(ctx, doc) {
     const lab = t => { const l = document.createElement("p"); l.className = "sgp-l"; l.textContent = t; return l; };
     if (pin) { if (pin2) entry.appendChild(lab("PIN baru")); entry.appendChild(pin); digits(pin, 4, { secret: true, label: pin2 ? "PIN baru" : "PIN" }); }
     if (pin2) { entry.appendChild(lab("Ulangi PIN")); entry.appendChild(pin2); digits(pin2, 4, { secret: true, label: "Ulangi PIN" }); }
+    if (ctx.create) {
+        const kb = document.createElement("div"); kb.className = "sgn-box";
+        kb.innerHTML = `<p class="sgn-h"><i class="fa-solid fa-address-card"></i>Kontak Anda <span>dianjurkan</span></p><p class="sgn-p">Untuk menerima link dokumen dan reset PIN kalau lupa.</p>
+            <label class="sgc-f"><span>No WhatsApp</span><input id="sgn-wa" class="field w-full" type="tel" inputmode="tel" autocomplete="tel" placeholder="0812xxxxxxxx"></label>
+            <label class="sgc-f"><span>Email</span><input id="sgn-mail" class="field w-full" type="email" inputmode="email" autocomplete="email" placeholder="nama@email.com"></label>`;
+        entry.appendChild(kb);
+    }
     if (err) entry.appendChild(err);
     entry.appendChild(go);
     if (forgot) { forgot.innerHTML = 'Lupa PIN?'; entry.appendChild(forgot); }
@@ -12352,6 +12368,18 @@ new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) i
         };
     } catch (e) { }
 })();
+function newContact() {
+    const w = (($id("sgn-wa") || {}).value || "").trim(), m = (($id("sgn-mail") || {}).value || "").trim();
+    if (w && !/^08[1-9]\d{7,11}$/.test(waNormS(w))) return { err: "Nomor WhatsApp tidak valid. Contoh: 0812xxxxxxxx" };
+    if (m && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)) return { err: "Format email tidak valid" };
+    return { wa: w ? waNormS(w) : null, mail: m || null };
+}
+function waNormS(v) { let d = String(v || "").replace(/\D/g, ""); if (/^62/.test(d)) d = "0" + d.slice(2); else if (/^8/.test(d)) d = "0" + d; return d; }
+async function saveNewContact(cred, nc) {
+    if (!cred || !nc || (!nc.wa && !nc.mail)) return;
+    try { askedAt = Date.now(); } catch (e) { }
+    try { await sbRpc("sg_me_contact", Object.assign({}, cred, { p_wa: nc.wa, p_email: nc.mail }), 20000); toast("Kontak Anda tersimpan", "success"); } catch (e) { }
+}
 const LAST = { name: "" };
 (function hook() {
     const baseStep = sgPublicPinStep;
@@ -12374,6 +12402,8 @@ const LAST = { name: "" };
         const b = window[name]; if (typeof b !== "function") return;
         window[name] = async function (create) {
             const pin = (($id("sg-pin") || {}).value || "").trim();
+            const nc = create ? newContact() : null;
+            if (nc && nc.err) { setErr(nc.err); return; }
             const ctx = mode === "person" ? { t: SGP.home || SGP.t, signer: null, name: LAST.name || (SGP.person && SGP.person.name) || "" }
                 : { t: SGP.t, signer: SGP.signer, name: LAST.name || (SGP.data && SGP.data.me && SGP.data.me.name) || "" };
             const r = await b.apply(this, arguments);
@@ -12381,6 +12411,7 @@ const LAST = { name: "" };
                 if (/^\d{4}$/.test(pin) && !$id("sg-pgo")) {             // berhasil: layar PIN sudah berganti
                     if (!ctx.name) ctx.name = mode === "person" ? (SGP.me && SGP.me.name) || "" : (SGP.data && SGP.data.me && SGP.data.me.name) || "";
                     ctx.pin = pin; setTimeout(() => offer(ctx), 1200);
+                    if (nc) saveNewContact(typeof sgCred === "function" ? sgCred() : null, nc);
                 }
             } catch (e) { }
             return r;
