@@ -11984,6 +11984,19 @@ html.dark .sgc-f span{color:#cbd5e1}
 .sgc-dev i:last-child{margin-left:auto;font-size:10px;color:#94a3b8}
 html.dark .sgc-dev{color:#e2e8f0;border-color:rgba(148,163,184,.2)}
 .sgc-tr{display:flex;align-items:center;gap:8px}
+/* v26g: persetujuan penanda tangan baru */
+.sga-head{display:flex;align-items:center;gap:6px;margin-top:10px;padding:8px 10px;border-radius:10px;background:rgba(217,119,6,.1);color:#92400e;font-size:11.5px;font-weight:700}
+html.dark .sga-head{color:#fcd34d;background:rgba(245,158,11,.12)}
+.sgp-row.sga-pend{border-color:rgba(217,119,6,.45)!important;background:rgba(217,119,6,.05)}
+.sga-chip{display:inline-flex;align-items:center;gap:4px;padding:1px 7px;border-radius:999px;background:rgba(217,119,6,.14);color:#b45309;font-size:9.5px;font-weight:800}
+html.dark .sga-chip{color:#fcd34d}
+.sga-ok{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 10px;border-radius:9px;border:0;background:#059669;color:#fff;font-size:11px;font-weight:800;cursor:pointer}
+.sga-no{width:30px;height:30px;border-radius:9px;border:1px solid rgba(225,29,72,.35);background:transparent;color:#e11d48;cursor:pointer}
+.sga-ok:focus-visible,.sga-no:focus-visible{outline:2px solid #3558c8;outline-offset:2px}
+.sgp-row.sga-pend{flex-wrap:wrap}
+.sgp-row.sga-pend [data-pin],.sgp-row.sga-pend [data-m]{display:none}
+.sga-acts{flex-basis:100%;display:flex;justify-content:flex-end;gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(217,119,6,.35)}
+.sga-no{width:auto;display:inline-flex;align-items:center;gap:5px;padding:0 10px;font-size:11px;font-weight:800}
 
 </style>
 <script id="addon_v26_sg">
@@ -12432,14 +12445,17 @@ new MutationObserver(() => {
         if (em && p.hasEmail) { em.value = ""; em.disabled = true; em.placeholder = "Email tersimpan " + (p.emailMask || "") + " · hanya Akun Utama"; }
     }
     const form = m.querySelector(".sgp-form");
-    if (form && !m.querySelector(".sgc-hint")) form.insertAdjacentHTML("afterend", '<p class="sgc-hint"><i class="fa-solid fa-circle-info"></i>Disarankan isi <b>No WhatsApp</b> atau <b>email</b> — dipakai untuk mengirim link & reset PIN. Kontak hanya bisa dilihat Akun Utama.</p>');
+    if (form && !m.querySelector(".sgc-hint")) form.insertAdjacentHTML("afterend", (SG.signers || []).some(x => x.canApprove)
+        ? '<p class="sgc-hint"><i class="fa-solid fa-circle-info"></i>Disarankan isi <b>No WhatsApp</b> atau <b>email</b> — dipakai untuk mengirim link & reset PIN. Kontak hanya bisa dilihat Akun Utama.</p>'
+        : '<p class="sgc-hint"><i class="fa-solid fa-circle-info"></i>Penanda tangan baru <b>diajukan ke Akun Utama</b> dan bisa dipakai setelah disetujui. No WhatsApp & email boleh dikosongkan.</p>');
     add.addEventListener("click", ev => {
         const w = wa.disabled ? "" : wa.value.trim(), e = em && !em.disabled ? em.value.trim() : "";
         if (w && !waOk(w)) { ev.stopImmediatePropagation(); ev.preventDefault(); toast("Nomor WhatsApp tidak valid. Contoh: 0812xxxxxxxx", "error", 6000); wa.focus(); return; }
         if (e && !mailOk(e)) { ev.stopImmediatePropagation(); ev.preventDefault(); toast("Format email tidak valid", "error", 6000); em.focus(); return; }
         if (w) wa.value = waNorm(w);
         const hasNow = !!(w || e || (p && (p.hasWa || p.hasEmail)));
-        if (!id && !hasNow && !confirm("No WhatsApp dan email masih kosong.\n\nDisarankan diisi agar penanda tangan bisa menerima link dan reset PIN sendiri.\n\nSimpan tanpa kontak?")) { ev.stopImmediatePropagation(); ev.preventDefault(); wa.focus(); }
+        const primary = (SG.signers || []).some(x => x.canApprove);
+        if (!id && !hasNow && primary && !confirm("No WhatsApp dan email masih kosong.\n\nDisarankan diisi agar penanda tangan bisa menerima link dan reset PIN sendiri.\n\nSimpan tanpa kontak?")) { ev.stopImmediatePropagation(); ev.preventDefault(); wa.focus(); }
     }, true);
 }).observe(document.body, { childList: true, subtree: true });
 new MutationObserver(() => {
@@ -12454,6 +12470,55 @@ new MutationObserver(() => {
     });
 }).observe(document.body, { childList: true, subtree: true });
 
+// (a2) penanda tangan baru: diajukan akun lain → disetujui Akun Utama sistem
+new MutationObserver(() => {
+    const m = $id("sg-people"); if (!m) return;
+    const list = m.querySelector(".sgp-list"); if (!list || list.dataset.sga) return;
+    list.dataset.sga = "1";
+    const pend = (SG.signers || []).filter(p => p.status === "menunggu");
+    const rows = [...list.querySelectorAll(".sgp-row")];
+    rows.forEach(row => {
+        const id = ((row.querySelector("[data-e]") || {}).dataset || {}).e; const p = id && (SG.signers || []).find(x => x.id === id);
+        if (!p || p.status !== "menunggu") return;
+        row.classList.add("sga-pend");
+        const sm = row.querySelector("small"); if (sm) sm.insertAdjacentHTML("afterbegin", `<span class="sga-chip"><i class="fa-solid fa-hourglass-half"></i>Menunggu persetujuan${p.requestedBy ? " · diajukan " + E(String(p.requestedBy).replace(/\s*\(.*\)$/, "")) : ""}</span> `);
+        if (p.canApprove) {
+            row.insertAdjacentHTML("beforeend", `<div class="sga-acts"><button type="button" class="sga-no" data-rj="${E(p.id)}"><i class="fa-solid fa-xmark"></i>Tolak</button><button type="button" class="sga-ok" data-ap="${E(p.id)}"><i class="fa-solid fa-check"></i>Setujui</button></div>`);
+        }
+    });
+    // yang menunggu ditaruh paling atas
+    rows.filter(r => r.classList.contains("sga-pend")).reverse().forEach(r => list.insertAdjacentElement("afterbegin", r));
+    if (pend.length && !m.querySelector(".sga-head")) list.insertAdjacentHTML("beforebegin", `<p class="sga-head"><i class="fa-solid fa-user-clock"></i>${pend.length} penanda tangan baru menunggu persetujuan${pend[0].canApprove ? " Anda" : " Akun Utama"}</p>`);
+    const act = async (id, ok) => {
+        const p = (SG.signers || []).find(x => x.id === id); if (!p) return;
+        if (!ok && !confirm(`Tolak pengajuan "${p.name}"? Nama ini dihapus dari daftar.`)) return;
+        try {
+            const r = await sbOwner("sg_signer_approve", { p_id: id, p_ok: ok }, 20000);
+            if (r.removed) SG.signers = SG.signers.filter(x => x.id !== id); else Object.assign(p, r.signer);
+            toast(ok ? `${p.name} disetujui — sudah bisa dipakai di dokumen` : `Pengajuan ${p.name} ditolak`, "success");
+            if (typeof sgPeopleManage === "function") sgPeopleManage();
+        } catch (e) { toast(e.message, "error", 7000); }
+    };
+    list.querySelectorAll("[data-ap]").forEach(b => b.onclick = ev => { ev.stopPropagation(); act(b.dataset.ap, true); });
+    list.querySelectorAll("[data-rj]").forEach(b => b.onclick = ev => { ev.stopPropagation(); act(b.dataset.rj, false); });
+}).observe(document.body, { childList: true, subtree: true });
+(function hookApproval() {
+    if (typeof sgSignerSave !== "function") return;
+    const base = sgSignerSave;
+    sgSignerSave = async function (item, quiet) {
+        const r = await base.apply(this, arguments);
+        try { if (r && r.status === "menunggu" && !r.canApprove && !(item && item.id)) toast(`${r.name} diajukan — menunggu persetujuan Akun Utama sebelum bisa dipakai di dokumen`, "info", 8000); } catch (e) { }
+        return r;
+    };
+    if (typeof sgSignersLoad === "function") {
+        const bl = sgSignersLoad; let told = false;
+        sgSignersLoad = async function () {
+            const r = await bl.apply(this, arguments);
+            try { const n = (r || []).filter(p => p.status === "menunggu"); if (!told && n.length && n[0].canApprove) { told = true; toast(`${n.length} penanda tangan baru menunggu persetujuan Anda — buka Daftar Penanda Tangan`, "info", 9000); } } catch (e) { }
+            return r;
+        };
+    }
+})();
 // (b) penanda tangan: pengingat lengkapi kontak + ikon pengaturan
 const CSKIP = "sgc_skip_v1";
 async function contactGet() {
