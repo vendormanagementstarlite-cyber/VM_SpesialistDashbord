@@ -12898,5 +12898,392 @@ async function contactNudge() {
 })();
 
 </script>
+<style id="addon_v27_mail_css">
+/* v27 · Email Dokumen */
+.mx-hdr{position:relative}
+.mx-hb{position:absolute;top:2px;right:2px;min-width:16px;height:16px;padding:0 4px;border-radius:9px;background:#e11d48;color:#fff;font-size:10px;font-weight:800;line-height:16px;text-align:center}
+.mx-ov{position:fixed;inset:0;z-index:97;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(8,13,28,.55);backdrop-filter:blur(4px)}
+.mx-card{width:100%;max-width:1040px;max-height:92vh;display:flex;flex-direction:column;background:#fff;border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 30px 80px -20px rgba(11,17,34,.55);overflow:hidden}
+.dark .mx-card{background:#0f172a;border-color:#1e293b;color:#e2e8f0}
+.mx-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 18px 8px}
+.mx-hd h3{margin:0;font-size:16px;font-weight:800;color:#0f172a}.dark .mx-hd h3{color:#fff}
+.mx-hd h3 i{color:#3558c8;margin-right:6px}
+.mx-hd p{margin:3px 0 0;font-size:12px;color:#64748b}
+.mx-ok{color:#047857;font-weight:700}.mx-bad{color:#be123c;font-weight:700}
+.mx-tabs{display:flex;gap:4px;padding:0 14px;border-bottom:1px solid #e2e8f0;overflow-x:auto}.dark .mx-tabs{border-color:#1e293b}
+.mx-tabs button{display:flex;align-items:center;gap:6px;padding:9px 12px;font-size:13px;font-weight:700;color:#64748b;border-bottom:2px solid transparent;white-space:nowrap}
+.mx-tabs button.on{color:#3558c8;border-color:#3558c8}
+.mx-badge{display:inline-block;min-width:18px;padding:0 5px;border-radius:9px;background:#e11d48;color:#fff;font-size:11px;line-height:18px;text-align:center}
+.mx-bd{padding:14px 18px 18px;overflow-y:auto}
+.mx-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px}
+@media (max-width:820px){.mx-grid{grid-template-columns:1fr}.mx-card{max-height:96vh}}
+.mx-col h4{margin:4px 0 8px;font-size:13px;font-weight:800;color:#0f172a}.dark .mx-col h4{color:#f1f5f9}
+.mx-col h4:not(:first-child){margin-top:18px}
+.mx-lbl{display:block;margin:12px 0 5px;font-size:12px;font-weight:700;color:#475569}.dark .mx-lbl{color:#94a3b8}
+.mx-chips{display:flex;flex-wrap:wrap;gap:6px}
+.mx-chips button{padding:6px 10px;border:1px solid #cbd5e1;border-radius:999px;font-size:12px;font-weight:700;color:#334155;background:#fff}
+.dark .mx-chips button{background:#111827;border-color:#334155;color:#cbd5e1}
+.mx-chips button.on{background:#3558c8;border-color:#3558c8;color:#fff}
+.mx-note{margin:8px 0 0;font-size:12px;color:#64748b;line-height:1.45}.mx-note i{color:#3558c8;margin-right:4px}
+.mx-srch{position:relative}.mx-srch i{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:12px;color:#94a3b8}.mx-srch input{padding-left:30px}
+.mx-list{margin-top:6px;max-height:340px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:12px}.dark .mx-list{border-color:#1e293b}
+.mx-item{display:block;width:100%;text-align:left;padding:8px 11px;border-bottom:1px solid #f1f5f9}.dark .mx-item{border-color:#1e293b}
+.mx-item:last-child{border-bottom:0}.mx-item b{display:block;font-size:13px}.mx-item small{display:block;font-size:11px;color:#64748b}
+.mx-item:hover{background:#f8fafc}.dark .mx-item:hover{background:#111827}
+.mx-item.on{background:#eef2ff;box-shadow:inset 3px 0 0 #3558c8}.dark .mx-item.on{background:#1e293b}
+.mx-empty{padding:18px;text-align:center;font-size:12px;color:#94a3b8}.mx-empty.big{padding:40px}.mx-empty.big i{display:block;font-size:26px;margin-bottom:8px}
+.mx-load{padding:30px;text-align:center;font-size:13px;color:#64748b}
+.mx-err{margin-top:10px;padding:10px 12px;border-radius:10px;background:#fff1f2;color:#9f1239;font-size:12px}.dark .mx-err{background:#4c0519;color:#fecdd3}
+.mx-sel{padding:10px 12px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0}.dark .mx-sel{background:#111827;border-color:#1e293b}
+.mx-sel small{display:block;font-size:10px;font-weight:800;color:#94a3b8;text-transform:none}.mx-sel b{display:block;font-size:14px}.mx-sel span{font-size:12px;color:#64748b}
+.mx-files{display:flex;flex-direction:column;gap:4px;margin-bottom:6px}
+.mx-files label{display:flex;gap:8px;align-items:flex-start;font-size:12px;padding:6px 8px;border:1px solid #e2e8f0;border-radius:9px;cursor:pointer}.dark .mx-files label{border-color:#1e293b}
+.mx-act{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.mx-draft{margin-top:14px;padding:12px;border:1px solid #e2e8f0;border-radius:14px}.dark .mx-draft{border-color:#1e293b}
+.mx-path{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;font-size:12px;font-weight:800;margin-bottom:8px}
+.mx-path.fast{background:#ecfdf5;color:#065f46}.mx-path.slow{background:#fffbeb;color:#92400e}
+.dark .mx-path.fast{background:#022c22;color:#6ee7b7}.dark .mx-path.slow{background:#451a03;color:#fcd34d}
+.mx-chk{display:flex;gap:8px;align-items:flex-start;font-size:12px;padding:3px 2px}.mx-chk i{margin-top:2px}
+.mx-chk.bad{color:#be123c}.mx-chk.warn{color:#b45309}.mx-chk.ok{color:#047857}
+.mx-dl{display:grid;grid-template-columns:64px 1fr;gap:6px 10px;margin:10px 0 0;font-size:12px;align-items:center}
+.mx-dl dt{font-weight:800;color:#64748b}.mx-dl dd{margin:0;min-width:0;word-break:break-word}.mx-dl a{color:#3558c8;text-decoration:underline}
+.mx-body{margin-top:10px;font-size:12px}.mx-body summary{cursor:pointer;font-weight:700;color:#3558c8}
+.mx-body pre{white-space:pre-wrap;font-family:inherit;font-size:12.5px;line-height:1.55;margin:8px 0 0;padding:10px;border-radius:10px;background:#f8fafc}.dark .mx-body pre{background:#111827}
+.mx-dup{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:12px;font-weight:700}
+.mx-qbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;font-size:13px;font-weight:700}
+.mx-qi{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid #e2e8f0;border-radius:14px;margin-bottom:8px}.dark .mx-qi{border-color:#1e293b}
+.mx-qc{padding-top:3px}.mx-qx{flex:1;min-width:0;font-size:12px}.mx-qx b{display:block;font-size:13px}.mx-qx small{display:block;color:#64748b}
+.mx-qx p{margin:6px 0}.mx-qx a{color:#3558c8;text-decoration:underline}
+.mx-why{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.mx-why span{padding:2px 8px;border-radius:999px;background:#fffbeb;color:#92400e;font-size:11px;font-weight:700}
+.mx-log{display:flex;flex-direction:column;gap:6px}
+.mx-li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px;font-size:12px}.dark .mx-li{border-color:#1e293b}
+.mx-li b{display:block;font-size:13px}.mx-li small{display:block;color:#64748b}.mx-li p{margin:4px 0 0}
+.mx-st{flex:none;min-width:72px;text-align:center;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:800}
+.mx-st.ok{background:#ecfdf5;color:#047857}.mx-st.warn{background:#fffbeb;color:#b45309}.mx-st.bad{background:#fff1f2;color:#be123c}.mx-st.muted{background:#f1f5f9;color:#64748b}
+.mx-f2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.mx-f2 .field:last-child:nth-child(odd){grid-column:1/-1}
+@media (max-width:520px){.mx-f2{grid-template-columns:1fr}}
+.mx-next{font-size:12px;font-weight:700;color:#475569;margin-right:auto}
+.mx-tg{display:flex;gap:8px;align-items:center;font-size:12.5px;padding:4px 0}
+.mx-tpl{margin-top:6px;border:1px solid #e2e8f0;border-radius:10px;padding:6px 10px}.dark .mx-tpl{border-color:#1e293b}
+.mx-tpl summary{cursor:pointer;font-size:12.5px;font-weight:700}.mx-tpl .field{margin-top:6px}
+.mx-sgb{margin-left:0}
+
+</style>
+<script id="addon_v27_mail">
+/* ===== v27: Email Dokumen (pengirim vendor.management@weave.co.id) · Persetujuan · Riwayat · Nomor otomatis & Tambah SPK =====
+   Backend: Kode.gs v13 (mail.*, num.*, spk.*). Tidak ada email otomatis tanpa klik pengguna. */
+(function () {
+  if (typeof callApi !== "function") return;
+  var MX = { cfg: null, tab: "kirim", jenis: "SPK", row: null, file: "", fileName: "", draft: null, q: "", opts: null, pending: 0, busy: false, lastCfgAt: 0 };
+  window.MAILX = MX;
+  var E = function (v) { return typeof esc === "function" ? esc(v) : String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var $i = function (id) { return document.getElementById(id); };
+  var toast = function (m, t, d) { try { showToast(m, t || "info", d || 4500); } catch (e) { } };
+  var isOwner = function () { return !!(window.currentUser || (typeof currentUser !== "undefined" && currentUser)) && (typeof currentUser !== "undefined" ? currentUser.role === "owner" : false); };
+  var canMail = function () { try { return isOwner() || can("generate") || can("sirkulir"); } catch (e) { return false; } };
+  var canAddSpk = function () { try { return isOwner() || can("add_spk"); } catch (e) { return false; } };
+  var ST = function (k) { try { return (typeof STATE !== "undefined" && STATE[k]) || []; } catch (e) { return []; } };
+  var SGD = function () { try { return (typeof SG !== "undefined" && SG.docs) || []; } catch (e) { return []; } };
+  var nn = function (v) { return String(v || "").toUpperCase().replace(/\b(PT|CV|TBK)\b\.?/g, " ").replace(/[^A-Z0-9]+/g, " ").trim(); };
+  var driveIdOf = function (u) { var m = String(u || "").match(/(?:[?&]id=|\/d\/|\/file\/d\/)([-\w]{20,})/); return m ? m[1] : (/^[-\w]{20,}$/.test(String(u || "").trim()) ? String(u).trim() : ""); };
+  var JENIS = [["SPK", "SPK", "spk"], ["SPK_CANCEL", "Cancel SPK Take Over", "spk"], ["BAP_PO", "BAP PO", "takeover"], ["BASTM", "BASTM", "takeover"], ["BACANCEL", "PO Cancel (BA Cancel)", "pocancel"], ["SP1", "SP-1", "sp"], ["SP2", "SP-2", "sp"], ["SP3", "SP-3", "sp"]];
+  var JMAP = {}; JENIS.forEach(function (j) { JMAP[j[0]] = { label: j[1], src: j[2] }; });
+  var tipeBase = function (t) { var u = String(t || "").toUpperCase().replace(/\s+/g, " ").trim(); if (/^(SURVEY|PATCHING)( FAMIKA| KOPINDOSAT)?$/.test(u)) return u.split(" ")[0]; if (/^(HC|HOME CONNECT)( FAMIKA| KOPINDOSAT)?$/.test(u) || u === "HC - FTTH - ISP") return "HOME CONNECT"; return u; };
+
+  // ---------- baris sumber per jenis ----------
+  function rowsFor(j) {
+    var src = JMAP[j].src;
+    if (src === "spk") return ST("spk").filter(function (r) { return r.no_spk && (j !== "SPK_CANCEL" || tipeBase(r.tipe) === "TAKE OVER"); }).map(function (r) {
+      return { row: r.row, key: r.no_spk, title: r.no_spk, sub: [tipeBase(r.tipe), r.mitra, r.stasiun].filter(Boolean).join(" · "), stasiun: r.stasiun, files: [r.link ? { url: r.link, name: r.att || "Dokumen SPK (kolom R)" } : null], q: [r.no_spk, r.tipe, r.mitra, r.stasiun, r.region].join(" ").toLowerCase() };
+    });
+    if (src === "takeover") return ST("takeover").map(function (r) {
+      var f = []; try { var u = docUrl(r, j); if (u) f.push({ url: u, name: (j === "BAP_PO" ? r.att_bap : r.att_bastm) || j }); } catch (e) { }
+      return { row: r.row, key: r.po, title: r.po + (r.bap_no ? " · " + r.bap_no : ""), sub: [r.stasiun, r.before, "→ " + (r.after || "-")].filter(Boolean).join(" · "), stasiun: r.stasiun, files: f, q: [r.po, r.bap_no, r.stasiun, r.before, r.after].join(" ").toLowerCase() };
+    });
+    if (src === "pocancel") return ST("pocancel").filter(function (r) { return r.po; }).map(function (r) {
+      return { row: r.row, key: r.po, title: r.po + (r.ba ? " · " + r.ba : " · (belum ada NO BA)"), sub: [r.stasiun, r.mitra, r.region].filter(Boolean).join(" · "), stasiun: r.stasiun, files: [r.link ? { url: r.link, name: r.att || "Dokumen BA (kolom P)" } : null], q: [r.po, r.ba, r.stasiun, r.mitra].join(" ").toLowerCase() };
+    });
+    if (src === "sp") { var lv = Number(j.slice(2)); return ST("sp").filter(function (r) { return r["sp" + lv]; }).map(function (r) {
+      return { row: r.row, key: r.po, title: r["sp" + lv] + " · " + r.po, sub: [r.site, r.mitra, r.region].filter(Boolean).join(" · "), stasiun: r.site, files: [], q: [r["sp" + lv], r.po, r.site, r.mitra].join(" ").toLowerCase() };
+    }); }
+    return [];
+  }
+  // dokumen Signing Selesai yang mirip (nama memuat stasiun / nomor)
+  function signFilesFor(r) {
+    var st = nn(String(r.stasiun || "").split(",")[0]), kk = nn(String(r.key || "").split("/")[0]);
+    return SGD().filter(function (d) { return d.status === "selesai" && d.finalUrl; }).filter(function (d) { var n = nn(d.finalName || d.name); return (st && n.indexOf(st) >= 0) || (kk && kk.length > 2 && n.indexOf(kk) >= 0); })
+      .slice(0, 6).map(function (d) { return { url: d.finalUrl, name: (d.finalName || d.name) + " · Signing" }; });
+  }
+
+  // ---------- kerangka modal ----------
+  function shell() {
+    var m = $i("mx-modal"); if (m) return m;
+    m = document.createElement("div"); m.id = "mx-modal"; m.className = "mx-ov";
+    m.onclick = function (e) { if (e.target === m) close(); };
+    m.innerHTML = '<div class="mx-card" role="dialog" aria-label="Email dokumen"><div class="mx-hd"><div><h3><i class="fa-solid fa-paper-plane"></i> Email Dokumen</h3><p id="mx-from"></p></div><button class="icon-btn" data-x aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div><div class="mx-tabs" id="mx-tabs"></div><div class="mx-bd" id="mx-bd"></div></div>';
+    document.body.appendChild(m);
+    m.querySelector("[data-x]").onclick = close;
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && $i("mx-modal")) close(); });
+    return m;
+  }
+  function close() { var m = $i("mx-modal"); if (m) m.remove(); }
+  function tabs() {
+    var t = [["kirim", "fa-paper-plane", "Kirim"]];
+    if (isOwner()) t.push(["setuju", "fa-user-check", "Persetujuan" + (MX.pending ? ' <b class="mx-badge">' + MX.pending + "</b>" : "")]);
+    t.push(["riwayat", "fa-clock-rotate-left", "Riwayat"], ["nomor", "fa-hashtag", "Nomor & SPK"]);
+    if (isOwner()) t.push(["atur", "fa-gear", "Pengaturan"]);
+    $i("mx-tabs").innerHTML = t.map(function (x) { return '<button class="' + (MX.tab === x[0] ? "on" : "") + '" data-t="' + x[0] + '"><i class="fa-solid ' + x[1] + '"></i>' + x[2] + "</button>"; }).join("");
+    $i("mx-tabs").querySelectorAll("[data-t]").forEach(function (b) { b.onclick = function () { MX.tab = b.dataset.t; render(); }; });
+    var c = MX.cfg; $i("mx-from").innerHTML = c ? ('Dari <b>' + E(c.from) + '</b> · ' + (c.alias ? '<span class="mx-ok">alias aktif</span>' : '<span class="mx-bad">alias belum aktif</span>') + ' · sisa kuota hari ini ' + (c.quota >= 0 ? c.quota : "-") + (c.store === "sheet" ? ' · riwayat di sheet "Log Email"' : "")) : "Memuat…";
+  }
+  async function loadCfg(force) {
+    if (!force && MX.cfg && Date.now() - MX.lastCfgAt < 60000) return MX.cfg;
+    var r = await callApi("mail.cfg", {}, 60000); MX.cfg = r; MX.pending = r.pending || 0; MX.lastCfgAt = Date.now(); badge(); return r;
+  }
+  async function open(opt) {
+    if (!canMail()) return toast("Akun Anda tidak memiliki akses kirim email dokumen", "error");
+    opt = opt || {}; shell();
+    if (opt.tab) MX.tab = opt.tab;
+    if (opt.jenis) { MX.jenis = opt.jenis; MX.row = null; MX.draft = null; MX.file = ""; MX.fileName = ""; }
+    if (opt.file) { MX.file = opt.file; MX.fileName = opt.fileName || ""; }
+    if (opt.match) { var rs = rowsFor(MX.jenis), q = nn(opt.match); var hit = rs.filter(function (r) { var st = nn(String(r.stasiun || "").split(",")[0]); return st && q.indexOf(st) >= 0; }); if (hit.length === 1) MX.row = hit[0]; else MX.q = ""; }
+    $i("mx-bd").innerHTML = '<div class="mx-load"><i class="fa-solid fa-circle-notch fa-spin"></i> Memuat…</div>'; tabs();
+    try { await loadCfg(); } catch (e) { $i("mx-bd").innerHTML = '<div class="mx-err">' + E(/tidak dikenal/i.test(e.message) ? "Backend belum versi v13. Pasang Kode.gs v13 lalu Deploy ulang." : e.message) + "</div>"; return; }
+    render();
+  }
+  window.openMailCenter = open;
+  function render() {
+    tabs();
+    var t = MX.tab;
+    if (t === "kirim") return rKirim(); if (t === "setuju") return rSetuju(); if (t === "riwayat") return rRiwayat(); if (t === "nomor") return rNomor(); if (t === "atur") return rAtur();
+  }
+
+  // ---------- KIRIM ----------
+  function rKirim() {
+    var bd = $i("mx-bd"), j = MX.jenis, rs = rowsFor(j), q = MX.q.toLowerCase(), list = rs.filter(function (r) { return !q || r.q.indexOf(q) >= 0; }).slice(0, 40);
+    var att = j !== "SPK_CANCEL";
+    var files = MX.row ? (MX.row.files || []).filter(Boolean).concat(signFilesFor(MX.row)) : [];
+    bd.innerHTML = '<div class="mx-grid"><div class="mx-col">'
+      + '<label class="mx-lbl">Jenis dokumen</label><div class="mx-chips">' + JENIS.map(function (x) { return '<button class="' + (x[0] === j ? "on" : "") + '" data-j="' + x[0] + '">' + E(x[1]) + "</button>"; }).join("") + "</div>"
+      + (j === "SPK_CANCEL" ? '<p class="mx-note"><i class="fa-solid fa-circle-info"></i> Hanya SPK berjenis TAKE OVER. Email saja, tanpa lampiran. Status ditulis ke kolom R, tanggal cancel ke kolom P.</p>' : "")
+      + (j === "BAP_PO" ? '<p class="mx-note"><i class="fa-solid fa-circle-info"></i> BAP PO dikirim sebelum TTD, estimasi tanda tangan 3 hari.</p>' : "")
+      + '<label class="mx-lbl">Baris data (' + E(JMAP[j].src === "spk" ? "All SPK" : JMAP[j].src === "takeover" ? "Data Mitra Takeover" : JMAP[j].src === "pocancel" ? "PO Cancel" : "Monitoring SP") + ')</label>'
+      + '<div class="mx-srch"><i class="fa-solid fa-magnifying-glass"></i><input id="mx-q" class="field w-full" placeholder="Cari nomor, PO, mitra, stasiun…" value="' + E(MX.q) + '"></div>'
+      + '<div class="mx-list" id="mx-list">' + (list.length ? list.map(function (r) { return '<button class="mx-item' + (MX.row && MX.row.row === r.row ? " on" : "") + '" data-r="' + r.row + '"><b>' + E(r.title) + "</b><small>" + E(r.sub) + "</small></button>"; }).join("") : '<div class="mx-empty">' + (rs.length ? "Tidak ada yang cocok" : "Data belum dimuat atau kosong. Sinkronkan data dulu.") + "</div>") + "</div>"
+      + "</div><div class=\"mx-col\">"
+      + (MX.row ? '<div class="mx-sel"><small>Dipilih</small><b>' + E(MX.row.title) + "</b><span>" + E(MX.row.sub) + "</span></div>" : '<div class="mx-empty">Pilih baris data di kiri.</div>')
+      + (MX.row && att ? '<label class="mx-lbl">Lampiran (PDF, dikirim langsung)</label>' + (files.length ? '<div class="mx-files">' + files.map(function (f) { return '<label><input type="radio" name="mx-f" value="' + E(f.url) + '"' + (MX.file === f.url ? " checked" : "") + "><span>" + E(f.name) + "</span></label>"; }).join("") + "</div>" : "")
+        + '<input id="mx-file" class="field w-full" placeholder="atau tempel link Google Drive file PDF" value="' + E(files.some(function (f) { return f.url === MX.file; }) ? "" : MX.file) + '">' : "")
+      + (MX.row ? '<div class="mx-act"><button class="btn btn-primary" id="mx-prev"><i class="fa-solid fa-eye"></i>Periksa & pratinjau</button></div>' : "")
+      + '<div id="mx-draft"></div></div></div>';
+    bd.querySelectorAll("[data-j]").forEach(function (b) { b.onclick = function () { MX.jenis = b.dataset.j; MX.row = null; MX.draft = null; MX.file = ""; MX.q = ""; rKirim(); }; });
+    var qi = $i("mx-q"); qi.oninput = function () { MX.q = qi.value; var pos = qi.selectionStart; rKirim(); var n = $i("mx-q"); n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) { } };
+    bd.querySelectorAll("[data-r]").forEach(function (b) { b.onclick = function () { MX.row = rs.find(function (r) { return r.row === Number(b.dataset.r); }); MX.draft = null; var fs = (MX.row.files || []).filter(Boolean).concat(signFilesFor(MX.row)); if (!MX.file || !fs.some(function (f) { return f.url === MX.file; })) MX.file = (fs[0] || {}).url || MX.file || ""; rKirim(); }; });
+    bd.querySelectorAll('input[name="mx-f"]').forEach(function (r) { r.onchange = function () { MX.file = r.value; var fi = $i("mx-file"); if (fi) fi.value = ""; }; });
+    var fi = $i("mx-file"); if (fi) fi.oninput = function () { if (fi.value.trim()) { MX.file = fi.value.trim(); bd.querySelectorAll('input[name="mx-f"]').forEach(function (r) { r.checked = false; }); } };
+    var pv = $i("mx-prev"); if (pv) pv.onclick = preview;
+    if (MX.draft) drawDraft();
+  }
+  function reqBase() { return { jenis: MX.jenis, ref: { sheet: JMAP[MX.jenis].src, row: MX.row.row, key: MX.row.key }, fileUrl: MX.jenis === "SPK_CANCEL" ? "" : MX.file }; }
+  async function preview(extra) {
+    var b = $i("mx-prev"); if (b) { b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Memeriksa…'; }
+    try { var r = await callApi("mail.preview", Object.assign(reqBase(), extra || {}), 120000); MX.draft = r.draft; drawDraft(); }
+    catch (e) { $i("mx-draft").innerHTML = '<div class="mx-err">' + E(e.message) + "</div>"; }
+    finally { if (b) { b.disabled = false; b.innerHTML = '<i class="fa-solid fa-eye"></i>Periksa & pratinjau'; } }
+  }
+  function drawDraft() {
+    var d = MX.draft, box = $i("mx-draft"); if (!d || !box) return;
+    var dup = (d.warn || []).some(function (w) { return /sudah terkirim hari ini/.test(w); });
+    box.innerHTML = '<div class="mx-draft">'
+      + '<div class="mx-path ' + (d.direct ? "fast" : "slow") + '"><i class="fa-solid ' + (d.direct ? "fa-bolt" : "fa-user-check") + '"></i>' + (d.direct ? (d.needApproval ? "Anda Akun Utama — langsung terkirim" : "Jalur cepat — satu klik kirim") : "Jalur persetujuan Akun Utama: " + E(d.reasons.join(", "))) + "</div>"
+      + (d.checks || []).map(function (c) { return '<div class="mx-chk bad"><i class="fa-solid fa-circle-xmark"></i>' + E(c.msg) + "</div>"; }).join("")
+      + (d.warn || []).map(function (w) { return '<div class="mx-chk warn"><i class="fa-solid fa-triangle-exclamation"></i>' + E(w) + "</div>"; }).join("")
+      + (d.ok && !(d.warn || []).length ? '<div class="mx-chk ok"><i class="fa-solid fa-circle-check"></i>Semua pemeriksaan lolos</div>' : "")
+      + '<dl class="mx-dl"><dt>To</dt><dd><input id="mx-to" class="field w-full" value="' + E(d.to.join(", ")) + '"></dd><dt>Cc</dt><dd><input id="mx-cc" class="field w-full" value="' + E(d.cc.join(", ")) + '" placeholder="(tidak ada)"></dd>'
+      + "<dt>Subjek</dt><dd><b>" + E(d.subject) + "</b></dd><dt>Lampiran</dt><dd>" + (d.attach ? '<a href="' + E(d.attach.url) + '" target="_blank" rel="noopener">' + E(d.attach.name) + "</a> · " + (d.attach.size / 1048576).toFixed(2) + " MB" + (d.attach.big ? " · dikirim sebagai tautan" : "") : "Tanpa lampiran") + "</dd></dl>"
+      + '<details class="mx-body"><summary>Lihat isi email</summary><pre>' + E(d.text) + "</pre></details>"
+      + (dup ? '<label class="mx-dup"><input type="checkbox" id="mx-dupok"> Kirim ulang (sudah terkirim hari ini)</label>' : "")
+      + '<div class="mx-act"><button class="btn btn-ghost" id="mx-recheck"><i class="fa-solid fa-rotate"></i>Periksa ulang</button><button class="btn btn-primary" id="mx-send"' + (d.ok ? "" : " disabled") + '><i class="fa-solid ' + (d.direct ? "fa-paper-plane" : "fa-user-check") + '"></i>' + (d.direct ? "Kirim sekarang" : "Ajukan persetujuan") + "</button></div></div>";
+    var rc = $i("mx-recheck"); rc.onclick = function () { preview({ to: $i("mx-to").value, cc: $i("mx-cc").value }); };
+    $i("mx-send").onclick = send;
+  }
+  async function send() {
+    var d = MX.draft, b = $i("mx-send"); if (!d || !d.ok || MX.busy) return;
+    var to = $i("mx-to").value, cc = $i("mx-cc").value, dupok = $i("mx-dupok");
+    if (dupok && !dupok.checked) return toast("Centang \"Kirim ulang\" bila memang ingin mengirim lagi", "error");
+    MX.busy = true; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>' + (d.direct ? "Mengirim…" : "Mengajukan…");
+    var req = reqBase(); if (to !== d.to.join(", ")) req.to = to; if (cc !== d.cc.join(", ")) req.cc = cc;
+    try {
+      var r = await callApi("mail.send", Object.assign(req, { confirmDup: !!(dupok && dupok.checked) }), 180000), x = r.results[0] || {};
+      if (!x.ok) throw new Error(x.error || "Gagal");
+      if (x.queued) toast("Diajukan ke Akun Utama untuk disetujui", "success", 6000);
+      else toast("Email terkirim ke " + x.item.to.join(", ") + (x.item.wb && x.item.wb.length ? " · " + x.item.wb.join(" · ") : ""), "success", 8000);
+      if (MX.cfg) MX.cfg.quota = r.quota;
+      MX.draft = null; rKirim();
+      try { if (!x.queued && typeof syncNow === "function" && x.item.wb && x.item.wb.length) setTimeout(function () { try { syncNow(); } catch (e) { } }, 1500); } catch (e) { }
+    } catch (e) { toast("Email tidak terkirim: " + e.message, "error", 9000); b.disabled = false; b.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Coba lagi'; }
+    finally { MX.busy = false; }
+  }
+
+  // ---------- PERSETUJUAN ----------
+  async function rSetuju() {
+    var bd = $i("mx-bd"); bd.innerHTML = '<div class="mx-load"><i class="fa-solid fa-circle-notch fa-spin"></i> Memuat antrean…</div>';
+    var r; try { r = await callApi("mail.queue", {}, 60000); } catch (e) { bd.innerHTML = '<div class="mx-err">' + E(e.message) + "</div>"; return; }
+    MX.pending = r.items.length; badge(); tabs();
+    if (!r.items.length) { bd.innerHTML = '<div class="mx-empty big"><i class="fa-solid fa-inbox"></i>Tidak ada email yang menunggu persetujuan.</div>'; return; }
+    bd.innerHTML = '<div class="mx-qbar"><label><input type="checkbox" id="mx-all" checked> Pilih semua (' + r.items.length + ')</label><button class="btn btn-primary" id="mx-ok"><i class="fa-solid fa-check-double"></i>Setujui & kirim</button></div>'
+      + r.items.map(function (e) { return '<div class="mx-qi"><label class="mx-qc"><input type="checkbox" class="mx-ck" value="' + E(e.id) + '" checked></label><div class="mx-qx"><b>' + E(e.subject) + '</b><small>' + E(e.label) + " · diajukan " + E(e.by) + " · " + E(new Date(e.at).toLocaleString("id-ID")) + "</small>"
+        + '<div class="mx-why">' + (e.reasons || []).map(function (x) { return "<span>" + E(x) + "</span>"; }).join("") + "</div>"
+        + "<p>To: " + E(e.to.join(", ")) + (e.cc && e.cc.length ? "<br>Cc: " + E(e.cc.join(", ")) : "") + "</p>"
+        + (e.attach ? '<a href="' + E(e.attach.url) + '" target="_blank" rel="noopener"><i class="fa-solid fa-paperclip"></i> ' + E(e.attach.name) + "</a>" : "<em>Tanpa lampiran</em>")
+        + '</div><button class="btn btn-ghost text-rose-600" data-rj="' + E(e.id) + '"><i class="fa-solid fa-ban"></i>Tolak</button></div>'; }).join("");
+    $i("mx-all").onchange = function () { var v = this.checked; bd.querySelectorAll(".mx-ck").forEach(function (c) { c.checked = v; }); };
+    $i("mx-ok").onclick = async function () {
+      var ids = Array.from(bd.querySelectorAll(".mx-ck:checked")).map(function (c) { return c.value; }); if (!ids.length) return toast("Pilih minimal satu email", "error");
+      var b = this; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Mengirim ' + ids.length + "…";
+      try { var x = await callApi("mail.approve", { ids: ids }, 300000), okN = x.results.filter(function (z) { return z.ok; }).length, bad = x.results.filter(function (z) { return !z.ok; });
+        toast(okN + " email terkirim" + (bad.length ? " · " + bad.length + " gagal: " + bad.map(function (z) { return z.error; }).join("; ") : ""), bad.length ? "error" : "success", 9000); }
+      catch (e) { toast(e.message, "error", 8000); }
+      rSetuju();
+    };
+    bd.querySelectorAll("[data-rj]").forEach(function (b) { b.onclick = async function () {
+      var note = prompt2("Alasan menolak (opsional)"); if (note === null) return;
+      try { await callApi("mail.reject", { id: b.dataset.rj, note: note }, 60000); toast("Email ditolak", "success"); } catch (e) { toast(e.message, "error"); }
+      rSetuju();
+    }; });
+  }
+  function prompt2(msg) { try { return window.prompt(msg, ""); } catch (e) { return ""; } }
+
+  // ---------- RIWAYAT ----------
+  async function rRiwayat() {
+    var bd = $i("mx-bd"); bd.innerHTML = '<div class="mx-load"><i class="fa-solid fa-circle-notch fa-spin"></i> Memuat riwayat…</div>';
+    var r; try { r = await callApi("mail.log", { limit: 150 }, 60000); } catch (e) { bd.innerHTML = '<div class="mx-err">' + E(e.message) + "</div>"; return; }
+    var lab = { terkirim: ["ok", "Terkirim"], menunggu: ["warn", "Menunggu"], gagal: ["bad", "Gagal"], ditolak: ["muted", "Ditolak"] };
+    bd.innerHTML = r.items.length ? '<div class="mx-log">' + r.items.map(function (e) { var s = lab[e.status] || ["muted", e.status];
+      return '<div class="mx-li"><span class="mx-st ' + s[0] + '">' + s[1] + "</span><div><b>" + E(e.subject) + "</b><small>" + E(e.label) + " · " + E(new Date(e.sentAt || e.at).toLocaleString("id-ID")) + " · " + E(e.by) + (e.approvedBy ? " · disetujui " + E(e.approvedBy) : "") + "</small>"
+        + "<p>To: " + E((e.to || []).join(", ")) + (e.cc && e.cc.length ? " · Cc: " + E(e.cc.join(", ")) : "") + "</p>" + (e.err ? '<p class="mx-bad">' + E(e.err) + "</p>" : "") + (e.note ? "<p>Catatan: " + E(e.note) + "</p>" : "") + (e.fallback ? '<p class="mx-bad">Dikirim dari akun cadangan (alias belum aktif)</p>' : "") + "</div></div>"; }).join("") + "</div>"
+      : '<div class="mx-empty big"><i class="fa-solid fa-envelope-open"></i>Belum ada email yang dikirim lewat sistem.</div>';
+  }
+
+  // ---------- NOMOR & TAMBAH SPK ----------
+  async function rNomor() {
+    var bd = $i("mx-bd");
+    bd.innerHTML = '<div class="mx-grid"><div class="mx-col"><h4>Tambah SPK · nomor otomatis</h4>' + (canAddSpk() ? '<div id="mx-spk"><div class="mx-load"><i class="fa-solid fa-circle-notch fa-spin"></i> Memuat pilihan dari All Starlite…</div></div>' : '<p class="mx-note">Akun Anda tidak memiliki akses tambah data All SPK.</p>') + "</div>"
+      + '<div class="mx-col"><h4>Nomor BAP PO baru</h4><p class="mx-note">Ditulis ke Master Data Letter kolom A–D.</p><div class="mx-f2"><input id="mx-bpo" class="field" placeholder="NO PO"><input id="mx-bst" class="field" placeholder="Stasiun"><input id="mx-bmt" class="field" placeholder="Mitra"></div><label class="mx-dup"><input type="checkbox" id="mx-bforce"> Tetap buat nomor baru bila PO & stasiun sudah punya</label><div class="mx-act"><span class="mx-next" id="mx-nbap"></span><button class="btn btn-primary" id="mx-bgo"><i class="fa-solid fa-hashtag"></i>Terbitkan</button></div>'
+      + '<h4>NO BA Cancel</h4><p class="mx-note">Ditulis ke kolom O baris PO Cancel yang belum bernomor.</p><select id="mx-bcrow" class="field w-full">' + ST("pocancel").filter(function (r) { return r.po && !r.ba; }).slice(0, 300).map(function (r) { return '<option value="' + r.row + '" data-k="' + E(r.po) + '">' + E(r.po + " · " + r.stasiun + " · " + r.mitra) + "</option>"; }).join("") + '</select><div class="mx-act"><span class="mx-next" id="mx-nba"></span><button class="btn btn-primary" id="mx-bcgo"><i class="fa-solid fa-hashtag"></i>Terbitkan</button></div></div></div>';
+    callApi("num.next", { seri: "BAP" }, 60000).then(function (r) { var x = $i("mx-nbap"); if (x) x.textContent = "Berikutnya: " + r.next; }).catch(function () { });
+    callApi("num.next", { seri: "BACANCEL" }, 60000).then(function (r) { var x = $i("mx-nba"); if (x) x.textContent = "Berikutnya: " + r.next; }).catch(function () { });
+    $i("mx-bgo").onclick = async function () {
+      var b = this; b.disabled = true;
+      try { var r = await callApi("num.bap", { po: $i("mx-bpo").value, stasiun: $i("mx-bst").value, mitra: $i("mx-bmt").value, force: $i("mx-bforce").checked }, 60000); copyText(r.no, "NO BAP " + r.no + " diterbitkan & disalin (baris " + r.row + ")"); rNomor(); }
+      catch (e) { toast(e.message, "error", 9000); b.disabled = false; }
+    };
+    $i("mx-bcgo").onclick = async function () {
+      var s = $i("mx-bcrow"), o = s.options[s.selectedIndex]; if (!o) return toast("Tidak ada baris PO Cancel tanpa NO BA", "error");
+      var b = this; b.disabled = true;
+      try { var r = await callApi("num.bacancel", { row: Number(o.value), key: o.dataset.k }, 60000); copyText(r.no, "NO BA Cancel " + r.no + " ditulis ke baris " + r.row + " & disalin"); try { syncNow(); } catch (e) { } rNomor(); }
+      catch (e) { toast(e.message, "error", 9000); b.disabled = false; }
+    };
+    if (!canAddSpk()) return;
+    try { MX.opts = await callApi("spk.opts", {}, 90000); } catch (e) { $i("mx-spk").innerHTML = '<div class="mx-err">' + E(e.message) + "</div>"; return; }
+    var o = MX.opts, dl = function (id, arr) { return '<datalist id="' + id + '">' + arr.map(function (v) { return '<option value="' + E(v) + '">'; }).join("") + "</datalist>"; };
+    var mitra = o.mitra.concat(ST("perseroan").map(function (p) { return p.short || p.nama; })).filter(function (v, i, a) { return v && a.indexOf(v) === i; }).sort();
+    $i("mx-spk").innerHTML = '<p class="mx-note">Nomor berikutnya <b>' + E(o.next) + '</b>. Hanya kolom B, D, E, F, G, H yang diisi. Region, stasiun, dan mitra dipilih dari All Starlite / Info Perseroan.</p>'
+      + '<div class="mx-f2"><input id="mx-sp" class="field" list="mx-dlp" placeholder="PROJECT"><select id="mx-st" class="field">' + o.tipes.map(function (t) { return "<option>" + E(t) + "</option>"; }).join("") + '</select><input id="mx-sm" class="field" list="mx-dlm" placeholder="MITRA YANG MENERIMA SPK"><input id="mx-sr" class="field" list="mx-dlr" placeholder="REGION/SEGMENT"><input id="mx-ss" class="field" list="mx-dls" placeholder="STASIUN (pisahkan koma bila lebih dari satu)"></div>'
+      + dl("mx-dlp", o.projects) + dl("mx-dlm", mitra) + dl("mx-dlr", o.regions) + dl("mx-dls", o.stasiun.map(function (s) { return s.s; }))
+      + '<div class="mx-act"><button class="btn btn-primary" id="mx-sgo"><i class="fa-solid fa-plus"></i>Simpan SPK baru</button></div>';
+    $i("mx-ss").onchange = function () { var v = String(this.value).split(",")[0].trim().toUpperCase(), hit = o.stasiun.find(function (s) { return s.s.toUpperCase() === v; }); if (hit) { if (!$i("mx-sr").value) $i("mx-sr").value = hit.r; } };
+    $i("mx-sgo").onclick = async function () {
+      var b = this; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Menyimpan…';
+      try { var r = await callApi("spk.add", { project: $i("mx-sp").value, tipe: $i("mx-st").value, mitra: $i("mx-sm").value, region: $i("mx-sr").value, stasiun: $i("mx-ss").value }, 90000);
+        copyText(r.no, "SPK " + r.no + " ditambahkan di All SPK baris " + r.row + " · nomor disalin"); try { syncNow(); } catch (e) { } rNomor(); }
+      catch (e) { toast(e.message, "error", 9000); b.disabled = false; b.innerHTML = '<i class="fa-solid fa-plus"></i>Simpan SPK baru'; }
+    };
+  }
+
+  // ---------- PENGATURAN (Akun Utama) ----------
+  function rAtur() {
+    var c = MX.cfg.cfg || {}, ap = c.approval || {}, bd = $i("mx-bd"), J2 = JENIS.concat([["MIG", "Migrasi IKR"]]);
+    var tg = function (k, l) { return '<label class="mx-tg"><input type="checkbox" data-ap="' + k + '"' + (ap[k] ? " checked" : "") + "><span>" + E(l) + "</span></label>"; };
+    bd.innerHTML = '<div class="mx-grid"><div class="mx-col"><h4>Pengirim</h4><p class="mx-note">Alias <b>' + E(MX.cfg.from) + "</b>: " + (MX.cfg.alias ? "aktif" : "<b>belum aktif</b> — tambahkan di Gmail pemilik Apps Script (Setelan → Akun → Kirim email sebagai).") + '</p><label class="mx-tg"><input type="checkbox" id="mx-fb"' + (c.allowFallback ? " checked" : "") + '><span>Izinkan kirim dari akun Gmail pemilik bila alias belum aktif (cadangan)</span></label>'
+      + "<h4>Wajib persetujuan Akun Utama</h4>" + tg("SP3", "SP-3") + tg("SPK_CANCEL", "Cancel SPK") + tg("bulk", "Kirim massal") + tg("manual", "Penerima / cc diubah manual") + JENIS.filter(function (x) { return ["SP3", "SPK_CANCEL"].indexOf(x[0]) < 0; }).map(function (x) { return tg(x[0], x[1]); }).join("")
+      + '</div><div class="mx-col"><h4>Cc default per jenis</h4>' + J2.map(function (x) { return x[0] === "MIG" ? "" : '<label class="mx-lbl">' + E(x[1]) + '</label><input class="field w-full" data-cc="' + x[0] + '" value="' + E((c.cc || {})[x[0]] || "") + '" placeholder="email; email">'; }).join("")
+      + '<p class="mx-note">Cc Migrasi IKR mengikuti pengaturan di menu Migrasi IKR.</p><h4>Cc khusus per jenis SPK</h4>' + (MX.cfg.tipes || []).map(function (t) { return '<label class="mx-lbl">' + E(t) + '</label><input class="field w-full" data-ct="' + E(t) + '" value="' + E((c.ccTipe || {})[t] || "") + '" placeholder="kosong = pakai cc SPK">'; }).join("")
+      + '<h4>Templat</h4><p class="mx-note">Kosongkan untuk memakai templat bawaan. Penanda: {mitra} {stasiun} {no} {po} {tipe} {bap} {ba} {region} {sp}. Salam pembuka dan penutup "Hormat kami, Vendor Management, PT Integrasi Jaringan Ekosistem" selalu ditambahkan.</p>'
+      + JENIS.map(function (x) { var t = (c.tpl || {})[x[0]] || {}; return '<details class="mx-tpl"><summary>' + E(x[1]) + (t.subject || t.core ? " · diubah" : "") + '</summary><input class="field w-full" data-ts="' + x[0] + '" value="' + E(t.subject || "") + '" placeholder="Subjek"><textarea class="field w-full" rows="5" data-tc="' + x[0] + '" placeholder="Isi inti">' + E(t.core || "") + "</textarea></details>"; }).join("")
+      + '<div class="mx-act"><button class="btn btn-primary" id="mx-save"><i class="fa-solid fa-floppy-disk"></i>Simpan pengaturan</button></div></div></div>';
+    $i("mx-save").onclick = async function () {
+      var cfg = { allowFallback: $i("mx-fb").checked, approval: {}, cc: {}, ccTipe: {}, tpl: {} };
+      bd.querySelectorAll("[data-ap]").forEach(function (i) { cfg.approval[i.dataset.ap] = i.checked; });
+      bd.querySelectorAll("[data-cc]").forEach(function (i) { cfg.cc[i.dataset.cc] = i.value; });
+      bd.querySelectorAll("[data-ct]").forEach(function (i) { if (i.value.trim()) cfg.ccTipe[i.dataset.ct] = i.value; });
+      bd.querySelectorAll("[data-ts]").forEach(function (i) { var k = i.dataset.ts, co = bd.querySelector('[data-tc="' + k + '"]').value; if (i.value.trim() || co.trim()) cfg.tpl[k] = { subject: i.value, core: co }; });
+      var b = this; b.disabled = true;
+      try { await callApi("mail.cfg.save", { cfg: cfg }, 60000); toast("Pengaturan email disimpan", "success"); await loadCfg(true); rAtur(); } catch (e) { toast(e.message, "error", 8000); b.disabled = false; }
+    };
+  }
+
+  // ---------- tombol header + lencana antrean ----------
+  function badge() {
+    var b = $i("mx-hdr-badge"); if (!b) return;
+    var t = MX.pending > 99 ? "99+" : String(MX.pending || ""), d = isOwner() && MX.pending ? "" : "none";
+    if (b.textContent !== t) b.textContent = t; if (b.style.display !== d) b.style.display = d;
+  }
+  function ensureHeader() {
+    if (!canMail()) { document.querySelectorAll(".mx-hdr").forEach(function (x) { x.remove(); }); return; }
+    document.querySelectorAll(".tb-actions").forEach(function (bar) {
+      if (bar.querySelector(".mx-hdr")) return;
+      var b = document.createElement("button"); b.className = "tb-btn mx-hdr"; b.title = "Email dokumen"; b.setAttribute("aria-label", "Email dokumen");
+      b.innerHTML = '<i class="fa-solid fa-paper-plane"></i><span class="mx-hb" id="mx-hdr-badge" style="display:none"></span>';
+      b.onclick = function () { open({}); };
+      var slot = bar.querySelector("[data-notif-slot]"); bar.insertBefore(b, slot || bar.firstChild);
+    });
+    badge();
+  }
+  async function pollPending() { if (!isOwner()) return; try { await loadCfg(true); } catch (e) { } }
+
+  // ---------- Signing: tombol "Kirim email" di dokumen Selesai ----------
+  function guessJenis(name) {
+    var n = String(name || "").toUpperCase();
+    if (/BA\s*PO\s*CANCEL|BA\s*CANCEL|PEMBATALAN/.test(n)) return "BACANCEL"; if (/BAP/.test(n)) return "BAP_PO"; if (/BASTM|SERAH\s*TERIMA/.test(n)) return "BASTM";
+    var m = n.match(/SP\s*-?\s*([123])\b/); if (m) return "SP" + m[1]; if (/SPK|PRJ/.test(n)) return "SPK"; return "SPK";
+  }
+  function addSignButtons() {
+    if (!canMail()) return;
+    document.querySelectorAll('button[onclick^="sgIntegrate("]').forEach(function (b) {
+      if (b.nextElementSibling && b.nextElementSibling.classList.contains("mx-sgb")) return;
+      var id = (String(b.getAttribute("onclick")).match(/sgIntegrate\('([^']+)'\)/) || [])[1]; if (!id) return;
+      var x = document.createElement("button"); x.className = "btn btn-primary mx-sgb"; x.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Kirim email';
+      x.onclick = function () { var d = (SGD().find(function (z) { return z.id === id; })) || {}; var nm = d.finalName || d.name || ""; open({ tab: "kirim", jenis: guessJenis(nm), file: d.finalUrl || "", fileName: nm, match: nm }); };
+      b.parentNode.insertBefore(x, b.nextSibling);
+    });
+  }
+  // ---------- Migrasi IKR: "Kirim langsung dari sistem" di jendela Kirim ke Team IT ----------
+  function addMigButton() {
+    document.querySelectorAll(".mig-dec").forEach(function (dec) {
+      if (dec.querySelector(".mx-migb") || !isOwner()) return;
+      var root = dec.closest(".mig-pad") || dec.parentNode, card = root && root.parentNode; if (!card || !/Kirim ke Team IT/.test(card.textContent || "")) return;
+      var done = dec.querySelector("[data-s]"); if (!done) return;
+      var x = document.createElement("button"); x.className = "st-b pri mx-migb"; x.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Kirim langsung dari sistem';
+      x.onclick = async function () {
+        var subj = ((card.querySelector(".mig-dl dd b") || {}).textContent || "").trim(), body = (card.querySelector("#mig-body") || {}).value || "", ba = (card.querySelector("a.mig-lnk") || {}).href || "";
+        if (!ba) return toast("File BA belum ada di kolom M", "error");
+        x.disabled = true; x.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Mengirim…';
+        try {
+          var r = await callApi("mail.send", { jenis: "MIG", ref: { sheet: "mig", row: 0 }, fileUrl: ba, subject: subj, body: body }, 180000), it = r.results[0] || {};
+          if (!it.ok) throw new Error(it.error || "Gagal");
+          toast("Email ke Team IT terkirim dari " + (MX.cfg ? MX.cfg.from : "alias weave"), "success", 7000);
+          done.click();                                              // pakai alur bawaan: status VM + Data Takeover kolom M & X
+        } catch (e) { toast("Tidak terkirim: " + e.message, "error", 9000); x.disabled = false; x.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Kirim langsung dari sistem'; }
+      };
+      dec.insertBefore(x, done);
+    });
+  }
+  var mo = new MutationObserver(function () { try { ensureHeader(); addSignButtons(); addMigButton(); } catch (e) { } });
+  function boot() { mo.observe(document.body, { childList: true, subtree: true }); ensureHeader(); addSignButtons(); setTimeout(pollPending, 4000); setInterval(pollPending, 5 * 60 * 1000); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+})();
+
+</script>
 </body>
 </html>
