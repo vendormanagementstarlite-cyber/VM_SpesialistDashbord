@@ -12993,6 +12993,8 @@ async function contactNudge() {
 .mx-card{height:min(92vh,780px)}
 .mx-g2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.mx-g2 .mx-lbl{margin-top:10px}
 @media (max-width:520px){.mx-g2{grid-template-columns:1fr}}
+.mx-mige{margin:10px 0;padding:12px 14px;border:1px solid #c7d2fe;border-radius:14px;background:#f8faff}.dark .mx-mige{background:#0b1222;border-color:#312e81}
+.mx-mige .mx-lbl:first-child{margin-top:0}
 
 </style>
 <script id="addon_v27_mail">
@@ -13309,23 +13311,49 @@ async function contactNudge() {
       b.parentNode.insertBefore(x, b.nextSibling);
     });
   }
-  // ---------- Migrasi IKR: "Kirim langsung dari sistem" di jendela Kirim ke Team IT ----------
+  // ---------- Migrasi IKR: "Kirim langsung dari sistem" di jendela Kirim ke Team IT (To & Cc bisa diubah) ----------
   function addMigButton() {
     document.querySelectorAll(".mig-dec").forEach(function (dec) {
       if (dec.querySelector(".mx-migb") || !isOwner()) return;
       var root = dec.closest(".mig-pad") || dec.parentNode, card = root && root.parentNode; if (!card || !/Kirim ke Team IT/.test(card.textContent || "")) return;
       var done = dec.querySelector("[data-s]"); if (!done) return;
       var x = document.createElement("button"); x.className = "st-b pri mx-migb"; x.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Kirim langsung dari sistem';
+      var info = function () { return { subj: ((card.querySelector(".mig-dl dd b") || {}).textContent || "").trim(), body: (card.querySelector("#mig-body") || {}).value || "", ba: (card.querySelector("a.mig-lnk") || {}).href || "" }; };
       x.onclick = async function () {
-        var subj = ((card.querySelector(".mig-dl dd b") || {}).textContent || "").trim(), body = (card.querySelector("#mig-body") || {}).value || "", ba = (card.querySelector("a.mig-lnk") || {}).href || "";
-        if (!ba) return toast("File BA belum ada di kolom M", "error");
-        x.disabled = true; x.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Mengirim…';
-        try {
-          var r = await callApi("mail.send", { jenis: "MIG", ref: { sheet: "mig", row: 0 }, fileUrl: ba, subject: subj, body: body }, 180000), it = r.results[0] || {};
-          if (!it.ok) throw new Error(it.error || "Gagal");
-          toast("Email ke Team IT terkirim", "success", 7000);
-          done.click();                                              // pakai alur bawaan: status VM + Data Takeover kolom M & X
-        } catch (e) { toast("Tidak terkirim: " + e.message, "error", 9000); x.disabled = false; x.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Kirim langsung dari sistem'; }
+        var f = info(); if (!f.ba) return toast("File BA belum ada di kolom M", "error");
+        var ed = card.querySelector(".mx-mige"); if (ed) { ed.querySelector(".mx-mto").focus(); return; }
+        x.disabled = true; x.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Menyiapkan…';
+        var d;
+        try { await loadCfg(); d = (await callApi("mail.preview", { jenis: "MIG", ref: { sheet: "mig", row: 0 }, fileUrl: f.ba, subject: f.subj, body: f.body }, 120000)).draft; }
+        catch (e) { toast(e.message, "error", 8000); x.disabled = false; x.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Kirim langsung dari sistem'; return; }
+        x.disabled = false; x.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Kirim langsung dari sistem';
+        ed = document.createElement("div"); ed.className = "mx-mige";
+        var lock = wajib().filter(function (z) { return d.to.indexOf(z) < 0; });
+        ed.innerHTML = '<label class="mx-lbl">To</label><input class="field w-full mx-mto" value="' + E(d.to.join(", ")) + '">'
+          + '<label class="mx-lbl">Cc</label><input class="field w-full mx-mcc" value="' + E(ccFree(d).join(", ")) + '" placeholder="(tidak ada cc tambahan)">'
+          + (lock.length ? '<div class="mx-lock">' + lock.map(function (z) { return '<span title="Cc wajib, selalu ikut"><i class="fa-solid fa-lock"></i>' + E(z) + "</span>"; }).join("") + "</div>" : "")
+          + (d.checks || []).map(function (c) { return '<div class="mx-chk bad"><i class="fa-solid fa-circle-xmark"></i>' + E(c.msg) + "</div>"; }).join("")
+          + (d.warn || []).map(function (w) { return '<div class="mx-chk warn"><i class="fa-solid fa-triangle-exclamation"></i>' + E(w) + "</div>"; }).join("")
+          + ((d.warn || []).some(function (w) { return /sudah terkirim hari ini/.test(w); }) ? '<label class="mx-dup"><input type="checkbox" class="mx-mdup"> Kirim ulang (sudah terkirim hari ini)</label>' : "")
+          + '<p class="mx-note">Pisahkan alamat dengan koma. Perubahan hanya untuk email ini; bawaan tetap diatur di pengaturan Migrasi IKR.</p>'
+          + '<div class="mx-act"><button class="btn btn-ghost mx-mx">Batal</button><button class="btn btn-primary mx-mgo"><i class="fa-solid fa-paper-plane"></i>Kirim sekarang</button></div>';
+        dec.parentNode.insertBefore(ed, dec.nextSibling);
+        ed.querySelector(".mx-mto").focus();
+        ed.querySelector(".mx-mx").onclick = function () { ed.remove(); };
+        var go = ed.querySelector(".mx-mgo");
+        go.onclick = async function () {
+          var g = info(), to = ed.querySelector(".mx-mto").value.trim(), cc = ed.querySelector(".mx-mcc").value, dup = ed.querySelector(".mx-mdup");
+          if (!to) return toast("Penerima (To) wajib diisi", "error");
+          if (dup && !dup.checked) return toast("Centang \"Kirim ulang\" bila memang ingin mengirim lagi", "error");
+          go.disabled = true; go.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Mengirim…';
+          try {
+            var r = await callApi("mail.send", { jenis: "MIG", ref: { sheet: "mig", row: 0 }, fileUrl: g.ba, subject: g.subj, body: g.body, to: to, cc: cc, confirmDup: !!(dup && dup.checked) }, 180000), it = r.results[0] || {};
+            if (!it.ok) throw new Error(it.error || "Gagal");
+            if (MX.cfg) MX.cfg.quota = r.quota;
+            toast("Email ke " + it.item.to.join(", ") + " terkirim", "success", 7000);
+            ed.remove(); done.click();                                 // alur bawaan: status VM + Data Takeover kolom M & X
+          } catch (e) { toast("Tidak terkirim: " + e.message, "error", 9000); go.disabled = false; go.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Coba lagi'; }
+        };
       };
       dec.insertBefore(x, done);
     });
