@@ -12967,20 +12967,46 @@ async function contactNudge() {
 .mx-tpl{margin-top:6px;border:1px solid #e2e8f0;border-radius:10px;padding:6px 10px}.dark .mx-tpl{border-color:#1e293b}
 .mx-tpl summary{cursor:pointer;font-size:12.5px;font-weight:700}.mx-tpl .field{margin-top:6px}
 .mx-sgb{margin-left:0}
+/* v27.1 · rapikan (28 Okt 2026) */
+.mx-hd p{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.mx-meta{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:#f1f5f9;color:#475569;font-size:11.5px;font-weight:700}
+.mx-meta i{color:#3558c8;font-size:11px}.mx-meta.low{background:#fff1f2;color:#be123c}.mx-meta.low i{color:#be123c}
+.dark .mx-meta{background:#1e293b;color:#cbd5e1}
+.mx-lock{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.mx-lock span{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:11.5px;font-weight:700}
+.mx-lock i{font-size:10px}.dark .mx-lock span{background:#1e1b4b;color:#c7d2fe}
+.mx-sec{padding:12px 14px;border:1px solid #e2e8f0;border-radius:14px;margin-bottom:12px}.dark .mx-sec{border-color:#1e293b}
+.mx-sec h4,.mx-sec>summary{display:flex;align-items:center;gap:8px;margin:0 0 4px!important;font-size:13px;font-weight:800;color:#0f172a;cursor:default}
+.mx-sec>summary{cursor:pointer;list-style:none}.mx-sec>summary::-webkit-details-marker{display:none}
+.mx-sec>summary::after{content:"\f078";font-family:"Font Awesome 6 Free";font-weight:900;font-size:10px;margin-left:auto;color:#94a3b8;transition:transform .15s}
+.mx-sec[open]>summary::after{transform:rotate(180deg)}
+.mx-sec h4 i,.mx-sec>summary i{color:#3558c8;width:14px;text-align:center}
+.dark .mx-sec h4,.dark .mx-sec>summary{color:#f1f5f9}
+.mx-sec .mx-lbl:first-of-type{margin-top:8px}
+.mx-adv{background:#f8fafc}.dark .mx-adv{background:#0b1222}
+.mx-tagx{margin-left:6px;padding:1px 7px;border-radius:999px;background:#fffbeb;color:#92400e;font-size:10.5px;font-weight:800}
+.mx-sticky{position:sticky;bottom:-18px;margin:0 -18px -18px;padding:12px 18px;background:linear-gradient(to top,#fff 70%,rgba(255,255,255,0));border-top:1px solid #f1f5f9}
+.dark .mx-sticky{background:linear-gradient(to top,#0f172a 70%,rgba(15,23,42,0));border-color:#1e293b}
+.mx-lx{min-width:0;flex:1}.mx-lx a{color:#3558c8;text-decoration:underline}
+.mx-qbar .mx-chips button{padding:5px 11px}
+.mx-li{transition:border-color .15s}.mx-li:hover{border-color:#cbd5e1}
+.mx-card{height:min(92vh,780px)}
+.mx-g2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.mx-g2 .mx-lbl{margin-top:10px}
+@media (max-width:520px){.mx-g2{grid-template-columns:1fr}}
 
 </style>
 <script id="addon_v27_mail">
-/* ===== v27: Email Dokumen (pengirim vendor.management@weave.co.id) · Persetujuan · Riwayat · Nomor otomatis & Tambah SPK =====
+/* ===== v27: Email Dokumen (khusus Akun Utama · dikirim dari Gmail STARLITE · cc wajib akun weave) · Riwayat · Nomor otomatis & Tambah SPK =====
    Backend: Kode.gs v13 (mail.*, num.*, spk.*). Tidak ada email otomatis tanpa klik pengguna. */
 (function () {
   if (typeof callApi !== "function") return;
-  var MX = { cfg: null, tab: "kirim", jenis: "SPK", row: null, file: "", fileName: "", draft: null, q: "", opts: null, pending: 0, busy: false, lastCfgAt: 0 };
+  var MX = { cfg: null, tab: "kirim", logF: "",  jenis: "SPK", row: null, file: "", fileName: "", draft: null, q: "", opts: null, pending: 0, busy: false, lastCfgAt: 0 };
   window.MAILX = MX;
   var E = function (v) { return typeof esc === "function" ? esc(v) : String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   var $i = function (id) { return document.getElementById(id); };
   var toast = function (m, t, d) { try { showToast(m, t || "info", d || 4500); } catch (e) { } };
   var isOwner = function () { return !!(window.currentUser || (typeof currentUser !== "undefined" && currentUser)) && (typeof currentUser !== "undefined" ? currentUser.role === "owner" : false); };
-  var canMail = function () { try { return isOwner() || can("generate") || can("sirkulir"); } catch (e) { return false; } };
+  var canMail = function () { try { return isOwner(); } catch (e) { return false; } };
   var canAddSpk = function () { try { return isOwner() || can("add_spk"); } catch (e) { return false; } };
   var ST = function (k) { try { return (typeof STATE !== "undefined" && STATE[k]) || []; } catch (e) { return []; } };
   var SGD = function () { try { return (typeof SG !== "undefined" && SG.docs) || []; } catch (e) { return []; } };
@@ -13029,19 +13055,22 @@ async function contactNudge() {
   function close() { var m = $i("mx-modal"); if (m) m.remove(); }
   function tabs() {
     var t = [["kirim", "fa-paper-plane", "Kirim"]];
-    if (isOwner()) t.push(["setuju", "fa-user-check", "Persetujuan" + (MX.pending ? ' <b class="mx-badge">' + MX.pending + "</b>" : "")]);
+    if (MX.pending) t.push(["setuju", "fa-user-check", "Persetujuan" + ' <b class="mx-badge">' + MX.pending + "</b>"]);
     t.push(["riwayat", "fa-clock-rotate-left", "Riwayat"], ["nomor", "fa-hashtag", "Nomor & SPK"]);
     if (isOwner()) t.push(["atur", "fa-gear", "Pengaturan"]);
     $i("mx-tabs").innerHTML = t.map(function (x) { return '<button class="' + (MX.tab === x[0] ? "on" : "") + '" data-t="' + x[0] + '"><i class="fa-solid ' + x[1] + '"></i>' + x[2] + "</button>"; }).join("");
     $i("mx-tabs").querySelectorAll("[data-t]").forEach(function (b) { b.onclick = function () { MX.tab = b.dataset.t; render(); }; });
-    var c = MX.cfg; $i("mx-from").innerHTML = c ? ('Dari <b>' + E(c.from) + '</b> · ' + (c.alias ? '<span class="mx-ok">alias aktif</span>' : '<span class="mx-bad">alias belum aktif</span>') + ' · sisa kuota hari ini ' + (c.quota >= 0 ? c.quota : "-") + (c.store === "sheet" ? ' · riwayat di sheet "Log Email"' : "")) : "Memuat…";
+    var c = MX.cfg, cf = (c && c.cfg) || {};
+    $i("mx-from").innerHTML = c ? ('<span class="mx-meta"><i class="fa-solid fa-at"></i>' + (cf.useAlias ? E(c.from) + (c.alias ? "" : ' <span class="mx-bad">(alias belum aktif)</span>') : "Gmail STARLITE") + '</span>'
+      + (cf.ccWajib ? '<span class="mx-meta"><i class="fa-solid fa-user-shield"></i>Cc wajib ' + E(cf.ccWajib) + "</span>" : "")
+      + '<span class="mx-meta' + (c.quota >= 0 && c.quota < 10 ? " low" : "") + '"><i class="fa-solid fa-gauge"></i>Sisa kuota ' + (c.quota >= 0 ? c.quota : "-") + "/hari</span>") : "Memuat…";
   }
   async function loadCfg(force) {
     if (!force && MX.cfg && Date.now() - MX.lastCfgAt < 60000) return MX.cfg;
     var r = await callApi("mail.cfg", {}, 60000); MX.cfg = r; MX.pending = r.pending || 0; MX.lastCfgAt = Date.now(); badge(); return r;
   }
   async function open(opt) {
-    if (!canMail()) return toast("Akun Anda tidak memiliki akses kirim email dokumen", "error");
+    if (!canMail()) return toast("Fitur email dokumen khusus Akun Utama", "error");
     opt = opt || {}; shell();
     if (opt.tab) MX.tab = opt.tab;
     if (opt.jenis) { MX.jenis = opt.jenis; MX.row = null; MX.draft = null; MX.file = ""; MX.fileName = ""; }
@@ -13091,19 +13120,20 @@ async function contactNudge() {
     catch (e) { $i("mx-draft").innerHTML = '<div class="mx-err">' + E(e.message) + "</div>"; }
     finally { if (b) { b.disabled = false; b.innerHTML = '<i class="fa-solid fa-eye"></i>Periksa & pratinjau'; } }
   }
+  function wajib() { var w = ((MX.cfg && MX.cfg.cfg) || {}).ccWajib || ""; return String(w).split(/[;,\s]+/).map(function (x) { return x.trim().toLowerCase(); }).filter(Boolean); }
+  function ccFree(d) { var w = wajib(); return (d.cc || []).filter(function (x) { return w.indexOf(String(x).toLowerCase()) < 0; }); }
   function drawDraft() {
     var d = MX.draft, box = $i("mx-draft"); if (!d || !box) return;
     var dup = (d.warn || []).some(function (w) { return /sudah terkirim hari ini/.test(w); });
     box.innerHTML = '<div class="mx-draft">'
-      + '<div class="mx-path ' + (d.direct ? "fast" : "slow") + '"><i class="fa-solid ' + (d.direct ? "fa-bolt" : "fa-user-check") + '"></i>' + (d.direct ? (d.needApproval ? "Anda Akun Utama — langsung terkirim" : "Jalur cepat — satu klik kirim") : "Jalur persetujuan Akun Utama: " + E(d.reasons.join(", "))) + "</div>"
       + (d.checks || []).map(function (c) { return '<div class="mx-chk bad"><i class="fa-solid fa-circle-xmark"></i>' + E(c.msg) + "</div>"; }).join("")
       + (d.warn || []).map(function (w) { return '<div class="mx-chk warn"><i class="fa-solid fa-triangle-exclamation"></i>' + E(w) + "</div>"; }).join("")
       + (d.ok && !(d.warn || []).length ? '<div class="mx-chk ok"><i class="fa-solid fa-circle-check"></i>Semua pemeriksaan lolos</div>' : "")
-      + '<dl class="mx-dl"><dt>To</dt><dd><input id="mx-to" class="field w-full" value="' + E(d.to.join(", ")) + '"></dd><dt>Cc</dt><dd><input id="mx-cc" class="field w-full" value="' + E(d.cc.join(", ")) + '" placeholder="(tidak ada)"></dd>'
+      + '<dl class="mx-dl"><dt>To</dt><dd><input id="mx-to" class="field w-full" value="' + E(d.to.join(", ")) + '"></dd><dt>Cc</dt><dd><input id="mx-cc" class="field w-full" value="' + E(ccFree(d).join(", ")) + '" placeholder="(tidak ada cc tambahan)">' + (wajib().length ? '<div class="mx-lock">' + wajib().filter(function (x) { return d.to.indexOf(x) < 0; }).map(function (x) { return '<span title="Cc wajib, selalu ikut"><i class="fa-solid fa-lock"></i>' + E(x) + "</span>"; }).join("") + "</div>" : "") + "</dd>"
       + "<dt>Subjek</dt><dd><b>" + E(d.subject) + "</b></dd><dt>Lampiran</dt><dd>" + (d.attach ? '<a href="' + E(d.attach.url) + '" target="_blank" rel="noopener">' + E(d.attach.name) + "</a> · " + (d.attach.size / 1048576).toFixed(2) + " MB" + (d.attach.big ? " · dikirim sebagai tautan" : "") : "Tanpa lampiran") + "</dd></dl>"
       + '<details class="mx-body"><summary>Lihat isi email</summary><pre>' + E(d.text) + "</pre></details>"
       + (dup ? '<label class="mx-dup"><input type="checkbox" id="mx-dupok"> Kirim ulang (sudah terkirim hari ini)</label>' : "")
-      + '<div class="mx-act"><button class="btn btn-ghost" id="mx-recheck"><i class="fa-solid fa-rotate"></i>Periksa ulang</button><button class="btn btn-primary" id="mx-send"' + (d.ok ? "" : " disabled") + '><i class="fa-solid ' + (d.direct ? "fa-paper-plane" : "fa-user-check") + '"></i>' + (d.direct ? "Kirim sekarang" : "Ajukan persetujuan") + "</button></div></div>";
+      + '<div class="mx-act"><button class="btn btn-ghost" id="mx-recheck"><i class="fa-solid fa-rotate"></i>Periksa ulang</button><button class="btn btn-primary" id="mx-send"' + (d.ok ? "" : " disabled") + '><i class="fa-solid fa-paper-plane"></i>Kirim sekarang</button></div></div>';
     var rc = $i("mx-recheck"); rc.onclick = function () { preview({ to: $i("mx-to").value, cc: $i("mx-cc").value }); };
     $i("mx-send").onclick = send;
   }
@@ -13111,8 +13141,8 @@ async function contactNudge() {
     var d = MX.draft, b = $i("mx-send"); if (!d || !d.ok || MX.busy) return;
     var to = $i("mx-to").value, cc = $i("mx-cc").value, dupok = $i("mx-dupok");
     if (dupok && !dupok.checked) return toast("Centang \"Kirim ulang\" bila memang ingin mengirim lagi", "error");
-    MX.busy = true; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>' + (d.direct ? "Mengirim…" : "Mengajukan…");
-    var req = reqBase(); if (to !== d.to.join(", ")) req.to = to; if (cc !== d.cc.join(", ")) req.cc = cc;
+    MX.busy = true; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Mengirim…';
+    var req = reqBase(); if (to !== d.to.join(", ")) req.to = to; if (cc !== ccFree(d).join(", ")) req.cc = cc;
     try {
       var r = await callApi("mail.send", Object.assign(req, { confirmDup: !!(dupok && dupok.checked) }), 180000), x = r.results[0] || {};
       if (!x.ok) throw new Error(x.error || "Gagal");
@@ -13155,14 +13185,27 @@ async function contactNudge() {
   function prompt2(msg) { try { return window.prompt(msg, ""); } catch (e) { return ""; } }
 
   // ---------- RIWAYAT ----------
-  async function rRiwayat() {
-    var bd = $i("mx-bd"); bd.innerHTML = '<div class="mx-load"><i class="fa-solid fa-circle-notch fa-spin"></i> Memuat riwayat…</div>';
-    var r; try { r = await callApi("mail.log", { limit: 150 }, 60000); } catch (e) { bd.innerHTML = '<div class="mx-err">' + E(e.message) + "</div>"; return; }
-    var lab = { terkirim: ["ok", "Terkirim"], menunggu: ["warn", "Menunggu"], gagal: ["bad", "Gagal"], ditolak: ["muted", "Ditolak"] };
-    bd.innerHTML = r.items.length ? '<div class="mx-log">' + r.items.map(function (e) { var s = lab[e.status] || ["muted", e.status];
-      return '<div class="mx-li"><span class="mx-st ' + s[0] + '">' + s[1] + "</span><div><b>" + E(e.subject) + "</b><small>" + E(e.label) + " · " + E(new Date(e.sentAt || e.at).toLocaleString("id-ID")) + " · " + E(e.by) + (e.approvedBy ? " · disetujui " + E(e.approvedBy) : "") + "</small>"
-        + "<p>To: " + E((e.to || []).join(", ")) + (e.cc && e.cc.length ? " · Cc: " + E(e.cc.join(", ")) : "") + "</p>" + (e.err ? '<p class="mx-bad">' + E(e.err) + "</p>" : "") + (e.note ? "<p>Catatan: " + E(e.note) + "</p>" : "") + (e.fallback ? '<p class="mx-bad">Dikirim dari akun cadangan (alias belum aktif)</p>' : "") + "</div></div>"; }).join("") + "</div>"
-      : '<div class="mx-empty big"><i class="fa-solid fa-envelope-open"></i>Belum ada email yang dikirim lewat sistem.</div>';
+  async function rRiwayat(clear) {
+    var bd = $i("mx-bd"); bd.innerHTML = '<div class="mx-load"><i class="fa-solid fa-circle-notch fa-spin"></i> ' + (clear ? "Menghapus riwayat gagal…" : "Memuat riwayat…") + "</div>";
+    var r; try { r = await callApi("mail.log", clear ? { limit: 150, clear: true } : { limit: 150 }, 90000); } catch (e) { bd.innerHTML = '<div class="mx-err">' + E(e.message) + "</div>"; return; }
+    if (clear) toast(r.deleted ? r.deleted + " riwayat gagal dihapus" : "Tidak ada riwayat gagal", "success");
+    MX._log = r.items || []; drawLog();
+  }
+  function drawLog() {
+    var bd = $i("mx-bd"), all = MX._log || [], lab = { terkirim: ["ok", "Terkirim"], menunggu: ["warn", "Menunggu"], gagal: ["bad", "Gagal"], ditolak: ["muted", "Ditolak"] };
+    var cnt = { "": all.length }; all.forEach(function (e) { cnt[e.status] = (cnt[e.status] || 0) + 1; });
+    var f = MX.logF && cnt[MX.logF] ? MX.logF : "", items = all.filter(function (e) { return !f || e.status === f; }), bad = (cnt.gagal || 0) + (cnt.ditolak || 0);
+    var chip = function (k, l) { return (k && !cnt[k]) ? "" : '<button class="' + (f === k ? "on" : "") + '" data-lf="' + k + '">' + l + " · " + (cnt[k] || 0) + "</button>"; };
+    if (!all.length) { bd.innerHTML = '<div class="mx-empty big"><i class="fa-solid fa-envelope-open"></i>Belum ada email yang dikirim lewat sistem.</div>'; return; }
+    bd.innerHTML = '<div class="mx-qbar"><div class="mx-chips">' + chip("", "Semua") + chip("terkirim", "Terkirim") + chip("gagal", "Gagal") + chip("menunggu", "Menunggu") + chip("ditolak", "Ditolak") + "</div>"
+        + (bad ? '<button class="btn btn-ghost text-rose-600" id="mx-clr"><i class="fa-solid fa-trash-can"></i>Hapus riwayat gagal (' + bad + ")</button>" : "") + "</div>"
+      + '<div class="mx-log">' + items.map(function (e) { var s = lab[e.status] || ["muted", e.status];
+        return '<div class="mx-li"><span class="mx-st ' + s[0] + '">' + s[1] + '</span><div class="mx-lx"><b>' + E(e.subject) + "</b><small>" + E(e.label) + " · " + E(new Date(e.sentAt || e.at).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })) + "</small>"
+          + "<p>To: " + E((e.to || []).join(", ")) + (e.cc && e.cc.length ? "<br>Cc: " + E(e.cc.join(", ")) : "") + "</p>"
+          + (e.attach ? '<p><a href="' + E(e.attach.url) + '" target="_blank" rel="noopener"><i class="fa-solid fa-paperclip"></i> ' + E(e.attach.name) + "</a></p>" : "")
+          + (e.err ? '<p class="mx-bad">' + E(e.err) + "</p>" : "") + (e.note ? "<p>Catatan: " + E(e.note) + "</p>" : "") + "</div></div>"; }).join("") + "</div>";
+    bd.querySelectorAll("[data-lf]").forEach(function (b) { b.onclick = function () { MX.logF = b.dataset.lf; drawLog(); }; });
+    var c = $i("mx-clr"); if (c) c.onclick = function () { if (!window.confirm("Hapus " + bad + " riwayat email gagal/ditolak? Email yang terkirim tidak ikut terhapus.")) return; rRiwayat(true); };
   }
 
   // ---------- NOMOR & TAMBAH SPK ----------
@@ -13203,24 +13246,31 @@ async function contactNudge() {
 
   // ---------- PENGATURAN (Akun Utama) ----------
   function rAtur() {
-    var c = MX.cfg.cfg || {}, ap = c.approval || {}, bd = $i("mx-bd"), J2 = JENIS.concat([["MIG", "Migrasi IKR"]]);
-    var tg = function (k, l) { return '<label class="mx-tg"><input type="checkbox" data-ap="' + k + '"' + (ap[k] ? " checked" : "") + "><span>" + E(l) + "</span></label>"; };
-    var als = (MX.cfg.aliases || []).slice(); if (als.indexOf(MX.cfg.from) < 0) als.unshift(MX.cfg.from); if (als.indexOf("vendor.management@weave.co.id") < 0) als.push("vendor.management@weave.co.id");
-    bd.innerHTML = (MX.cfg.sendAsFails && c.useAlias ? '<div class="mx-err"><b>Pengiriman lewat alias ditolak Gmail (' + MX.cfg.sendAsFails + ' pemberitahuan gagal dalam 2 hari).</b> Login SMTP alias weave kemungkinan tidak berlaku lagi. Buat ulang App Password akun weave, lalu perbarui di Gmail → Setelan → Akun dan Impor → Kirim email sebagai → edit info. Sementara itu, aktifkan cadangan di bawah.</div>' : '') + '<div class="mx-grid"><div class="mx-col"><h4>Pengirim</h4><p class="mx-note"><i class="fa-solid fa-envelope"></i>Email keluar dari akun Gmail STARLITE (bawaan). Cc wajib di bawah selalu ikut di semua email.</p><label class="mx-lbl">Cc wajib (semua email)</label><input class="field w-full" id="mx-ccw" value="' + E(c.ccWajib != null ? c.ccWajib : "") + '" placeholder="email; email"><label class="mx-tg"><input type="checkbox" id="mx-ua"' + (c.useAlias ? " checked" : "") + '><span>Kirim dari alias weave (butuh App Password akun weave yang masih berlaku)</span></label><label class="mx-lbl">Alamat pengirim alias (hanya dipakai bila opsi di atas aktif)</label><select id="mx-from-sel" class="field w-full">' + als.map(function (a) { return '<option value="' + E(a) + '"' + (a === MX.cfg.from ? " selected" : "") + ">" + E(a) + ((MX.cfg.aliases || []).indexOf(a) >= 0 ? " · terverifikasi" : " · belum terdaftar di Gmail") + "</option>"; }).join("") + '</select><p class="mx-note">Alias <b>' + E(MX.cfg.from) + "</b>: " + (MX.cfg.alias ? "aktif" : "<b>belum aktif</b> — tambahkan di Gmail pemilik Apps Script (Setelan → Akun → Kirim email sebagai), atau pilih alias yang sudah terverifikasi.") + '</p><label class="mx-tg"><input type="checkbox" id="mx-fb"' + (c.allowFallback ? " checked" : "") + '><span>Izinkan kirim dari akun Gmail pemilik bila alias belum aktif (cadangan)</span></label>'
-      + "<h4>Wajib persetujuan Akun Utama</h4>" + tg("SP3", "SP-3") + tg("SPK_CANCEL", "Cancel SPK") + tg("bulk", "Kirim massal") + tg("manual", "Penerima / cc diubah manual") + JENIS.filter(function (x) { return ["SP3", "SPK_CANCEL"].indexOf(x[0]) < 0; }).map(function (x) { return tg(x[0], x[1]); }).join("")
-      + '</div><div class="mx-col"><h4>Cc default per jenis</h4>' + J2.map(function (x) { return x[0] === "MIG" ? "" : '<label class="mx-lbl">' + E(x[1]) + '</label><input class="field w-full" data-cc="' + x[0] + '" value="' + E((c.cc || {})[x[0]] || "") + '" placeholder="email; email">'; }).join("")
-      + '<p class="mx-note">Cc Migrasi IKR mengikuti pengaturan di menu Migrasi IKR.</p><h4>Cc khusus per jenis SPK</h4>' + (MX.cfg.tipes || []).map(function (t) { return '<label class="mx-lbl">' + E(t) + '</label><input class="field w-full" data-ct="' + E(t) + '" value="' + E((c.ccTipe || {})[t] || "") + '" placeholder="kosong = pakai cc SPK">'; }).join("")
-      + '<h4>Templat</h4><p class="mx-note">Kosongkan untuk memakai templat bawaan. Penanda: {mitra} {stasiun} {no} {po} {tipe} {bap} {ba} {region} {sp}. Salam pembuka dan penutup "Hormat kami, Vendor Management, PT Integrasi Jaringan Ekosistem" selalu ditambahkan.</p>'
-      + JENIS.map(function (x) { var t = (c.tpl || {})[x[0]] || {}; return '<details class="mx-tpl"><summary>' + E(x[1]) + (t.subject || t.core ? " · diubah" : "") + '</summary><input class="field w-full" data-ts="' + x[0] + '" value="' + E(t.subject || "") + '" placeholder="Subjek"><textarea class="field w-full" rows="5" data-tc="' + x[0] + '" placeholder="Isi inti">' + E(t.core || "") + "</textarea></details>"; }).join("")
-      + '<div class="mx-act"><button class="btn btn-primary" id="mx-save"><i class="fa-solid fa-floppy-disk"></i>Simpan pengaturan</button></div></div></div>';
+    var c = MX.cfg.cfg || {}, bd = $i("mx-bd");
+    var als = (MX.cfg.aliases || []).slice(); if (als.indexOf(MX.cfg.from) < 0) als.unshift(MX.cfg.from);
+    var fld = function (lbl, attr, val, ph) { return '<label class="mx-lbl">' + E(lbl) + '</label><input class="field w-full" ' + attr + ' value="' + E(val || "") + '" placeholder="' + E(ph || "email; email") + '">'; };
+    bd.innerHTML = (MX.cfg.sendAsFails && c.useAlias ? '<div class="mx-err"><b>Alias weave ditolak Gmail (' + MX.cfg.sendAsFails + " pemberitahuan gagal dalam 2 hari).</b> Matikan \"Kirim dari alias weave\" agar email kembali terkirim dari Gmail STARLITE.</div>" : "")
+      + '<div class="mx-grid"><div class="mx-col">'
+      + '<section class="mx-sec"><h4><i class="fa-solid fa-paper-plane"></i>Pengirim</h4><p class="mx-note">Semua email keluar dari akun Gmail STARLITE. Balasan penerima masuk ke Gmail STARLITE. Kuota Gmail 100 penerima per hari.</p>'
+      + fld("Cc wajib di semua email", 'id="mx-ccw"', c.ccWajib) + '<p class="mx-note">Tidak bisa dihapus dari form kirim. Pisahkan dengan titik koma bila lebih dari satu.</p></section>'
+      + '<section class="mx-sec"><h4><i class="fa-solid fa-copy"></i>Cc tambahan per jenis dokumen</h4><div class="mx-g2">' + JENIS.map(function (x) { return '<div>' + fld(x[1], 'data-cc="' + x[0] + '"', (c.cc || {})[x[0]], "kosong = tidak ada") + "</div>"; }).join("") + "</div>"
+      + '<p class="mx-note">Cc Migrasi IKR diatur di menu Migrasi IKR.</p></section>'
+      + '<details class="mx-sec mx-adv"><summary><i class="fa-solid fa-sliders"></i>Lanjutan: kirim dari alias weave</summary>'
+      + '<label class="mx-tg"><input type="checkbox" id="mx-ua"' + (c.useAlias ? " checked" : "") + '><span>Kirim dari alias weave (butuh App Password akun weave yang berlaku)</span></label>'
+      + '<label class="mx-lbl">Alamat alias</label><select id="mx-from-sel" class="field w-full">' + als.map(function (a) { return '<option value="' + E(a) + '"' + (a === MX.cfg.from ? " selected" : "") + ">" + E(a) + ((MX.cfg.aliases || []).indexOf(a) >= 0 ? " · terverifikasi" : " · belum terdaftar") + "</option>"; }).join("") + "</select>"
+      + '<label class="mx-tg"><input type="checkbox" id="mx-fb"' + (c.allowFallback ? " checked" : "") + '><span>Bila alias belum aktif, kirim dari Gmail STARLITE</span></label></details>'
+      + '</div><div class="mx-col">'
+      + '<details class="mx-sec"><summary><i class="fa-solid fa-diagram-project"></i>Cc khusus per jenis SPK</summary><p class="mx-note">Kosong = memakai cc tambahan SPK.</p>' + (MX.cfg.tipes || []).map(function (t) { return fld(t, 'data-ct="' + E(t) + '"', (c.ccTipe || {})[t], "kosong = pakai cc SPK"); }).join("") + "</details>"
+      + '<section class="mx-sec"><h4><i class="fa-solid fa-file-lines"></i>Templat email</h4><p class="mx-note">Kosongkan untuk memakai templat bawaan. Penanda: {mitra} {stasiun} {no} {po} {tipe} {bap} {ba} {region} {sp}. Salam pembuka dan penutup selalu ditambahkan.</p>'
+      + JENIS.map(function (x) { var t = (c.tpl || {})[x[0]] || {}; return '<details class="mx-tpl"><summary>' + E(x[1]) + (t.subject || t.core ? ' <span class="mx-tagx">diubah</span>' : "") + '</summary><input class="field w-full" data-ts="' + x[0] + '" value="' + E(t.subject || "") + '" placeholder="Subjek"><textarea class="field w-full" rows="5" data-tc="' + x[0] + '" placeholder="Isi inti">' + E(t.core || "") + "</textarea></details>"; }).join("") + "</section>"
+      + '</div></div><div class="mx-act mx-sticky"><button class="btn btn-primary" id="mx-save"><i class="fa-solid fa-floppy-disk"></i>Simpan pengaturan</button></div>';
     $i("mx-save").onclick = async function () {
-      var cfg = { from: $i("mx-from-sel").value, allowFallback: $i("mx-fb").checked, useAlias: $i("mx-ua").checked, ccWajib: $i("mx-ccw").value, approval: {}, cc: {}, ccTipe: {}, tpl: {} };
-      bd.querySelectorAll("[data-ap]").forEach(function (i) { cfg.approval[i.dataset.ap] = i.checked; });
+      var cfg = { from: $i("mx-from-sel").value, allowFallback: $i("mx-fb").checked, useAlias: $i("mx-ua").checked, ccWajib: $i("mx-ccw").value, cc: {}, ccTipe: {}, tpl: {} };
       bd.querySelectorAll("[data-cc]").forEach(function (i) { cfg.cc[i.dataset.cc] = i.value; });
       bd.querySelectorAll("[data-ct]").forEach(function (i) { if (i.value.trim()) cfg.ccTipe[i.dataset.ct] = i.value; });
       bd.querySelectorAll("[data-ts]").forEach(function (i) { var k = i.dataset.ts, co = bd.querySelector('[data-tc="' + k + '"]').value; if (i.value.trim() || co.trim()) cfg.tpl[k] = { subject: i.value, core: co }; });
-      var b = this; b.disabled = true;
-      try { await callApi("mail.cfg.save", { cfg: cfg }, 60000); toast("Pengaturan email disimpan", "success"); await loadCfg(true); rAtur(); } catch (e) { toast(e.message, "error", 8000); b.disabled = false; }
+      var b = this; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Menyimpan…';
+      try { await callApi("mail.cfg.save", { cfg: cfg }, 60000); toast("Pengaturan email disimpan", "success"); await loadCfg(true); rAtur(); } catch (e) { toast(e.message, "error", 8000); b.disabled = false; b.innerHTML = '<i class="fa-solid fa-floppy-disk"></i>Simpan pengaturan'; }
     };
   }
 
@@ -13250,7 +13300,7 @@ async function contactNudge() {
     var m = n.match(/SP\s*-?\s*([123])\b/); if (m) return "SP" + m[1]; if (/SPK|PRJ/.test(n)) return "SPK"; return "SPK";
   }
   function addSignButtons() {
-    if (!canMail()) return;
+    if (!canMail()) { document.querySelectorAll(".mx-sgb,.mx-migb").forEach(function (x) { x.remove(); }); return; }
     document.querySelectorAll('button[onclick^="sgIntegrate("]').forEach(function (b) {
       if (b.nextElementSibling && b.nextElementSibling.classList.contains("mx-sgb")) return;
       var id = (String(b.getAttribute("onclick")).match(/sgIntegrate\('([^']+)'\)/) || [])[1]; if (!id) return;
@@ -13273,7 +13323,7 @@ async function contactNudge() {
         try {
           var r = await callApi("mail.send", { jenis: "MIG", ref: { sheet: "mig", row: 0 }, fileUrl: ba, subject: subj, body: body }, 180000), it = r.results[0] || {};
           if (!it.ok) throw new Error(it.error || "Gagal");
-          toast("Email ke Team IT terkirim dari " + (MX.cfg ? MX.cfg.from : "alias weave"), "success", 7000);
+          toast("Email ke Team IT terkirim", "success", 7000);
           done.click();                                              // pakai alur bawaan: status VM + Data Takeover kolom M & X
         } catch (e) { toast("Tidak terkirim: " + e.message, "error", 9000); x.disabled = false; x.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Kirim langsung dari sistem'; }
       };
