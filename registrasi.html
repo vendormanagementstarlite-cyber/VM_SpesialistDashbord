@@ -199,7 +199,7 @@ var S = [
     { key: "pernyataan", label: "Saya menyatakan seluruh data dan dokumen yang diisi/diunggah adalah benar, milik perusahaan kami sendiri, dan dapat kami pertanggungjawabkan sepenuhnya.", type: "check", req: 1, full: 1 },
     { key: "ttd_nama", label: "Nama penanda tangan", type: "text", req: 1, rule: "person" },
     { key: "ttd_jabatan", label: "Jabatan", type: "text", req: 1, rule: "text", ph: "Direktur Utama" },
-    { key: "surat_kuasa", label: "Surat kuasa (wajib bila penanda tangan bukan direktur)", type: "file", max: 2, full: 1, showIf: ["_kuasa", true] }] }
+    { key: "surat_kuasa", label: "Surat kuasa (opsional, bila penanda tangan bukan direktur)", type: "file", max: 2, full: 1, showIf: ["_kuasa", true] }] }
 ];
 var F = {}; S.forEach(function (s, i) { s.fields.forEach(function (f) { f.sec = i; F[f.key] = f; }); });
 
@@ -253,7 +253,7 @@ function visible(f) { if (!f.showIf) return true; if (f.showIf[0] === "_kuasa") 
 function check(f) {
   if (!visible(f)) return "";
   var v = st.data[f.key], fl = (st.files[f.key] || []);
-  if (f.type === "file") { if (fl.some(function (x) { return x.state === "up"; })) return ""; var okf = fl.filter(function (x) { return x.id; }); if ((f.req || (f.key === "surat_kuasa" && kuasaNeeded())) && !okf.length) return f.key === "surat_kuasa" ? "Penanda tangan bukan direktur: unggah surat kuasa." : "Wajib diunggah."; return okf.length > (f.max || 5) ? "Maksimal " + (f.max || 5) + " file." : ""; }
+  if (f.type === "file") { if (fl.some(function (x) { return x.state === "up"; })) return ""; var okf = fl.filter(function (x) { return x.id; }); if (f.req && !okf.length) return "Wajib diunggah."; return okf.length > (f.max || 5) ? "Maksimal " + (f.max || 5) + " file." : ""; }
   if (f.type === "check") return f.req && v !== true ? "Wajib dicentang." : "";
   if (f.type === "radio") return f.req && f.options.indexOf(String(v || "")) < 0 ? "Pilih salah satu." : "";
   if (f.req && !norm(v)) return "Wajib diisi.";
