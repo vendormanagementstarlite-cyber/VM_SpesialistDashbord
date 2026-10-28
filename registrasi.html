@@ -380,13 +380,16 @@ async function shrink(file) {
   } catch (e) { return file; }
 }
 function xhrPost(body, onp) {
+  /* fetch, bukan XHR: listener x.upload membuat browser mengirim preflight CORS yang tidak dijawab Apps Script -> "Koneksi terputus".
+     Progres disimulasikan (merayap ke 90%) lalu 100% saat respons diterima. */
   return new Promise(function (res, rej) {
-    var x = new XMLHttpRequest(); x.open("POST", API); x.setRequestHeader("Content-Type", "text/plain;charset=utf-8");
-    x.upload.onprogress = function (e) { if (e.lengthComputable) onp(Math.min(100, e.loaded / e.total * 100)); };
-    x.upload.onload = function () { onp(100); };
-    x.onload = function () { try { var j = JSON.parse(x.responseText); if (j.ok === false) return rej(Object.assign(new Error(j.error || "Gagal"), { server: true })); res(j); } catch (e) { rej(new Error("Respons tidak valid")); } };
-    x.onerror = function () { rej(new Error("Koneksi terputus")); }; x.ontimeout = function () { rej(new Error("Waktu habis")); }; x.timeout = 180000;
-    x.send(body);
+    var done = false, t0 = Date.now(), est = Math.max(2500, body.length / 400), tm = setInterval(function () { if (!done) onp(Math.min(90, (Date.now() - t0) / est * 90)); }, 150);
+    var ctl = new AbortController(), to = setTimeout(function () { ctl.abort(); }, 180000);
+    fetch(API, { method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body, signal: ctl.signal })
+      .then(function (r) { return r.text(); })
+      .then(function (t) { var j; try { j = JSON.parse(t); } catch (e) { throw new Error("Respons tidak valid"); } if (j.ok === false) throw Object.assign(new Error(j.error || "Gagal"), { server: true }); onp(100); res(j); })
+      .catch(function (e) { rej(e.server || e.message === "Respons tidak valid" ? e : new Error(e.name === "AbortError" ? "Waktu habis" : "Koneksi terputus")); })
+      .finally(function () { done = true; clearInterval(tm); clearTimeout(to); });
   });
 }
 function paintFile(k, it) { var arr = st.files[k] || [], i = arr.indexOf(it), el = document.querySelector('[data-fk="' + k + ":" + i + '"]'); if (!el) return; var pct = Math.round(it.pct || 0), g = el.querySelector(".pg"), c = el.querySelector(".pc"); if (!g) return; g.firstChild.style.width = pct + "%"; g.classList.toggle("wait", pct >= 100); c.textContent = pct >= 100 ? "…" : pct + "%"; }
