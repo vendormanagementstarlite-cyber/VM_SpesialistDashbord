@@ -13453,6 +13453,13 @@ async function contactNudge() {
 @media (max-width:700px){#rg-host .rg-head{flex-wrap:wrap}#rg-host .rg-head p{white-space:normal}}
 #rg-host .rg-main{gap:10px}
 .rg-side .rg-note textarea{width:100%;box-sizing:border-box}
+.rg-attbox{margin-top:10px;padding:8px 10px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1px #e2e8f0}.dark .rg-attbox{background:#0f172a;box-shadow:inset 0 0 0 1px #1e293b}
+.rg-attbox>summary{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12.5px;font-weight:800;list-style:none}.rg-attbox>summary::-webkit-details-marker{display:none}
+.rg-attbox>summary i{color:#0b5cad}.rg-attbox>summary em{font-style:normal;font-weight:600;color:#94a3b8;font-size:11.5px}
+.rg-attbox p{margin:6px 0!important;font-size:11.5px!important}
+.rg-attl{display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto}
+.rg-att{display:flex;gap:8px;align-items:flex-start;padding:6px 8px;border-radius:9px;cursor:pointer;font-size:12px}.rg-att:hover{background:#f1f5f9}.dark .rg-att:hover{background:#1e293b}
+.rg-att input{margin-top:2px}.rg-att b{display:block;font-weight:700;word-break:break-word}.rg-att small{display:block;color:#94a3b8}
 
 </style>
 <script id="addon_v28_reg">
@@ -13571,11 +13578,18 @@ async function contactNudge() {
     var g = people.find(function (p) { return new RegExp(guess, "i").test(p.jabatan || "") || new RegExp(guess, "i").test(p.name || ""); });
     return '<label class="rg-ps"><span>' + E(role) + '</span><select class="field" id="' + id + '"><option value="">Pilih dari daftar Signing</option>' + people.map(function (p, i) { return '<option value="' + i + '"' + (g === p ? " selected" : "") + ">" + E(p.name + (p.jabatan ? " · " + p.jabatan : "")) + "</option>"; }).join("") + "</select></label>";
   }
+  function attachPick(d) {
+    var it = d.item, files = it.files || {}, rows = [];
+    (d.sections || []).forEach(function (sec) { sec.fields.forEach(function (f) { if (f.type !== "file") return; (files[f.key] || []).forEach(function (x) { rows.push('<label class="rg-att"><input type="checkbox" data-att="' + E(x.id) + '"><span><b>' + E(x.name) + "</b><small>" + E(f.label) + (x.size ? " · " + (x.size >= 1048576 ? (x.size / 1048576).toFixed(1) + " MB" : Math.round(x.size / 1024) + " KB") : "") + "</small></span></label>"); }); }); });
+    if (!rows.length) return "";
+    return '<details class="rg-attbox"><summary><i class="fa-solid fa-paperclip"></i>Lampirkan ke PDF (opsional) <em>foto, bukti proyek, dokumen pendukung</em></summary><p class="rg-mute">Berkas yang dicentang ditambahkan sebagai halaman lampiran setelah halaman tanda tangan. Total maks. 25 MB.</p><div class="rg-attl">' + rows.join("") + "</div></details>";
+  }
   function actionBox(it, d) {
     var ppl = d.people || [];
     if (it.status === "diajukan") return '<div class="rg-act"><h4>Verifikasi</h4><p>Periksa isian dan lampiran per bagian. Setujui untuk membuat PDF dan mengirimnya ke Signing (paralel).</p>'
       + '<div class="rg-g3">' + personSel("rg-s1", "Vendor Management", ppl, "vendor|vm") + personSel("rg-s2", "Director", ppl, "director|direktur") + personSel("rg-s3", "CEO", ppl, "ceo") + "</div>"
       + (ppl.length ? "" : '<p class="rg-warn">Daftar orang di Signing masih kosong. Tambahkan dulu di menu Signing.</p>')
+      + attachPick(d)
       + '<label class="rg-note"><span>Alasan penolakan (wajib bila Tolak)</span><textarea id="rg-note" rows="2"></textarea></label><p class="rg-mute">Calon mitra tidak bisa merevisi. Bila data tidak benar, tolak registrasi; calon mitra harus mendaftar ulang dengan formulir baru.</p>'
       + '<div class="rg-btns"><button class="btn btn-ghost text-rose-600" data-a="tolak"><i class="fa-solid fa-ban"></i>Tolak</button><button class="btn btn-primary" data-a="setujui"><i class="fa-solid fa-signature"></i>Setujui & kirim ke Signing</button></div></div>';
     if (it.status === "ttd") return '<div class="rg-act"><h4>Proses tanda tangan</h4><div class="rg-sg">' + ((it.sg && it.sg.signers) || []).map(function (g) { return '<div class="' + (g.status === "selesai" ? "ok" : "") + '"><i class="fa-solid ' + (g.status === "selesai" ? "fa-circle-check" : "fa-hourglass-half") + '"></i><span><b>' + E(g.name) + "</b><small>" + E(g.jabatan || "") + (g.signedAt ? " · " + E(whenT(g.signedAt)) : " · menunggu") + "</small></span></div>"; }).join("") + "</div>"
@@ -13613,7 +13627,7 @@ async function contactNudge() {
     };
     on("tolak", function (b) { decide(b, "tolak", "Tolak registrasi ini? Calon mitra tidak bisa merevisi."); });
     on("batal", function (b) { decide(b, "batal", ""); });
-    on("setujui", function (b) { approve(b, notes()); });
+    on("setujui", function (b) { approve(b, notes(), Array.from(sd.querySelectorAll("[data-att]:checked")).map(function (c) { return c.dataset.att; })); });
     on("confirm", async function (b) {
       var row = {}; sd.querySelectorAll("[data-row]").forEach(function (i) { row[i.dataset.row] = i.value.trim(); });
       if (!row.jenis) return toast("Isi kolom C · Jenis", "error");
@@ -13628,7 +13642,7 @@ async function contactNudge() {
 
   // ---------- PDF registrasi (pdf-lib) ----------
   var ascii = function (s) { return String(s == null ? "" : s).replace(/[–—]/g, "-").replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/…/g, "...").replace(/²/g, "2").replace(/±/g, "+/-").replace(/[^\x20-\x7E\xA0-\xFF\n]/g, ""); };
-  async function buildPdf(d, signImgB64) {
+  async function buildPdf(d, signImgB64, blobs, atts) {
     var L = await loadPdfLib(), doc = await L.PDFDocument.create(), H = await doc.embedFont(L.StandardFonts.Helvetica), B = await doc.embedFont(L.StandardFonts.HelveticaBold);
     var W = 595.28, PH = 841.89, M = 42, CW = W - 2 * M, ink = L.rgb(0.055, 0.165, 0.278), mute = L.rgb(0.42, 0.49, 0.58), line = L.rgb(0.85, 0.89, 0.93), blue = L.rgb(0.043, 0.36, 0.68), band = L.rgb(0.93, 0.96, 0.99);
     var it = d.item, form = it.form || {}, files = it.files || {};
@@ -13684,10 +13698,28 @@ async function contactNudge() {
       var png = await doc.embedPng(b64ToBytes(signImgB64)), x0 = M + 4, by0 = top - 28 - boxH, sc = Math.min((cw - 16) / png.width, (boxH - 8) / png.height);
       page.drawImage(png, { x: x0 + (cw - 8 - png.width * sc) / 2, y: by0 + (boxH - png.height * sc) / 2, width: png.width * sc, height: png.height * sc });
     }
+    // lampiran opsional: setelah halaman tanda tangan, kotak Signing tetap di halaman yang sama
+    var labelOf = {}; (d.sections || []).forEach(function (s) { s.fields.forEach(function (f) { labelOf[f.key] = f.label; }); });
+    for (var ai = 0; ai < (atts || []).length; ai++) {
+      var bl = (blobs || {})[atts[ai]]; if (!bl || !bl.b64) continue;
+      var head = ascii("Lampiran " + (ai + 1) + " - " + (labelOf[bl.k] || "") + ": " + bl.name).slice(0, 110);
+      try {
+        if (/pdf/i.test(bl.mime)) {
+          var src = await L.PDFDocument.load(b64ToBytes(bl.b64), { ignoreEncryption: true }), cps = await doc.copyPages(src, src.getPageIndices());
+          cps.forEach(function (pg, pi) { doc.addPage(pg); if (pi === 0) { var sz = pg.getSize(); pg.drawRectangle({ x: 0, y: sz.height - 18, width: sz.width, height: 18, color: L.rgb(1, 1, 1), opacity: 0.85 }); pg.drawText(head, { x: 10, y: sz.height - 12, size: 7.5, font: B, color: blue }); } });
+        } else {
+          var img = /png/i.test(bl.mime) ? await doc.embedPng(b64ToBytes(bl.b64)) : await doc.embedJpg(b64ToBytes(bl.b64));
+          var ap = doc.addPage([W, PH]); ap.drawText(head, { x: M, y: PH - M + 6, size: 9.5, font: B, color: blue });
+          var mw = CW, mh = PH - 2 * M - 30, sc = Math.min(mw / img.width, mh / img.height, 1.5);
+          ap.drawImage(img, { x: M + (mw - img.width * sc) / 2, y: PH - M - 20 - img.height * sc, width: img.width * sc, height: img.height * sc });
+          ap.drawText(ascii("Formulir Registrasi Mitra " + it.nomor + " - lampiran"), { x: M, y: 22, size: 7.5, font: H, color: mute });
+        }
+      } catch (e) { toast("Lampiran " + bl.name + " tidak bisa ditempel: " + e.message, "error", 6000); }
+    }
     var bytes = await doc.save();
     return { bytes: bytes, pages: doc.getPageCount(), fields: fieldsOut };
   }
-  async function approve(b, notes) {
+  async function approve(b, notes, atts) {
     var d = RG.det, ppl = d.people || [];
     var pick = ["rg-s1", "rg-s2", "rg-s3"].map(function (id) { var v = ($(id) || {}).value; return v === "" || v == null ? null : ppl[+v]; });
     if (pick.some(function (p) { return !p; })) return toast("Pilih ketiga penanda tangan", "error");
@@ -13695,8 +13727,10 @@ async function contactNudge() {
     if (!confirm("Setujui registrasi " + d.item.nama + " dan kirim ke Signing untuk " + pick.map(function (p) { return p.name; }).join(", ") + "?")) return;
     busy(b, "Menyusun PDF…");
     try {
-      var g = await callApi("reg.get", { id: RG.sel, withSign: true }, 90000);
-      var pdf = await buildPdf(d, g.signImg || "");
+      var g = await callApi("reg.get", { id: RG.sel, withSign: true, blobs: atts || [] }, 180000);
+      var skipped = Object.keys(g.blobs || {}).filter(function (k) { return g.blobs[k].skip; });
+      if (skipped.length) toast(skipped.length + " lampiran dilewati (batas ukuran)", "error", 6000);
+      var pdf = await buildPdf(d, g.signImg || "", g.blobs || {}, atts || []);
       var colors = ["#2563eb", "#059669", "#d97706"], signers = pick.map(function (p, i) { return { id: "s" + (i + 1), name: p.name, jabatan: p.jabatan || ["Vendor Management", "Director", "CEO"][i], color: colors[i] }; });
       var fields = pdf.fields.map(function (f, i) { return { id: "f" + (i + 1), signer: "s" + f.role, page: f.page, x: +f.x.toFixed(5), y: +f.y.toFixed(5), w: +f.w.toFixed(5), h: +f.h.toFixed(5) }; });
       b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Mengirim ke Signing…';

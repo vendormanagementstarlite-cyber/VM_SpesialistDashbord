@@ -66,6 +66,12 @@ input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(11
 .lrow .f>label.l{font-size:12px;color:var(--ink2)}
 .lhint{align-self:center;font-size:12.5px;color:var(--mute)}
 @media (max-width:620px){.lrow{grid-template-columns:1fr;gap:8px}.lhint{display:none}}
+.tip{display:flex;gap:8px;align-items:flex-start;margin:0 0 8px;padding:9px 11px;border-radius:10px;background:var(--sky);color:#16426f;font-size:12.5px;line-height:1.45}.tip svg{flex:none;margin-top:1px}
+.segm{display:inline-flex;gap:3px;padding:3px;margin-bottom:8px;border-radius:11px;background:var(--line2)}
+.segm button{padding:7px 12px;border:0;border-radius:8px;background:none;font-size:12.5px;font-weight:700;color:var(--ink2)}.segm button.on{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(14,42,71,.15)}
+.sig.up{display:grid;place-items:center;min-height:190px;padding:12px;cursor:pointer;border-style:dashed;border-color:#b9cbdd;background:#f7fafd}.sig.up:hover,.sig.up.over{border-color:var(--blue);background:var(--sky)}
+.sig.up img{max-width:100%;max-height:220px;display:block}
+.ph2{display:flex;align-items:center;gap:12px;color:var(--ink2);font-size:13.5px;text-align:left}.ph2 b{color:var(--blue)}.ph2 small{color:var(--mute);font-size:12px}
 .warnbox{display:flex;gap:10px;align-items:flex-start;margin:0 0 12px;padding:11px 13px;border-radius:12px;background:var(--warnbg);color:#7a4a00;font-size:13px;line-height:1.45;border:1px solid #f3d9a6}
 .warnbox svg{flex:none;margin-top:1px}
 .ov{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:16px;background:rgba(14,42,71,.45);backdrop-filter:blur(4px);animation:fade .2s}
@@ -189,7 +195,7 @@ var S = [
     { key: "k_sittac", label: "Sittac/Perizinan", type: "number", rule: "int" },
     { key: "k_survei", label: "Survei", type: "number", rule: "int" },
     { key: "surat_kesiapan", label: "Surat pernyataan kesiapan tim dan tools (bermaterai)", type: "file", max: 2, full: 1 }] },
-  { key: "akhir", title: "Pernyataan dan Tanda Tangan", lead: "Tombol Kirim aktif setelah pernyataan dicentang dan ditandatangani.", fields: [
+  { key: "akhir", title: "Pernyataan dan Tanda Tangan", lead: "Tombol Kirim aktif setelah pernyataan dicentang dan gambar tanda tangan diunggah.", fields: [
     { key: "pernyataan", label: "Saya menyatakan seluruh data dan dokumen yang diisi/diunggah adalah benar, milik perusahaan kami sendiri, dan dapat kami pertanggungjawabkan sepenuhnya.", type: "check", req: 1, full: 1 },
     { key: "ttd_nama", label: "Nama penanda tangan", type: "text", req: 1, rule: "person" },
     { key: "ttd_jabatan", label: "Jabatan", type: "text", req: 1, rule: "text", ph: "Direktur Utama" },
@@ -204,7 +210,7 @@ var DRAFT = REV ? "" : (store.get("reg_draft") || (function () { var a = new Uin
 var SKEY = "reg_state_" + (REV || DRAFT);
 var st = store.get(SKEY) || { step: 0, data: {}, files: {}, seen: {} };
 st.files = st.files || {}; st.data = st.data || {}; st.seen = st.seen || {};
-var V = { notes: {}, errs: {}, busy: false, pending: 0, sig: null, sigDirty: false, revNote: "" };
+var V = { notes: {}, errs: {}, busy: false, pending: 0, sig: null, sigDirty: false, revNote: "", sigMode: "upload" };
 var $ = function (id) { return document.getElementById(id); };
 var esc = function (v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
 var save = function () { st.files = st.files || {}; store.set(SKEY, { step: st.step, data: st.data, seen: st.seen, files: pruneFiles() }); };
@@ -294,10 +300,14 @@ function render() {
       var fl = F[f.key + "_file"], on = st.data[f.key] === true;
       return '<div class="lrow' + (on ? " on" : "") + '">' + fieldHtml(Object.assign({}, f, { full: 0 })) + (fl && visible(fl) ? fieldHtml(Object.assign({}, fl, { full: 0 })) : '<div class="f lhint">' + (f.req ? "" : "Opsional. Centang bila dimiliki, lalu unggah dokumennya.") + "</div>") + "</div>"; }).join("") + "</div>";
   else html += '<div class="grid">' + s.fields.map(fieldHtml).join("") + "</div>";
-  if (last) html += '<div class="f full" id="f__ttd"><label class="l">Tanda tangan<b>*</b></label><div class="sig"><canvas id="sig" aria-label="Kotak tanda tangan"></canvas><div class="base"></div><div class="ph" id="sigph">Tanda tangan di sini</div></div><div class="sigbar"><span>Gunakan jari atau mouse. Tanda tangan ini ditempel di dokumen registrasi.</span><button type="button" id="sigclr">Ulangi</button></div><div class="e" id="e__ttd" role="alert"></div></div>';
+  if (last) html += '<div class="f full" id="f__ttd"><label class="l">Tanda tangan<b>*</b></label>'
+    + '<div class="tip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><span><b>Dianjurkan memakai stempel perusahaan.</b> Tanda tangani di kertas putih, bubuhkan stempel perusahaan, lalu foto atau pindai dan unggah di sini.</span></div>'
+    + '<div class="sig up" id="sigup" tabindex="0" role="button">' + (V.sig && V.sig.up ? '<img id="sigimg" alt="Tanda tangan dan stempel" src="' + V.sig.img + '">' : '<div class="ph2">' + IC_UP + '<span><b>Unggah foto/scan tanda tangan</b> atau seret ke sini<br><small>JPG atau PNG, latar putih, tanda tangan dan stempel terlihat jelas</small></span></div>') + '</div><input type="file" id="sigfile" accept="image/jpeg,image/png" hidden>'
+    + '<div class="sigbar"><span>Gambar dirapikan otomatis dan ditempel di dokumen registrasi.</span>' + (V.sig && V.sig.up ? '<button type="button" id="sigclr">Ganti gambar</button>' : "") + "</div>"
+    + '<div class="e" id="e__ttd" role="alert"></div></div>';
   html += '<div class="state" id="state"></div></section>';
   $("main").innerHTML = html;
-  bindStep(); if (last) sigInit();
+  bindStep(); if (last) sigUpInit();
   paintErrors(false); bar();
 }
 function paintErrors(show) {
@@ -416,6 +426,32 @@ function sigInit() {
   c.addEventListener("pointerup", up); c.addEventListener("pointercancel", up);
   $("sigclr").onclick = function () { V.sig = null; V.sigMsg = ""; sigInit(); $("sigph").style.display = ""; paintErrors(false); bar(); };
 }
+function sigUpInit() {
+  var box = $("sigup"), inp = $("sigfile");
+  var pick = function () { inp.click(); };
+  box.onclick = pick; box.onkeydown = function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } };
+  box.ondragover = function (e) { e.preventDefault(); box.classList.add("over"); }; box.ondragleave = function () { box.classList.remove("over"); };
+  box.ondrop = function (e) { e.preventDefault(); box.classList.remove("over"); if (e.dataTransfer.files[0]) loadSig(e.dataTransfer.files[0]); };
+  inp.onchange = function () { if (inp.files[0]) loadSig(inp.files[0]); inp.value = ""; };
+  var c = $("sigclr"); if (c && V.sig) c.onclick = pick;
+}
+// foto tanda tangan + stempel → PNG latar putih, tepi kosong dipotong, maks. 900 px
+async function loadSig(file) {
+  if (!/^image\/(jpeg|png)$/.test(file.type)) return toast("Gunakan gambar JPG atau PNG");
+  if (file.size > 12 * 1048576) return toast("Gambar lebih dari 12 MB");
+  try {
+    var bmp = await createImageBitmap(file), sc = Math.min(1, 1400 / Math.max(bmp.width, bmp.height)), w = Math.round(bmp.width * sc), h = Math.round(bmp.height * sc);
+    var c = document.createElement("canvas"); c.width = w; c.height = h; var g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, w, h); g.drawImage(bmp, 0, 0, w, h);
+    var d = g.getImageData(0, 0, w, h).data, x0 = w, y0 = h, x1 = -1, y1 = -1;
+    for (var y = 0; y < h; y += 2) for (var x = 0; x < w; x += 2) { var i = (y * w + x) * 4; if (d[i] + d[i + 1] + d[i + 2] < 600) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; } }
+    if (x1 < 0 || (x1 - x0) < w * 0.08 || (y1 - y0) < h * 0.05) return toast("Tanda tangan tidak terlihat jelas. Gunakan foto berlatar putih.", 5000);
+    var p = Math.round(Math.max(w, h) * 0.02); x0 = Math.max(0, x0 - p); y0 = Math.max(0, y0 - p); x1 = Math.min(w, x1 + p); y1 = Math.min(h, y1 + p);
+    var cw = x1 - x0, ch = y1 - y0, s2 = Math.min(1, 900 / Math.max(cw, ch)), t = document.createElement("canvas"); t.width = Math.round(cw * s2); t.height = Math.round(ch * s2);
+    var tg = t.getContext("2d"); tg.fillStyle = "#fff"; tg.fillRect(0, 0, t.width, t.height); tg.drawImage(c, x0, y0, cw, ch, 0, 0, t.width, t.height);
+    var url = t.toDataURL("image/png"); if (url.length > 1400000) url = t.toDataURL("image/jpeg", 0.9) && (function () { var q = document.createElement("canvas"); var k = Math.sqrt(1300000 / url.length); q.width = Math.round(t.width * k); q.height = Math.round(t.height * k); q.getContext("2d").drawImage(t, 0, 0, q.width, q.height); return q.toDataURL("image/png"); })();
+    V.sig = { img: url, full: url, up: true, box: { pts: 999 } }; V.sigMsg = ""; st.seen._ttd = 1; delete V.errs._ttd; render();
+  } catch (e) { toast("Gambar tidak bisa dibaca. Coba file lain."); }
+}
 function captureSig() {
   if (!pad || !pad.pts) return;
   var dpr = pad.c.width / pad.w, p = 12, x0 = Math.max(0, pad.minX - p), y0 = Math.max(0, pad.minY - p), x1 = Math.min(pad.w, pad.maxX + p), y1 = Math.min(pad.h, pad.maxY + p);
@@ -424,7 +460,8 @@ function captureSig() {
   V.sig = { img: t.toDataURL("image/png"), full: pad.c.toDataURL("image/png"), box: { pts: pad.pts, minX: pad.minX, minY: pad.minY, maxX: pad.maxX, maxY: pad.maxY, strokes: pad.strokes } };
 }
 function sigOk() {
-  var s = V.sig; if (!s) { V.sigMsg = "Tanda tangan belum dibuat."; return false; }
+  var s = V.sig; if (!s) { V.sigMsg = "Unggah gambar tanda tangan (dianjurkan dengan stempel perusahaan)."; return false; }
+  if (s.up) { V.sigMsg = ""; return true; }
   var b = s.box, w = pad ? pad.w : 600, h = pad ? pad.h : 190;
   if (b.pts < 25 || (b.maxX - b.minX) < w * 0.18 || (b.maxY - b.minY) < h * 0.12) { V.sigMsg = "Tanda tangan terlalu sederhana. Tanda tangani seperti biasa."; return false; }
   V.sigMsg = ""; return true;
