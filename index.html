@@ -13364,5 +13364,328 @@ async function contactNudge() {
 })();
 
 </script>
+<style id="addon_v28_reg_css">
+/* v28 · Registrasi Mitra */
+.rg-wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+.rg-wrap.has-sel{grid-template-columns:minmax(0,1fr) minmax(360px,480px)}
+@media (max-width:1100px){.rg-wrap.has-sel{grid-template-columns:1fr}.rg-wrap.has-sel .rg-main{display:none}}
+.rg-main{display:flex;flex-direction:column;gap:12px;min-width:0}
+.rg-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px}
+.rg-head h2{margin:0;font-size:18px;font-weight:800;color:#0f172a}.dark .rg-head h2{color:#fff}
+.rg-head p{margin:3px 0 0;font-size:12.5px;color:#64748b}
+.rg-acts{display:flex;gap:6px}.rg-acts .btn span{margin-left:2px}
+.rg-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.rg-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.rg-tabs button{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;border:1px solid #e2e8f0;background:#fff;font-size:12.5px;font-weight:700;color:#475569}
+.rg-tabs button b{min-width:18px;padding:0 5px;border-radius:9px;background:#f1f5f9;color:#475569;font-size:11px;line-height:18px;text-align:center}
+.rg-tabs button.on{background:#0b5cad;border-color:#0b5cad;color:#fff}.rg-tabs button.on b{background:rgba(255,255,255,.22);color:#fff}
+.dark .rg-tabs button{background:#111827;border-color:#334155;color:#cbd5e1}.dark .rg-tabs button b{background:#1e293b;color:#cbd5e1}
+.rg-srch{position:relative;flex:0 1 300px;min-width:200px}.rg-srch i{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:12px;color:#94a3b8}
+.rg-srch input{width:100%;padding:8px 12px 8px 30px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;font-size:13px}.dark .rg-srch input{background:#0f172a;border-color:#334155;color:#e2e8f0}
+.rg-err{padding:10px 12px;border-radius:12px;background:#fff1f2;color:#9f1239;font-size:12.5px;font-weight:600}
+.rg-list{padding:4px;overflow:hidden}
+.rg-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto auto;gap:12px;align-items:center;width:100%;padding:10px 12px;border:0;border-radius:12px;background:none;text-align:left;font:inherit;cursor:pointer}
+.rg-row+.rg-row{box-shadow:inset 0 1px 0 #f1f5f9}.dark .rg-row+.rg-row{box-shadow:inset 0 1px 0 #1e293b}
+.rg-row:hover{background:#f8fafc}.rg-row.on{background:#eef5fd;box-shadow:inset 3px 0 0 #0b5cad}.dark .rg-row:hover,.dark .rg-row.on{background:#111c30}
+.rg-no{display:grid;place-items:center;height:34px;border-radius:9px;background:#eef5fd;color:#0b5cad;font-weight:800;font-size:13px}.dark .rg-no{background:#13243d;color:#93c5fd}
+.rg-nm{min-width:0}.rg-nm b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#0f172a}.dark .rg-nm b{color:#f1f5f9}
+.rg-nm small{display:block;font-size:11.5px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rg-dt{font-size:11.5px;color:#94a3b8;white-space:nowrap}
+.rg-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--c) 12%,transparent);color:var(--c);font-size:11px;font-weight:800;white-space:nowrap}
+.rg-chip i{font-size:10px}
+@media (max-width:640px){.rg-row{grid-template-columns:38px minmax(0,1fr) auto}.rg-dt{display:none}}
+.rg-empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:36px 16px;text-align:center;font-size:13px;color:#94a3b8}.rg-empty>i{font-size:24px}
+.rg-side{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto;border-radius:18px;background:#fff;box-shadow:0 0 0 1px #e2e8f0,0 18px 40px -24px rgba(15,23,42,.35)}
+.rg-side:empty{display:none}.dark .rg-side{background:#0f172a;box-shadow:0 0 0 1px #1e293b}
+.rg-sh{display:flex;justify-content:space-between;gap:10px;padding:16px 16px 10px;position:sticky;top:0;background:inherit;z-index:1}
+.rg-sh small{font-size:11.5px;font-weight:700;color:#0b5cad}.rg-sh h3{margin:2px 0 6px;font-size:16px;font-weight:800;line-height:1.3;color:#0f172a}.dark .rg-sh h3{color:#fff}
+.rg-links{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 10px}
+.rg-links a,.rg-links button{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:9px;border:1px solid #e2e8f0;background:#fff;font-size:12px;font-weight:700;color:#334155;text-decoration:none;cursor:pointer}
+.rg-links a:hover,.rg-links button:hover{border-color:#0b5cad;color:#0b5cad}.dark .rg-links a,.dark .rg-links button{background:#111827;border-color:#334155;color:#cbd5e1}
+.rg-act{margin:0 16px 12px;padding:12px 14px;border-radius:14px;background:#f8fafc;box-shadow:inset 0 0 0 1px #e2e8f0}.dark .rg-act{background:#111827;box-shadow:inset 0 0 0 1px #1e293b}
+.rg-act.ok{background:#f0fdf9;box-shadow:inset 0 0 0 1px #a7f3d0}.rg-act.warn{background:#fffbeb;box-shadow:inset 0 0 0 1px #fde68a}
+.dark .rg-act.ok{background:#052e2b}.dark .rg-act.warn{background:#2b1d05}
+.rg-act h4{margin:0 0 3px;font-size:13.5px;font-weight:800}.rg-act p{margin:0 0 8px;font-size:12.5px;color:#64748b}
+.rg-g3{display:grid;grid-template-columns:1fr;gap:6px}
+.rg-ps{display:grid;grid-template-columns:130px 1fr;gap:8px;align-items:center;font-size:12px;font-weight:700;color:#475569}
+.rg-ps select{width:100%;padding:6px 8px;font-size:12.5px}
+.rg-note{display:block;margin-top:8px}.rg-note span{display:block;margin-bottom:4px;font-size:11.5px;font-weight:700;color:#64748b}
+.rg-note textarea{width:100%;padding:7px 9px;border:1px solid #e2e8f0;border-radius:9px;font:inherit;font-size:12.5px;background:#fff;resize:vertical}.dark .rg-note textarea{background:#0f172a;border-color:#334155;color:#e2e8f0}
+.rg-btns{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin-top:10px}
+.rg-warn{color:#b45309!important;font-weight:700}
+.rg-sg{display:flex;flex-direction:column;gap:6px;margin:4px 0 8px}
+.rg-sg div{display:flex;gap:9px;align-items:center;padding:7px 10px;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 1px #e2e8f0;font-size:12.5px}.dark .rg-sg div{background:#0f172a;box-shadow:inset 0 0 0 1px #1e293b}
+.rg-sg i{color:#7c3aed}.rg-sg .ok i{color:#047857}.rg-sg b{display:block;font-size:12.5px}.rg-sg small{display:block;font-size:11px;color:#64748b}
+.rg-row2{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px}.rg-row2 label{display:block;min-width:0}.rg-row2 .w2{grid-column:1/-1}
+.rg-row2 span{display:block;margin-bottom:3px;font-size:11px;font-weight:700;color:#475569}.rg-row2 input{width:100%;padding:6px 8px;font-size:12.5px}
+.rg-secs{padding:0 16px 6px}
+.rg-sec{border-top:1px solid #f1f5f9}.dark .rg-sec{border-color:#1e293b}
+.rg-sec>summary{display:flex;align-items:center;gap:8px;padding:10px 2px;font-size:13px;font-weight:800;cursor:pointer;list-style:none;color:#0f172a}.dark .rg-sec>summary{color:#f1f5f9}
+.rg-sec>summary::-webkit-details-marker{display:none}
+.rg-sec>summary::after{content:"\f078";font-family:"Font Awesome 6 Free";font-weight:900;font-size:10px;margin-left:auto;color:#94a3b8;transition:transform .15s}
+.rg-sec[open]>summary::after{transform:rotate(180deg)}
+.rg-sec>summary em{font-style:normal;padding:1px 7px;border-radius:999px;background:#fffbeb;color:#b45309;font-size:10.5px}
+.rg-kv{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;padding:5px 2px;font-size:12.5px}
+.rg-kv>span{color:#64748b;line-height:1.4}.rg-kv>div{min-width:0;font-weight:600;word-break:break-word;color:#0f172a}.dark .rg-kv>div{color:#e2e8f0}
+.rg-kv a{display:flex;align-items:center;gap:6px;color:#0b5cad;text-decoration:none;font-weight:600}.rg-kv a:hover{text-decoration:underline}
+.rg-mute{color:#94a3b8;font-weight:500}.rg-yes{color:#047857}.rg-yes i{margin-right:4px}
+.rg-cat{margin:4px 0 10px;padding:7px 10px;border-radius:9px;background:#fffbeb;color:#92400e;font-size:12px;font-weight:600}
+.rg-sec .rg-note{margin:4px 0 12px}
+.rg-hist{padding:6px 16px 16px}.rg-hist h4{margin:6px 0;font-size:12.5px;font-weight:800;color:#475569}
+.rg-hist div{padding:5px 0 5px 12px;border-left:2px solid #e2e8f0;font-size:12px}.rg-hist b{display:block;font-weight:700}.rg-hist small{color:#94a3b8}
+@media (max-width:520px){.rg-kv{grid-template-columns:1fr;gap:2px}.rg-ps{grid-template-columns:1fr;gap:3px}.rg-row2{grid-template-columns:1fr}}
+.rg-side input,.rg-side select,.rg-side textarea,.rg-srch input{box-sizing:border-box;max-width:100%}
+
+</style>
+<script id="addon_v28_reg">
+/* ===== v28: Registrasi Mitra Baru (khusus Akun Utama) — verifikasi, PDF + Signing paralel, konfirmasi ke Info Perseroan =====
+   Backend: Kode.gs v14 (reg.*). Formulir publik: registrasi.html (tautan tetap). */
+(function () {
+  if (typeof callApi !== "function") return;
+  var FORM_URL = "https://vendormanagementstarlite-cyber.github.io/VM_SpesialistDashbord/registrasi.html";
+  var RG = { items: [], loaded: false, busy: false, f: "aktif_kerja", q: "", sel: null, det: null, err: "", at: 0 };
+  window.REGX = RG;
+  var $ = function (id) { return document.getElementById(id); };
+  var E = function (v) { return typeof esc === "function" ? esc(v) : String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var toast = function (m, t, d) { try { showToast(m, t || "info", d || 4500); } catch (e) { } };
+  var isOwner = function () { try { return !!currentUser && currentUser.role === "owner"; } catch (e) { return false; } };
+  var ST = { diajukan: ["Diajukan", "#2563eb", "fa-inbox"], dikembalikan: ["Dikembalikan", "#b45309", "fa-rotate-left"], ttd: ["Proses TTD", "#7c3aed", "fa-signature"], lengkap: ["TTD lengkap", "#0891b2", "fa-file-circle-check"], aktif: ["Aktif", "#047857", "fa-circle-check"], ditolak: ["Ditolak", "#be123c", "fa-ban"], batal: ["Dibatalkan", "#64748b", "fa-xmark"] };
+  var chip = function (s) { var x = ST[s] || [s, "#64748b", "fa-circle"]; return '<span class="rg-chip" style="--c:' + x[1] + '"><i class="fa-solid ' + x[2] + '"></i>' + E(x[0]) + "</span>"; };
+  var when = function (t) { try { return new Date(t).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return ""; } };
+  var whenT = function (t) { try { return new Date(t).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } };
+
+  // ---------- kerangka di aplikasi ----------
+  function ensureUi() {
+    if (!isOwner()) { var n0 = $("nav-regmitra"); n0 && n0.classList.add("hidden"); return; }
+    var np = $("nav-perseroan");
+    if (np && !$("nav-regmitra")) {
+      var b = document.createElement("button"); b.id = "nav-regmitra"; b.title = "Registrasi Mitra"; b.className = np.className; b.setAttribute("onclick", "switchTab('regmitra')");
+      b.innerHTML = '<div class="flex items-center gap-3"><i class="fa-solid fa-id-card-clip text-sm shrink-0 group-hover:scale-110 transition-transform"></i><span class="sidebar-text">Registrasi Mitra</span></div><span id="sidebar-reg-badge" class="sidebar-text text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-700 dark:text-sky-300 hidden">0</span>';
+      np.after(b);
+    }
+    var n = $("nav-regmitra"); n && n.classList.remove("hidden");
+    var vp = $("view-perseroan");
+    if (vp && !$("view-regmitra")) { var v = document.createElement("section"); v.id = "view-regmitra"; v.className = "tab-view hidden"; vp.after(v); }
+  }
+  function badge(n) { var b = $("sidebar-reg-badge"); if (!b) return; if (n == null) n = RG.items.filter(function (x) { return x.status === "diajukan" || x.status === "lengkap"; }).length; b.textContent = n; b.classList.toggle("hidden", !n); }
+  async function load(force) {
+    if (RG.busy || (!force && RG.loaded && Date.now() - RG.at < 60000)) return;
+    RG.busy = true; RG.err = "";
+    try { var r = await callApi("reg.list", {}, 90000); RG.items = r.items || []; RG.loaded = true; RG.at = Date.now(); if (r.formUrl) FORM_URL = r.formUrl; }
+    catch (e) { RG.err = /tidak dikenal/i.test(e.message) ? "Backend belum versi v14. Tempel Kode v14 di Apps Script lalu Deploy ulang." : e.message; }
+    RG.busy = false; badge(); render();
+  }
+  var FILTERS = [["aktif_kerja", "Perlu tindakan"], ["diajukan", "Diajukan"], ["dikembalikan", "Dikembalikan"], ["ttd", "Proses TTD"], ["lengkap", "TTD lengkap"], ["aktif", "Aktif"], ["ditolak", "Ditolak"], ["semua", "Semua"]];
+  function list() {
+    var q = RG.q.trim().toLowerCase();
+    return RG.items.filter(function (x) {
+      if (RG.f === "aktif_kerja" && ["diajukan", "lengkap"].indexOf(x.status) < 0) return false;
+      if (["aktif_kerja", "semua"].indexOf(RG.f) < 0 && x.status !== RG.f) return false;
+      return !q || [x.nomor, x.nama, x.short, x.direktur, x.pic, x.email, x.npwp].join(" ").toLowerCase().indexOf(q) >= 0;
+    });
+  }
+  function render() {
+    var v = $("view-regmitra"); if (!v) return;
+    var cnt = {}; RG.items.forEach(function (x) { cnt[x.status] = (cnt[x.status] || 0) + 1; }); cnt.aktif_kerja = (cnt.diajukan || 0) + (cnt.lengkap || 0); cnt.semua = RG.items.length;
+    var L = list();
+    v.innerHTML = '<div class="rg-wrap' + (RG.sel ? " has-sel" : "") + '"><div class="rg-main">'
+      + '<div class="glass-panel rounded-2xl rg-head"><div><h2>Registrasi Mitra</h2><p>Calon mitra mengisi lewat tautan tetap · data masuk Info Perseroan setelah tanda tangan lengkap dan Anda konfirmasi</p></div>'
+      + '<div class="rg-acts"><button class="btn btn-ghost" data-a="link" title="Salin tautan formulir"><i class="fa-solid fa-link"></i><span>Tautan formulir</span></button><button class="btn btn-ghost" data-a="reload" title="Muat ulang"><i class="fa-solid fa-rotate' + (RG.busy ? " fa-spin" : "") + '"></i></button></div></div>'
+      + '<div class="rg-bar"><div class="rg-tabs">' + FILTERS.map(function (f) { return (cnt[f[0]] || ["aktif_kerja", "semua"].indexOf(f[0]) >= 0) ? '<button class="' + (RG.f === f[0] ? "on" : "") + '" data-f="' + f[0] + '">' + E(f[1]) + "<b>" + (cnt[f[0]] || 0) + "</b></button>" : ""; }).join("") + "</div>"
+      + '<label class="rg-srch"><i class="fa-solid fa-magnifying-glass"></i><input id="rg-q" placeholder="Cari nomor, perusahaan, PIC, NPWP" value="' + E(RG.q) + '"></label></div>'
+      + (RG.err ? '<div class="rg-err">' + E(RG.err) + "</div>" : "")
+      + '<div class="glass-panel rounded-2xl rg-list">' + (!RG.loaded && RG.busy ? '<div class="rg-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Memuat registrasi…</div>'
+        : L.length ? L.map(function (x) { return '<button class="rg-row' + (RG.sel === x.id ? " on" : "") + '" data-id="' + E(x.id) + '"><span class="rg-no">' + E(String(x.nomor || "").split("/")[0]) + '</span><span class="rg-nm"><b>' + E(x.nama) + "</b><small>" + E([x.nomor, x.direktur ? "Dir. " + x.direktur : "", x.pic ? "PIC " + x.pic : ""].filter(Boolean).join(" · ")) + '</small></span><span class="rg-dt">' + E(when(x.updatedAt || x.at)) + "</span>" + chip(x.status) + "</button>"; }).join("")
+        : '<div class="rg-empty"><i class="fa-solid fa-id-card-clip"></i>' + (RG.items.length ? "Tidak ada registrasi pada filter ini." : "Belum ada registrasi. Bagikan tautan formulir ke calon mitra.") + (RG.items.length ? "" : '<button class="btn btn-primary" data-a="link"><i class="fa-solid fa-link"></i>Salin tautan formulir</button>') + "</div>") + "</div>"
+      + '</div><aside class="rg-side" id="rg-side">' + (RG.sel ? side() : "") + "</aside></div>";
+    v.querySelectorAll("[data-a=link]").forEach(function (b) { b.onclick = function () { try { copyText(FORM_URL, "Tautan formulir registrasi disalin"); } catch (e) { toast(FORM_URL); } }; });
+    var rl = v.querySelector("[data-a=reload]"); rl && (rl.onclick = function () { load(true); });
+    v.querySelectorAll("[data-f]").forEach(function (b) { b.onclick = function () { RG.f = b.dataset.f; render(); }; });
+    var qi = $("rg-q"); qi.oninput = function () { RG.q = qi.value; var p = qi.selectionStart; render(); var n = $("rg-q"); n.focus(); try { n.setSelectionRange(p, p); } catch (e) { } };
+    v.querySelectorAll("[data-id]").forEach(function (b) { b.onclick = function () { openDet(b.dataset.id); }; });
+    if (RG.sel) bindSide();
+  }
+
+  // ---------- panel detail ----------
+  async function openDet(id, keep) {
+    RG.sel = id; if (!keep) RG.det = null; render();
+    try { var r = await callApi("reg.get", { id: id, withJenis: true }, 90000); if (RG.sel !== id) return; RG.det = r; var i = RG.items.findIndex(function (x) { return x.id === id; }); if (i >= 0) RG.items[i] = Object.assign(RG.items[i], r.item); render(); }
+    catch (e) { toast(e.message, "error", 7000); RG.sel = null; render(); }
+  }
+  function val(f, form, files) {
+    if (f.type === "file") { var fl = files[f.key] || []; return fl.length ? fl.map(function (x) { return '<a href="' + E(x.url || ("https://drive.google.com/file/d/" + x.id + "/view")) + '" target="_blank" rel="noopener"><i class="fa-regular fa-file"></i>' + E(x.name) + "</a>"; }).join("") : '<span class="rg-mute">Tidak ada</span>'; }
+    if (f.type === "check") return form[f.key] ? '<span class="rg-yes"><i class="fa-solid fa-check"></i>Ya</span>' : '<span class="rg-mute">Tidak</span>';
+    var v = String(form[f.key] == null ? "" : form[f.key]); return v ? E(v).replace(/\n/g, "<br>") : '<span class="rg-mute">-</span>';
+  }
+  var vis = function (f, form) { return !f.showIf || String(form[f.showIf[0]] || "") === f.showIf[1]; };
+  function side() {
+    var x = (RG.det && RG.det.item) || RG.items.find(function (y) { return y.id === RG.sel; }) || {};
+    var h = '<div class="rg-sh"><div><small>' + E(x.nomor || "") + "</small><h3>" + E(x.nama || "Memuat…") + "</h3>" + (x.status ? chip(x.status) : "") + '</div><button class="icon-btn" data-a="close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div>';
+    if (!RG.det) return h + '<div class="rg-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Memuat detail…</div>';
+    var d = RG.det, it = d.item, form = it.form || {}, files = it.files || {}, notes = it.notes || {}, editable = it.status === "diajukan";
+    h += '<div class="rg-links">' + (it.folderUrl ? '<a href="' + E(it.folderUrl) + '" target="_blank" rel="noopener"><i class="fa-solid fa-folder-open"></i>Folder lampiran</a>' : "") + (it.pdfUrl ? '<a href="' + E(it.pdfUrl) + '" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i>PDF registrasi</a>' : "") + (it.finalUrl ? '<a href="' + E(it.finalUrl) + '" target="_blank" rel="noopener"><i class="fa-solid fa-file-signature"></i>PDF bertanda tangan</a>' : "") + (it.docUrl ? '<a href="' + E(it.docUrl) + '" target="_blank" rel="noopener"><i class="fa-solid fa-file-word"></i>Salinan Doc</a>' : "") + '<button data-a="doc"><i class="fa-solid fa-file-word"></i>' + (it.docUrl ? "Buat ulang Doc" : "Buat salinan Doc") + "</button></div>";
+    h += actionBox(it, d);
+    h += '<div class="rg-secs">' + d.sections.map(function (s, si) {
+      var rows = s.fields.filter(function (f) { return vis(f, form); }).map(function (f) { return '<div class="rg-kv"><span>' + E(f.label) + "</span><div>" + val(f, form, files) + "</div></div>"; }).join("");
+      if (s.key === "akhir" && it.sign) rows += '<div class="rg-kv"><span>Ditandatangani</span><div>' + E(it.sign.nama) + " · " + E(it.sign.jabatan) + " · " + E(whenT(it.sign.at)) + "</div></div>";
+      return '<details class="rg-sec"' + (si === 0 || notes[s.key] ? " open" : "") + "><summary>" + E(s.title) + (notes[s.key] ? ' <em>ada catatan</em>' : "") + "</summary>" + rows
+        + (editable ? '<label class="rg-note"><span>Catatan untuk calon mitra (bagian ini)</span><textarea data-note="' + s.key + '" rows="2" placeholder="Kosongkan bila sesuai">' + E(notes[s.key] || "") + "</textarea></label>" : notes[s.key] ? '<div class="rg-cat">Catatan: ' + E(notes[s.key]) + "</div>" : "") + "</details>";
+    }).join("") + "</div>";
+    h += '<div class="rg-hist"><h4>Riwayat</h4>' + (it.hist || []).slice().reverse().map(function (y) { return "<div><b>" + E(y.aksi) + "</b><small>" + E(y.by) + " · " + E(whenT(y.at)) + "</small></div>"; }).join("") + "</div>";
+    return h;
+  }
+  function personSel(id, role, people, guess) {
+    var g = people.find(function (p) { return new RegExp(guess, "i").test(p.jabatan || "") || new RegExp(guess, "i").test(p.name || ""); });
+    return '<label class="rg-ps"><span>' + E(role) + '</span><select class="field" id="' + id + '"><option value="">Pilih dari daftar Signing</option>' + people.map(function (p, i) { return '<option value="' + i + '"' + (g === p ? " selected" : "") + ">" + E(p.name + (p.jabatan ? " · " + p.jabatan : "")) + "</option>"; }).join("") + "</select></label>";
+  }
+  function actionBox(it, d) {
+    var ppl = d.people || [];
+    if (it.status === "diajukan") return '<div class="rg-act"><h4>Verifikasi</h4><p>Periksa isian dan lampiran per bagian. Setujui untuk membuat PDF dan mengirimnya ke Signing (paralel).</p>'
+      + '<div class="rg-g3">' + personSel("rg-s1", "Vendor Management", ppl, "vendor|vm") + personSel("rg-s2", "Director", ppl, "director|direktur") + personSel("rg-s3", "CEO", ppl, "ceo") + "</div>"
+      + (ppl.length ? "" : '<p class="rg-warn">Daftar orang di Signing masih kosong. Tambahkan dulu di menu Signing.</p>')
+      + '<label class="rg-note"><span>Catatan umum (wajib untuk Kembalikan/Tolak)</span><textarea id="rg-note" rows="2"></textarea></label>'
+      + '<div class="rg-btns"><button class="btn btn-ghost text-rose-600" data-a="tolak"><i class="fa-solid fa-ban"></i>Tolak</button><button class="btn btn-ghost" data-a="kembalikan"><i class="fa-solid fa-rotate-left"></i>Kembalikan</button><button class="btn btn-primary" data-a="setujui"><i class="fa-solid fa-signature"></i>Setujui & kirim ke Signing</button></div></div>';
+    if (it.status === "ttd") return '<div class="rg-act"><h4>Proses tanda tangan</h4><div class="rg-sg">' + ((it.sg && it.sg.signers) || []).map(function (g) { return '<div class="' + (g.status === "selesai" ? "ok" : "") + '"><i class="fa-solid ' + (g.status === "selesai" ? "fa-circle-check" : "fa-hourglass-half") + '"></i><span><b>' + E(g.name) + "</b><small>" + E(g.jabatan || "") + (g.signedAt ? " · " + E(whenT(g.signedAt)) : " · menunggu") + "</small></span></div>"; }).join("") + "</div>"
+      + (it.sg && it.sg.cancelled ? '<p class="rg-warn">Dokumen Signing dibatalkan. Batalkan registrasi atau hubungi pengelola.</p>' : '<p>Bagikan tautan tanda tangan dari menu Signing. Status diperbarui otomatis saat dibuka.</p>') + '<div class="rg-btns"><button class="btn btn-ghost" data-a="refresh"><i class="fa-solid fa-rotate"></i>Periksa status</button><button class="btn btn-primary" data-a="signing"><i class="fa-solid fa-signature"></i>Buka Signing</button></div></div>';
+    if (it.status === "lengkap") {
+      var f = it.form || {}, js = d.jenis || [];
+      var inp = function (k, l, v) { return '<label><span>' + E(l) + '</span><input class="field" data-row="' + k + '" value="' + E(v || "") + '"></label>'; };
+      return '<div class="rg-act ok"><h4>Tambahkan ke Info Perseroan</h4><p>Tanda tangan sudah lengkap. Periksa baris di bawah, ubah bila perlu, lalu konfirmasi.</p><div class="rg-row2">'
+        + inp("short", "A · Nama singkat", it.short) + inp("nama", "B · Nama perusahaan", it.nama)
+        + '<label><span>C · Jenis</span><input class="field" data-row="jenis" list="rg-jenis" value="' + E(js[0] || "") + '"><datalist id="rg-jenis">' + js.map(function (j) { return '<option value="' + E(j) + '">'; }).join("") + "</datalist></label>"
+        + inp("direksi", "E · Direksi", f.nama_direktur) + inp("hp", "F · No HP", f.hp_pic) + inp("email", "G · Email", it.email)
+        + '<label class="w2"><span>D · Alamat</span><input class="field" data-row="alamat" value="' + E(f.alamat_perusahaan || "") + '"></label>'
+        + '</div><p class="rg-mute">H berisi nomor registrasi bertautan ke PDF bertanda tangan · I = Aktif</p><div class="rg-btns"><button class="btn btn-primary" data-a="confirm"><i class="fa-solid fa-circle-check"></i>Konfirmasi & tambahkan</button></div></div>';
+    }
+    if (it.status === "aktif") return '<div class="rg-act ok"><h4>Sudah di Info Perseroan</h4><p>Ditambahkan di baris ' + E(it.infoRow || "-") + '.</p><div class="rg-btns"><button class="btn btn-ghost" data-a="toPers"><i class="fa-solid fa-building"></i>Buka Info Perseroan</button></div></div>';
+    if (it.status === "dikembalikan") return '<div class="rg-act warn"><h4>Menunggu revisi calon mitra</h4><p>' + E(it.note || "Catatan dikirim per bagian.") + '</p><div class="rg-btns"><button class="btn btn-ghost text-rose-600" data-a="batal"><i class="fa-solid fa-xmark"></i>Batalkan registrasi</button></div></div>';
+    return '<div class="rg-act"><h4>' + E((ST[it.status] || [it.status])[0]) + "</h4>" + (it.note ? "<p>" + E(it.note) + "</p>" : "") + "</div>";
+  }
+  function bindSide() {
+    var sd = $("rg-side"); if (!sd) return;
+    var on = function (a, fn) { var b = sd.querySelector('[data-a="' + a + '"]'); if (b) b.onclick = function () { fn(b); }; };
+    on("close", function () { RG.sel = null; RG.det = null; render(); });
+    on("refresh", function () { openDet(RG.sel, true); load(true); });
+    on("signing", function () { try { switchTab("sirkulir"); } catch (e) { } });
+    on("toPers", function () { try { switchTab("perseroan"); } catch (e) { } });
+    on("doc", async function (b) { busy(b, "Membuat…"); try { var r = await callApi("reg.doc", { id: RG.sel }, 120000); window.open(r.url, "_blank", "noopener"); toast("Salinan Google Doc dibuat", "success"); openDet(RG.sel, true); } catch (e) { toast(/DocumentApp|izin|authoriz/i.test(e.message) ? "Izin Google Docs belum diberikan. Jalankan izinkanRegistrasi() di Apps Script." : e.message, "error", 8000); unbusy(b); } });
+    var notes = function () { var o = {}; sd.querySelectorAll("[data-note]").forEach(function (t) { if (t.value.trim()) o[t.dataset.note] = t.value.trim(); }); return o; };
+    var decide = async function (b, act, msg) {
+      var note = ($("rg-note") || {}).value || "";
+      if (act !== "batal" && !confirm(msg)) return;
+      if (act === "batal" && !confirm("Batalkan registrasi ini? Calon mitra tidak bisa merevisi lagi.")) return;
+      busy(b, "Menyimpan…");
+      try { await callApi("reg.decide", { id: RG.sel, act: act, note: note, notes: notes() }, 60000); toast(act === "kembalikan" ? "Dikembalikan ke calon mitra untuk revisi" : act === "tolak" ? "Registrasi ditolak" : "Registrasi dibatalkan", "success"); await load(true); openDet(RG.sel, true); }
+      catch (e) { toast(e.message, "error", 7000); unbusy(b); }
+    };
+    on("kembalikan", function (b) { decide(b, "kembalikan", "Kembalikan ke calon mitra untuk revisi? Catatan per bagian akan terlihat di tautan revisi mereka."); });
+    on("tolak", function (b) { decide(b, "tolak", "Tolak registrasi ini? Calon mitra tidak bisa merevisi."); });
+    on("batal", function (b) { decide(b, "batal", ""); });
+    on("setujui", function (b) { approve(b, notes()); });
+    on("confirm", async function (b) {
+      var row = {}; sd.querySelectorAll("[data-row]").forEach(function (i) { row[i.dataset.row] = i.value.trim(); });
+      if (!row.jenis) return toast("Isi kolom C · Jenis", "error");
+      if (!confirm("Tambahkan " + row.nama + " ke Info Perseroan?")) return;
+      busy(b, "Menambahkan…");
+      try { var r = await callApi("reg.confirm", { id: RG.sel, row: row }, 90000); toast(row.nama + " ditambahkan ke Info Perseroan baris " + r.row, "success", 7000); try { syncNow(); } catch (e) { } await load(true); openDet(RG.sel, true); }
+      catch (e) { toast(e.message, "error", 8000); unbusy(b); }
+    });
+  }
+  var busy = function (b, t) { b.dataset.h = b.innerHTML; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>' + t; };
+  var unbusy = function (b) { b.disabled = false; if (b.dataset.h) b.innerHTML = b.dataset.h; };
+
+  // ---------- PDF registrasi (pdf-lib) ----------
+  var ascii = function (s) { return String(s == null ? "" : s).replace(/[–—]/g, "-").replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/…/g, "...").replace(/²/g, "2").replace(/±/g, "+/-").replace(/[^\x20-\x7E\xA0-\xFF\n]/g, ""); };
+  async function buildPdf(d, signImgB64) {
+    var L = await loadPdfLib(), doc = await L.PDFDocument.create(), H = await doc.embedFont(L.StandardFonts.Helvetica), B = await doc.embedFont(L.StandardFonts.HelveticaBold);
+    var W = 595.28, PH = 841.89, M = 42, CW = W - 2 * M, ink = L.rgb(0.055, 0.165, 0.278), mute = L.rgb(0.42, 0.49, 0.58), line = L.rgb(0.85, 0.89, 0.93), blue = L.rgb(0.043, 0.36, 0.68), band = L.rgb(0.93, 0.96, 0.99);
+    var it = d.item, form = it.form || {}, files = it.files || {};
+    var page, y;
+    var wrap = function (t, font, size, w) { var out = []; ascii(t).split("\n").forEach(function (para) { var words = para.split(/\s+/), cur = ""; words.forEach(function (wd) { var tr = cur ? cur + " " + wd : wd; if (font.widthOfTextAtSize(tr, size) <= w) cur = tr; else { if (cur) out.push(cur); while (font.widthOfTextAtSize(wd, size) > w) { var k = wd.length; while (k > 1 && font.widthOfTextAtSize(wd.slice(0, k), size) > w) k--; out.push(wd.slice(0, k)); wd = wd.slice(k); } cur = wd; } }); out.push(cur); }); return out; };
+    var newPage = function () { page = doc.addPage([W, PH]); y = PH - M; page.drawText(ascii("Formulir Registrasi Mitra " + it.nomor), { x: M, y: 22, size: 7.5, font: H, color: mute }); };
+    var need = function (h) { if (y - h < M + 20) newPage(); };
+    newPage();
+    try { var logo = await doc.embedPng(REG_LOGO); var lw = 46, lh = lw * logo.height / logo.width; page.drawImage(logo, { x: M, y: y - lh, width: lw, height: lh }); } catch (e) { }
+    page.drawText("FORMULIR REGISTRASI MITRA/VENDOR BARU", { x: M + 60, y: y - 16, size: 14, font: B, color: ink });
+    page.drawText(ascii("PT Integrasi Jaringan Ekosistem - Vendor Management - Proyek STARLITE"), { x: M + 60, y: y - 31, size: 8.5, font: H, color: mute });
+    page.drawText(ascii("Nomor " + it.nomor), { x: M + 60, y: y - 46, size: 9.5, font: B, color: blue });
+    page.drawText(ascii("Diajukan " + new Date(it.at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })), { x: W - M - H.widthOfTextAtSize(ascii("Diajukan " + new Date(it.at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })), 8.5), y: y - 46, size: 8.5, font: H, color: mute });
+    y -= 62; page.drawLine({ start: { x: M, y: y }, end: { x: W - M, y: y }, thickness: 1, color: line }); y -= 14;
+    var LW = 172, VW = CW - LW - 16;
+    d.sections.forEach(function (s) {
+      var empty = function (f) { return f.type === "file" ? !(files[f.key] || []).length : f.type === "check" ? false : !String(form[f.key] || "").trim(); };
+      var rows = s.fields.filter(function (f) { return vis(f, form) && !(empty(f) && !f.req); });       // hemat ruang: kolom opsional kosong tidak dicetak
+      if (!rows.length) return;
+      need(36); page.drawRectangle({ x: M, y: y - 14, width: CW, height: 18, color: band }); page.drawText(ascii(s.title), { x: M + 8, y: y - 9, size: 9.5, font: B, color: blue }); y -= 22;
+      rows.forEach(function (f) {
+        var v = f.type === "file" ? ((files[f.key] || []).map(function (x) { return x.name; }).join("\n") || "-") : f.type === "check" ? (form[f.key] ? "Ya" : "Tidak") : (String(form[f.key] || "") || "-");
+        var la = wrap(f.label, H, 8, LW), va = wrap(v, B, 8.5, VW), h = Math.max(la.length * 10, va.length * 11) + 5;
+        need(h);
+        la.forEach(function (t, i) { page.drawText(t, { x: M + 8, y: y - 8 - i * 10, size: 8, font: H, color: mute }); });
+        va.forEach(function (t, i) { page.drawText(t, { x: M + 8 + LW + 8, y: y - 8 - i * 11, size: 8.5, font: B, color: ink }); });
+        y -= h; page.drawLine({ start: { x: M + 8, y: y + 2 }, end: { x: W - M - 8, y: y + 2 }, thickness: 0.4, color: line });
+      });
+      y -= 6;
+    });
+    if (it.folderUrl) { need(20); page.drawText(ascii("Lampiran tersimpan di folder Drive registrasi: " + it.folderUrl), { x: M, y: y - 8, size: 7.5, font: H, color: mute }); y -= 18; }
+    // pernyataan + blok tanda tangan 4 kolom
+    var decl = wrap("Calon mitra menyatakan seluruh data dan dokumen dalam formulir ini benar, milik perusahaan sendiri, dan dapat dipertanggungjawabkan sepenuhnya. Apabila di kemudian hari ditemukan data yang tidak benar, calon mitra bersedia menerima segala konsekuensi, termasuk pembatalan registrasi dan kerja sama.", H, 8.5, CW - 16);
+    var blockH = decl.length * 11 + 16 + 150;
+    need(blockH);
+    decl.forEach(function (t, i) { page.drawText(t, { x: M + 8, y: y - 9 - i * 11, size: 8.5, font: H, color: ink }); }); y -= decl.length * 11 + 16;
+    var cw = CW / 4, top = y, boxH = 72, roles = [["Dinyatakan oleh", "Calon Mitra"], ["Diverifikasi oleh", "Vendor Management"], ["Disetujui oleh", "Director"], ["Disetujui oleh", "CEO"]], fieldsOut = [];
+    roles.forEach(function (r, i) {
+      var x = M + i * cw;
+      page.drawText(r[0], { x: x + 6, y: top - 9, size: 8, font: H, color: mute }); page.drawText(r[1], { x: x + 6, y: top - 21, size: 9, font: B, color: ink });
+      var by = top - 28 - boxH;
+      page.drawRectangle({ x: x + 4, y: by, width: cw - 8, height: boxH, borderColor: line, borderWidth: 0.8 });
+      if (i === 0) {
+        page.drawText(ascii(it.sign ? it.sign.nama : ""), { x: x + 6, y: by - 12, size: 8.5, font: B, color: ink });
+        page.drawText(ascii(it.sign ? (it.sign.jabatan + " - " + new Date(it.sign.at).toLocaleDateString("id-ID")) : ""), { x: x + 6, y: by - 23, size: 7.5, font: H, color: mute });
+      } else {
+        fieldsOut.push({ page: doc.getPageCount(), x: (x + 4) / W, y: (PH - (by + boxH)) / PH, w: (cw - 8) / W, h: boxH / PH, role: i });
+        page.drawLine({ start: { x: x + 6, y: by - 16 }, end: { x: x + cw - 6, y: by - 16 }, thickness: 0.4, color: line });
+        page.drawText("Nama, tanggal", { x: x + 6, y: by - 26, size: 7, font: H, color: mute });
+      }
+    });
+    if (signImgB64) {
+      var png = await doc.embedPng(b64ToBytes(signImgB64)), x0 = M + 4, by0 = top - 28 - boxH, sc = Math.min((cw - 16) / png.width, (boxH - 8) / png.height);
+      page.drawImage(png, { x: x0 + (cw - 8 - png.width * sc) / 2, y: by0 + (boxH - png.height * sc) / 2, width: png.width * sc, height: png.height * sc });
+    }
+    var bytes = await doc.save();
+    return { bytes: bytes, pages: doc.getPageCount(), fields: fieldsOut };
+  }
+  async function approve(b, notes) {
+    var d = RG.det, ppl = d.people || [];
+    var pick = ["rg-s1", "rg-s2", "rg-s3"].map(function (id) { var v = ($(id) || {}).value; return v === "" || v == null ? null : ppl[+v]; });
+    if (pick.some(function (p) { return !p; })) return toast("Pilih ketiga penanda tangan", "error");
+    if (new Set(pick.map(function (p) { return p.name.toLowerCase(); })).size < 3) return toast("Penanda tangan harus tiga orang berbeda", "error");
+    if (!confirm("Setujui registrasi " + d.item.nama + " dan kirim ke Signing untuk " + pick.map(function (p) { return p.name; }).join(", ") + "?")) return;
+    busy(b, "Menyusun PDF…");
+    try {
+      var g = await callApi("reg.get", { id: RG.sel, withSign: true }, 90000);
+      var pdf = await buildPdf(d, g.signImg || "");
+      var colors = ["#2563eb", "#059669", "#d97706"], signers = pick.map(function (p, i) { return { id: "s" + (i + 1), name: p.name, jabatan: p.jabatan || ["Vendor Management", "Director", "CEO"][i], color: colors[i] }; });
+      var fields = pdf.fields.map(function (f, i) { return { id: "f" + (i + 1), signer: "s" + f.role, page: f.page, x: +f.x.toFixed(5), y: +f.y.toFixed(5), w: +f.w.toFixed(5), h: +f.h.toFixed(5) }; });
+      b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Mengirim ke Signing…';
+      var hash = ""; try { hash = await sha256Hex(pdf.bytes); } catch (e) { }
+      var r = await callApi("reg.approve", { id: RG.sel, pdfBase64: bytesToB64(pdf.bytes), pages: pdf.pages, hash: hash, signers: signers, fields: fields, appUrl: typeof APP_PUBLIC_URL !== "undefined" ? APP_PUBLIC_URL : "", notes: notes }, 300000);
+      toast("Disetujui · dokumen masuk Signing", "success", 7000);
+      if (r.doc && r.doc.link) { try { copyText(r.doc.link, "Disetujui · tautan tanda tangan disalin, bagikan ke ketiga penanda tangan"); } catch (e) { } }
+      try { if (typeof SG !== "undefined") SG.loaded = false; } catch (e) { }
+      await load(true); openDet(RG.sel, true);
+    } catch (e) { toast(e.message, "error", 9000); unbusy(b); }
+  }
+
+  // ---------- kait ke aplikasi ----------
+  async function pollBadge() { if (!isOwner()) return; try { var r = await callApi("reg.badge", {}, 30000); badge(r.n || 0); } catch (e) { } }
+  if (typeof switchTab === "function") { var oST = switchTab; window.switchTab = switchTab = function (t) { ensureUi(); var r = oST.apply(this, arguments); try { if (t === "regmitra" && isOwner()) { render(); load(false); } } catch (e) { console.warn("reg", e); } return r; }; }
+  if (typeof applyPermissions === "function") { var oAP = applyPermissions; window.applyPermissions = applyPermissions = function () { var r = oAP.apply(this, arguments); try { ensureUi(); } catch (e) { } return r; }; }
+  function boot() { try { ensureUi(); } catch (e) { } setTimeout(pollBadge, 6000); setInterval(pollBadge, 5 * 60 * 1000); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+  var REG_LOGO = "data:image/png;base64,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";
+})();
+
+</script>
 </body>
 </html>
