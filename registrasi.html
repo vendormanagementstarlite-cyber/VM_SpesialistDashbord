@@ -142,16 +142,22 @@ var S = [
   { key: "slik", title: "SLIK OJK", lead: "SLIK direktur dan perusahaan wajib kolektibilitas 1 (lancar) dan tanpa tunggakan.", fields: [
     { key: "slik_pernyataan", label: "Saya menyatakan SLIK perusahaan dan direktur kami bersih (kolektibilitas 1/lancar dan tanpa tunggakan), serta bersedia diperiksa.", type: "check", req: 1, full: 1 },
     { key: "slik_ije", label: "Bersedia pengecekan SLIK oleh PT IJE/Hibank?", type: "radio", req: 1, options: ["Ya", "Tidak"], full: 1 },
-    { key: "surat_slik", label: "Surat persetujuan pengecekan SLIK (bermaterai)", type: "file", req: 1, max: 2, showIf: ["slik_ije", "Ya"], full: 1 }] },
-  { key: "legal", title: "Legalitas", lead: "Cukup centang. Dokumen tidak perlu diunggah, tetapi siapkan bila diminta saat verifikasi.", fields: [
+    { key: "surat_slik", label: "Surat persetujuan pengecekan SLIK (bermaterai)", type: "file", max: 2, showIf: ["slik_ije", "Ya"], full: 1 }] },
+  { key: "legal", title: "Legalitas", lead: "Centang dokumen yang dimiliki dan unggah dokumennya. Akta, NIB, dan NPWP wajib.", fields: [
     { key: "leg_akta", label: "Akta pendirian, akta perubahan, dan SK Kemenkumham", type: "check", req: 1 },
+    { key: "leg_akta_file", label: "Dokumen akta dan SK Kemenkumham", type: "file", req: 1, max: 5 },
     { key: "leg_nib", label: "NIB (OSS) dengan KBLI sesuai", type: "check", req: 1 },
+    { key: "leg_nib_file", label: "Dokumen NIB", type: "file", req: 1, max: 2 },
     { key: "leg_npwp", label: "NPWP dan SPPKP (jika PKP)", type: "check", req: 1 },
+    { key: "leg_npwp_file", label: "Dokumen NPWP/SPPKP", type: "file", req: 1, max: 2 },
     { key: "leg_isp", label: "Izin penyelenggaraan jasa internet (ISP)", type: "check" },
+    { key: "leg_isp_file", label: "Dokumen izin ISP", type: "file", req: 1, max: 2, showIf: ["leg_isp", "true"] },
     { key: "leg_ktp", label: "KTP dan NPWP direksi, plus surat kuasa jika penandatangan bukan direksi", type: "check" },
-    { key: "leg_domisili", label: "Surat domisili usaha", type: "check" }] },
+    { key: "leg_ktp_file", label: "KTP/NPWP direksi", type: "file", req: 1, max: 4, showIf: ["leg_ktp", "true"] },
+    { key: "leg_domisili", label: "Surat domisili usaha", type: "check" },
+    { key: "leg_domisili_file", label: "Surat domisili usaha", type: "file", req: 1, max: 2, showIf: ["leg_domisili", "true"] }] },
   { key: "admin", title: "Administrasi", lead: "Profil perusahaan dan pengalaman proyek.", fields: [
-    { key: "company_profile", label: "Company profile", type: "file", req: 1, max: 3 },
+    { key: "company_profile", label: "Company profile", type: "file", max: 3 },
     { key: "struktur_org", label: "Struktur organisasi", type: "file", max: 2 },
     { key: "pernah_vendor", label: "Pernah menjadi vendor/mitra ISP lain?", type: "radio", req: 1, options: ["Ya", "Tidak"], full: 1 },
     { key: "daftar_proyek", label: "Daftar proyek", type: "textarea", req: 1, rule: "projects", showIf: ["pernah_vendor", "Ya"], full: 1, hint: "Satu baris per proyek: Klien – Lingkup – Lokasi – Periode – Nilai kontrak", ph: "PT Telkom – Instalasi FTTH 500 HP – Bandung – 2024 – Rp 1,2 M" },
@@ -163,7 +169,7 @@ var S = [
     { key: "alamat_kantor", label: "Alamat kantor", type: "textarea", req: 1, rule: "address", full: 1 },
     { key: "status_kantor", label: "Status kantor", type: "radio", req: 1, options: ["Milik", "Sewa"] },
     { key: "koordinat", label: "Koordinat lokasi", type: "text", req: 1, rule: "coord", ph: "-6.2088, 106.8456 atau tautan Google Maps" },
-    { key: "bukti_sewa", label: "Bukti sewa", type: "file", req: 1, max: 3, showIf: ["status_kantor", "Sewa"], full: 1 },
+    { key: "bukti_sewa", label: "Bukti sewa", type: "file", max: 3, showIf: ["status_kantor", "Sewa"], full: 1 },
     { key: "foto_kantor", label: "Foto kantor", type: "file", max: 5 },
     { key: "foto_gudang", label: "Foto gudang", type: "file", max: 5 },
     { key: "kapasitas_gudang", label: "Kapasitas gudang", type: "text", rule: "text", ph: "± 50 m²" },
@@ -175,7 +181,7 @@ var S = [
     { key: "k_admin", label: "Admin", type: "number", rule: "int" },
     { key: "k_sittac", label: "Sittac/Perizinan", type: "number", rule: "int" },
     { key: "k_survei", label: "Survei", type: "number", rule: "int" },
-    { key: "surat_kesiapan", label: "Surat pernyataan kesiapan tim dan tools (bermaterai)", type: "file", req: 1, max: 2, full: 1 }] },
+    { key: "surat_kesiapan", label: "Surat pernyataan kesiapan tim dan tools (bermaterai)", type: "file", max: 2, full: 1 }] },
   { key: "akhir", title: "Pernyataan dan Tanda Tangan", lead: "Tombol Kirim aktif setelah pernyataan dicentang dan ditandatangani.", fields: [
     { key: "pernyataan", label: "Saya menyatakan seluruh data dan dokumen yang diisi/diunggah adalah benar, milik perusahaan kami sendiri, dan dapat kami pertanggungjawabkan sepenuhnya.", type: "check", req: 1, full: 1 },
     { key: "ttd_nama", label: "Nama penanda tangan", type: "text", req: 1, rule: "person" },
@@ -311,7 +317,7 @@ function bindStep() {
     el.addEventListener("input", function () { st.data[k] = el.value; delete V.errs[k]; if (st.seen[k]) paintErrors(false); if (k === "ttd_nama" || k === "nama_direktur") toggleKuasa(); save(); bar(); });
     el.addEventListener("blur", function () { st.seen[k] = 1; if (F[k].type === "number" || k === "npwp" || k === "hp_pic") { el.value = norm(el.value); st.data[k] = el.value; } paintErrors(false); save(); });
   });
-  m.querySelectorAll("input[type=checkbox]").forEach(function (el) { var k = el.id.slice(2); el.addEventListener("change", function () { st.data[k] = el.checked; st.seen[k] = 1; delete V.errs[k]; el.closest(".chk").classList.toggle("on", el.checked); paintErrors(false); save(); bar(); }); });
+  m.querySelectorAll("input[type=checkbox]").forEach(function (el) { var k = el.id.slice(2); el.addEventListener("change", function () { st.data[k] = el.checked; st.seen[k] = 1; delete V.errs[k]; save(); if (S[st.step].fields.some(function (f) { return f.showIf && f.showIf[0] === k; })) { var y = window.scrollY; captureSig(); render(); window.scrollTo(0, y); return; } el.closest(".chk").classList.toggle("on", el.checked); paintErrors(false); bar(); }); });
   m.querySelectorAll("[data-r]").forEach(function (b) { b.addEventListener("click", function () { var k = b.dataset.r; st.data[k] = b.dataset.v; delete V.errs[k]; st.seen[k] = 1; save(); var y = window.scrollY; render(); window.scrollTo(0, y); }); });
   m.querySelectorAll("[data-drop]").forEach(function (d) {
     var k = d.dataset.drop, inp = $("i_" + k);
