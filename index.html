@@ -13475,7 +13475,7 @@ async function contactNudge() {
     catch (e) { RG.err = /tidak dikenal/i.test(e.message) ? "Backend belum versi v14. Tempel Kode v14 di Apps Script lalu Deploy ulang." : e.message; }
     RG.busy = false; badge(); render();
   }
-  var FILTERS = [["aktif_kerja", "Perlu tindakan"], ["diajukan", "Diajukan"], ["dikembalikan", "Dikembalikan"], ["ttd", "Proses TTD"], ["lengkap", "TTD lengkap"], ["aktif", "Aktif"], ["ditolak", "Ditolak"], ["semua", "Semua"]];
+  var FILTERS = [["aktif_kerja", "Perlu tindakan"], ["diajukan", "Diajukan"], ["ttd", "Proses TTD"], ["lengkap", "TTD lengkap"], ["aktif", "Aktif"], ["ditolak", "Ditolak"], ["semua", "Semua"]];
   function list() {
     var q = RG.q.trim().toLowerCase();
     return RG.items.filter(function (x) {
@@ -13529,7 +13529,7 @@ async function contactNudge() {
       var rows = s.fields.filter(function (f) { return vis(f, form); }).map(function (f) { return '<div class="rg-kv"><span>' + E(f.label) + "</span><div>" + val(f, form, files) + "</div></div>"; }).join("");
       if (s.key === "akhir" && it.sign) rows += '<div class="rg-kv"><span>Ditandatangani</span><div>' + E(it.sign.nama) + " · " + E(it.sign.jabatan) + " · " + E(whenT(it.sign.at)) + "</div></div>";
       return '<details class="rg-sec"' + (si === 0 || notes[s.key] ? " open" : "") + "><summary>" + E(s.title) + (notes[s.key] ? ' <em>ada catatan</em>' : "") + "</summary>" + rows
-        + (editable ? '<label class="rg-note"><span>Catatan untuk calon mitra (bagian ini)</span><textarea data-note="' + s.key + '" rows="2" placeholder="Kosongkan bila sesuai">' + E(notes[s.key] || "") + "</textarea></label>" : notes[s.key] ? '<div class="rg-cat">Catatan: ' + E(notes[s.key]) + "</div>" : "") + "</details>";
+        + (editable ? '<label class="rg-note"><span>Catatan verifikasi (internal)</span><textarea data-note="' + s.key + '" rows="2" placeholder="Kosongkan bila sesuai">' + E(notes[s.key] || "") + "</textarea></label>" : notes[s.key] ? '<div class="rg-cat">Catatan: ' + E(notes[s.key]) + "</div>" : "") + "</details>";
     }).join("") + "</div>";
     h += '<div class="rg-hist"><h4>Riwayat</h4>' + (it.hist || []).slice().reverse().map(function (y) { return "<div><b>" + E(y.aksi) + "</b><small>" + E(y.by) + " · " + E(whenT(y.at)) + "</small></div>"; }).join("") + "</div>";
     return h;
@@ -13543,8 +13543,8 @@ async function contactNudge() {
     if (it.status === "diajukan") return '<div class="rg-act"><h4>Verifikasi</h4><p>Periksa isian dan lampiran per bagian. Setujui untuk membuat PDF dan mengirimnya ke Signing (paralel).</p>'
       + '<div class="rg-g3">' + personSel("rg-s1", "Vendor Management", ppl, "vendor|vm") + personSel("rg-s2", "Director", ppl, "director|direktur") + personSel("rg-s3", "CEO", ppl, "ceo") + "</div>"
       + (ppl.length ? "" : '<p class="rg-warn">Daftar orang di Signing masih kosong. Tambahkan dulu di menu Signing.</p>')
-      + '<label class="rg-note"><span>Catatan umum (wajib untuk Kembalikan/Tolak)</span><textarea id="rg-note" rows="2"></textarea></label>'
-      + '<div class="rg-btns"><button class="btn btn-ghost text-rose-600" data-a="tolak"><i class="fa-solid fa-ban"></i>Tolak</button><button class="btn btn-ghost" data-a="kembalikan"><i class="fa-solid fa-rotate-left"></i>Kembalikan</button><button class="btn btn-primary" data-a="setujui"><i class="fa-solid fa-signature"></i>Setujui & kirim ke Signing</button></div></div>';
+      + '<label class="rg-note"><span>Alasan penolakan (wajib bila Tolak)</span><textarea id="rg-note" rows="2"></textarea></label><p class="rg-mute">Calon mitra tidak bisa merevisi. Bila data tidak benar, tolak registrasi; calon mitra harus mendaftar ulang dengan formulir baru.</p>'
+      + '<div class="rg-btns"><button class="btn btn-ghost text-rose-600" data-a="tolak"><i class="fa-solid fa-ban"></i>Tolak</button><button class="btn btn-primary" data-a="setujui"><i class="fa-solid fa-signature"></i>Setujui & kirim ke Signing</button></div></div>';
     if (it.status === "ttd") return '<div class="rg-act"><h4>Proses tanda tangan</h4><div class="rg-sg">' + ((it.sg && it.sg.signers) || []).map(function (g) { return '<div class="' + (g.status === "selesai" ? "ok" : "") + '"><i class="fa-solid ' + (g.status === "selesai" ? "fa-circle-check" : "fa-hourglass-half") + '"></i><span><b>' + E(g.name) + "</b><small>" + E(g.jabatan || "") + (g.signedAt ? " · " + E(whenT(g.signedAt)) : " · menunggu") + "</small></span></div>"; }).join("") + "</div>"
       + (it.sg && it.sg.cancelled ? '<p class="rg-warn">Dokumen Signing dibatalkan. Batalkan registrasi atau hubungi pengelola.</p>' : '<p>Bagikan tautan tanda tangan dari menu Signing. Status diperbarui otomatis saat dibuka.</p>') + '<div class="rg-btns"><button class="btn btn-ghost" data-a="refresh"><i class="fa-solid fa-rotate"></i>Periksa status</button><button class="btn btn-primary" data-a="signing"><i class="fa-solid fa-signature"></i>Buka Signing</button></div></div>';
     if (it.status === "lengkap") {
@@ -13558,7 +13558,7 @@ async function contactNudge() {
         + '</div><p class="rg-mute">H berisi nomor registrasi bertautan ke PDF bertanda tangan · I = Aktif</p><div class="rg-btns"><button class="btn btn-primary" data-a="confirm"><i class="fa-solid fa-circle-check"></i>Konfirmasi & tambahkan</button></div></div>';
     }
     if (it.status === "aktif") return '<div class="rg-act ok"><h4>Sudah di Info Perseroan</h4><p>Ditambahkan di baris ' + E(it.infoRow || "-") + '.</p><div class="rg-btns"><button class="btn btn-ghost" data-a="toPers"><i class="fa-solid fa-building"></i>Buka Info Perseroan</button></div></div>';
-    if (it.status === "dikembalikan") return '<div class="rg-act warn"><h4>Menunggu revisi calon mitra</h4><p>' + E(it.note || "Catatan dikirim per bagian.") + '</p><div class="rg-btns"><button class="btn btn-ghost text-rose-600" data-a="batal"><i class="fa-solid fa-xmark"></i>Batalkan registrasi</button></div></div>';
+    if (it.status === "dikembalikan") return '<div class="rg-act warn"><h4>Dikembalikan (versi lama)</h4><p>Calon mitra tidak bisa merevisi lagi. Batalkan registrasi ini.</p><div class="rg-btns"><button class="btn btn-ghost text-rose-600" data-a="batal"><i class="fa-solid fa-xmark"></i>Batalkan registrasi</button></div></div>';
     return '<div class="rg-act"><h4>' + E((ST[it.status] || [it.status])[0]) + "</h4>" + (it.note ? "<p>" + E(it.note) + "</p>" : "") + "</div>";
   }
   function bindSide() {
@@ -13573,12 +13573,11 @@ async function contactNudge() {
     var decide = async function (b, act, msg) {
       var note = ($("rg-note") || {}).value || "";
       if (act !== "batal" && !confirm(msg)) return;
-      if (act === "batal" && !confirm("Batalkan registrasi ini? Calon mitra tidak bisa merevisi lagi.")) return;
+      if (act === "batal" && !confirm("Batalkan registrasi ini?")) return;
       busy(b, "Menyimpan…");
-      try { await callApi("reg.decide", { id: RG.sel, act: act, note: note, notes: notes() }, 60000); toast(act === "kembalikan" ? "Dikembalikan ke calon mitra untuk revisi" : act === "tolak" ? "Registrasi ditolak" : "Registrasi dibatalkan", "success"); await load(true); openDet(RG.sel, true); }
+      try { await callApi("reg.decide", { id: RG.sel, act: act, note: note, notes: notes() }, 60000); toast(act === "tolak" ? "Registrasi ditolak" : "Registrasi dibatalkan", "success"); await load(true); openDet(RG.sel, true); }
       catch (e) { toast(e.message, "error", 7000); unbusy(b); }
     };
-    on("kembalikan", function (b) { decide(b, "kembalikan", "Kembalikan ke calon mitra untuk revisi? Catatan per bagian akan terlihat di tautan revisi mereka."); });
     on("tolak", function (b) { decide(b, "tolak", "Tolak registrasi ini? Calon mitra tidak bisa merevisi."); });
     on("batal", function (b) { decide(b, "batal", ""); });
     on("setujui", function (b) { approve(b, notes()); });
