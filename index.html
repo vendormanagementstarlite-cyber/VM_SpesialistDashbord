@@ -13435,6 +13435,24 @@ async function contactNudge() {
 .rg-hist div{padding:5px 0 5px 12px;border-left:2px solid #e2e8f0;font-size:12px}.rg-hist b{display:block;font-weight:700}.rg-hist small{color:#94a3b8}
 @media (max-width:520px){.rg-kv{grid-template-columns:1fr;gap:2px}.rg-ps{grid-template-columns:1fr;gap:3px}.rg-row2{grid-template-columns:1fr}}
 .rg-side input,.rg-side select,.rg-side textarea,.rg-srch input{box-sizing:border-box;max-width:100%}
+/* v28.1 · digabung ke Info Perseroan */
+.rg-switch{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:#fff;box-shadow:0 0 0 1px #e2e8f0}.dark .rg-switch{background:#0f172a;box-shadow:0 0 0 1px #1e293b}
+.rg-switch button{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:0;border-radius:10px;background:none;font:inherit;font-size:13px;font-weight:700;color:#64748b;cursor:pointer;transition:background .15s,color .15s}
+.rg-switch button i{font-size:12px}
+.rg-switch button.on{background:#0b5cad;color:#fff;box-shadow:0 4px 14px -6px rgba(11,92,173,.6)}
+.rg-switch button b{min-width:18px;padding:0 6px;border-radius:9px;background:#e11d48;color:#fff;font-size:10.5px;line-height:18px;text-align:center}
+.rg-switch button b.hidden{display:none}
+#view-perseroan.rg-on>:not(#rg-switch):not(#rg-host){display:none!important}
+#view-perseroan:not(.rg-on)>#rg-host{display:none}
+#rg-host .rg-head{padding:14px 18px}
+#rg-host .rg-head h2{font-size:16px}
+#rg-host .rg-head{flex-wrap:nowrap;align-items:center}
+#rg-host .rg-head>div:first-child{min-width:0}
+#rg-host .rg-head p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#rg-host .rg-acts{flex:none}
+@media (max-width:700px){#rg-host .rg-head{flex-wrap:wrap}#rg-host .rg-head p{white-space:normal}}
+#rg-host .rg-main{gap:10px}
+.rg-side .rg-note textarea{width:100%;box-sizing:border-box}
 
 </style>
 <script id="addon_v28_reg">
@@ -13455,19 +13473,34 @@ async function contactNudge() {
   var whenT = function (t) { try { return new Date(t).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } };
 
   // ---------- kerangka di aplikasi ----------
-  function ensureUi() {
-    if (!isOwner()) { var n0 = $("nav-regmitra"); n0 && n0.classList.add("hidden"); return; }
-    var np = $("nav-perseroan");
-    if (np && !$("nav-regmitra")) {
-      var b = document.createElement("button"); b.id = "nav-regmitra"; b.title = "Registrasi Mitra"; b.className = np.className; b.setAttribute("onclick", "switchTab('regmitra')");
-      b.innerHTML = '<div class="flex items-center gap-3"><i class="fa-solid fa-id-card-clip text-sm shrink-0 group-hover:scale-110 transition-transform"></i><span class="sidebar-text">Registrasi Mitra</span></div><span id="sidebar-reg-badge" class="sidebar-text text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-700 dark:text-sky-300 hidden">0</span>';
-      np.after(b);
-    }
-    var n = $("nav-regmitra"); n && n.classList.remove("hidden");
-    var vp = $("view-perseroan");
-    if (vp && !$("view-regmitra")) { var v = document.createElement("section"); v.id = "view-regmitra"; v.className = "tab-view hidden"; vp.after(v); }
+  // digabung ke Info Perseroan: tab "Daftar mitra" | "Registrasi mitra baru" (khusus Akun Utama)
+  RG.mode = (function () { try { return localStorage.getItem("rg_mode") || "list"; } catch (e) { return "list"; } })();
+  function setMode(m) { RG.mode = m; try { localStorage.setItem("rg_mode", m); } catch (e) { } applyMode(); if (m === "reg") { render(); load(false); } }
+  function applyMode() {
+    var vp = $("view-perseroan"); if (!vp) return;
+    var on = isOwner() && RG.mode === "reg"; vp.classList.toggle("rg-on", on);
+    var sw = $("rg-switch"); if (sw) sw.querySelectorAll("[data-m]").forEach(function (b) { b.classList.toggle("on", b.dataset.m === (on ? "reg" : "list")); b.setAttribute("aria-selected", b.dataset.m === (on ? "reg" : "list")); });
   }
-  function badge(n) { var b = $("sidebar-reg-badge"); if (!b) return; if (n == null) n = RG.items.filter(function (x) { return x.status === "diajukan" || x.status === "lengkap"; }).length; b.textContent = n; b.classList.toggle("hidden", !n); }
+  function ensureUi() {
+    var old = $("nav-regmitra"); old && old.remove(); var ov = $("view-regmitra"); ov && ov.remove();
+    var vp = $("view-perseroan"); if (!vp) return;
+    var sw = $("rg-switch");
+    if (!isOwner()) { sw && sw.remove(); var h0 = $("rg-host"); h0 && h0.remove(); vp.classList.remove("rg-on"); return; }
+    if (!sw) {
+      sw = document.createElement("div"); sw.id = "rg-switch"; sw.className = "rg-switch"; sw.setAttribute("role", "tablist");
+      sw.innerHTML = '<button role="tab" data-m="list"><i class="fa-solid fa-building"></i>Daftar mitra</button><button role="tab" data-m="reg"><i class="fa-solid fa-id-card-clip"></i>Registrasi mitra baru<b id="rg-sw-badge" class="hidden">0</b></button>';
+      vp.insertBefore(sw, vp.firstChild);
+      sw.querySelectorAll("[data-m]").forEach(function (b) { b.onclick = function () { setMode(b.dataset.m); }; });
+    }
+    if (!$("rg-host")) { var h = document.createElement("div"); h.id = "rg-host"; vp.appendChild(h); }
+    var np = $("nav-perseroan");
+    if (np && !$("nav-pers-reg-badge")) { var bb = document.createElement("span"); bb.id = "nav-pers-reg-badge"; bb.className = "sidebar-text text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-700 dark:text-sky-300 hidden"; bb.title = "Registrasi mitra perlu tindakan"; np.appendChild(bb); try { np.classList.add("justify-between"); } catch (e) { } }
+    applyMode();
+  }
+  function badge(n) {
+    if (n == null) n = RG.items.filter(function (x) { return x.status === "diajukan" || x.status === "lengkap"; }).length;
+    ["rg-sw-badge", "nav-pers-reg-badge"].forEach(function (id) { var b = $(id); if (!b) return; b.textContent = n; b.classList.toggle("hidden", !n); });
+  }
   async function load(force) {
     if (RG.busy || (!force && RG.loaded && Date.now() - RG.at < 60000)) return;
     RG.busy = true; RG.err = "";
@@ -13485,11 +13518,11 @@ async function contactNudge() {
     });
   }
   function render() {
-    var v = $("view-regmitra"); if (!v) return;
+    var v = $("rg-host"); if (!v) return;
     var cnt = {}; RG.items.forEach(function (x) { cnt[x.status] = (cnt[x.status] || 0) + 1; }); cnt.aktif_kerja = (cnt.diajukan || 0) + (cnt.lengkap || 0); cnt.semua = RG.items.length;
     var L = list();
     v.innerHTML = '<div class="rg-wrap' + (RG.sel ? " has-sel" : "") + '"><div class="rg-main">'
-      + '<div class="glass-panel rounded-2xl rg-head"><div><h2>Registrasi Mitra</h2><p>Calon mitra mengisi lewat tautan tetap · data masuk Info Perseroan setelah tanda tangan lengkap dan Anda konfirmasi</p></div>'
+      + '<div class="glass-panel rounded-2xl rg-head"><div><h2>Registrasi mitra baru</h2><p>Calon mitra mengisi lewat tautan tetap. Data masuk ke daftar mitra setelah tanda tangan lengkap dan Anda konfirmasi.</p></div>'
       + '<div class="rg-acts"><button class="btn btn-ghost" data-a="link" title="Salin tautan formulir"><i class="fa-solid fa-link"></i><span>Tautan formulir</span></button><button class="btn btn-ghost" data-a="reload" title="Muat ulang"><i class="fa-solid fa-rotate' + (RG.busy ? " fa-spin" : "") + '"></i></button></div></div>'
       + '<div class="rg-bar"><div class="rg-tabs">' + FILTERS.map(function (f) { return (cnt[f[0]] || ["aktif_kerja", "semua"].indexOf(f[0]) >= 0) ? '<button class="' + (RG.f === f[0] ? "on" : "") + '" data-f="' + f[0] + '">' + E(f[1]) + "<b>" + (cnt[f[0]] || 0) + "</b></button>" : ""; }).join("") + "</div>"
       + '<label class="rg-srch"><i class="fa-solid fa-magnifying-glass"></i><input id="rg-q" placeholder="Cari nomor, perusahaan, PIC, NPWP" value="' + E(RG.q) + '"></label></div>'
@@ -13567,7 +13600,7 @@ async function contactNudge() {
     on("close", function () { RG.sel = null; RG.det = null; render(); });
     on("refresh", function () { openDet(RG.sel, true); load(true); });
     on("signing", function () { try { switchTab("sirkulir"); } catch (e) { } });
-    on("toPers", function () { try { switchTab("perseroan"); } catch (e) { } });
+    on("toPers", function () { setMode("list"); try { switchTab("perseroan"); } catch (e) { } });
     on("doc", async function (b) { busy(b, "Membuat…"); try { var r = await callApi("reg.doc", { id: RG.sel }, 120000); window.open(r.url, "_blank", "noopener"); toast("Salinan Google Doc dibuat", "success"); openDet(RG.sel, true); } catch (e) { toast(/DocumentApp|izin|authoriz/i.test(e.message) ? "Izin Google Docs belum diberikan. Jalankan izinkanRegistrasi() di Apps Script." : e.message, "error", 8000); unbusy(b); } });
     var notes = function () { var o = {}; sd.querySelectorAll("[data-note]").forEach(function (t) { if (t.value.trim()) o[t.dataset.note] = t.value.trim(); }); return o; };
     var decide = async function (b, act, msg) {
@@ -13678,7 +13711,7 @@ async function contactNudge() {
 
   // ---------- kait ke aplikasi ----------
   async function pollBadge() { if (!isOwner()) return; try { var r = await callApi("reg.badge", {}, 30000); badge(r.n || 0); } catch (e) { } }
-  if (typeof switchTab === "function") { var oST = switchTab; window.switchTab = switchTab = function (t) { ensureUi(); var r = oST.apply(this, arguments); try { if (t === "regmitra" && isOwner()) { render(); load(false); } } catch (e) { console.warn("reg", e); } return r; }; }
+  if (typeof switchTab === "function") { var oST = switchTab; window.switchTab = switchTab = function (t) { if (t === "regmitra") { RG.mode = "reg"; t = "perseroan"; arguments[0] = t; } ensureUi(); var r = oST.apply(this, arguments); try { if (t === "perseroan" && isOwner()) { applyMode(); if (RG.mode === "reg") { render(); load(false); } } } catch (e) { console.warn("reg", e); } return r; }; }
   if (typeof applyPermissions === "function") { var oAP = applyPermissions; window.applyPermissions = applyPermissions = function () { var r = oAP.apply(this, arguments); try { ensureUi(); } catch (e) { } return r; }; }
   function boot() { try { ensureUi(); } catch (e) { } setTimeout(pollBadge, 6000); setInterval(pollBadge, 5 * 60 * 1000); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
