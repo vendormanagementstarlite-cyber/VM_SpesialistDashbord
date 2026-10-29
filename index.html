@@ -13824,7 +13824,7 @@ async function contactNudge() {
       } catch (e) { toast("Lampiran " + bl.name + " tidak bisa ditempel: " + e.message, "error", 6000); }
     }
     var bytes = await doc.save();
-    return { bytes: bytes, pages: doc.getPageCount(), fields: fieldsOut };
+    return { bytes: bytes, pages: doc.getPageCount(), formPages: formPages, fields: fieldsOut };
   }
   // unduh formulir sebagai dokumen Word (.doc, HTML) yang bisa disunting di Word atau Google Docs
   async function downloadDoc(d, signB64) {
@@ -13906,7 +13906,7 @@ async function contactNudge() {
     m.innerHTML = '<div class="rge-box rge-view"><div class="rge-hd"><i class="fa-solid fa-file-pdf"></i><b>' + E(title) + '</b><span class="rge-sp"></span><a class="btn btn-ghost rge-dl" id="' + id + '-dl" download><i class="fa-solid fa-download"></i><span>Unduh PDF</span></a><button class="btn btn-ghost rge-doc" data-doc><i class="fa-solid fa-file-word"></i><span>Unduh Doc</span></button><button class="icon-btn" data-x aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div><div class="rge-pvwrap"><div class="rge-load"><i class="fa-solid fa-circle-notch fa-spin"></i>Menyusun formulir…</div><iframe title="Pratinjau formulir"></iframe></div></div>';
     document.body.appendChild(m); var close = function () { m.remove(); }; m.onclick = function (e) { if (e.target === m) close(); }; m.querySelector("[data-x]").onclick = close; var db = m.querySelector("[data-doc]"); db.onclick = async function () { if (!m._docFn) return toast("Formulir belum siap", "error"); busy(db, "Menyiapkan…"); try { await m._docFn(); } catch (e) { toast("Gagal membuat Doc: " + e.message, "error", 6000); } unbusy(db); }; return m;
   }
-  function showPdf(m, bytes, name) { var u = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" })); var old = m.dataset.u; m.dataset.u = u; var f = m.querySelector("iframe"); f.src = u + "#toolbar=0&navpanes=0&view=FitH"; var hide = function () { var l = m.querySelector(".rge-load"); l && l.remove(); }; f.onload = hide; setTimeout(hide, 1800); var dl = m.querySelector(".rge-dl"); dl.href = u; dl.download = name; if (old) setTimeout(function () { URL.revokeObjectURL(old); }, 4000); }
+  function showPdf(m, bytes, name, page) { var u = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" })); var old = m.dataset.u; m.dataset.u = u; var f = m.querySelector("iframe"); f.src = u + "#toolbar=0&navpanes=0&view=FitH" + (page ? "&page=" + page : ""); var hide = function () { var l = m.querySelector(".rge-load"); l && l.remove(); }; f.onload = hide; setTimeout(hide, 1800); var dl = m.querySelector(".rge-dl"); dl.href = u; dl.download = name; if (old) setTimeout(function () { URL.revokeObjectURL(old); }, 4000); }
   async function viewForm(b) {
     var d = RG.det; if (!d) return; var m = pdfModal("Formulir " + d.item.nomor, "rg-view"); if (b) busy(b, "Membuka…");
     try { var g = await callApi("reg.get", { id: RG.sel, withSign: true }, 90000); var pdf = await buildPdf(d, g.signImg || "", {}, []); m._docFn = function () { return downloadDoc(d, g.signImg || ""); }; showPdf(m, pdf.bytes, "Formulir Registrasi " + String(d.item.nomor).replace(/\//g, "-") + ".pdf"); }
@@ -13941,8 +13941,21 @@ async function contactNudge() {
     m.querySelectorAll(".rge-tg [data-t]").forEach(function (t) { t.onclick = function () { m.querySelector(".rge-body").dataset.pane = t.dataset.t; m.querySelectorAll(".rge-tg [data-t]").forEach(function (o) { o.classList.toggle("on", o === t); }); }; });
     var syncVis = function () { d.sections.forEach(function (s) { s.fields.forEach(function (f) { var w = m.querySelector('[data-w="' + f.key + '"]'); if (w) w.classList.toggle("hidden", !vis(f, F)); }); }); var n = Object.keys(F).filter(function (k) { return String(F[k]) !== String((it.form || {})[k] == null ? "" : it.form[k]); }).length; $("rge-chg").textContent = n ? n + " isian diubah" : ""; };
     var signB64 = null, tm = null, seq = 0;
-    var repaint = async function () { var my = ++seq; try { if (signB64 == null) { var g = await callApi("reg.get", { id: id, withSign: true }, 90000); signB64 = g.signImg || ""; } var dd0 = itemWith(d, F), pdf = await buildPdf(dd0, signB64, {}, []); m._docFn = function () { return downloadDoc(dd0, signB64); }; if (my === seq && $("rg-edit")) showPdf(m, pdf.bytes, "Formulir Registrasi " + String(it.nomor).replace(/\//g, "-") + ".pdf"); } catch (e) { toast("Pratinjau gagal: " + e.message, "error", 6000); } };
-    var onChange = function (e) { var t = e.target, k = t.dataset && t.dataset.k; if (!k) return; F[k] = t.type === "checkbox" ? t.checked : t.value; syncVis(); clearTimeout(tm); tm = setTimeout(repaint, 700); };
+    var bl = {};
+    var repaint = async function (jump) {
+      var my = ++seq; if (typeof jump !== "boolean") jump = false;
+      try {
+        if (signB64 == null) { var g = await callApi("reg.get", { id: id, withSign: true }, 90000); signB64 = g.signImg || ""; }
+        var atts = Array.from(m.querySelectorAll("[data-att]:checked")).map(function (c) { return c.dataset.att; }), miss = atts.filter(function (a) { return !bl[a]; });
+        if (miss.length) { var g2 = await callApi("reg.get", { id: id, blobs: miss }, 180000); Object.keys(g2.blobs || {}).forEach(function (k) { bl[k] = g2.blobs[k]; }); var sk = miss.filter(function (a) { return bl[a] && bl[a].skip; }); if (sk.length) toast(sk.length + " lampiran dilewati (batas ukuran)", "error", 6000); }
+        var dd0 = itemWith(d, F), pdf = await buildPdf(dd0, signB64, bl, atts); m._docFn = function () { return downloadDoc(dd0, signB64); };
+        if (my === seq && $("rg-edit")) { showPdf(m, pdf.bytes, "Formulir Registrasi " + String(it.nomor).replace(/\//g, "-") + ".pdf", jump && atts.length ? pdf.formPages + 1 : 0); }
+      } catch (e) { toast("Pratinjau gagal: " + e.message, "error", 6000); }
+    };
+    var onChange = function (e) {
+      var t = e.target; if (t.dataset && t.dataset.att && e.type === "change") { var ld = m.querySelector(".rge-pvwrap"); if (ld && !ld.querySelector(".rge-load")) ld.insertAdjacentHTML("afterbegin", '<div class="rge-load"><i class="fa-solid fa-circle-notch fa-spin"></i>Menyusun pratinjau…</div>'); m.querySelector(".rge-body").dataset.pane = "p"; m.querySelectorAll(".rge-tg [data-t]").forEach(function (o) { o.classList.toggle("on", o.dataset.t === "p"); }); clearTimeout(tm); tm = setTimeout(function () { repaint(t.checked); }, 150); return; }
+      var k = t.dataset && t.dataset.k; if (!k) return; F[k] = t.type === "checkbox" ? t.checked : t.value; syncVis(); clearTimeout(tm); tm = setTimeout(repaint, 700);
+    };
     m.addEventListener("input", onChange); m.addEventListener("change", onChange);
     syncVis(); repaint();
     $("rge-go").onclick = function () {
