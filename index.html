@@ -13624,20 +13624,20 @@ async function contactNudge() {
   }
   function attachPick(d) {
     var it = d.item, files = it.files || {}, rows = [];
-    (d.sections || []).forEach(function (sec) { sec.fields.forEach(function (f) { if (f.type !== "file") return; (files[f.key] || []).forEach(function (x) { rows.push('<label class="rg-att"><input type="checkbox" data-att="' + E(x.id) + '"><span><b>' + E(x.name) + "</b><small>" + E(f.label) + (x.size ? " · " + (x.size >= 1048576 ? (x.size / 1048576).toFixed(1) + " MB" : Math.round(x.size / 1024) + " KB") : "") + "</small></span></label>"); }); }); });
+    (d.sections || []).forEach(function (sec) { sec.fields.forEach(function (f) { if (f.type !== "file") return; (files[f.key] || []).forEach(function (x) { if (PHOTO_KEYS(f.key) && isImg(x)) return; rows.push('<label class="rg-att"><input type="checkbox" data-att="' + E(x.id) + '"><span><b>' + E(x.name) + "</b><small>" + E(f.label) + (x.size ? " · " + (x.size >= 1048576 ? (x.size / 1048576).toFixed(1) + " MB" : Math.round(x.size / 1024) + " KB") : "") + "</small></span></label>"); }); }); });
     if (!rows.length) return "";
     return '<details class="rg-attbox"><summary><i class="fa-solid fa-paperclip"></i>Lampirkan ke PDF (opsional) <em>foto, bukti proyek, dokumen pendukung</em></summary><p class="rg-mute">Berkas yang dicentang ditambahkan sebagai halaman lampiran setelah halaman tanda tangan. Total maks. 25 MB.</p><div class="rg-attl">' + rows.join("") + "</div></details>";
   }
   function actionBox(it, d) {
     if (it.status === "diajukan") return '<div class="rg-act"><h4>Verifikasi</h4><p>Periksa isian dan lampiran per bagian. Lanjutkan untuk meninjau dan mengedit formulir serta memilih lampiran. Penanda tangan dipilih di fitur Signing Document.</p>'
       + '<label class="rg-note"><span>Alasan penolakan (wajib bila Tolak)</span><textarea id="rg-note" rows="2"></textarea></label><p class="rg-mute">Calon mitra tidak bisa merevisi. Bila data tidak benar, tolak registrasi; calon mitra harus mendaftar ulang dengan formulir baru.</p>'
-      + '<div class="rg-btns"><button class="btn btn-ghost text-rose-600" data-a="tolak"><i class="fa-solid fa-ban"></i>Tolak</button><button class="btn btn-primary" data-a="setujui"><i class="fa-solid fa-pen-to-square"></i>Tinjau, edit & lanjut ke Signing</button></div></div>';
+      + '<div class="rg-btns"><button class="btn btn-ghost text-rose-600" data-a="tolak"><i class="fa-solid fa-ban"></i>Tolak</button><button class="btn btn-primary" data-a="setujui"><i class="fa-solid fa-pen-to-square"></i>Tinjau, edit & lanjut ke Signing</button></div><div class="rg-btns"><button class="btn btn-ghost" data-a="final"><i class="fa-solid fa-file-arrow-up"></i>Unggah formulir final (TTD manual, hasil scan)</button></div><input type="file" id="rg-final" accept="application/pdf,.pdf" hidden></div>';
     if (it.status === "ttd") return '<div class="rg-act"><h4>Proses tanda tangan</h4><div class="rg-sg">' + ((it.sg && it.sg.signers) || []).map(function (g) { return '<div class="' + (g.status === "selesai" ? "ok" : "") + '"><i class="fa-solid ' + (g.status === "selesai" ? "fa-circle-check" : "fa-hourglass-half") + '"></i><span><b>' + E(g.name) + "</b><small>" + E(g.jabatan || "") + (g.signedAt ? " · " + E(whenT(g.signedAt)) : " · menunggu") + "</small></span></div>"; }).join("") + "</div>"
-      + (it.sg && it.sg.cancelled ? '<p class="rg-warn">Dokumen Signing dibatalkan. Batalkan registrasi atau hubungi pengelola.</p>' : '<p>Penanda tangan diarahkan lewat fitur Signing Document. Status diperbarui otomatis.</p>') + '<div class="rg-btns"><button class="btn btn-ghost" data-a="refresh"><i class="fa-solid fa-rotate"></i>Periksa status</button><button class="btn btn-primary" data-a="signing"><i class="fa-solid fa-signature"></i>Buka di Signing</button></div></div>';
+      + (it.sg && it.sg.cancelled ? '<p class="rg-warn">Dokumen Signing dibatalkan. Batalkan registrasi atau hubungi pengelola.</p>' : '<p>Penanda tangan diarahkan lewat fitur Signing Document. Status diperbarui otomatis.</p>') + '<div class="rg-btns"><button class="btn btn-ghost" data-a="refresh"><i class="fa-solid fa-rotate"></i>Periksa status</button><button class="btn btn-ghost" data-a="final"><i class="fa-solid fa-file-arrow-up"></i>Unggah formulir final (hasil scan)</button><button class="btn btn-primary" data-a="signing"><i class="fa-solid fa-signature"></i>Buka di Signing</button></div><input type="file" id="rg-final" accept="application/pdf,.pdf" hidden></div>';
     if (it.status === "lengkap") {
       var f = it.form || {}, js = d.jenis || [];
       var inp = function (k, l, v) { return '<label><span>' + E(l) + '</span><input class="field" data-row="' + k + '" value="' + E(v || "") + '"></label>'; };
-      return '<div class="rg-act ok"><h4>Tambahkan ke Info Perseroan</h4><p>Tanda tangan sudah lengkap. Periksa baris di bawah, ubah bila perlu, lalu konfirmasi.</p><div class="rg-row2">'
+      return '<div class="rg-act ok"><h4><i class="fa-solid fa-circle-check" style="color:#059669"></i> Disetujui · tambahkan ke Info Perseroan</h4><p>Tanda tangan sudah lengkap. Periksa baris di bawah, ubah bila perlu, lalu konfirmasi.</p><div class="rg-row2">'
         + inp("short", "A · Nama singkat", it.short) + inp("nama", "B · Nama perusahaan", it.nama)
         + '<label><span>C · Jenis</span><input class="field" data-row="jenis" list="rg-jenis" value="' + E(js[0] || "") + '"><datalist id="rg-jenis">' + js.map(function (j) { return '<option value="' + E(j) + '">'; }).join("") + "</datalist></label>"
         + inp("direksi", "E · Direksi", f.nama_direktur) + inp("hp", "F · No HP", f.hp_pic) + inp("email", "G · Email", it.email)
@@ -13655,6 +13655,15 @@ async function contactNudge() {
     on("refresh", function () { openDet(RG.sel, true); load(true); });
     on("signing", function () { openInSigning(RG.det && RG.det.item && RG.det.item.sg && RG.det.item.sg.id, RG.det && RG.det.item && RG.det.item.nomor); });
     on("view", function (b) { viewForm(b); });
+    on("final", function (b) { var inp = $("rg-final"); if (inp) inp.click(); });
+    var fin = $("rg-final"); if (fin) fin.onchange = async function () {
+      var fl = fin.files && fin.files[0]; if (!fl) return; if (!/\.pdf$/i.test(fl.name) && fl.type !== "application/pdf") return toast("File harus PDF", "error");
+      if (fl.size > 15 * 1048576) return toast("File terlalu besar (maks 15 MB)", "error");
+      if (!confirm("Unggah " + fl.name + " sebagai formulir final dan tandai registrasi disetujui?")) { fin.value = ""; return; }
+      var b = sd.querySelector('[data-a="final"]'); if (b) busy(b, "Mengunggah…");
+      try { var b64 = bytesToB64(new Uint8Array(await fl.arrayBuffer())); await callApi("reg.final", { id: RG.sel, name: fl.name, b64: b64 }, 180000); toast("Formulir final diunggah. Registrasi disetujui.", "success", 6000); await load(true); openDet(RG.sel, true); }
+      catch (e) { toast(e.message, "error", 8000); if (b) unbusy(b); } fin.value = "";
+    };
     on("toPers", function () { setMode("list"); try { switchTab("perseroan"); } catch (e) { } });
     var notes = function () { var o = {}; sd.querySelectorAll("[data-note]").forEach(function (t) { if (t.value.trim()) o[t.dataset.note] = t.value.trim(); }); return o; };
     var decide = async function (b, act, msg) {
