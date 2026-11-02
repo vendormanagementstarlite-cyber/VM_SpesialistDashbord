@@ -61,10 +61,19 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
   <div class="f"><div><label for="nm">Nama mitra</label><input id="nm" list="dl" placeholder="Ketik untuk mencari…" autocomplete="off" autocapitalize="characters"><datalist id="dl"></datalist></div>
   <div><label for="pin">PIN (6 angka)</label><input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="••••••"></div>
   <div id="pin2w" class="hide"><label for="pin2">Ulangi PIN</label><input id="pin2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="••••••"></div>
-  <button id="go">Masuk</button></div><div id="m1"></div>
+  <div id="emw" class="hide"><label for="em">Email untuk pemulihan PIN</label><input id="em" type="email" inputmode="email" autocomplete="email" placeholder="nama@perusahaan.com"><p class="s" style="margin-top:6px">Kode reset PIN akan dikirim ke email ini jika Anda lupa PIN.</p></div>
+  <button id="go">Masuk</button><button class="g" id="fgt" type="button">Lupa PIN?</button></div><div id="m1"></div>
+  <div id="fp" class="hide" style="text-align:left;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)">
+    <h2 style="font-size:15px">Reset PIN lewat email</h2><p class="s">Kami kirim kode 6 angka ke email yang terdaftar. Kode berlaku 15 menit.</p>
+    <div class="f"><button class="t" id="fpq" type="button">Kirim kode ke email</button>
+    <div id="fp2" class="hide" style="display:none;gap:14px"><div><label for="fcode">Kode dari email</label><input id="fcode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="••••••"></div>
+    <div><label for="fpin">PIN baru (6 angka)</label><input id="fpin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••"></div>
+    <div><label for="fpin2">Ulangi PIN baru</label><input id="fpin2" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••"></div>
+    <button id="fps" type="button">Simpan PIN baru</button></div></div><div id="m4"></div></div>
 </section>
 <section id="s-edit" class="hide">
   <div class="card"><h2 id="ttl">Struktur</h2><div id="stt" style="margin-top:8px"></div><p class="s">Tambahkan posisi dan orangnya, lalu pilih atasan langsung. Revisi diverifikasi Vendor Management; bagan lama tetap berlaku sampai revisi disetujui.</p></div>
+  <div class="card"><label for="em2">Email pemulihan PIN</label><div class="acts"><input id="em2" type="email" inputmode="email" placeholder="nama@perusahaan.com" style="flex:1;min-width:200px"><button class="t" id="em2s" type="button">Simpan email</button></div><div id="m3"></div></div>
   <div class="seg" id="seg"><button class="on" data-p="edit">Isi data</button><button data-p="prev">Pratinjau</button></div>
   <div class="layout">
     <div class="pane-edit" id="pe"><div id="list"></div>
@@ -83,16 +92,27 @@ var S={row:0,pin:"",names:[],data:{posisi:[]},nid:1,zoom:0,res:null,shut:{}};
 function api(a,b){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({action:a},b||{}))}).then(function(r){return r.json()}).then(function(j){if(!j||!j.ok)throw new Error(j&&j.error||"Gagal menghubungi server");return j}).catch(function(e){throw e instanceof TypeError?new Error("Tidak ada koneksi. Periksa internet Anda lalu coba lagi."):e})}
 function msg(id,t,c){$(id).innerHTML=t?'<div class="msg '+c+'">'+esc(t)+"</div>":""}
 function find(){var v=$("nm").value.trim().toLowerCase();return S.names.filter(function(x){return x.name.toLowerCase()===v})[0]}
-function onName(){var x=find();$("pin2w").classList.toggle("hide",!(x&&!x.pin));$("go").textContent=x&&!x.pin?"Buat PIN":"Masuk"}
+function onName(){var x=find(),nw=!!(x&&!x.pin);$("pin2w").classList.toggle("hide",!nw);$("emw").classList.toggle("hide",!nw);$("fgt").classList.toggle("hide",nw);$("go").textContent=nw?"Buat PIN":"Masuk";if(nw)$("fp").classList.add("hide")}
 api("bg.names").then(function(j){S.names=j.items;$("dl").innerHTML=j.items.map(function(x){return'<option value="'+esc(x.name)+'">'}).join("")}).catch(function(e){msg("m1",e.message,"err")});
 $("nm").addEventListener("input",onName);$("nm").addEventListener("change",onName);
 ["pin","pin2"].forEach(function(i){$(i).addEventListener("keydown",function(e){if(e.key==="Enter")$("go").click()})});
+var MAILRE=/^[^\s@,;]+@[^\s@,;]+\.[^\s@,;]{2,}$/;
+$("fgt").onclick=function(){var x=find();if(!x)return msg("m1","Pilih nama mitra dulu.","err");msg("m1","");$("fp").classList.toggle("hide");msg("m4","")};
+$("fpq").onclick=function(){var x=find();if(!x)return msg("m4","Pilih nama mitra dulu.","err");var b=this;b.disabled=true;msg("m4","");
+  api("bg.fp.req",{row:x.row}).then(function(j){msg("m4","Kode dikirim ke "+j.mask+". Cek inbox atau spam.","okm");var f=$("fp2");f.style.display="grid";f.classList.remove("hide");$("fcode").focus()}).catch(function(e){msg("m4",e.message,"err")}).finally(function(){b.disabled=false})};
+$("fps").onclick=function(){var x=find();if(!x)return;var c=$("fcode").value.trim(),p=$("fpin").value;
+  if(!/^\d{6}$/.test(c))return msg("m4","Kode harus 6 angka.","err");if(!/^\d{6}$/.test(p))return msg("m4","PIN baru harus 6 angka.","err");if(p!==$("fpin2").value)return msg("m4","Ulangi PIN tidak sama.","err");
+  var b=this;b.disabled=true;msg("m4","");
+  api("bg.fp.set",{row:x.row,code:c,pin:p}).then(function(){return api("bg.open",{row:x.row,pin:p,create:false})}).then(function(j){S.row=x.row;S.pin=p;S.name=x.name;start(j)}).catch(function(e){msg("m4",e.message,"err")}).finally(function(){b.disabled=false})};
+$("em2s").onclick=function(){var v=$("em2").value.trim();if(!MAILRE.test(v))return msg("m3","Format email tidak valid.","err");var b=this;b.disabled=true;
+  api("bg.setemail",{row:S.row,pin:S.pin,email:v}).then(function(j){msg("m3","Email pemulihan tersimpan ("+j.mask+").","okm");$("em2").value=""}).catch(function(e){msg("m3",e.message,"err")}).finally(function(){b.disabled=false})};
 $("go").onclick=function(){
   var x=find();if(!x)return msg("m1","Pilih nama mitra dari daftar yang muncul.","err");
   var pin=$("pin").value;if(!/^\d{6}$/.test(pin))return msg("m1","PIN harus 6 angka.","err");
   var create=!x.pin;if(create&&pin!==$("pin2").value)return msg("m1","Ulangi PIN tidak sama.","err");
+  var mail=$("em").value.trim();if(create&&!MAILRE.test(mail))return msg("m1","Isi email yang valid untuk pemulihan PIN.","err");
   $("go").disabled=true;msg("m1","");
-  api("bg.open",{row:x.row,pin:pin,create:create}).then(function(j){S.row=x.row;S.pin=pin;S.name=x.name;start(j)}).catch(function(e){msg("m1",e.message,"err")}).finally(function(){$("go").disabled=false});
+  api("bg.open",{row:x.row,pin:pin,create:create}).then(function(j){S.row=x.row;S.pin=pin;S.name=x.name;start(j);if(create)api("bg.setemail",{row:x.row,pin:pin,email:mail}).catch(function(e){msg("m3","Email belum tersimpan: "+e.message,"err")})}).catch(function(e){msg("m1",e.message,"err")}).finally(function(){$("go").disabled=false});
 };
 function start(j){
   $("s-login").classList.add("hide");$("s-edit").classList.remove("hide");$("bar").classList.remove("hide");$("ttl").textContent=S.name;
