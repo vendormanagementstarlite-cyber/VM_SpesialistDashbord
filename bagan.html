@@ -84,7 +84,7 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
   <div id="fp" class="hide" style="text-align:left;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)">
     <h2 style="font-size:15px" id="fph">Reset PIN lewat email</h2><p class="s" id="fpd">Kami kirim kode 6 angka ke email yang terdaftar. Kode berlaku 15 menit.</p>
     <div class="f"><button class="t" id="fpq" type="button">Kirim kode ke email</button>
-    <div id="fp2" class="hide" style="display:none;gap:14px"><div><label for="fcode">Kode dari email</label><input id="fcode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="••••••"></div>
+    <div id="fp2" class="hide" style="display:none;gap:14px"><div><label for="fcode" id="fcl">Kode dari email</label><input id="fcode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="••••••"></div>
     <div><label for="fpin" id="fpl">PIN baru (6 angka)</label><input id="fpin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••"></div>
     <div><label for="fpin2">Ulangi PIN baru</label><input id="fpin2" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••"></div>
     <button id="fps" type="button">Simpan PIN baru</button></div></div><div id="m4"></div></div>
@@ -113,14 +113,14 @@ function find(){var v=$("nm").value.trim().toLowerCase();return S.names.filter(f
 function onName(){var x=find(),nw=!!(x&&!x.pin);S.mode=nw?"v":"fp";$("pinw").classList.toggle("hide",nw);$("go").classList.toggle("hide",nw);$("fgt").classList.toggle("hide",nw);
   if(nw){$("fp").classList.remove("hide");$("fph").textContent="Buat PIN pertama";$("fpd").textContent="Untuk keamanan, kode verifikasi 6 angka dikirim ke email resmi perusahaan Anda yang terdaftar di Vendor Management. Kode berlaku 15 menit.";$("fpq").textContent="Kirim kode verifikasi";$("fps").textContent="Buat PIN"}
   else{$("fp").classList.add("hide");$("fph").textContent="Reset PIN lewat email";$("fpd").textContent="Kami kirim kode 6 angka ke email yang terdaftar. Kode berlaku 15 menit.";$("fpq").textContent="Kirim kode ke email";$("fps").textContent="Simpan PIN baru"}
-  $("fp2").style.display="none";msg("m4","");msg("m1","")}
+  $("fp2").style.display="none";$("fcl").textContent="Kode dari email";msg("m4","");msg("m1","")}
 api("bg.names").then(function(j){S.names=j.items;$("dl").innerHTML=j.items.map(function(x){return'<option value="'+esc(x.name)+'">'}).join("")}).catch(function(e){msg("m1",e.message,"err")});
 $("nm").addEventListener("input",onName);$("nm").addEventListener("change",onName);
 ["pin"].forEach(function(i){$(i).addEventListener("keydown",function(e){if(e.key==="Enter")$("go").click()})});
 var MAILRE=/^[^\s@,;]+@[^\s@,;]+\.[^\s@,;]{2,}$/;
 $("fgt").onclick=function(){var x=find();if(!x)return msg("m1","Pilih nama mitra dulu.","err");msg("m1","");$("fp").classList.toggle("hide");msg("m4","")};
 $("fpq").onclick=function(){var x=find();if(!x)return msg("m4","Pilih nama mitra dulu.","err");var b=this;b.disabled=true;msg("m4","");
-  api(S.mode==="v"?"bg.v.req":"bg.fp.req",{row:x.row}).then(function(j){msg("m4","Kode dikirim ke "+j.mask+". Cek inbox atau spam.","okm");var f=$("fp2");f.style.display="grid";f.classList.remove("hide");$("fcode").focus()}).catch(function(e){msg("m4",e.message,"err")}).finally(function(){b.disabled=false})};
+  api(S.mode==="v"?"bg.v.req":"bg.fp.req",{row:x.row}).then(function(j){msg("m4","Kode dikirim ke "+j.mask+". Cek inbox atau spam.","okm");$("fcl").textContent="Kode dari email "+j.mask;var f=$("fp2");f.style.display="grid";f.classList.remove("hide");$("fcode").focus()}).catch(function(e){msg("m4",e.message,"err")}).finally(function(){b.disabled=false})};
 $("fps").onclick=function(){var x=find();if(!x)return;var c=$("fcode").value.trim(),p=$("fpin").value;
   if(!/^\d{6}$/.test(c))return msg("m4","Kode harus 6 angka.","err");if(!/^\d{6}$/.test(p))return msg("m4","PIN baru harus 6 angka.","err");if(p!==$("fpin2").value)return msg("m4","Ulangi PIN tidak sama.","err");
   var b=this;b.disabled=true;msg("m4","");
