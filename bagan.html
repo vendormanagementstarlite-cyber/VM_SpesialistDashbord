@@ -44,9 +44,9 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
 .bar .in{max-width:1180px;margin:0 auto;display:flex;gap:8px}.bar .in>*{flex:1}
 .seg{display:flex;background:#e8edf4;border-radius:13px;padding:4px;margin-bottom:14px;position:sticky;top:6px;z-index:15}
 .seg button{flex:1;background:none;color:#475569;min-height:40px;border-radius:10px;box-shadow:none}.seg button.on{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(15,23,42,.15)}
-.hide{display:none!important}
+.hide{display:none!important}.hs{font-size:12px;margin-top:4px;min-height:0}.hs.ok{color:var(--ok)}.hs.no{color:var(--bad)}details.card>summary{cursor:pointer;font-weight:700;list-style:none}details.card>summary::-webkit-details-marker{display:none}details.card>summary::after{content:"▾";float:right;color:var(--mut)}details.card[open]>summary::after{content:"▴"}.layout{max-width:760px;margin:0 auto}#s-edit{max-width:760px;margin:0 auto}
 @media(min-width:900px){
-  .layout{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:start}
+  .layout{grid-template-columns:minmax(0,1fr)}
   .seg{display:none}.pvcard{position:sticky;top:12px}.g2{grid-template-columns:2fr 1fr}.g3{display:grid;gap:12px;grid-template-columns:1fr 1fr}
   .per{grid-template-columns:1fr 1fr}.per .cap,.per .wide{grid-column:1/-1}.prev{max-height:calc(100vh - 150px)}
 }
@@ -74,16 +74,14 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
 <section id="s-edit" class="hide">
   <div class="card"><h2 id="ttl">Struktur</h2><div id="stt" style="margin-top:8px"></div><p class="s">Tambahkan posisi dan orangnya, lalu pilih atasan langsung. Revisi diverifikasi Vendor Management; bagan lama tetap berlaku sampai revisi disetujui.</p></div>
   <div class="card"><label for="em2">Email pemulihan PIN</label><div class="acts"><input id="em2" type="email" inputmode="email" placeholder="nama@perusahaan.com" style="flex:1;min-width:200px"><button class="t" id="em2s" type="button">Simpan email</button></div><div id="m3"></div></div>
-  <div class="seg" id="seg"><button class="on" data-p="edit">Isi data</button><button data-p="prev">Pratinjau</button></div>
+  <details class="card hide" id="pubc"><summary>Bagan berlaku saat ini <span id="pubv"></span></summary><div class="prev" id="prev" style="margin-top:12px"></div></details>
   <div class="layout">
     <div class="pane-edit" id="pe"><div id="list"></div>
       <div class="card"><label for="note">Catatan untuk Vendor Management (opsional)</label><textarea id="note" maxlength="500" placeholder="mis. Perubahan setelah rotasi tim"></textarea><div id="m2"></div></div></div>
-    <div class="pane-prev off" id="pp"><div class="card pvcard"><div class="pvh"><h2>Pratinjau</h2><button class="g sm" id="zo">−</button><button class="g sm" id="zi">+</button><button class="g sm" id="zf">Pas</button><button class="g sm" id="fs">Layar penuh</button></div><div class="prev" id="prev"></div></div></div>
   </div>
 </section>
 </main>
 <div class="bar hide" id="bar"><div class="in"><button class="t" id="addp">+ Posisi</button><button id="send">Kirim revisi</button></div></div>
-<button class="fx hide g" id="fxc">Tutup</button>
 <script src="bagan_core.js"></script>
 <script>
 (function(){
@@ -125,7 +123,7 @@ function start(j){
   var d=(j.pending||j.rejected||j.published||{}).data||j.seed||{posisi:[]};
   S.data=JSON.parse(JSON.stringify(d));S.nid=1;S.shut={};S.zoom=0;S.data.posisi.forEach(function(p){var n=parseInt(String(p.id).replace(/\D/g,""),10);if(n>=S.nid)S.nid=n+1});
   if(!S.data.posisi.length)S.data.posisi.push(np(""));
-  draw();
+  draw();showPub(j);
 }
 function np(at){return{id:"p"+(S.nid++),jabatan:"",level:"",atasan:at,ket:"aktif",orang:[{nama:"",hp:"",email:"",site:[]}]}}
 function opts(p){return'<option value="">— Puncak (tanpa atasan) —</option>'+S.data.posisi.filter(function(x){return x.id!==p.id}).map(function(x){return'<option value="'+esc(x.id)+'"'+(x.id===p.atasan?" selected":"")+">"+esc(x.jabatan||"(posisi tanpa nama)")+"</option>"}).join("")}
@@ -133,27 +131,28 @@ function summ(p){var o=p.orang.filter(function(x){return x.nama});return p.ket==
 function draw(){
   var scroll=window.scrollY;
   $("list").innerHTML=S.data.posisi.map(function(p,i){
-    var per=p.ket==="kosong"?"":'<div class="ppl">'+p.orang.map(function(o,k){return'<div class="per" data-k="'+k+'"><div class="cap">Orang '+(k+1)+'</div><button class="d x" data-x="orang" aria-label="Hapus orang">×</button><div><label>Nama</label><input data-o="nama" value="'+esc(o.nama)+'" maxlength="80" autocomplete="off"></div><div><label>No HP / WhatsApp</label><input data-o="hp" value="'+esc(o.hp)+'" maxlength="30" inputmode="tel" autocomplete="off"></div><div><label>Email (opsional)</label><input data-o="email" type="email" value="'+esc(o.email)+'" maxlength="80" inputmode="email" autocomplete="off"></div><div><label>Handle site (opsional, pisahkan koma)</label><input data-o="site" value="'+esc((o.site||[]).join(", "))+'" list="sl" placeholder="mis. Karangantu, Serang" autocomplete="off"></div></div>'}).join("")+'<button class="t sm" data-x="addo">+ Tambah orang</button></div>';
+    var per=p.ket==="kosong"?"":'<div class="ppl">'+p.orang.map(function(o,k){return'<div class="per" data-k="'+k+'"><div class="cap">Orang '+(k+1)+'</div><button class="d x" data-x="orang" aria-label="Hapus orang">×</button><div><label>Nama</label><input data-o="nama" value="'+esc(o.nama)+'" maxlength="80" autocomplete="off"></div><div><label>No HP / WhatsApp</label><input data-o="hp" value="'+esc(o.hp)+'" maxlength="20" inputmode="tel" autocomplete="off" placeholder="0812 3456 7890"><div class="hs'+(o.hp?(hpState(o.hp).ok?" ok":" no"):"")+'">'+(o.hp?(hpState(o.hp).ok?"✓ Nomor valid":"Nomor tidak valid. Contoh: 0812 3456 7890"):"")+'</div></div><div><label>Email (opsional)</label><input data-o="email" type="email" value="'+esc(o.email)+'" maxlength="80" inputmode="email" autocomplete="off"></div><div><label>Handle site (opsional, pisahkan koma)</label><input data-o="site" value="'+esc((o.site||[]).join(", "))+'" list="sl" placeholder="mis. Karangantu, Serang" autocomplete="off"></div></div>'}).join("")+'<button class="t sm" data-x="addo">+ Tambah orang</button></div>';
     return'<div class="pos'+(S.shut[p.id]?" shut":"")+'" data-i="'+i+'"><div class="h" data-x="tog"><div class="n">'+(i+1)+'</div><div class="ti"><b>'+esc(p.jabatan||"Posisi baru")+"</b><small>"+esc(summ(p))+'</small></div><span class="ch">▾</span></div><div class="b"><div class="g2"><div><label>Jabatan</label><input data-f="jabatan" value="'+esc(p.jabatan)+'" maxlength="80" placeholder="mis. Manajer Operasional" autocomplete="off"></div><div><label>Level (bebas)</label><input data-f="level" value="'+esc(p.level)+'" maxlength="40" placeholder="mis. Manajer" autocomplete="off"></div></div><div class="g2"><div><label>Atasan langsung</label><select data-f="atasan">'+opts(p)+'</select></div><div><label>Keterangan</label><select data-f="ket"><option value="aktif"'+(p.ket==="aktif"?" selected":"")+'>Terisi</option><option value="kosong"'+(p.ket==="kosong"?" selected":"")+'>Kosong</option></select></div></div>'+per+'<div class="acts"><button class="g sm" data-x="child">+ Bawahan posisi ini</button><button class="d sm" data-x="pos">Hapus posisi</button></div></div></div>'}).join("");
   var sites={};S.data.posisi.forEach(function(p){p.orang.forEach(function(o){(o.site||[]).forEach(function(s){sites[s]=1})})});
   var dl=$("sl");if(!dl){dl=document.createElement("datalist");dl.id="sl";document.body.appendChild(dl)}dl.innerHTML=Object.keys(sites).map(function(s){return'<option value="'+esc(s)+'">'}).join("");
-  prev();window.scrollTo(0,scroll);
+  window.scrollTo(0,scroll);
 }
-function applyZoom(){var r=S.res;if(!r||!r.w)return;var box=$("prev"),w=box.clientWidth||320,z=S.zoom||Math.min(1,(w-2)/r.w);S.z=z;var sv=box.firstChild;if(sv&&sv.style){sv.setAttribute("width",Math.round(r.w*z));sv.setAttribute("height",Math.round(r.h*z))}}
-function prev(){var r=BG.render(S.data);S.res=r;$("prev").innerHTML=r.svg||'<div class="empty">Isi posisi puncak terlebih dahulu.</div>';applyZoom()}
-var tm;function later(){clearTimeout(tm);tm=setTimeout(prev,250)}
-$("zi").onclick=function(){S.zoom=Math.min(2.5,(S.z||1)*1.25);applyZoom()};$("zo").onclick=function(){S.zoom=Math.max(.25,(S.z||1)/1.25);applyZoom()};$("zf").onclick=function(){S.zoom=0;applyZoom()};
-$("fs").onclick=function(){document.body.classList.add("full");$("fxc").classList.remove("hide");S.zoom=0;applyZoom()};$("fxc").onclick=function(){document.body.classList.remove("full");$("fxc").classList.add("hide");S.zoom=0;applyZoom()};
-window.addEventListener("resize",function(){if(!S.zoom)applyZoom()});
-$("seg").addEventListener("click",function(e){var b=e.target.closest("[data-p]");if(!b)return;this.querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b)});var pv=b.dataset.p==="prev";$("pe").classList.toggle("off",pv);$("pp").classList.toggle("off",!pv);if(pv){prev();window.scrollTo({top:0})}});
+function fit(){var r=S.res,box=$("prev");if(!r||!r.w||!box)return;var sv=box.firstChild;if(!sv||!sv.setAttribute)return;var z=Math.min(1,((box.clientWidth||320)-2)/r.w);sv.setAttribute("width",Math.round(r.w*z));sv.setAttribute("height",Math.round(r.h*z));sv.style.maxWidth="none"}
+function showPub(j){var c=$("pubc");if(!j.published){c.classList.add("hide");return}c.classList.remove("hide");$("pubv").textContent="· versi "+j.published.no;var r=BG.render(j.published.data);S.res=r;$("prev").innerHTML=r.svg;fit()}
+$("pubc").addEventListener("toggle",fit);window.addEventListener("resize",fit);
+var HPRE=/^08\d{8,11}$/;
+function hpNorm(v){var d=String(v||"").replace(/[^\d+]/g,"");if(d.indexOf("+62")===0)d="0"+d.slice(3);else if(d.indexOf("62")===0)d="0"+d.slice(2);else if(d[0]==="8")d="0"+d;return d.replace(/\D/g,"")}
+function hpState(v){if(!String(v||"").trim())return{ok:true,empty:true};var n=hpNorm(v);return HPRE.test(n)?{ok:true,norm:n}:{ok:false,norm:n}}
+function hpMsg(el,st){var h=el.parentNode.querySelector(".hs");if(!h)return;if(st.empty){h.textContent="";h.className="hs"}else if(st.ok){h.textContent="✓ Nomor valid";h.className="hs ok"}else{h.textContent="Nomor tidak valid. Contoh: 0812 3456 7890";h.className="hs no"}el.classList.toggle("bad",!st.ok)}
 $("list").addEventListener("input",function(e){
   var t=e.target,pe=t.closest(".pos");if(!pe)return;var p=S.data.posisi[+pe.dataset.i];t.classList.remove("bad");
   if(t.dataset.f&&t.tagName==="INPUT"){p[t.dataset.f]=t.value;if(t.dataset.f==="jabatan"){var b=pe.querySelector(".ti b");b.textContent=t.value||"Posisi baru"}}
+  if(t.dataset.o==="hp"){hpMsg(t,hpState(t.value))}
   if(t.dataset.o){var o=p.orang[+t.closest(".per").dataset.k];o[t.dataset.o]=t.dataset.o==="site"?t.value.split(",").map(function(s){return s.trim()}).filter(Boolean):t.value;if(t.dataset.o==="nama")pe.querySelector(".ti small").textContent=summ(p)}
-  later();
 });
 $("list").addEventListener("change",function(e){
   var t=e.target,pe=t.closest(".pos");if(!pe)return;var p=S.data.posisi[+pe.dataset.i];
+  if(t.dataset.o==="hp"){var st=hpState(t.value);if(st.ok&&st.norm){t.value=st.norm;p.orang[+t.closest(".per").dataset.k].hp=st.norm}hpMsg(t,st);return}
   if(t.tagName==="SELECT"){p[t.dataset.f]=t.value;draw()}else if(t.dataset.f==="jabatan")draw();
 });
 $("list").addEventListener("click",function(e){
@@ -166,18 +165,17 @@ $("list").addEventListener("click",function(e){
   draw();
 });
 function focusLast(){var l=$("list").lastElementChild;if(l){l.scrollIntoView({behavior:"smooth",block:"start"});var f=l.querySelector("[data-f=jabatan]");f&&setTimeout(function(){f.focus({preventScroll:true})},350)}}
-$("addp").onclick=function(){var top=S.data.posisi.filter(function(p){return!p.atasan})[0];S.data.posisi.push(np(top?top.id:""));$("seg").querySelector('[data-p=edit]').click();draw();focusLast()};
+$("addp").onclick=function(){var top=S.data.posisi.filter(function(p){return!p.atasan})[0];S.data.posisi.push(np(top?top.id:""));draw();focusLast()};
 function check(){
   var bad=0,first=null;
   S.data.posisi.forEach(function(p,i){var pe=$("list").children[i];if(!pe)return;
     var j=pe.querySelector("[data-f=jabatan]");if(!p.jabatan.trim()){j.classList.add("bad");bad++;first=first||pe}
-    if(p.ket!=="kosong")p.orang.forEach(function(o,k){if(!o.nama.trim()){var n=pe.querySelectorAll("[data-o=nama]")[k];if(n){n.classList.add("bad");bad++;first=first||pe}}})});
+    if(p.ket!=="kosong")p.orang.forEach(function(o,k){var hs=hpState(o.hp);if(!hs.ok){var hi=pe.querySelectorAll("[data-o=hp]")[k];if(hi){hi.classList.add("bad");hpMsg(hi,hs);bad++;first=first||pe}}else if(hs.norm)o.hp=hs.norm;if(!o.nama.trim()){var n=pe.querySelectorAll("[data-o=nama]")[k];if(n){n.classList.add("bad");bad++;first=first||pe}}})});
   if(first){first.classList.remove("shut");S.shut[S.data.posisi[+first.dataset.i].id]=false;first.scrollIntoView({behavior:"smooth",block:"center"})}
   return bad;
 }
 $("send").onclick=function(){
-  $("seg").querySelector('[data-p=edit]').click();
-  if(check())return msg("m2","Lengkapi kolom yang bertanda merah: jabatan dan nama orang wajib diisi.","err");
+  if(check())return msg("m2","Lengkapi kolom yang bertanda merah: jabatan, nama orang, dan nomor HP yang valid.","err");
   if(!confirm("Kirim revisi struktur ini ke Vendor Management?"))return;
   $("send").disabled=true;msg("m2","");
   api("bg.submit",{row:S.row,pin:S.pin,data:S.data,note:$("note").value}).then(function(j){start(j);msg("m2","Terkirim. Vendor Management akan memverifikasi revisi Anda.","okm");window.scrollTo({top:0,behavior:"smooth"})}).catch(function(e){msg("m2",e.message,"err")}).finally(function(){$("send").disabled=false});
