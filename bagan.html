@@ -98,10 +98,10 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
       <div class="zm"><button class="g sm" id="zo" aria-label="Perkecil" type="button">−</button><span id="zl">100%</span><button class="g sm" id="zi" aria-label="Perbesar" type="button">+</button></div></div>
       <div class="vp" id="vp"><div id="cw"></div></div></div>
   </div>
-  <div class="card hide" id="notec"><label for="note">Catatan untuk Vendor Management</label><textarea id="note" maxlength="500" placeholder="mis. Perubahan setelah rotasi tim"></textarea><div id="m2"></div></div>
+  <div class="card hide" id="notec"><label for="note">Catatan untuk Vendor Management</label><textarea id="note" maxlength="480" placeholder="mis. Perubahan setelah rotasi tim"></textarea><label class="ck" style="margin-top:14px;align-items:flex-start"><input type="checkbox" id="ack" style="margin-top:2px"><span>Saya menyatakan data pada bagan ini benar dan dapat dipertanggungjawabkan.</span></label><div id="m2"></div></div>
 </section>
 </main>
-<div class="bar hide" id="bar"><div class="in"><button id="send">Kirim revisi</button></div></div>
+<div class="bar hide" id="bar"><div class="in"><button id="send">Simpan bagan</button></div></div>
 <script src="bagan_core.js"></script>
 <script>
 (function(){
@@ -137,14 +137,14 @@ $("go").onclick=function(){
 function start(j){
   $("s-login").classList.add("hide");$("s-edit").classList.remove("hide");$("bar").classList.remove("hide");$("ttl").textContent=S.name;
   var st="";
-  if(j.pending)st+='<span class="tag t-pend">⏳ Revisi menunggu verifikasi</span>';
+  if(j.pending)st+='<span class="tag t-pend">⏳ Menunggu verifikasi</span>';
   if(j.published)st+='<span class="tag t-pub">✓ Bagan berlaku: versi '+j.published.no+"</span>";
   if(j.rejected)st+='<div class="msg err"><b>Revisi terakhir ditolak.</b> '+esc(j.rejected.reason||"")+"</div>";
   if(!j.pending&&!j.published&&!j.rejected)st='<span class="tag t-new">Belum ada bagan</span>';
   $("stt").innerHTML=st;
   var d=(j.pending||j.rejected||j.published||{}).data||j.seed||{posisi:[]};
   if(j.info)S.info=j.info;if(j.mail!==undefined)S.mail=j.mail;
-  S.data=JSON.parse(JSON.stringify(d));S.nid=1;S.chk=false;S.ready=false;$("notec").classList.add("hide");$("send").textContent="Kirim revisi";$("note").value="";
+  S.data=JSON.parse(JSON.stringify(d));S.nid=1;S.chk=false;S.ready=false;$("notec").classList.add("hide");$("send").textContent="Simpan bagan";$("note").value="";$("ack").checked=false;
   S.data.posisi.forEach(function(p){var n=parseInt(String(p.id).replace(/\D/g,""),10);if(n>=S.nid)S.nid=n+1});
   if(!S.data.posisi.length)S.data.posisi.push(np(""));
   normalize();prefill();emState(false);S.sel=(S.data.posisi.filter(function(p){return!p.atasan})[0]||S.data.posisi[0]).id;
@@ -254,10 +254,11 @@ $("send").onclick=function(){
   paint();
   if(first){S.sel=first.id;paint();var e=bad(first),f=e.indexOf("nama")>=0?"nama":e.indexOf("jabatan")>=0?"jabatan":(e.indexOf("email")>=0&&e.indexOf("hp")<0&&e.indexOf("kontak")<0)?"email":"hp";
     msg("m2",cnt+" kotak belum lengkap (bertanda merah). Isi nama, jabatan, dan minimal No HP/WhatsApp atau email yang valid.","err");focusNode(first.id,f);return}
-  if(!S.ready){S.ready=true;$("notec").classList.remove("hide");$("send").textContent="Kirim sekarang";$("notec").scrollIntoView({behavior:"smooth",block:"center"});return}
+  if(!S.ready){S.ready=true;$("notec").classList.remove("hide");$("send").textContent="Simpan bagan";$("notec").scrollIntoView({behavior:"smooth",block:"center"});return}
+  if(!$("ack").checked)return msg("m2","Centang pernyataan bahwa data benar dan dapat dipertanggungjawabkan.","err");
   $("send").disabled=true;msg("m2","");
   var data={posisi:S.data.posisi.map(function(p){return{id:p.id,jabatan:p.jabatan.trim(),level:p.level||"",atasan:p.atasan||"",ket:p.ket,orang:p.ket==="kosong"?[]:[{nama:per(p).nama.trim(),hp:per(p).hp.trim(),email:per(p).email.trim(),site:per(p).site||[]}]}})};
-  api("bg.submit",{row:S.row,pin:S.pin,data:data,note:$("note").value}).then(function(j){start(j);msg("m2","Terkirim. Vendor Management akan memverifikasi revisi Anda.","okm");window.scrollTo({top:0,behavior:"smooth"})}).catch(function(e){msg("m2",e.message,"err")}).finally(function(){$("send").disabled=false});
+  api("bg.submit",{row:S.row,pin:S.pin,data:data,note:"[Pernyataan: data benar dan dapat dipertanggungjawabkan] "+$("note").value}).then(function(j){start(j);$("stt").insertAdjacentHTML("beforeend",'<div class="msg okm">Bagan tersimpan dan langsung berlaku.</div>');window.scrollTo({top:0,behavior:"smooth"})}).catch(function(e){msg("m2",e.message,"err")}).finally(function(){$("send").disabled=false});
 };
 })();
 </script></body></html>
