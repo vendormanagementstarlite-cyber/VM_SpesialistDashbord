@@ -97,7 +97,7 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
       <div class="zm"><button class="g sm" id="zo" aria-label="Perkecil" type="button">−</button><span id="zl">100%</span><button class="g sm" id="zi" aria-label="Perbesar" type="button">+</button></div></div>
       <div class="vp" id="vp"><div id="cw"></div></div></div>
   </div>
-  <div class="card"><label for="note">Catatan untuk Vendor Management (opsional)</label><textarea id="note" maxlength="500" placeholder="mis. Perubahan setelah rotasi tim"></textarea><div id="m2"></div></div>
+  <div class="card hide" id="notec"><label for="note">Catatan untuk Vendor Management (opsional)</label><textarea id="note" maxlength="500" placeholder="mis. Perubahan setelah rotasi tim"></textarea><div id="m2"></div></div>
   <div class="card"><label for="em2">Email pemulihan PIN</label><div class="acts"><input id="em2" type="email" inputmode="email" placeholder="nama@perusahaan.com" style="flex:1;min-width:200px"><button class="t" id="em2s" type="button">Simpan email</button></div><div id="m3"></div></div>
 </section>
 </main>
@@ -143,7 +143,7 @@ function start(j){
   if(!j.pending&&!j.published&&!j.rejected)st='<span class="tag t-new">Belum ada bagan</span>';
   $("stt").innerHTML=st;
   var d=(j.pending||j.rejected||j.published||{}).data||j.seed||{posisi:[]};
-  S.data=JSON.parse(JSON.stringify(d));S.nid=1;S.chk=false;
+  S.data=JSON.parse(JSON.stringify(d));S.nid=1;S.chk=false;S.ready=false;$("notec").classList.add("hide");$("send").textContent="Kirim revisi";$("note").value="";
   S.data.posisi.forEach(function(p){var n=parseInt(String(p.id).replace(/\D/g,""),10);if(n>=S.nid)S.nid=n+1});
   if(!S.data.posisi.length)S.data.posisi.push(np(""));
   normalize();S.sel=(S.data.posisi.filter(function(p){return!p.atasan})[0]||S.data.posisi[0]).id;
@@ -247,7 +247,7 @@ $("send").onclick=function(){
   paint();
   if(first){S.sel=first.id;paint();var e=bad(first),f=e.indexOf("nama")>=0?"nama":e.indexOf("jabatan")>=0?"jabatan":(e.indexOf("email")>=0&&e.indexOf("hp")<0&&e.indexOf("kontak")<0)?"email":"hp";
     msg("m2",cnt+" kotak belum lengkap (bertanda merah). Isi nama, jabatan, dan minimal No HP/WhatsApp atau email yang valid.","err");focusNode(first.id,f);return}
-  if(!confirm("Kirim revisi struktur ini ke Vendor Management?"))return;
+  if(!S.ready){S.ready=true;$("notec").classList.remove("hide");$("send").textContent="Kirim sekarang";$("notec").scrollIntoView({behavior:"smooth",block:"center"});return}
   $("send").disabled=true;msg("m2","");
   var data={posisi:S.data.posisi.map(function(p){return{id:p.id,jabatan:p.jabatan.trim(),level:p.level||"",atasan:p.atasan||"",ket:p.ket,orang:p.ket==="kosong"?[]:[{nama:per(p).nama.trim(),hp:per(p).hp.trim(),email:per(p).email.trim(),site:per(p).site||[]}]}})};
   api("bg.submit",{row:S.row,pin:S.pin,data:data,note:$("note").value}).then(function(j){start(j);msg("m2","Terkirim. Vendor Management akan memverifikasi revisi Anda.","okm");window.scrollTo({top:0,behavior:"smooth"})}).catch(function(e){msg("m2",e.message,"err")}).finally(function(){$("send").disabled=false});
