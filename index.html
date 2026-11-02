@@ -13986,5 +13986,85 @@ async function contactNudge() {
 })();
 
 </script>
+<script id="addon_v29_cf">
+/* v29 — Info Perseroan penuh di Cloudflare (D1 + Worker). Sheet "Info Perseroan" tidak dibaca/ditulis lagi oleh aplikasi. */
+(function () {
+  "use strict";
+  var URL_PS = "https://starlite-perseroan.hsans-din.workers.dev/";
+  var HEAD = ["Nama Singkat", "Nama Perusahaan", "Jenis", "Alamat", "Direksi", "No HP", "Email", "Info", "Status"];
+  var PSU = {}, uid = 0;
+  function tok() { try { return currentUser ? currentUser.token : ""; } catch (e) { return ""; } }
+  function ps(action, body) {
+    var ctl = new AbortController(), tm = setTimeout(function () { ctl.abort(); }, 30000);
+    return fetch(URL_PS, { method: "POST", signal: ctl.signal, headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(Object.assign({ action: action, token: tok() }, body || {})) })
+      .then(function (r) { return r.json().catch(function () { return { ok: false, error: "Balasan server tidak valid" }; }); })
+      .then(function (j) { if (!j || !j.ok) throw new Error((j && j.error) || "Gagal menghubungi database Info Perseroan"); return j; })
+      .catch(function (e) { throw e.name === "AbortError" ? new Error("Database Info Perseroan tidak merespons") : e; })
+      .finally(function () { clearTimeout(tm); });
+  }
+  function pad(v) { v = (v || []).map(function (x) { return x == null ? "" : String(x); }); while (v.length < 9) v.push(""); return v.slice(0, 9); }
+  function asRows(j) {
+    var rows = [[1, HEAD.slice()]], max = 1;
+    (j.rows || []).forEach(function (r) { rows.push([r.row, r.v]); if (r.row > max) max = r.row; });
+    return { rows: rows, count: max };
+  }
+  window.PS_CF = { call: ps, head: HEAD };
+
+  /* ---- baca data ---- */
+  var oFast = window.fetchSheetsFast, oRows = window.fetchSheetRows;
+  window.fetchSheetsFast = async function (list) {
+    var rest = list.filter(function (e) { return e.k !== "perseroan"; }), has = rest.length !== list.length;
+    var out = rest.length ? await oFast(rest) : {};
+    if (has) out.perseroan = asRows(await ps("ps.list"));
+    return out;
+  };
+  window.fetchSheetRows = async function (title) {
+    if (title === "Info Perseroan") return asRows(await ps("ps.list")).rows;
+    return oRows.apply(this, arguments);
+  };
+
+  /* nomor baris di D1 tetap (tidak bergeser seperti baris spreadsheet saat ada yang dihapus) */
+  var oRem = window.recRemoveRow, oShift = window.recShiftRows;
+  window.recRemoveRow = function (e, t) {
+    if (e !== "perseroan") return oRem.apply(this, arguments);
+    STATE[e] = STATE[e].filter(function (x) { return x.row !== t; }); recDataChanged();
+  };
+  window.recShiftRows = function (e) { if (e !== "perseroan") return oShift.apply(this, arguments); };
+
+  /* ---- ubah data (tambah / edit / hapus / urungkan) ---- */
+  var oCall = window.callApi;
+  function undoId(o) { var id = "ps" + Date.now() + "_" + (++uid); PSU[id] = o; return id; }
+  function logc(a, r) { try { logClient(a, r || ""); } catch (e) { } }
+  window.callApi = async function (action, payload, timeout) {
+    var p = payload || {};
+    if (action === "rows.undo" && PSU[p.id]) {
+      var u = PSU[p.id]; delete PSU[p.id]; var r;
+      if (u.type === "edit") { var c = {}; u.values.forEach(function (v, i) { c[i] = v; }); r = await ps("ps.update", { row: u.row, cols: c }); return { type: "edit", sheet: "perseroan", row: u.row, values: r.values }; }
+      if (u.type === "append") { await ps("ps.delete", { row: u.row }); return { type: "append", sheet: "perseroan", row: u.row }; }
+      r = await ps("ps.restore", { row: u.row, values: u.values }); return { type: "delete", sheet: "perseroan", row: u.row, values: r.values };
+    }
+    if (p.sheet !== "perseroan" || !/^rows\.(get|meta|update|append|delete)$/.test(action)) return oCall.apply(this, arguments);
+    var j;
+    if (action === "rows.meta") return { headers: HEAD.slice(), options: {} };
+    if (action === "rows.get") { j = await ps("ps.get", { row: p.row }); return { row: j.row, values: j.values, headers: HEAD.slice() }; }
+    if (action === "rows.update") {
+      var before = pad(p.expect);
+      j = await ps("ps.update", { row: p.row, cols: p.changes, ifMatch: before });
+      logc("Ubah Info Perseroan", j.values[1] + " (baris " + j.row + ")");
+      return { row: j.row, values: j.values, undo: undoId({ type: "edit", row: j.row, values: before }) };
+    }
+    if (action === "rows.append") {
+      var v = pad([]); Object.keys(p.values || {}).forEach(function (k) { v[Number(k)] = p.values[k]; });
+      j = await ps("ps.add", { values: v });
+      logc("Tambah Info Perseroan", j.values[1] + " (baris " + j.row + ")");
+      return { row: j.row, values: j.values, undo: undoId({ type: "append", row: j.row }) };
+    }
+    var vals = pad(p.expect); j = await ps("ps.delete", { row: p.row });
+    logc("Hapus Info Perseroan", vals[1] + " (baris " + j.row + ")");
+    return { row: j.row, undo: undoId({ type: "delete", row: j.row, values: vals }) };
+  };
+})();
+
+</script>
 </body>
 </html>
