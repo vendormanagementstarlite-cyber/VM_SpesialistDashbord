@@ -90,15 +90,15 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
     <button id="fps" type="button">Simpan PIN baru</button></div></div><div id="m4"></div></div>
 </section>
 <section id="s-edit" class="hide">
-  <div class="card"><h2 id="ttl">Struktur</h2><div id="stt" style="margin-top:8px"></div></div>
+  <div class="card"><div class="cvh" style="margin:0"><h2 id="ttl">Struktur</h2><button class="g sm" id="gear" type="button" aria-label="Pengaturan email pemulihan" title="Pengaturan email pemulihan" style="width:40px;padding:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div><div id="stt" style="margin-top:8px"></div></div>
+  <div class="card hide" id="emc"><label for="em2" id="eml">Email pemulihan PIN</label><div class="acts"><input id="em2" type="email" inputmode="email" placeholder="nama@perusahaan.com" style="flex:1;min-width:200px"><button class="t" id="em2s" type="button">Simpan email</button></div><div id="m3"></div></div>
   <details class="card hide" id="pubc"><summary>Bagan berlaku saat ini <span id="pubv"></span></summary><div class="prev" id="prev" style="margin-top:12px"></div></details>
   <div class="ed">
     <div class="card cv"><div class="cvh"><h2>Bagan struktur</h2>
       <div class="zm"><button class="g sm" id="zo" aria-label="Perkecil" type="button">−</button><span id="zl">100%</span><button class="g sm" id="zi" aria-label="Perbesar" type="button">+</button></div></div>
       <div class="vp" id="vp"><div id="cw"></div></div></div>
   </div>
-  <div class="card hide" id="notec"><label for="note">Catatan untuk Vendor Management (opsional)</label><textarea id="note" maxlength="500" placeholder="mis. Perubahan setelah rotasi tim"></textarea><div id="m2"></div></div>
-  <div class="card"><label for="em2">Email pemulihan PIN</label><div class="acts"><input id="em2" type="email" inputmode="email" placeholder="nama@perusahaan.com" style="flex:1;min-width:200px"><button class="t" id="em2s" type="button">Simpan email</button></div><div id="m3"></div></div>
+  <div class="card hide" id="notec"><label for="note">Catatan untuk Vendor Management</label><textarea id="note" maxlength="500" placeholder="mis. Perubahan setelah rotasi tim"></textarea><div id="m2"></div></div>
 </section>
 </main>
 <div class="bar hide" id="bar"><div class="in"><button id="send">Kirim revisi</button></div></div>
@@ -126,7 +126,7 @@ $("fps").onclick=function(){var x=find();if(!x)return;var c=$("fcode").value.tri
   var b=this;b.disabled=true;msg("m4","");
   api(S.mode==="v"?"bg.v.set":"bg.fp.set",{row:x.row,code:c,pin:p}).then(function(){return api("bg.open",{row:x.row,pin:p,create:false})}).then(function(j){S.row=x.row;S.pin=p;S.name=x.name;start(j)}).catch(function(e){msg("m4",e.message,"err")}).finally(function(){b.disabled=false})};
 $("em2s").onclick=function(){var v=$("em2").value.trim();if(!MAILRE.test(v))return msg("m3","Format email tidak valid.","err");var b=this;b.disabled=true;
-  api("bg.setemail",{row:S.row,pin:S.pin,email:v}).then(function(j){msg("m3","Email pemulihan tersimpan ("+j.mask+").","okm");$("em2").value=""}).catch(function(e){msg("m3",e.message,"err")}).finally(function(){b.disabled=false})};
+  api("bg.setemail",{row:S.row,pin:S.pin,email:v}).then(function(j){S.mail=j.mask;$("em2").value="";msg("m3","Email pemulihan tersimpan ("+j.mask+").","okm");setTimeout(function(){emState(false);msg("m3","")},1600)}).catch(function(e){msg("m3",e.message,"err")}).finally(function(){b.disabled=false})};
 $("go").onclick=function(){
   var x=find();if(!x)return msg("m1","Pilih nama mitra dari daftar yang muncul.","err");
   var pin=$("pin").value;if(!/^\d{6}$/.test(pin))return msg("m1","PIN harus 6 angka.","err");
@@ -143,12 +143,19 @@ function start(j){
   if(!j.pending&&!j.published&&!j.rejected)st='<span class="tag t-new">Belum ada bagan</span>';
   $("stt").innerHTML=st;
   var d=(j.pending||j.rejected||j.published||{}).data||j.seed||{posisi:[]};
+  if(j.info)S.info=j.info;if(j.mail!==undefined)S.mail=j.mail;
   S.data=JSON.parse(JSON.stringify(d));S.nid=1;S.chk=false;S.ready=false;$("notec").classList.add("hide");$("send").textContent="Kirim revisi";$("note").value="";
   S.data.posisi.forEach(function(p){var n=parseInt(String(p.id).replace(/\D/g,""),10);if(n>=S.nid)S.nid=n+1});
   if(!S.data.posisi.length)S.data.posisi.push(np(""));
-  normalize();S.sel=(S.data.posisi.filter(function(p){return!p.atasan})[0]||S.data.posisi[0]).id;
+  normalize();prefill();emState(false);S.sel=(S.data.posisi.filter(function(p){return!p.atasan})[0]||S.data.posisi[0]).id;
   S.z=0;fitZoom();paint();showPub(j);
 }
+function prefill(){var i=S.info,r=S.data.posisi.filter(function(p){return!p.atasan})[0];if(!i||!r||r.ket==="kosong")return;var o=per(r);
+  if(!r.jabatan)r.jabatan="Direktur";if(!o.nama&&i.direksi)o.nama=i.direksi;
+  if(!o.hp&&i.telepon){var n=hpNorm(i.telepon);o.hp=HPRE.test(n)?n:i.telepon}
+  if(!o.email&&i.email)o.email=i.email}
+function emState(open){var c=$("emc");c.classList.toggle("hide",!(open||!S.mail));$("eml").textContent=S.mail?"Email pemulihan PIN saat ini: "+S.mail+". Isi email baru untuk mengubah.":"Email pemulihan PIN (isi sekali, dipakai jika lupa PIN)"}
+$("gear").onclick=function(){emState($("emc").classList.contains("hide"))};
 function blank(){return{nama:"",hp:"",email:"",site:[]}}
 function np(at){return{id:"p"+(S.nid++),jabatan:"",level:"",atasan:at,ket:"aktif",orang:[blank()]}}
 function normalize(){
