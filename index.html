@@ -14066,5 +14066,215 @@ async function contactNudge() {
 })();
 
 </script>
+<script id="bagan_core">
+/* STARLITE · Bagan Struktur Mitra — penggambar bagan + unduh PNG/PDF (dipakai form mitra dan Info Perseroan) */
+(function (g) {
+  "use strict";
+  var W = 176, GX = 20, GY = 46, TXT = "#0f172a", MUT = "#64748b", ACC = "#0b5cad";
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function cut(s, n) { s = String(s || ""); return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+  function lines(p) {
+    var o = (p.orang || []).filter(function (x) { return x.nama; }), out = [];
+    if (p.ket === "kosong" || !o.length) return [{ t: "(posisi kosong)", m: 1 }];
+    o.slice(0, 3).forEach(function (x) { out.push({ t: x.nama }); });
+    if (o.length > 3) out.push({ t: "+" + (o.length - 3) + " orang", m: 1 });
+    var sites = {}; o.forEach(function (x) { (x.site || []).forEach(function (s) { sites[s] = 1; }); });
+    var ns = Object.keys(sites).length;
+    if (ns) out.push({ t: o.length + " orang · " + ns + " site", m: 1 });
+    return out;
+  }
+  function layout(data) {
+    var P = (data && data.posisi) || [], by = {}, kids = {}, root = null;
+    P.forEach(function (p) { by[p.id] = p; kids[p.id] = []; });
+    P.forEach(function (p) { if (p.atasan && by[p.atasan]) kids[p.atasan].push(p); else if (!root) root = p; });
+    if (!root) return null;
+    var maxL = 1; P.forEach(function (p) { maxL = Math.max(maxL, lines(p).length); });
+    var H = 34 + 14 * maxL, sw = {}, seen = {};
+    (function calc(n) { seen[n.id] = 1; var k = kids[n.id].filter(function (c) { return !seen[c.id]; }); kids[n.id] = k; var s = 0; k.forEach(function (c) { calc(c); s += sw[c.id]; }); s += GX * Math.max(0, k.length - 1); sw[n.id] = Math.max(W, s); })(root);
+    var nodes = [], edges = [], maxD = 0;
+    (function place(n, left, d) {
+      var cx = left + sw[n.id] / 2, y = 20 + d * (H + GY); maxD = Math.max(maxD, d);
+      nodes.push({ p: n, x: cx - W / 2, y: y, cx: cx });
+      var k = kids[n.id], x = left + (sw[n.id] - (k.reduce(function (a, c) { return a + sw[c.id]; }, 0) + GX * Math.max(0, k.length - 1))) / 2;
+      k.forEach(function (c) { edges.push([n.id, c.id]); place(c, x, d + 1); x += sw[c.id] + GX; });
+    })(root, 20, 0);
+    return { nodes: nodes, edges: edges, H: H, w: sw[root.id] + 40, h: 40 + (maxD + 1) * (H + GY) - GY };
+  }
+  function render(data, o) {
+    o = o || {}; var L = layout(data);
+    if (!L) return { svg: "", w: 0, h: 0, count: 0 };
+    var pos = {}; L.nodes.forEach(function (n) { pos[n.p.id] = n; });
+    var s = "";
+    L.edges.forEach(function (e) { var a = pos[e[0]], b = pos[e[1]], my = (a.y + L.H + b.y) / 2; s += '<path d="M' + a.cx + " " + (a.y + L.H) + "V" + my + "H" + b.cx + "V" + b.y + '" fill="none" stroke="#94a3b8" stroke-width="1.4"/>'; });
+    L.nodes.forEach(function (n) {
+      var p = n.p, em = p.ket === "kosong", ls = lines(p);
+      s += '<g data-id="' + esc(p.id) + '"><rect x="' + n.x + '" y="' + n.y + '" width="' + W + '" height="' + L.H + '" rx="8" fill="' + (em ? "#f8fafc" : "#fff") + '" stroke="' + (em ? "#94a3b8" : ACC) + '" stroke-width="1.4"' + (em ? ' stroke-dasharray="5 4"' : "") + "/>" +
+        '<rect x="' + n.x + '" y="' + n.y + '" width="5" height="' + L.H + '" rx="2.5" fill="' + (em ? "#cbd5e1" : ACC) + '"/>' +
+        '<text x="' + (n.x + 14) + '" y="' + (n.y + 18) + '" font-size="12" font-weight="700" fill="' + TXT + '">' + esc(cut(p.jabatan, 25)) + "</text>";
+      ls.forEach(function (l, i) { s += '<text x="' + (n.x + 14) + '" y="' + (n.y + 34 + i * 14) + '" font-size="11" fill="' + (l.m ? MUT : TXT) + '"' + (l.m ? ' font-style="italic"' : "") + ">" + esc(cut(l.t, 27)) + "</text>"; });
+      s += "</g>";
+    });
+    var top = o.title ? 38 : 0, w = Math.max(L.w, 360), h = L.h + top;
+    var head = o.title ? '<text x="20" y="22" font-size="15" font-weight="700" fill="' + TXT + '">' + esc(o.title) + '</text><text x="20" y="36" font-size="10.5" fill="' + MUT + '">' + esc(o.sub || "") + "</text>" : "";
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h + '" font-family="Segoe UI,Arial,sans-serif"><rect width="100%" height="100%" fill="#fff"/>' + head + '<g transform="translate(0 ' + top + ')">' + s + "</g></svg>";
+    return { svg: svg, w: w, h: h, count: L.nodes.length };
+  }
+  function toPNG(r, scale) {
+    return new Promise(function (ok, no) {
+      var im = new Image(), sc = scale || 2;
+      im.onload = function () { var c = document.createElement("canvas"); c.width = r.w * sc; c.height = r.h * sc; var x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height); c.toBlob(function (b) { b ? ok(b) : no(new Error("Gagal membuat PNG")); }, "image/png"); };
+      im.onerror = function () { no(new Error("Gagal membuat gambar bagan")); };
+      im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(r.svg);
+    });
+  }
+  function loadJsPdf() {
+    if (g.jspdf) return Promise.resolve();
+    return new Promise(function (ok, no) { var s = document.createElement("script"); s.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"; s.onload = ok; s.onerror = function () { no(new Error("Gagal memuat pustaka PDF")); }; document.head.appendChild(s); });
+  }
+  function pdf(data, meta) {
+    meta = meta || {};
+    return loadJsPdf().then(function () {
+      var r = render(data, { title: meta.nama + " — Struktur Organisasi", sub: "STARLITE · " + (meta.ver ? "Versi " + meta.ver + " · " : "") + (meta.tgl || "") });
+      return toPNG(r, 2).then(function (blob) { return new Promise(function (ok) { var fr = new FileReader(); fr.onload = function () { ok(fr.result); }; fr.readAsDataURL(blob); }); }).then(function (url) {
+        var fmt = r.count > 25 ? "a3" : "a4", d = new g.jspdf.jsPDF({ orientation: "landscape", unit: "pt", format: fmt }), pw = d.internal.pageSize.getWidth(), ph = d.internal.pageSize.getHeight(), m = 24;
+        var k = Math.min((pw - 2 * m) / r.w, (ph - 2 * m) / r.h); d.addImage(url, "PNG", m, m, r.w * k, r.h * k);
+        d.addPage("a4", "portrait"); var y = 50, lh = 13; d.setFontSize(13); d.setFont(undefined, "bold"); d.text("Daftar personel — " + (meta.nama || ""), 40, y); y += 22;
+        (data.posisi || []).forEach(function (p) {
+          var rows = (p.orang || []).filter(function (o) { return o.nama; });
+          if (y > 780) { d.addPage("a4", "portrait"); y = 50; }
+          d.setFont(undefined, "bold"); d.setFontSize(10.5); d.text(p.jabatan + (p.level ? " (" + p.level + ")" : ""), 40, y); y += lh;
+          d.setFont(undefined, "normal"); d.setFontSize(9.5);
+          if (!rows.length) { d.text("Posisi kosong", 52, y); y += lh; }
+          rows.forEach(function (o) { if (y > 800) { d.addPage("a4", "portrait"); y = 50; } d.text(cut(o.nama, 34) + "   " + (o.hp || "-") + (o.site && o.site.length ? "   Site: " + cut(o.site.join(", "), 60) : ""), 52, y); y += lh; });
+          y += 6;
+        });
+        return d.output("blob");
+      });
+    });
+  }
+  function save(blob, name) { var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+  function diff(a, b) {
+    var A = {}, B = {}, out = []; ((a && a.posisi) || []).forEach(function (p) { A[p.id] = p; }); ((b && b.posisi) || []).forEach(function (p) { B[p.id] = p; });
+    function who(p) { return (p.orang || []).map(function (o) { return o.nama + (o.site && o.site.length ? " [" + o.site.join(", ") + "]" : ""); }).join("; "); }
+    Object.keys(B).forEach(function (id) { var n = B[id], o = A[id]; if (!o) { out.push(["+", "Posisi baru: " + n.jabatan + (who(n) ? " — " + who(n) : "")]); return; }
+      if (o.jabatan !== n.jabatan) out.push(["~", "Jabatan: " + o.jabatan + " → " + n.jabatan]);
+      if (o.atasan !== n.atasan) out.push(["~", n.jabatan + ": atasan berubah"]);
+      if ((o.ket || "aktif") !== (n.ket || "aktif")) out.push(["~", n.jabatan + ": " + o.ket + " → " + n.ket]);
+      if (who(o) !== who(n)) out.push(["~", n.jabatan + ": " + (who(o) || "kosong") + " → " + (who(n) || "kosong")]); });
+    Object.keys(A).forEach(function (id) { if (!B[id]) out.push(["-", "Posisi dihapus: " + A[id].jabatan]); });
+    return out;
+  }
+  g.BG = { render: render, png: toPNG, pdf: pdf, save: save, diff: diff, esc: esc };
+})(window);
+
+</script>
+<script id="addon_v30_bagan">
+/* v30 — Bagan struktur mitra di Info Perseroan (tab "Bagan struktur", khusus Akun Utama). Data di Cloudflare D1. */
+(function () {
+  "use strict";
+  var FORM = "bagan.html", $ = function (i) { return document.getElementById(i); }, esc = function (s) { return window.BG ? BG.esc(s) : String(s); };
+  var ST = { rows: [], sum: {}, q: "", f: "all", busy: false };
+  function owner() { try { return currentUser && currentUser.role === "owner"; } catch (e) { return false; } }
+  function api(a, b) { return PS_CF.call(a, b); }
+  function fmt(t) { if (!t) return "-"; var d = new Date(t); return isNaN(d) ? "-" : d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }); }
+  function toast2(m, t) { try { toast(m, t || "info"); } catch (e) { alert(m); } }
+  function link() { return location.href.replace(/[#?].*$/, "").replace(/[^\/]*$/, "") + FORM; }
+
+  var css = document.createElement("style");
+  css.textContent = "#view-perseroan.bg-on>:not(#rg-switch):not(#bg-host){display:none!important}#view-perseroan:not(.bg-on)>#bg-host{display:none}" +
+    "#bg-host{margin-top:14px}#bg-host .bgc{background:#fff;border-radius:16px;box-shadow:0 0 0 1px #e2e8f0;padding:16px;margin-bottom:14px}.dark #bg-host .bgc{background:#0f172a;box-shadow:0 0 0 1px #1e293b}" +
+    "#bg-host h2{font-size:16px;font-weight:800;margin:0}#bg-host p.sub{margin:2px 0 0;font-size:12.5px;color:#64748b}" +
+    "#bg-host .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}#bg-host input,#bg-host select,#bg-host textarea{padding:8px 10px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;font-size:13px;background:transparent;color:inherit}" +
+    "#bg-host button.b{padding:8px 13px;border:0;border-radius:9px;font:inherit;font-size:12.5px;font-weight:700;background:#0b5cad;color:#fff;cursor:pointer}#bg-host button.b.g{background:transparent;color:inherit;box-shadow:inset 0 0 0 1px #cbd5e1}#bg-host button.b.r{background:#e11d48}#bg-host button.b:disabled{opacity:.5}" +
+    "#bg-host table{width:100%;border-collapse:collapse;font-size:13px}#bg-host th{text-align:left;font-size:11.5px;color:#64748b;padding:8px;border-bottom:1px solid #e2e8f0}#bg-host td{padding:8px;border-bottom:1px solid #f1f5f9}" +
+    "#bg-host .tg{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11.5px;font-weight:700}.tg.p{background:#fef3c7;color:#92400e}.tg.k{background:#dcfce7;color:#166534}.tg.n{background:#f1f5f9;color:#64748b}.tg.l{background:#ffe4e6;color:#9f1239}" +
+    "#bg-host .prev{overflow:auto;border:1px solid #e2e8f0;border-radius:12px;background:#fff;max-height:560px}#bg-host .df{margin:8px 0;padding:0;list-style:none;font-size:13px}#bg-host .df li{padding:4px 0}" +
+    "#bg-host .df .a{color:#15803d}#bg-host .df .d{color:#be123c}#bg-host .df .c{color:#92400e}.bgscroll{overflow:auto;max-height:620px}";
+  document.head.appendChild(css);
+
+  function ensureUi() {
+    var vp = $("view-perseroan"); if (!vp) return;
+    var sw = $("rg-switch");
+    if (!owner()) { var b0 = $("bg-switch-btn"); b0 && b0.remove(); var h0 = $("bg-host"); h0 && h0.remove(); vp.classList.remove("bg-on"); return; }
+    if (!sw) return;
+    if (!$("bg-switch-btn")) {
+      var b = document.createElement("button"); b.id = "bg-switch-btn"; b.setAttribute("role", "tab"); b.innerHTML = '<i class="fa-solid fa-sitemap"></i>Bagan struktur<b id="bg-badge" class="hidden"></b>';
+      b.onclick = function () { setOn(true); }; sw.appendChild(b);
+      sw.addEventListener("click", function (e) { var t = e.target.closest("[data-m]"); if (t) setOn(false); }, true);
+    }
+    if (!$("bg-host")) { var h = document.createElement("div"); h.id = "bg-host"; vp.appendChild(h); }
+  }
+  function setOn(on) {
+    var vp = $("view-perseroan"), sw = $("rg-switch"); if (!vp) return;
+    vp.classList.toggle("bg-on", on);
+    var b = $("bg-switch-btn"); b && b.classList.toggle("on", on);
+    if (on) { sw.querySelectorAll("[data-m]").forEach(function (x) { x.classList.remove("on"); }); load(); }
+  }
+  function load() {
+    if (ST.busy) return; ST.busy = true; var h = $("bg-host"); if (h && !ST.rows.length) h.innerHTML = '<div class="bgc">Memuat…</div>';
+    Promise.all([api("ps.list"), api("bg.sum")]).then(function (r) {
+      ST.rows = (r[0].rows || []).map(function (x) { return { row: x.row, name: x.v[0], full: x.v[1], status: x.v[8] }; });
+      ST.sum = r[1].items || {}; ST.busy = false; list(); badge();
+    }).catch(function (e) { ST.busy = false; var h2 = $("bg-host"); if (h2) h2.innerHTML = '<div class="bgc" style="color:#be123c">' + esc(e.message) + ' <button class="b" onclick="BGUI.load()">Coba lagi</button></div>'; });
+  }
+  function badge() { var n = 0; for (var k in ST.sum) if (ST.sum[k].pend) n++; var b = $("bg-badge"); if (b) { b.textContent = n; b.classList.toggle("hidden", !n); } }
+  function state(r) {
+    var s = ST.sum[r.row] || {};
+    if (s.pend) return { k: "p", t: "Menunggu verifikasi", o: 0 };
+    if (s.pub) return { k: "k", t: "Berlaku v" + s.pub, o: 2 };
+    if (s.pin) return { k: "n", t: "Belum dikirim", o: 1 };
+    return { k: "n", t: "Belum mengisi", o: 3 };
+  }
+  function list() {
+    var h = $("bg-host"); if (!h) return;
+    var q = ST.q.toLowerCase(), rows = ST.rows.filter(function (r) {
+      var s = state(r); if (q && (r.name + " " + r.full).toLowerCase().indexOf(q) < 0) return false;
+      return ST.f === "all" || (ST.f === "p" && s.k === "p") || (ST.f === "k" && s.k === "k") || (ST.f === "n" && s.k === "n");
+    }).sort(function (a, b) { return state(a).o - state(b).o || a.name.localeCompare(b.name); });
+    var tot = { p: 0, k: 0, n: 0 }; ST.rows.forEach(function (r) { tot[state(r).k]++; });
+    h.innerHTML = '<div class="bgc"><h2>Bagan struktur mitra</h2><p class="sub">Mitra mengisi sendiri lewat satu tautan, memilih nama dari daftar mitra, dan masuk dengan PIN. Revisi baru tampil di sini untuk Anda verifikasi.</p>' +
+      '<div class="bar"><input id="bg-link" readonly style="flex:1;min-width:240px" value="' + esc(link()) + '"><button class="b" id="bg-copy">Salin tautan</button></div>' +
+      '<div class="bar"><input id="bg-q" placeholder="Cari mitra…" value="' + esc(ST.q) + '" style="min-width:200px"><select id="bg-f"><option value="all">Semua (' + ST.rows.length + ')</option><option value="p">Menunggu verifikasi (' + tot.p + ')</option><option value="k">Sudah berlaku (' + tot.k + ')</option><option value="n">Belum mengisi (' + tot.n + ')</option></select><button class="b g" id="bg-re">Muat ulang</button></div></div>' +
+      '<div class="bgc"><div class="bgscroll"><table><thead><tr><th>Mitra</th><th>Status</th><th>Terakhir</th><th>PIN</th><th></th></tr></thead><tbody>' +
+      (rows.length ? rows.slice(0, 300).map(function (r) { var s = state(r), x = ST.sum[r.row] || {}; return '<tr><td><b>' + esc(r.name) + '</b><div style="font-size:11.5px;color:#64748b">' + esc(r.full) + '</div></td><td><span class="tg ' + s.k + '">' + s.t + '</span></td><td>' + fmt(x.last) + '</td><td>' + (x.lock ? '<span class="tg l">Terkunci</span>' : x.pin ? "Ada" : "-") + '</td><td style="text-align:right"><button class="b g" data-open="' + r.row + '">Buka</button></td></tr>'; }).join("") : '<tr><td colspan="5" style="padding:18px;color:#64748b">Tidak ada mitra yang cocok.</td></tr>') + "</tbody></table></div></div>";
+    $("bg-f").value = ST.f;
+    $("bg-copy").onclick = function () { var i = $("bg-link"); i.select(); (navigator.clipboard ? navigator.clipboard.writeText(i.value) : Promise.reject()).then(function () { toast2("Tautan disalin", "success"); }, function () { document.execCommand("copy"); toast2("Tautan disalin", "success"); }); };
+    $("bg-q").oninput = function () { ST.q = this.value; var p = this.selectionStart; list(); var n = $("bg-q"); n.focus(); n.setSelectionRange(p, p); };
+    $("bg-f").onchange = function () { ST.f = this.value; list(); };
+    $("bg-re").onclick = load;
+    h.querySelectorAll("[data-open]").forEach(function (b) { b.onclick = function () { detail(+b.dataset.open); }; });
+  }
+
+  function detail(row) {
+    var h = $("bg-host"), r = ST.rows.filter(function (x) { return x.row === row; })[0] || { name: "#" + row, full: "" };
+    h.innerHTML = '<div class="bgc">Memuat…</div>';
+    api("bg.ver", { row: row }).then(function (j) {
+      var pub = j.published, pend = j.pending, v = pend || pub;
+      var out = '<div class="bgc"><div class="bar" style="margin:0"><button class="b g" id="bg-back">← Daftar</button><h2 style="flex:1">' + esc(r.name) + '</h2>' +
+        (j.pin ? '<button class="b g" id="bg-lock">' + (j.lock ? "Buka kunci" : "Kunci akses") + '</button><button class="b g" id="bg-reset">Reset PIN</button>' : "") + '</div><p class="sub">' + esc(r.full) + (j.pin ? " · PIN sudah dibuat" : " · PIN belum dibuat") + "</p></div>";
+      if (pend) {
+        var df = BG.diff(pub && pub.data, pend.data);
+        out += '<div class="bgc"><h2>Revisi menunggu verifikasi</h2><p class="sub">Dikirim ' + fmt(pend.at) + (pend.note ? " · Catatan: " + esc(pend.note) : "") + '</p><ul class="df">' + (df.length ? df.map(function (d) { return '<li class="' + (d[0] === "+" ? "a" : d[0] === "-" ? "d" : "c") + '">' + (d[0] === "+" ? "＋ " : d[0] === "-" ? "－ " : "✎ ") + esc(d[1]) + "</li>"; }).join("") : "<li>Tidak ada perubahan isi.</li>") + '</ul>' +
+          '<div class="prev" id="bg-pv">' + BG.render(pend.data).svg + '</div><div class="bar"><button class="b" id="bg-ok">Setujui dan terbitkan</button><input id="bg-why" placeholder="Alasan jika ditolak" style="flex:1;min-width:200px"><button class="b r" id="bg-no">Tolak</button></div></div>';
+      }
+      if (pub) out += '<div class="bgc"><h2>Bagan berlaku · versi ' + pub.no + '</h2><p class="sub">Terbit ' + fmt(pub.decided_at) + '</p><div class="prev" id="bg-pb">' + BG.render(pub.data).svg + '</div><div class="bar"><button class="b" id="bg-pdf">Unduh PDF</button><button class="b g" id="bg-png">Unduh PNG</button></div></div>';
+      else if (!pend) out += '<div class="bgc"><p class="sub">Mitra ini belum mengirim bagan.</p></div>';
+      out += '<div class="bgc"><h2>Riwayat versi</h2><table><thead><tr><th>Versi</th><th>Status</th><th>Dikirim</th><th>Keputusan</th><th>Catatan / alasan</th></tr></thead><tbody>' + (j.hist.length ? j.hist.map(function (x) { var L = { published: "Berlaku", old: "Digantikan", pending: "Menunggu", rejected: "Ditolak" }[x.status] || x.status; return '<tr><td>' + (x.no ? "v" + x.no : "-") + '</td><td>' + L + '</td><td>' + fmt(x.at) + '</td><td>' + fmt(x.decided_at) + (x.decided_by ? " · " + esc(x.decided_by) : "") + '</td><td>' + esc(x.reason || x.note || "") + (x.status !== "pending" ? ' <button class="b g" data-v="' + x.id + '" style="padding:3px 8px">Lihat</button>' : "") + "</td></tr>"; }).join("") : '<tr><td colspan="5" style="color:#64748b;padding:14px">Belum ada riwayat.</td></tr>') + '</tbody></table><div id="bg-old"></div></div>';
+      h.innerHTML = out;
+      $("bg-back").onclick = function () { load(); };
+      var ok = $("bg-ok"); if (ok) { ok.onclick = function () { ok.disabled = true; api("bg.decide", { id: pend.id, ok: true }).then(function () { toast2("Bagan versi baru diterbitkan", "success"); load0(row); }).catch(function (e) { ok.disabled = false; toast2(e.message, "error"); }); }; $("bg-no").onclick = function () { var w = $("bg-why").value.trim(); if (!w) return toast2("Isi alasan penolakan", "error"); api("bg.decide", { id: pend.id, ok: false, reason: w }).then(function () { toast2("Revisi ditolak dan dikembalikan ke mitra", "success"); load0(row); }).catch(function (e) { toast2(e.message, "error"); }); }; }
+      var meta = pub && { nama: r.name, ver: pub.no, tgl: fmt(pub.decided_at) };
+      if (pub) { $("bg-pdf").onclick = function () { var b = this; b.disabled = true; BG.pdf(pub.data, meta).then(function (bl) { BG.save(bl, "Struktur " + r.name + " v" + pub.no + ".pdf"); }).catch(function (e) { toast2(e.message, "error"); }).finally(function () { b.disabled = false; }); }; $("bg-png").onclick = function () { BG.png(BG.render(pub.data, { title: r.name + " — Struktur Organisasi", sub: "STARLITE · Versi " + pub.no + " · " + fmt(pub.decided_at) }), 2).then(function (bl) { BG.save(bl, "Struktur " + r.name + " v" + pub.no + ".png"); }).catch(function (e) { toast2(e.message, "error"); }); }; }
+      var rs = $("bg-reset"); if (rs) { rs.onclick = function () { if (!confirm("Reset PIN " + r.name + "? Mitra harus membuat PIN baru.")) return; api("bg.resetpin", { row: row }).then(function () { toast2("PIN direset", "success"); load0(row); }).catch(function (e) { toast2(e.message, "error"); }); }; $("bg-lock").onclick = function () { api("bg.lock", { row: row, lock: !j.lock }).then(function () { load0(row); }).catch(function (e) { toast2(e.message, "error"); }); }; }
+      h.querySelectorAll("[data-v]").forEach(function (b) { b.onclick = function () { api("bg.getver", { id: +b.dataset.v }).then(function (g) { $("bg-old").innerHTML = '<h2 style="margin-top:14px">Versi ' + (g.ver.no ? "v" + g.ver.no : "(" + g.ver.status + ")") + '</h2><div class="prev">' + BG.render(g.ver.data).svg + "</div>"; }).catch(function (e) { toast2(e.message, "error"); }); }; });
+    }).catch(function (e) { h.innerHTML = '<div class="bgc" style="color:#be123c">' + esc(e.message) + ' <button class="b g" id="bg-back">← Daftar</button></div>'; var bb = $("bg-back"); bb && (bb.onclick = load); });
+  }
+  function load0(row) { api("bg.sum").then(function (r) { ST.sum = r.items || {}; badge(); }).catch(function () { }); detail(row); }
+  window.BGUI = { load: load };
+  setInterval(ensureUi, 1500);
+  setInterval(function () { if (owner() && document.visibilityState === "visible") api("bg.sum").then(function (r) { ST.sum = r.items || {}; badge(); }).catch(function () { }); }, 120000);
+})();
+
+</script>
 </body>
 </html>

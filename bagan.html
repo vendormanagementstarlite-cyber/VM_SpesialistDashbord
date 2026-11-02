@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Struktur Organisasi Mitra · STARLITE</title><meta name="robots" content="noindex">
+<style>
+:root{--ink:#0f172a;--mut:#64748b;--line:#e2e8f0;--bg:#f1f5f9;--acc:#0b5cad;--bad:#e11d48;--ok:#15803d}
+*{box-sizing:border-box}body{margin:0;font:14px/1.45 "Segoe UI",system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:#fff;border-bottom:1px solid var(--line);padding:14px 20px;display:flex;align-items:center;gap:12px}
+header b{font-size:16px}header span{color:var(--mut);font-size:12.5px}
+main{max-width:1180px;margin:0 auto;padding:18px 16px 60px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+h2{margin:0 0 4px;font-size:16px}p.s{margin:0 0 14px;color:var(--mut);font-size:13px}
+label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin:0 0 4px}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid #93c5fd;border-color:var(--acc)}
+.row{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+button{font:inherit;font-weight:600;border:0;border-radius:9px;padding:9px 14px;cursor:pointer;background:var(--acc);color:#fff}
+button.g{background:#fff;color:var(--ink);border:1px solid #cbd5e1}button.d{background:#fff;color:var(--bad);border:1px solid #fecdd3}
+button:disabled{opacity:.55;cursor:default}
+.msg{padding:10px 12px;border-radius:10px;margin:10px 0;font-size:13px}.err{background:#fff1f2;color:#9f1239}.okm{background:#f0fdf4;color:#166534}.inf{background:#eff6ff;color:#1e40af}
+.pos{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;background:#fcfdff}
+.pos .top{display:grid;gap:10px;grid-template-columns:2fr 1.2fr 1.6fr 1fr auto;align-items:end}
+.ppl{margin-top:10px;display:grid;gap:8px}.p1{display:grid;gap:8px;grid-template-columns:1.4fr 1fr 1.2fr 1.6fr auto;align-items:end}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.prev{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff;max-height:520px}
+.hide{display:none}.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11.5px;font-weight:700}
+.t-pend{background:#fef3c7;color:#92400e}.t-pub{background:#dcfce7;color:#166534}.t-rej{background:#ffe4e6;color:#9f1239}
+@media(max-width:760px){.pos .top,.p1{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<header><b>STARLITE</b><span>Struktur organisasi mitra · PT IJE Vendor Management</span></header>
+<main>
+<section class="card" id="s-login">
+  <h2>Masuk</h2><p class="s">Pilih nama mitra Anda lalu masukkan PIN 6 angka. Belum punya PIN? Pilih nama mitra, isi PIN baru, lalu klik <b>Buat PIN</b>.</p>
+  <div class="row"><div><label for="nm">Nama mitra</label><input id="nm" list="dl" placeholder="Ketik untuk mencari…" autocomplete="off"><datalist id="dl"></datalist></div>
+  <div><label for="pin">PIN (6 angka)</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off"></div>
+  <div id="pin2w" class="hide"><label for="pin2">Ulangi PIN</label><input id="pin2" type="password" inputmode="numeric" maxlength="6" autocomplete="off"></div></div>
+  <div class="bar"><button id="go">Masuk</button></div><div id="m1"></div>
+</section>
+<section id="s-edit" class="hide">
+  <div class="card"><h2 id="ttl">Struktur</h2><div id="stt"></div><p class="s" style="margin-top:8px">Tambahkan posisi, isi orang di setiap posisi, lalu pilih atasan langsung. Kirim ke Vendor Management untuk diverifikasi; bagan lama tetap berlaku sampai revisi disetujui.</p></div>
+  <div class="card"><div id="list"></div><div class="bar"><button class="g" id="addp">+ Tambah posisi</button></div></div>
+  <div class="card"><h2>Pratinjau</h2><p class="s">Pratinjau berubah saat Anda mengetik.</p><div class="prev" id="prev"></div></div>
+  <div class="card"><label for="note">Catatan untuk Vendor Management (opsional)</label><textarea id="note" rows="2" maxlength="500"></textarea><div class="bar"><button id="send">Kirim revisi</button><button class="g" id="out">Keluar</button></div><div id="m2"></div></div>
+</section>
+</main>
+<script src="bagan_core.js"></script>
+<script>
+(function(){
+var API="https://starlite-perseroan.hsans-din.workers.dev/",$=function(i){return document.getElementById(i)},esc=BG.esc;
+var S={row:0,pin:"",names:[],data:{posisi:[]},nid:1};
+function api(a,b){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({action:a},b||{}))}).then(function(r){return r.json()}).then(function(j){if(!j||!j.ok)throw new Error(j&&j.error||"Gagal menghubungi server");return j})}
+function msg(id,t,c){$(id).innerHTML=t?'<div class="msg '+c+'">'+esc(t)+"</div>":""}
+function find(){var v=$("nm").value.trim().toLowerCase();return S.names.filter(function(x){return x.name.toLowerCase()===v})[0]}
+function onName(){var x=find();$("pin2w").classList.toggle("hide",!(x&&!x.pin));$("go").textContent=x&&!x.pin?"Buat PIN":"Masuk"}
+api("bg.names").then(function(j){S.names=j.items;$("dl").innerHTML=j.items.map(function(x){return'<option value="'+esc(x.name)+'">'}).join("")}).catch(function(e){msg("m1",e.message,"err")});
+$("nm").addEventListener("input",onName);
+$("go").onclick=function(){
+  var x=find();if(!x)return msg("m1","Pilih nama mitra dari daftar.","err");
+  var pin=$("pin").value;if(!/^\d{6}$/.test(pin))return msg("m1","PIN harus 6 angka.","err");
+  var create=!x.pin;if(create&&pin!==$("pin2").value)return msg("m1","Ulangi PIN tidak sama.","err");
+  $("go").disabled=true;msg("m1","");
+  api("bg.open",{row:x.row,pin:pin,create:create}).then(function(j){S.row=x.row;S.pin=pin;S.name=x.name;start(j)}).catch(function(e){msg("m1",e.message,"err")}).finally(function(){$("go").disabled=false});
+};
+function start(j){
+  $("s-login").classList.add("hide");$("s-edit").classList.remove("hide");$("ttl").textContent="Struktur "+S.name;
+  var st="";
+  if(j.pending)st+='<span class="tag t-pend">Revisi menunggu verifikasi</span> ';
+  if(j.published)st+='<span class="tag t-pub">Bagan berlaku: versi '+j.published.no+"</span>";
+  if(j.rejected)st+='<div class="msg err">Revisi terakhir ditolak: '+esc(j.rejected.reason||"")+"</div>";
+  if(!j.pending&&!j.published&&!j.rejected)st='<span class="tag t-pend">Belum ada bagan</span>';
+  $("stt").innerHTML=st;
+  var d=(j.pending||j.rejected||j.published||{}).data||j.seed||{posisi:[]};
+  S.data=JSON.parse(JSON.stringify(d));S.nid=1;S.data.posisi.forEach(function(p){var n=parseInt(String(p.id).replace(/\D/g,""),10);if(n>=S.nid)S.nid=n+1});
+  if(!S.data.posisi.length)S.data.posisi.push(np(""));
+  draw();
+}
+function np(at){return{id:"p"+(S.nid++),jabatan:"",level:"",atasan:at,ket:"aktif",orang:[{nama:"",hp:"",email:"",site:[]}]}}
+function opts(p){return'<option value="">— puncak (tanpa atasan) —</option>'+S.data.posisi.filter(function(x){return x.id!==p.id}).map(function(x){return'<option value="'+esc(x.id)+'"'+(x.id===p.atasan?" selected":"")+">"+esc(x.jabatan||"(tanpa nama)")+"</option>"}).join("")}
+function draw(){
+  $("list").innerHTML=S.data.posisi.map(function(p,i){
+    return'<div class="pos" data-i="'+i+'"><div class="top"><div><label>Jabatan</label><input data-f="jabatan" value="'+esc(p.jabatan)+'" maxlength="80" placeholder="mis. Manajer Operasional"></div><div><label>Level</label><input data-f="level" value="'+esc(p.level)+'" maxlength="40"></div><div><label>Atasan langsung</label><select data-f="atasan">'+opts(p)+'</select></div><div><label>Keterangan</label><select data-f="ket"><option value="aktif"'+(p.ket==="aktif"?" selected":"")+'>Terisi</option><option value="kosong"'+(p.ket==="kosong"?" selected":"")+'>Kosong</option></select></div><div><button class="d" data-x="pos">Hapus</button></div></div>'+
+    (p.ket==="kosong"?"":'<div class="ppl">'+p.orang.map(function(o,k){return'<div class="p1" data-k="'+k+'"><div><label>Nama</label><input data-o="nama" value="'+esc(o.nama)+'" maxlength="80"></div><div><label>No HP</label><input data-o="hp" value="'+esc(o.hp)+'" maxlength="30" inputmode="tel"></div><div><label>Email (opsional)</label><input data-o="email" value="'+esc(o.email)+'" maxlength="80"></div><div><label>Handle site (pisahkan koma)</label><input data-o="site" value="'+esc((o.site||[]).join(", "))+'" list="sl" placeholder="opsional"></div><div><button class="g" data-x="orang">×</button></div></div>'}).join("")+'<div><button class="g" data-x="addo">+ Tambah orang</button></div></div>')+"</div>"}).join("");
+  var sites={};S.data.posisi.forEach(function(p){p.orang.forEach(function(o){(o.site||[]).forEach(function(s){sites[s]=1})})});
+  var dl=$("sl");if(!dl){dl=document.createElement("datalist");dl.id="sl";document.body.appendChild(dl)}dl.innerHTML=Object.keys(sites).map(function(s){return'<option value="'+esc(s)+'">'}).join("");
+  prev();
+}
+function prev(){var r=BG.render(S.data);$("prev").innerHTML=r.svg||'<p class="s" style="padding:14px">Isi posisi puncak terlebih dahulu.</p>'}
+var tm;function later(){clearTimeout(tm);tm=setTimeout(prev,250)}
+$("list").addEventListener("input",function(e){
+  var t=e.target,pe=t.closest(".pos");if(!pe)return;var p=S.data.posisi[+pe.dataset.i];
+  if(t.dataset.f&&t.tagName==="INPUT")p[t.dataset.f]=t.value;
+  if(t.dataset.o){var o=p.orang[+t.closest(".p1").dataset.k];o[t.dataset.o]=t.dataset.o==="site"?t.value.split(",").map(function(s){return s.trim()}).filter(Boolean):t.value}
+  later();
+});
+$("list").addEventListener("change",function(e){
+  var t=e.target,pe=t.closest(".pos");if(!pe)return;var p=S.data.posisi[+pe.dataset.i];
+  if(t.tagName==="SELECT"){p[t.dataset.f]=t.value;draw()}else if(t.dataset.f==="jabatan")draw();
+});
+$("list").addEventListener("click",function(e){
+  var b=e.target.closest("[data-x]");if(!b)return;var pe=b.closest(".pos"),i=+pe.dataset.i,p=S.data.posisi[i],x=b.dataset.x;
+  if(x==="addo")p.orang.push({nama:"",hp:"",email:"",site:[]});
+  else if(x==="orang")p.orang.splice(+b.closest(".p1").dataset.k,1);
+  else if(x==="pos"){if(!confirm("Hapus posisi ini? Bawahannya akan naik ke atasan posisi ini."))return;S.data.posisi.forEach(function(q){if(q.atasan===p.id)q.atasan=p.atasan});S.data.posisi.splice(i,1)}
+  draw();
+});
+$("addp").onclick=function(){var top=S.data.posisi.filter(function(p){return!p.atasan})[0];S.data.posisi.push(np(top?top.id:""));draw();var l=$("list").lastElementChild;l&&l.scrollIntoView({behavior:"smooth",block:"center"})};
+$("out").onclick=function(){location.reload()};
+$("send").onclick=function(){
+  $("send").disabled=true;msg("m2","");
+  api("bg.submit",{row:S.row,pin:S.pin,data:S.data,note:$("note").value}).then(function(j){start(j);msg("m2","Terkirim. Vendor Management akan memverifikasi revisi Anda.","okm");window.scrollTo({top:0,behavior:"smooth"})}).catch(function(e){msg("m2",e.message,"err")}).finally(function(){$("send").disabled=false});
+};
+})();
+</script></body></html>
