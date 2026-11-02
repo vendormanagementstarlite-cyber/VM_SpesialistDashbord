@@ -20,12 +20,12 @@
     P.forEach(function (p) { if (p.atasan && by[p.atasan]) kids[p.atasan].push(p); else if (!root) root = p; });
     if (!root) return null;
     var maxL = 1; P.forEach(function (p) { maxL = Math.max(maxL, lines(p).length); });
-    var H = 34 + 14 * maxL, sw = {}, seen = {};
+    var H = 40 + 14 * maxL, sw = {}, seen = {};
     (function calc(n) { seen[n.id] = 1; var k = kids[n.id].filter(function (c) { return !seen[c.id]; }); kids[n.id] = k; var s = 0; k.forEach(function (c) { calc(c); s += sw[c.id]; }); s += GX * Math.max(0, k.length - 1); sw[n.id] = Math.max(W, s); })(root);
     var nodes = [], edges = [], maxD = 0;
     (function place(n, left, d) {
       var cx = left + sw[n.id] / 2, y = 20 + d * (H + GY); maxD = Math.max(maxD, d);
-      nodes.push({ p: n, x: cx - W / 2, y: y, cx: cx });
+      nodes.push({ p: n, x: cx - W / 2, y: y, cx: cx, d: d });
       var k = kids[n.id], x = left + (sw[n.id] - (k.reduce(function (a, c) { return a + sw[c.id]; }, 0) + GX * Math.max(0, k.length - 1))) / 2;
       k.forEach(function (c) { edges.push([n.id, c.id]); place(c, x, d + 1); x += sw[c.id] + GX; });
     })(root, 20, 0);
@@ -37,12 +37,13 @@
     var pos = {}; L.nodes.forEach(function (n) { pos[n.p.id] = n; });
     var s = "";
     L.edges.forEach(function (e) { var a = pos[e[0]], b = pos[e[1]], my = (a.y + L.H + b.y) / 2; s += '<path d="M' + a.cx + " " + (a.y + L.H) + "V" + my + "H" + b.cx + "V" + b.y + '" fill="none" stroke="#94a3b8" stroke-width="1.4"/>'; });
+    var BAND = ["#0b2447", "#0b5cad", "#2b7bd0", "#4f9be4"];
     L.nodes.forEach(function (n) {
-      var p = n.p, em = p.ket === "kosong", ls = lines(p);
-      s += '<g data-id="' + esc(p.id) + '"><rect x="' + n.x + '" y="' + n.y + '" width="' + W + '" height="' + L.H + '" rx="8" fill="' + (em ? "#f8fafc" : "#fff") + '" stroke="' + (em ? "#94a3b8" : ACC) + '" stroke-width="1.4"' + (em ? ' stroke-dasharray="5 4"' : "") + "/>" +
-        '<rect x="' + n.x + '" y="' + n.y + '" width="5" height="' + L.H + '" rx="2.5" fill="' + (em ? "#cbd5e1" : ACC) + '"/>' +
-        '<text x="' + (n.x + 14) + '" y="' + (n.y + 18) + '" font-size="12" font-weight="700" fill="' + TXT + '">' + esc(cut(p.jabatan, 25)) + "</text>";
-      ls.forEach(function (l, i) { s += '<text x="' + (n.x + 14) + '" y="' + (n.y + 34 + i * 14) + '" font-size="11" fill="' + (l.m ? MUT : TXT) + '"' + (l.m ? ' font-style="italic"' : "") + ">" + esc(cut(l.t, 27)) + "</text>"; });
+      var p = n.p, em = p.ket === "kosong", ls = lines(p), bc = em ? "#cbd5e1" : BAND[Math.min(n.d, 3)], tc = em ? "#475569" : "#fff";
+      s += '<g data-id="' + esc(p.id) + '"><rect x="' + n.x + '" y="' + n.y + '" width="' + W + '" height="' + L.H + '" rx="9" fill="' + (em ? "#f8fafc" : "#fff") + '" stroke="' + (em ? "#94a3b8" : bc) + '" stroke-width="1.3"' + (em ? ' stroke-dasharray="5 4"' : "") + "/>" +
+        '<path d="M' + n.x + " " + (n.y + 28) + "V" + (n.y + 9) + "a9 9 0 0 1 9 -9H" + (n.x + W - 9) + "a9 9 0 0 1 9 9V" + (n.y + 28) + 'Z" fill="' + bc + '"/>' +
+        '<text x="' + (n.x + 12) + '" y="' + (n.y + 18.5) + '" font-size="12" font-weight="700" fill="' + tc + '">' + esc(cut(p.jabatan, 24)) + "</text>";
+      ls.forEach(function (l, i) { s += '<text x="' + (n.x + 12) + '" y="' + (n.y + 46 + i * 14) + '" font-size="11" fill="' + (l.m ? MUT : TXT) + '"' + (l.m ? ' font-style="italic"' : "") + ">" + esc(cut(l.t, 27)) + "</text>"; });
       s += "</g>";
     });
     var top = o.title ? 38 : 0, w = Math.max(L.w, 360), h = L.h + top;

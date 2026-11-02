@@ -14089,12 +14089,12 @@ async function contactNudge() {
     P.forEach(function (p) { if (p.atasan && by[p.atasan]) kids[p.atasan].push(p); else if (!root) root = p; });
     if (!root) return null;
     var maxL = 1; P.forEach(function (p) { maxL = Math.max(maxL, lines(p).length); });
-    var H = 34 + 14 * maxL, sw = {}, seen = {};
+    var H = 40 + 14 * maxL, sw = {}, seen = {};
     (function calc(n) { seen[n.id] = 1; var k = kids[n.id].filter(function (c) { return !seen[c.id]; }); kids[n.id] = k; var s = 0; k.forEach(function (c) { calc(c); s += sw[c.id]; }); s += GX * Math.max(0, k.length - 1); sw[n.id] = Math.max(W, s); })(root);
     var nodes = [], edges = [], maxD = 0;
     (function place(n, left, d) {
       var cx = left + sw[n.id] / 2, y = 20 + d * (H + GY); maxD = Math.max(maxD, d);
-      nodes.push({ p: n, x: cx - W / 2, y: y, cx: cx });
+      nodes.push({ p: n, x: cx - W / 2, y: y, cx: cx, d: d });
       var k = kids[n.id], x = left + (sw[n.id] - (k.reduce(function (a, c) { return a + sw[c.id]; }, 0) + GX * Math.max(0, k.length - 1))) / 2;
       k.forEach(function (c) { edges.push([n.id, c.id]); place(c, x, d + 1); x += sw[c.id] + GX; });
     })(root, 20, 0);
@@ -14106,12 +14106,13 @@ async function contactNudge() {
     var pos = {}; L.nodes.forEach(function (n) { pos[n.p.id] = n; });
     var s = "";
     L.edges.forEach(function (e) { var a = pos[e[0]], b = pos[e[1]], my = (a.y + L.H + b.y) / 2; s += '<path d="M' + a.cx + " " + (a.y + L.H) + "V" + my + "H" + b.cx + "V" + b.y + '" fill="none" stroke="#94a3b8" stroke-width="1.4"/>'; });
+    var BAND = ["#0b2447", "#0b5cad", "#2b7bd0", "#4f9be4"];
     L.nodes.forEach(function (n) {
-      var p = n.p, em = p.ket === "kosong", ls = lines(p);
-      s += '<g data-id="' + esc(p.id) + '"><rect x="' + n.x + '" y="' + n.y + '" width="' + W + '" height="' + L.H + '" rx="8" fill="' + (em ? "#f8fafc" : "#fff") + '" stroke="' + (em ? "#94a3b8" : ACC) + '" stroke-width="1.4"' + (em ? ' stroke-dasharray="5 4"' : "") + "/>" +
-        '<rect x="' + n.x + '" y="' + n.y + '" width="5" height="' + L.H + '" rx="2.5" fill="' + (em ? "#cbd5e1" : ACC) + '"/>' +
-        '<text x="' + (n.x + 14) + '" y="' + (n.y + 18) + '" font-size="12" font-weight="700" fill="' + TXT + '">' + esc(cut(p.jabatan, 25)) + "</text>";
-      ls.forEach(function (l, i) { s += '<text x="' + (n.x + 14) + '" y="' + (n.y + 34 + i * 14) + '" font-size="11" fill="' + (l.m ? MUT : TXT) + '"' + (l.m ? ' font-style="italic"' : "") + ">" + esc(cut(l.t, 27)) + "</text>"; });
+      var p = n.p, em = p.ket === "kosong", ls = lines(p), bc = em ? "#cbd5e1" : BAND[Math.min(n.d, 3)], tc = em ? "#475569" : "#fff";
+      s += '<g data-id="' + esc(p.id) + '"><rect x="' + n.x + '" y="' + n.y + '" width="' + W + '" height="' + L.H + '" rx="9" fill="' + (em ? "#f8fafc" : "#fff") + '" stroke="' + (em ? "#94a3b8" : bc) + '" stroke-width="1.3"' + (em ? ' stroke-dasharray="5 4"' : "") + "/>" +
+        '<path d="M' + n.x + " " + (n.y + 28) + "V" + (n.y + 9) + "a9 9 0 0 1 9 -9H" + (n.x + W - 9) + "a9 9 0 0 1 9 9V" + (n.y + 28) + 'Z" fill="' + bc + '"/>' +
+        '<text x="' + (n.x + 12) + '" y="' + (n.y + 18.5) + '" font-size="12" font-weight="700" fill="' + tc + '">' + esc(cut(p.jabatan, 24)) + "</text>";
+      ls.forEach(function (l, i) { s += '<text x="' + (n.x + 12) + '" y="' + (n.y + 46 + i * 14) + '" font-size="11" fill="' + (l.m ? MUT : TXT) + '"' + (l.m ? ' font-style="italic"' : "") + ">" + esc(cut(l.t, 27)) + "</text>"; });
       s += "</g>";
     });
     var top = o.title ? 38 : 0, w = Math.max(L.w, 360), h = L.h + top;
@@ -14168,111 +14169,104 @@ async function contactNudge() {
 })(window);
 
 </script>
-<script id="addon_v30_bagan">
-/* v30 — Bagan struktur mitra di Info Perseroan (tab "Bagan struktur", khusus Akun Utama). Data di Cloudflare D1. */
+<script id="addon_v31_bagan">
+/* v31 — Bagan struktur terintegrasi di Daftar Mitra: ikon bagan per baris + rincian PIN di profil mitra. Data di Cloudflare D1. */
 (function () {
   "use strict";
-  var FORM = "bagan.html", $ = function (i) { return document.getElementById(i); }, esc = function (s) { return window.BG ? BG.esc(s) : String(s); };
-  var ST = { rows: [], sum: {}, q: "", f: "all", busy: false };
+  var FORM = "bagan.html", $ = function (i) { return document.getElementById(i); };
+  var esc = function (s) { return BG.esc(s); }, SUM = {}, loaded = false;
   function owner() { try { return currentUser && currentUser.role === "owner"; } catch (e) { return false; } }
   function api(a, b) { return PS_CF.call(a, b); }
   function fmt(t) { if (!t) return "-"; var d = new Date(t); return isNaN(d) ? "-" : d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }); }
-  function toast2(m, t) { try { toast(m, t || "info"); } catch (e) { alert(m); } }
+  function fmtT(t) { if (!t) return "-"; var d = new Date(t); return isNaN(d) ? "-" : d.toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }); }
+  function tt(m, t) { try { toast(m, t || "info"); } catch (e) { alert(m); } }
   function link() { return location.href.replace(/[#?].*$/, "").replace(/[^\/]*$/, "") + FORM; }
+  function st(row) { var s = SUM[row] || {}; return s.pend ? "p" : s.pub ? "k" : "n"; }
 
   var css = document.createElement("style");
-  css.textContent = "#view-perseroan.bg-on>:not(#rg-switch):not(#bg-host){display:none!important}#view-perseroan:not(.bg-on)>#bg-host{display:none}" +
-    "#bg-host{margin-top:14px}#bg-host .bgc{background:#fff;border-radius:16px;box-shadow:0 0 0 1px #e2e8f0;padding:16px;margin-bottom:14px}.dark #bg-host .bgc{background:#0f172a;box-shadow:0 0 0 1px #1e293b}" +
-    "#bg-host h2{font-size:16px;font-weight:800;margin:0}#bg-host p.sub{margin:2px 0 0;font-size:12.5px;color:#64748b}" +
-    "#bg-host .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}#bg-host input,#bg-host select,#bg-host textarea{padding:8px 10px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;font-size:13px;background:transparent;color:inherit}" +
-    "#bg-host button.b{padding:8px 13px;border:0;border-radius:9px;font:inherit;font-size:12.5px;font-weight:700;background:#0b5cad;color:#fff;cursor:pointer}#bg-host button.b.g{background:transparent;color:inherit;box-shadow:inset 0 0 0 1px #cbd5e1}#bg-host button.b.r{background:#e11d48}#bg-host button.b:disabled{opacity:.5}" +
-    "#bg-host table{width:100%;border-collapse:collapse;font-size:13px}#bg-host th{text-align:left;font-size:11.5px;color:#64748b;padding:8px;border-bottom:1px solid #e2e8f0}#bg-host td{padding:8px;border-bottom:1px solid #f1f5f9}" +
-    "#bg-host .tg{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11.5px;font-weight:700}.tg.p{background:#fef3c7;color:#92400e}.tg.k{background:#dcfce7;color:#166534}.tg.n{background:#f1f5f9;color:#64748b}.tg.l{background:#ffe4e6;color:#9f1239}" +
-    "#bg-host .prev{overflow:auto;border:1px solid #e2e8f0;border-radius:12px;background:#fff;max-height:560px}#bg-host .df{margin:8px 0;padding:0;list-style:none;font-size:13px}#bg-host .df li{padding:4px 0}" +
-    "#bg-host .df .a{color:#15803d}#bg-host .df .d{color:#be123c}#bg-host .df .c{color:#92400e}.bgscroll{overflow:auto;max-height:620px}";
+  css.textContent = ".bgi{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;border:0;cursor:pointer;background:rgba(100,116,139,.12);color:#64748b;transition:transform .1s}.bgi:hover{transform:scale(1.08)}" +
+    ".bgi.k{background:rgba(22,163,74,.14);color:#15803d}.bgi.p{background:rgba(245,158,11,.2);color:#b45309}.bgi.p::after{content:'';position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:#e11d48;box-shadow:0 0 0 2px #fff}" +
+    "#bgm{position:fixed;inset:0;z-index:9500;background:rgba(15,23,42,.55);display:flex;align-items:flex-start;justify-content:center;padding:3vh 10px;overflow:auto}#bgm.hidden{display:none}" +
+    "#bgm .bgw{width:100%;max-width:980px;background:#f8fafc;border-radius:18px;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);overflow:hidden}.dark #bgm .bgw{background:#0b1220;color:#e2e8f0}" +
+    "#bgm .bgh{display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(135deg,#0b2447,#0b5cad);color:#fff}#bgm .bgh b{flex:1;min-width:0;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#bgm .bgh small{display:block;font-weight:400;opacity:.8;font-size:11.5px}" +
+    "#bgm .bgb{padding:14px;display:grid;gap:12px}#bgm .c{background:#fff;border-radius:14px;box-shadow:0 0 0 1px #e2e8f0;padding:14px}.dark #bgm .c{background:#0f172a;box-shadow:0 0 0 1px #1e293b}#bgm h3{margin:0 0 8px;font-size:13.5px;font-weight:800}" +
+    "#bgm .bt{padding:8px 13px;border:0;border-radius:10px;font:inherit;font-size:12.5px;font-weight:700;background:#0b5cad;color:#fff;cursor:pointer}#bgm .bt.g{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px #cbd5e1}#bgm .bt.r{background:#e11d48}#bgm .bt.w{background:rgba(255,255,255,.16);color:#fff}#bgm .bt:disabled{opacity:.5}" +
+    "#bgm .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}#bgm input{padding:8px 10px;border:1.5px solid #cbd5e1;border-radius:10px;font:inherit;font-size:13px;background:transparent;color:inherit;min-width:0}" +
+    "#bgm .prev{overflow:auto;border:1px solid #e2e8f0;border-radius:12px;background:#fff;max-height:58vh}#bgm .df{margin:6px 0 10px;padding:0;list-style:none;font-size:13px}#bgm .df li{padding:3px 0}.df .a{color:#15803d}.df .d{color:#be123c}.df .m{color:#92400e}" +
+    "#bgm .pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}#bgm .pg div{background:rgba(100,116,139,.08);border-radius:10px;padding:8px 10px}#bgm .pg small{display:block;color:#64748b;font-size:11px}#bgm .pg b{font-size:13px}" +
+    "#bgm .tg{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11.5px;font-weight:700}.tg.p{background:#fef3c7;color:#92400e}.tg.k{background:#dcfce7;color:#166534}.tg.n{background:#f1f5f9;color:#64748b}.tg.l{background:#ffe4e6;color:#9f1239}" +
+    "#bgm table{width:100%;border-collapse:collapse;font-size:12.5px}#bgm th{text-align:left;font-size:11px;color:#64748b;padding:6px;border-bottom:1px solid #e2e8f0}#bgm td{padding:6px;border-bottom:1px solid #f1f5f9}" +
+    "#bgbox{margin-top:12px}.bgbx{padding:14px;border-radius:16px;background:rgba(11,92,173,.08);border:1px solid rgba(11,92,173,.2)}.bgbx h4{margin:0 0 8px;font-size:11px;font-weight:800;text-transform:uppercase;color:#0b5cad}.bgbx .kv{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;padding:2px 0}.bgbx .kv span:first-child{color:#64748b}" +
+    "@media(max-width:640px){#bgm{padding:0}#bgm .bgw{border-radius:0;min-height:100vh}}";
   document.head.appendChild(css);
 
-  function ensureUi() {
-    var vp = $("view-perseroan"); if (!vp) return;
-    var sw = $("rg-switch");
-    if (!owner()) { var b0 = $("bg-switch-btn"); b0 && b0.remove(); var h0 = $("bg-host"); h0 && h0.remove(); vp.classList.remove("bg-on"); return; }
-    if (!sw) return;
-    if (!$("bg-switch-btn")) {
-      var b = document.createElement("button"); b.id = "bg-switch-btn"; b.setAttribute("role", "tab"); b.innerHTML = '<i class="fa-solid fa-sitemap"></i>Bagan struktur<b id="bg-badge" class="hidden"></b>';
-      b.onclick = function () { setOn(true); }; sw.appendChild(b);
-      sw.addEventListener("click", function (e) { var t = e.target.closest("[data-m]"); if (t) setOn(false); }, true);
-    }
-    if (!$("bg-host")) { var h = document.createElement("div"); h.id = "bg-host"; vp.appendChild(h); }
+  function loadSum() {
+    if (!PS_CF || !owner() && !canRead_()) return Promise.resolve();
+    return api("bg.sum").then(function (r) { SUM = r.items || {}; loaded = true; if (typeof renderPerseroanPage === "function" && !$("view-perseroan").classList.contains("hidden")) renderPerseroanPage(); }).catch(function () { });
   }
-  function setOn(on) {
-    var vp = $("view-perseroan"), sw = $("rg-switch"); if (!vp) return;
-    vp.classList.toggle("bg-on", on);
-    var b = $("bg-switch-btn"); b && b.classList.toggle("on", on);
-    if (on) { sw.querySelectorAll("[data-m]").forEach(function (x) { x.classList.remove("on"); }); load(); }
-  }
-  function load() {
-    if (ST.busy) return; ST.busy = true; var h = $("bg-host"); if (h && !ST.rows.length) h.innerHTML = '<div class="bgc">Memuat…</div>';
-    Promise.all([api("ps.list"), api("bg.sum")]).then(function (r) {
-      ST.rows = (r[0].rows || []).map(function (x) { return { row: x.row, name: x.v[0], full: x.v[1], status: x.v[8] }; });
-      ST.sum = r[1].items || {}; ST.busy = false; list(); badge();
-    }).catch(function (e) { ST.busy = false; var h2 = $("bg-host"); if (h2) h2.innerHTML = '<div class="bgc" style="color:#be123c">' + esc(e.message) + ' <button class="b" onclick="BGUI.load()">Coba lagi</button></div>'; });
-  }
-  function badge() { var n = 0; for (var k in ST.sum) if (ST.sum[k].pend) n++; var b = $("bg-badge"); if (b) { b.textContent = n; b.classList.toggle("hidden", !n); } }
-  function state(r) {
-    var s = ST.sum[r.row] || {};
-    if (s.pend) return { k: "p", t: "Menunggu verifikasi", o: 0 };
-    if (s.pub) return { k: "k", t: "Berlaku v" + s.pub, o: 2 };
-    if (s.pin) return { k: "n", t: "Belum dikirim", o: 1 };
-    return { k: "n", t: "Belum mengisi", o: 3 };
-  }
-  function list() {
-    var h = $("bg-host"); if (!h) return;
-    var q = ST.q.toLowerCase(), rows = ST.rows.filter(function (r) {
-      var s = state(r); if (q && (r.name + " " + r.full).toLowerCase().indexOf(q) < 0) return false;
-      return ST.f === "all" || (ST.f === "p" && s.k === "p") || (ST.f === "k" && s.k === "k") || (ST.f === "n" && s.k === "n");
-    }).sort(function (a, b) { return state(a).o - state(b).o || a.name.localeCompare(b.name); });
-    var tot = { p: 0, k: 0, n: 0 }; ST.rows.forEach(function (r) { tot[state(r).k]++; });
-    h.innerHTML = '<div class="bgc"><h2>Bagan struktur mitra</h2><p class="sub">Mitra mengisi sendiri lewat satu tautan, memilih nama dari daftar mitra, dan masuk dengan PIN. Revisi baru tampil di sini untuk Anda verifikasi.</p>' +
-      '<div class="bar"><input id="bg-link" readonly style="flex:1;min-width:240px" value="' + esc(link()) + '"><button class="b" id="bg-copy">Salin tautan</button></div>' +
-      '<div class="bar"><input id="bg-q" placeholder="Cari mitra…" value="' + esc(ST.q) + '" style="min-width:200px"><select id="bg-f"><option value="all">Semua (' + ST.rows.length + ')</option><option value="p">Menunggu verifikasi (' + tot.p + ')</option><option value="k">Sudah berlaku (' + tot.k + ')</option><option value="n">Belum mengisi (' + tot.n + ')</option></select><button class="b g" id="bg-re">Muat ulang</button></div></div>' +
-      '<div class="bgc"><div class="bgscroll"><table><thead><tr><th>Mitra</th><th>Status</th><th>Terakhir</th><th>PIN</th><th></th></tr></thead><tbody>' +
-      (rows.length ? rows.slice(0, 300).map(function (r) { var s = state(r), x = ST.sum[r.row] || {}; return '<tr><td><b>' + esc(r.name) + '</b><div style="font-size:11.5px;color:#64748b">' + esc(r.full) + '</div></td><td><span class="tg ' + s.k + '">' + s.t + '</span></td><td>' + fmt(x.last) + '</td><td>' + (x.lock ? '<span class="tg l">Terkunci</span>' : x.pin ? "Ada" : "-") + '</td><td style="text-align:right"><button class="b g" data-open="' + r.row + '">Buka</button></td></tr>'; }).join("") : '<tr><td colspan="5" style="padding:18px;color:#64748b">Tidak ada mitra yang cocok.</td></tr>') + "</tbody></table></div></div>";
-    $("bg-f").value = ST.f;
-    $("bg-copy").onclick = function () { var i = $("bg-link"); i.select(); (navigator.clipboard ? navigator.clipboard.writeText(i.value) : Promise.reject()).then(function () { toast2("Tautan disalin", "success"); }, function () { document.execCommand("copy"); toast2("Tautan disalin", "success"); }); };
-    $("bg-q").oninput = function () { ST.q = this.value; var p = this.selectionStart; list(); var n = $("bg-q"); n.focus(); n.setSelectionRange(p, p); };
-    $("bg-f").onchange = function () { ST.f = this.value; list(); };
-    $("bg-re").onclick = load;
-    h.querySelectorAll("[data-open]").forEach(function (b) { b.onclick = function () { detail(+b.dataset.open); }; });
-  }
+  function canRead_() { try { return currentUser && (currentUser.role === "owner" || !currentUser.perms || currentUser.perms.perseroan !== false); } catch (e) { return false; } }
+  setInterval(function () { try { if (currentUser && currentUser.token && document.visibilityState === "visible" && (!loaded || Date.now() - (loadSum.t || 0) > 120000)) { loadSum.t = Date.now(); loadSum(); } } catch (e) { } }, 4000);
 
-  function detail(row) {
-    var h = $("bg-host"), r = ST.rows.filter(function (x) { return x.row === row; })[0] || { name: "#" + row, full: "" };
-    h.innerHTML = '<div class="bgc">Memuat…</div>';
-    api("bg.ver", { row: row }).then(function (j) {
-      var pub = j.published, pend = j.pending, v = pend || pub;
-      var out = '<div class="bgc"><div class="bar" style="margin:0"><button class="b g" id="bg-back">← Daftar</button><h2 style="flex:1">' + esc(r.name) + '</h2>' +
-        (j.pin ? '<button class="b g" id="bg-lock">' + (j.lock ? "Buka kunci" : "Kunci akses") + '</button><button class="b g" id="bg-reset">Reset PIN</button>' : "") + '</div><p class="sub">' + esc(r.full) + (j.pin ? " · PIN sudah dibuat" : " · PIN belum dibuat") + "</p></div>";
-      if (pend) {
-        var df = BG.diff(pub && pub.data, pend.data);
-        out += '<div class="bgc"><h2>Revisi menunggu verifikasi</h2><p class="sub">Dikirim ' + fmt(pend.at) + (pend.note ? " · Catatan: " + esc(pend.note) : "") + '</p><ul class="df">' + (df.length ? df.map(function (d) { return '<li class="' + (d[0] === "+" ? "a" : d[0] === "-" ? "d" : "c") + '">' + (d[0] === "+" ? "＋ " : d[0] === "-" ? "－ " : "✎ ") + esc(d[1]) + "</li>"; }).join("") : "<li>Tidak ada perubahan isi.</li>") + '</ul>' +
-          '<div class="prev" id="bg-pv">' + BG.render(pend.data).svg + '</div><div class="bar"><button class="b" id="bg-ok">Setujui dan terbitkan</button><input id="bg-why" placeholder="Alasan jika ditolak" style="flex:1;min-width:200px"><button class="b r" id="bg-no">Tolak</button></div></div>';
-      }
-      if (pub) out += '<div class="bgc"><h2>Bagan berlaku · versi ' + pub.no + '</h2><p class="sub">Terbit ' + fmt(pub.decided_at) + '</p><div class="prev" id="bg-pb">' + BG.render(pub.data).svg + '</div><div class="bar"><button class="b" id="bg-pdf">Unduh PDF</button><button class="b g" id="bg-png">Unduh PNG</button></div></div>';
-      else if (!pend) out += '<div class="bgc"><p class="sub">Mitra ini belum mengirim bagan.</p></div>';
-      out += '<div class="bgc"><h2>Riwayat versi</h2><table><thead><tr><th>Versi</th><th>Status</th><th>Dikirim</th><th>Keputusan</th><th>Catatan / alasan</th></tr></thead><tbody>' + (j.hist.length ? j.hist.map(function (x) { var L = { published: "Berlaku", old: "Digantikan", pending: "Menunggu", rejected: "Ditolak" }[x.status] || x.status; return '<tr><td>' + (x.no ? "v" + x.no : "-") + '</td><td>' + L + '</td><td>' + fmt(x.at) + '</td><td>' + fmt(x.decided_at) + (x.decided_by ? " · " + esc(x.decided_by) : "") + '</td><td>' + esc(x.reason || x.note || "") + (x.status !== "pending" ? ' <button class="b g" data-v="' + x.id + '" style="padding:3px 8px">Lihat</button>' : "") + "</td></tr>"; }).join("") : '<tr><td colspan="5" style="color:#64748b;padding:14px">Belum ada riwayat.</td></tr>') + '</tbody></table><div id="bg-old"></div></div>';
-      h.innerHTML = out;
-      $("bg-back").onclick = function () { load(); };
-      var ok = $("bg-ok"); if (ok) { ok.onclick = function () { ok.disabled = true; api("bg.decide", { id: pend.id, ok: true }).then(function () { toast2("Bagan versi baru diterbitkan", "success"); load0(row); }).catch(function (e) { ok.disabled = false; toast2(e.message, "error"); }); }; $("bg-no").onclick = function () { var w = $("bg-why").value.trim(); if (!w) return toast2("Isi alasan penolakan", "error"); api("bg.decide", { id: pend.id, ok: false, reason: w }).then(function () { toast2("Revisi ditolak dan dikembalikan ke mitra", "success"); load0(row); }).catch(function (e) { toast2(e.message, "error"); }); }; }
-      var meta = pub && { nama: r.name, ver: pub.no, tgl: fmt(pub.decided_at) };
-      if (pub) { $("bg-pdf").onclick = function () { var b = this; b.disabled = true; BG.pdf(pub.data, meta).then(function (bl) { BG.save(bl, "Struktur " + r.name + " v" + pub.no + ".pdf"); }).catch(function (e) { toast2(e.message, "error"); }).finally(function () { b.disabled = false; }); }; $("bg-png").onclick = function () { BG.png(BG.render(pub.data, { title: r.name + " — Struktur Organisasi", sub: "STARLITE · Versi " + pub.no + " · " + fmt(pub.decided_at) }), 2).then(function (bl) { BG.save(bl, "Struktur " + r.name + " v" + pub.no + ".png"); }).catch(function (e) { toast2(e.message, "error"); }); }; }
-      var rs = $("bg-reset"); if (rs) { rs.onclick = function () { if (!confirm("Reset PIN " + r.name + "? Mitra harus membuat PIN baru.")) return; api("bg.resetpin", { row: row }).then(function () { toast2("PIN direset", "success"); load0(row); }).catch(function (e) { toast2(e.message, "error"); }); }; $("bg-lock").onclick = function () { api("bg.lock", { row: row, lock: !j.lock }).then(function () { load0(row); }).catch(function (e) { toast2(e.message, "error"); }); }; }
-      h.querySelectorAll("[data-v]").forEach(function (b) { b.onclick = function () { api("bg.getver", { id: +b.dataset.v }).then(function (g) { $("bg-old").innerHTML = '<h2 style="margin-top:14px">Versi ' + (g.ver.no ? "v" + g.ver.no : "(" + g.ver.status + ")") + '</h2><div class="prev">' + BG.render(g.ver.data).svg + "</div>"; }).catch(function (e) { toast2(e.message, "error"); }); }; });
-    }).catch(function (e) { h.innerHTML = '<div class="bgc" style="color:#be123c">' + esc(e.message) + ' <button class="b g" id="bg-back">← Daftar</button></div>'; var bb = $("bg-back"); bb && (bb.onclick = load); });
+  /* kolom ikon bagan di tabel Daftar Mitra (tampilan horizontal) */
+  try {
+    if (!PS_COLS.some(function (c) { return c.key === "bagan"; })) PS_COLS.splice(1, 0, {
+      key: "bagan", label: "Bagan", th: "text-center", sortVal: function (e) { return { p: 0, k: 2, n: 3 }[st(e.row)]; },
+      td: function (e) { var k = st(e.row); return '<td class="px-3 py-2 text-center"><button type="button" class="bgi ' + k + '" data-bg="' + e.row + '" data-nm="' + esc(e.short || e.nama) + '" title="' + (k === "p" ? "Ada revisi bagan menunggu verifikasi" : k === "k" ? "Lihat bagan struktur" : "Belum ada bagan struktur") + '"><i class="fa-solid fa-sitemap"></i></button></td>'; }
+    });
+  } catch (e) { }
+  document.addEventListener("click", function (e) { var b = e.target.closest("[data-bg]"); if (b) { e.preventDefault(); e.stopPropagation(); open(+b.dataset.bg, b.dataset.nm); } }, true);
+
+  /* rincian bagan + PIN di profil mitra */
+  var oDet = window.renderPerseroanDetail;
+  window.renderPerseroanDetail = function (r) {
+    oDet.apply(this, arguments);
+    var body = $("detail-modal-body"); if (!body) return;
+    var box = document.createElement("div"); box.id = "bgbox"; box.innerHTML = '<div class="bgbx"><h4><i class="fa-solid fa-sitemap"></i> Bagan struktur &amp; PIN mitra</h4><p style="font-size:12px;color:#64748b;margin:0">Memuat…</p></div>';
+    body.insertBefore(box, body.firstChild.nextSibling || null);
+    api("bg.ver", { row: r.row }).then(function (j) {
+      var s = j.pending ? '<span class="tg p">Revisi menunggu verifikasi</span>' : j.published ? '<span class="tg k">Berlaku v' + j.published.no + "</span>" : '<span class="tg n">Belum ada bagan</span>';
+      box.firstChild.innerHTML = '<h4><i class="fa-solid fa-sitemap"></i> Bagan struktur &amp; PIN mitra</h4>' +
+        '<div class="kv"><span>Bagan</span><span>' + s + '</span></div>' +
+        '<div class="kv"><span>PIN</span><span>' + (j.pin ? (j.lock ? '<span class="tg l">Terkunci</span>' : "Sudah dibuat") : "Belum dibuat") + "</span></div>" +
+        (j.pin ? '<div class="kv"><span>PIN dibuat</span><span>' + fmtT(j.pat) + '</span></div><div class="kv"><span>Percobaan salah</span><span>' + (j.fails || 0) + " / 5</span></div>" : "") +
+        '<div class="row" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="px-3 py-2 rounded-xl text-[11px] font-bold bg-cyan-600 text-white" data-bg="' + r.row + '" data-nm="' + esc(r.short || r.nama) + '"><i class="fa-solid fa-sitemap mr-1"></i>Buka bagan &amp; kelola PIN</button></div>';
+    }).catch(function (e) { box.firstChild.innerHTML = '<h4>Bagan struktur &amp; PIN mitra</h4><p style="font-size:12px;color:#be123c;margin:0">' + esc(e.message) + "</p>"; });
+  };
+
+  /* overlay bagan */
+  function shell() { var m = $("bgm"); if (!m) { m = document.createElement("div"); m.id = "bgm"; m.className = "hidden"; m.addEventListener("click", function (e) { if (e.target === m) close(); }); document.body.appendChild(m); document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); }); } return m; }
+  function close() { var m = $("bgm"); if (m) { m.classList.add("hidden"); m.innerHTML = ""; } document.body.style.overflow = ""; }
+  function open(row, name) {
+    var m = shell(); m.classList.remove("hidden"); document.body.style.overflow = "hidden";
+    m.innerHTML = '<div class="bgw"><div class="bgh"><b>' + esc(name) + '<small>Bagan struktur &amp; PIN</small></b><button class="bt w" id="bgx">Tutup</button></div><div class="bgb"><div class="c">Memuat…</div></div></div>';
+    $("bgx").onclick = close;
+    api("bg.ver", { row: row }).then(function (j) { draw(row, name, j); }).catch(function (e) { m.querySelector(".bgb").innerHTML = '<div class="c" style="color:#be123c">' + esc(e.message) + "</div>"; });
   }
-  function load0(row) { api("bg.sum").then(function (r) { ST.sum = r.items || {}; badge(); }).catch(function () { }); detail(row); }
-  window.BGUI = { load: load };
-  setInterval(ensureUi, 1500);
-  setInterval(function () { if (owner() && document.visibilityState === "visible") api("bg.sum").then(function (r) { ST.sum = r.items || {}; badge(); }).catch(function () { }); }, 120000);
+  function refresh(row, name) { api("bg.sum").then(function (r) { SUM = r.items || {}; try { renderPerseroanPage(); } catch (e) { } }).catch(function () { }); open(row, name); }
+  function draw(row, name, j) {
+    var m = shell(), pub = j.published, pend = j.pending, own = owner(), h = "";
+    h += '<div class="c"><h3>Rincian PIN</h3><div class="pg"><div><small>Status PIN</small><b>' + (j.pin ? "Sudah dibuat" : "Belum dibuat") + '</b></div><div><small>PIN dibuat</small><b>' + (j.pin ? fmtT(j.pat) : "-") + '</b></div><div><small>Percobaan salah</small><b>' + (j.pin ? (j.fails || 0) + " / 5" : "-") + '</b></div><div><small>Akses</small><b>' + (j.lock ? "Terkunci s/d " + fmtT(j.until) : j.pin ? "Aktif" : "-") + "</b></div></div>" +
+      (own ? '<div class="row" style="margin-top:10px"><button class="bt" id="bg-set">' + (j.pin ? "Atur PIN baru" : "Buat PIN untuk mitra") + "</button>" + (j.pin ? '<button class="bt g" id="bg-reset">Reset PIN</button><button class="bt g" id="bg-lock">' + (j.lock ? "Buka kunci" : "Kunci akses") + "</button>" : "") + "</div>" : "") +
+      '<div class="row" style="margin-top:10px"><input readonly id="bg-lnk" value="' + esc(link()) + '" style="flex:1;min-width:200px"><button class="bt g" id="bg-cp">Salin tautan form</button></div><p style="margin:6px 0 0;font-size:11.5px;color:#64748b">PIN disimpan sebagai hash, jadi tidak bisa dilihat. Jika mitra lupa, atur PIN baru atau reset.</p></div>';
+    if (pend) {
+      var df = BG.diff(pub && pub.data, pend.data);
+      h += '<div class="c"><h3>Revisi menunggu verifikasi</h3><p style="margin:0;font-size:12px;color:#64748b">Dikirim ' + fmtT(pend.at) + (pend.note ? " · Catatan: " + esc(pend.note) : "") + '</p><ul class="df">' + (df.length ? df.map(function (d) { return '<li class="' + (d[0] === "+" ? "a" : d[0] === "-" ? "d" : "m") + '">' + (d[0] === "+" ? "＋ " : d[0] === "-" ? "－ " : "✎ ") + esc(d[1]) + "</li>"; }).join("") : "<li>Tidak ada perubahan isi.</li>") + '</ul><div class="prev">' + BG.render(pend.data).svg + "</div>" +
+        (own ? '<div class="row" style="margin-top:10px"><button class="bt" id="bg-ok">Setujui dan terbitkan</button><input id="bg-why" placeholder="Alasan jika ditolak" style="flex:1;min-width:160px"><button class="bt r" id="bg-no">Tolak</button></div>' : "") + "</div>";
+    }
+    if (pub) h += '<div class="c"><h3>Bagan berlaku · versi ' + pub.no + '</h3><p style="margin:0 0 8px;font-size:12px;color:#64748b">Terbit ' + fmt(pub.decided_at) + '</p><div class="prev">' + BG.render(pub.data).svg + '</div><div class="row" style="margin-top:10px"><button class="bt" id="bg-pdf">Unduh PDF</button><button class="bt g" id="bg-png">Unduh PNG</button></div></div>';
+    else if (!pend) h += '<div class="c" style="color:#64748b">Mitra ini belum mengirim bagan struktur. Salin tautan form di atas dan kirim ke mitra.</div>';
+    h += '<div class="c"><h3>Riwayat versi</h3><table><thead><tr><th>Versi</th><th>Status</th><th>Dikirim</th><th>Keputusan</th><th>Catatan</th></tr></thead><tbody>' + (j.hist.length ? j.hist.map(function (x) { var L = { published: "Berlaku", old: "Digantikan", pending: "Menunggu", rejected: "Ditolak" }[x.status] || x.status; return "<tr><td>" + (x.no ? "v" + x.no : "-") + "</td><td>" + L + "</td><td>" + fmt(x.at) + "</td><td>" + fmt(x.decided_at) + (x.decided_by ? " · " + esc(x.decided_by) : "") + "</td><td>" + esc(x.reason || x.note || "") + (x.status !== "pending" ? ' <button class="bt g" data-v="' + x.id + '" style="padding:2px 8px">Lihat</button>' : "") + "</td></tr>"; }).join("") : '<tr><td colspan="5" style="color:#64748b;padding:10px">Belum ada riwayat.</td></tr>') + '</tbody></table><div id="bg-old"></div></div>';
+    m.innerHTML = '<div class="bgw"><div class="bgh"><b>' + esc(name) + '<small>Bagan struktur &amp; PIN</small></b><button class="bt w" id="bgx">Tutup</button></div><div class="bgb">' + h + "</div></div>";
+    $("bgx").onclick = close;
+    var cp = $("bg-cp"); cp.onclick = function () { var i = $("bg-lnk"); i.select(); (navigator.clipboard ? navigator.clipboard.writeText(i.value) : Promise.reject()).then(function () { tt("Tautan disalin", "success"); }, function () { document.execCommand("copy"); tt("Tautan disalin", "success"); }); };
+    function done(msg) { tt(msg, "success"); refresh(row, name); }
+    function fail(e) { tt(e.message, "error"); }
+    var ok = $("bg-ok"); if (ok) { ok.onclick = function () { ok.disabled = true; api("bg.decide", { id: pend.id, ok: true }).then(function () { done("Bagan versi baru diterbitkan"); }).catch(function (e) { ok.disabled = false; fail(e); }); }; $("bg-no").onclick = function () { var w = $("bg-why").value.trim(); if (!w) return tt("Isi alasan penolakan", "error"); api("bg.decide", { id: pend.id, ok: false, reason: w }).then(function () { done("Revisi ditolak dan dikembalikan ke mitra"); }).catch(fail); }; }
+    if (pub) { var meta = { nama: name, ver: pub.no, tgl: fmt(pub.decided_at) }; $("bg-pdf").onclick = function () { var b = this; b.disabled = true; BG.pdf(pub.data, meta).then(function (bl) { BG.save(bl, "Struktur " + name + " v" + pub.no + ".pdf"); }).catch(fail).finally(function () { b.disabled = false; }); }; $("bg-png").onclick = function () { BG.png(BG.render(pub.data, { title: name + " — Struktur Organisasi", sub: "STARLITE · Versi " + pub.no + " · " + fmt(pub.decided_at) }), 2).then(function (bl) { BG.save(bl, "Struktur " + name + " v" + pub.no + ".png"); }).catch(fail); }; }
+    var se = $("bg-set"); if (se) se.onclick = function () { var p = prompt("PIN baru untuk " + name + " (6 angka):"); if (p == null) return; if (!/^\d{6}$/.test(p)) return tt("PIN harus 6 angka", "error"); api("bg.setpin", { row: row, pin: p }).then(function () { done("PIN diatur. Sampaikan PIN ke mitra."); }).catch(fail); };
+    var rs = $("bg-reset"); if (rs) { rs.onclick = function () { if (!confirm("Reset PIN " + name + "? Mitra harus membuat PIN baru.")) return; api("bg.resetpin", { row: row }).then(function () { done("PIN direset"); }).catch(fail); }; $("bg-lock").onclick = function () { api("bg.lock", { row: row, lock: !j.lock }).then(function () { done(j.lock ? "Kunci dibuka" : "Akses dikunci"); }).catch(fail); }; }
+    m.querySelectorAll("[data-v]").forEach(function (b) { b.onclick = function () { api("bg.getver", { id: +b.dataset.v }).then(function (g) { $("bg-old").innerHTML = '<h3 style="margin-top:12px">Versi ' + (g.ver.no ? "v" + g.ver.no : "(" + g.ver.status + ")") + '</h3><div class="prev">' + BG.render(g.ver.data).svg + "</div>"; }).catch(fail); }; });
+  }
 })();
 
 </script>
