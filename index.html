@@ -14363,9 +14363,9 @@ async function contactNudge() {
   }
   async function tkLoad() {
     if (cache && Date.now() - cacheAt < 4000) return cache;
-    var p = [["ranges", "'" + TK + "'!A1:AE"], ["ranges", "'" + ML + "'!A1:C"], ["valueRenderOption", "FORMATTED_VALUE"], ["majorDimension", "ROWS"]];
+    var p = [["ranges", "'" + TK + "'!A1:AE"], ["valueRenderOption", "FORMATTED_VALUE"], ["majorDimension", "ROWS"]];
     var r = await apiGet("/values:batchGet", p, SS), vr = r.valueRanges || [];
-    var tv = (vr[0] || {}).values || [], mv = (vr[1] || {}).values || [];
+    var tv = (vr[0] || {}).values || [], mv = [];   // Master Data Letter hanya untuk penomoran, tidak ditampilkan
     var rows = [[1, HEAD.slice()]], haveBap = new Set(), n = 0;
     tv.forEach(function (v, i) {
       if (i === 0 || !v || !v.length) return;
