@@ -13786,12 +13786,14 @@ async function contactNudge() {
     }
     // pernyataan + blok tanda tangan 4 kolom
     var decl = wrap("Calon mitra menyatakan seluruh data dan dokumen dalam formulir ini benar, milik perusahaan sendiri, dan dapat dipertanggungjawabkan sepenuhnya. Apabila di kemudian hari ditemukan data yang tidak benar, calon mitra bersedia menerima segala konsekuensi, termasuk pembatalan registrasi dan kerja sama.", H, 8.8, CW - 22);
-    need(decl.length * 12 + 22 + 28 + 72 + 34);
+    need(decl.length * 12 + 22 + 28 + 72 + 34 + 134);
     decl.forEach(function (t, i) { page.drawText(t, { x: M + 11, y: y - 9 - i * 12, size: 8.8, font: H, color: ink }); }); y -= decl.length * 12 + 22;
-    var cw = CW / 4, top = y, boxH = 72, roles = [["Dinyatakan oleh", "Calon Mitra"], ["Diverifikasi oleh", "Vendor Management", "Hendra Yudhanto"], ["Disetujui oleh", "Chief Executive Officer", "Nina Winata"], ["Disetujui oleh", "Director", "Andrew"]], fieldsOut = [];
+    var cw = CW / 3, boxH = 72, rowH = 28 + boxH + 30, fieldsOut = [], rowTop = [], sigTop = 0,
+      roles = [["Dinyatakan oleh", "Calon Mitra", null, 0, 0], ["Diverifikasi oleh", "Vendor Management", "Hendra Yudhanto", 0, 1], ["Disetujui oleh", "VP of Planning & Deployment", "Syevan Noer", 1, 0], ["Disetujui oleh", "Chief Executive Officer", "Nina Winata", 1, 1], ["Disetujui oleh", "Director", "Andrew", 1, 2]];
+    need(rowH * 2 + 6); sigTop = y;
     roles.forEach(function (r, i) {
-      var x = M + i * cw;
-      page.drawText(r[0], { x: x + 6, y: top - 9, size: 7.8, font: H, color: mute }); page.drawText(r[1], { x: x + 6, y: top - 21, size: 9, font: B, color: ink });
+      var x = M + r[4] * cw, top = sigTop - r[3] * rowH;
+      page.drawText(r[0], { x: x + 6, y: top - 9, size: 7.8, font: H, color: mute }); page.drawText(ascii(r[1]), { x: x + 6, y: top - 21, size: 9, font: B, color: ink });
       var by = top - 28 - boxH;
       page.drawRectangle({ x: x + 4, y: by, width: cw - 8, height: boxH, borderColor: line, borderWidth: 0.9 });
       if (i === 0) {
@@ -13804,9 +13806,10 @@ async function contactNudge() {
       }
     });
     if (signImgB64) {
-      var png = await doc.embedPng(b64ToBytes(signImgB64)), x0 = M + 4, by0 = top - 28 - boxH, sc = Math.min((cw - 16) / png.width, (boxH - 8) / png.height);
+      var png = await doc.embedPng(b64ToBytes(signImgB64)), x0 = M + 4, by0 = sigTop - 28 - boxH, sc = Math.min((cw - 16) / png.width, (boxH - 8) / png.height);
       page.drawImage(png, { x: x0 + (cw - 8 - png.width * sc) / 2, y: by0 + (boxH - png.height * sc) / 2, width: png.width * sc, height: png.height * sc });
     }
+    y = sigTop - rowH * 2;
     // kaki halaman (halaman formulir saja)
     formPages = doc.getPageCount();
     for (var pi0 = 0; pi0 < formPages; pi0++) {
@@ -13838,7 +13841,7 @@ async function contactNudge() {
   // unduh formulir sebagai dokumen Word (.doc, HTML) yang bisa disunting di Word atau Google Docs
   async function downloadDoc(d, signB64) {
     var it = d.item, form = it.form || {}, files = it.files || {}, PHO = await getPhotos(d), esc = E;
-    var h = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>Formulir Registrasi ' + esc(it.nomor) + '</title><style>@page{size:A4;margin:2cm}body{font-family:Calibri,Arial,sans-serif;font-size:10pt;color:#122238}h1{font-size:16pt;margin:0}h2{font-size:11pt;color:#0b5cad;background:#ecf4fc;border-left:4px solid #0b5cad;padding:3pt 6pt;margin:14pt 0 4pt}td{vertical-align:top;padding:3pt 4pt;border-bottom:1px solid #dbe5ee;font-size:9.5pt}td.l{width:42%;color:#667789}td.v{font-weight:bold}.ph{width:6cm;margin:2pt}.sg td{border:1px solid #c9d6e2;height:2.6cm;width:25%;text-align:left}</style></head><body>';
+    var h = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>Formulir Registrasi ' + esc(it.nomor) + '</title><style>@page{size:A4;margin:2cm}body{font-family:Calibri,Arial,sans-serif;font-size:10pt;color:#122238}h1{font-size:16pt;margin:0}h2{font-size:11pt;color:#0b5cad;background:#ecf4fc;border-left:4px solid #0b5cad;padding:3pt 6pt;margin:14pt 0 4pt}td{vertical-align:top;padding:3pt 4pt;border-bottom:1px solid #dbe5ee;font-size:9.5pt}td.l{width:42%;color:#667789}td.v{font-weight:bold}.ph{width:6cm;margin:2pt}.sg td{border:1px solid #c9d6e2;height:2.6cm;width:33%;text-align:left}</style></head><body>';
     h += '<h1>FORMULIR REGISTRASI MITRA / VENDOR BARU</h1><p style="color:#667789">PT Integrasi Jaringan Ekosistem | Vendor Management | Proyek STARLITE<br><b style="color:#0b5cad">Nomor ' + esc(it.nomor) + '</b> &nbsp; Diajukan ' + esc(new Date(it.at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })) + '</p>';
     d.sections.forEach(function (s) {
       var rows = s.fields.filter(function (f) { return vis(f, form) && !((f.type === "file" ? !(files[f.key] || []).length : f.type === "check" ? false : !String(form[f.key] || "").trim()) && !f.req); });
@@ -13856,7 +13859,8 @@ async function contactNudge() {
     });
     h += '<h2>Pernyataan dan Tanda Tangan</h2><p>Calon mitra menyatakan seluruh data dan dokumen dalam formulir ini benar, milik perusahaan sendiri, dan dapat dipertanggungjawabkan sepenuhnya. Apabila di kemudian hari ditemukan data yang tidak benar, calon mitra bersedia menerima segala konsekuensi, termasuk pembatalan registrasi dan kerja sama.</p>';
     h += '<table class="sg" width="100%" cellspacing="0"><tr><td><small>Dinyatakan oleh</small><br><b>Calon Mitra</b><br>' + (signB64 ? '<img src="data:image/png;base64,' + signB64 + '" style="height:1.4cm"><br>' : "<br><br>") + esc(it.sign ? it.sign.nama : "") + '<br><small>' + esc(it.sign ? it.sign.jabatan : "") + '</small></td>'
-      + [["Diverifikasi oleh", "Vendor Management", "Hendra Yudhanto"], ["Disetujui oleh", "Chief Executive Officer", "Nina Winata"], ["Disetujui oleh", "Director", "Andrew"]].map(function (r) { return "<td><small>" + r[0] + "</small><br><b>" + r[1] + "</b><br><br><br>" + r[2] + "<br><small>Tanggal:</small></td>"; }).join("") + "</tr></table></body></html>";
+      + '<td><small>Diverifikasi oleh</small><br><b>Vendor Management</b><br><br><br>Hendra Yudhanto<br><small>Tanggal:</small></td><td></td></tr><tr>'
+      + [["Disetujui oleh", "VP of Planning &amp; Deployment", "Syevan Noer"], ["Disetujui oleh", "Chief Executive Officer", "Nina Winata"], ["Disetujui oleh", "Director", "Andrew"]].map(function (r) { return "<td><small>" + r[0] + "</small><br><b>" + r[1] + "</b><br><br><br>" + r[2] + "<br><small>Tanggal:</small></td>"; }).join("") + "</tr></table></body></html>";
     var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\ufeff", h], { type: "application/msword" })); a.download = "Formulir Registrasi " + String(it.nomor).replace(/\//g, "-") + ".doc"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 3000);
   }
   function itemWith(d, form) { var it = Object.assign({}, d.item, { form: form || d.item.form }); if (it.sign && form) it.sign = Object.assign({}, it.sign, { nama: form.ttd_nama || it.sign.nama, jabatan: form.ttd_jabatan || it.sign.jabatan }); return Object.assign({}, d, { item: it }); }
@@ -13877,7 +13881,7 @@ async function contactNudge() {
       SGW.note = "Formulir Registrasi Mitra " + it.nomor + " · " + (form && form.nama_perusahaan || it.nama);
       await sgPickPdf(fileBytes(pdf.bytes, name + ".pdf"));
       try {   // urutan penanda tangan baku: Vendor Management, CEO, Director, sesuai kotak pada PDF
-        var pre = [["Hendra Yudhanto", "Vendor Management"], ["Nina Winata", "Chief Executive Officer"], ["Andrew", "Director"]];
+        var pre = [["Hendra Yudhanto", "Vendor Management"], ["Syevan Noer", "VP of Planning & Deployment"], ["Nina Winata", "Chief Executive Officer"], ["Andrew", "Director"]];
         SGW.signers = pre.map(function (x, i) { return { id: sgNewId(), name: x[0], jabatan: x[1] + " - PT IJE", pin: "", color: SG_COLORS[i % SG_COLORS.length] }; });
         SGW.active = SGW.signers[0].id;
         SGW.fields = (pdf.fields || []).map(function (f) { return { id: "f" + sgNewId(), signer: SGW.signers[f.role - 1].id, page: f.page, x: f.x, y: f.y, w: f.w, h: f.h }; });
