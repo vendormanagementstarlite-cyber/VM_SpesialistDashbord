@@ -14349,6 +14349,17 @@ async function contactNudge() {
     return out;
   }
   var cache = null, cacheAt = 0;
+  // No SPK takeover diambil dari All SPK: muat All SPK di latar belakang bila belum ada
+  var spkTry = 0;
+  async function ensureSpk() {
+    try {
+      if (typeof STATE === "undefined" || typeof loadSpkData !== "function") return;
+      if ((STATE.spk && STATE.spk.length) || STATE.spkLoading || spkTry >= 3) return;
+      spkTry++;
+      var d = await loadSpkData();
+      if (d && d.items && d.items.length) { STATE.headers.spk = d.headers; STATE.spk = d.items; refreshAll(); }
+    } catch (e) { }
+  }
   async function tkLoad() {
     if (cache && Date.now() - cacheAt < 4000) return cache;
     var p = [["ranges", "'" + TK + "'!A1:AE"], ["ranges", "'" + ML + "'!A1:C"], ["valueRenderOption", "FORMATTED_VALUE"], ["majorDimension", "ROWS"]];
@@ -14375,6 +14386,7 @@ async function contactNudge() {
       rows.push([VROW + i, L]); add++;
     });
     cache = { rows: rows, count: Math.max(2, n), added: add }; cacheAt = Date.now();
+    setTimeout(ensureSpk, 4000);
     window.TK_SRC.added = add; window.TK_SRC.total = rows.length - 1;
     return cache;
   }
