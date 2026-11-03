@@ -14332,7 +14332,7 @@ async function contactNudge() {
 <script>
 /* Data Mitra Takeover — sumber: VM Starlite Sheet (sheet lama tidak dipakai).
    Kolom sheet baru dipetakan ke susunan kolom lama (COL) supaya seluruh tampilan tetap jalan.
-   Baris dari Master Data Letter (A = NO BAP, B = NO PO) yang belum ada di takeover ikut ditambahkan. */
+   Baris dari Master Data Letter (A = NO BAP; lama: B = NO PO, C = UNIQUE; baru: B = UNIQUE) yang belum ada di takeover ikut ditambahkan. */
 (function () {
   "use strict";
   var SS = "1xAG3if2KO1NQhi4EM9eQkJJdh_QN0GElrWxiPuRGkPU", TK = "Data Mitra Takeover", ML = "Master Data Letter", VROW = 100000;
@@ -14365,7 +14365,9 @@ async function contactNudge() {
     var add = 0;
     mv.forEach(function (v, i) {
       if (i === 0 || !v) return;
-      var bap = nb(v[0]), po = String(v[1] || "").trim();
+      var bap = nb(v[0]), b = String(v[1] || "").trim(), c = String(v[2] || "").trim();
+      // susunan lama: B = NO PO, C = UNIQUE; susunan baru: B = UNIQUE, C kosong (PO = bagian depan UNIQUE)
+      var po = c ? b : b.split("_")[0].trim();
       if (!bap || !po || haveBap.has(bap)) return;
       haveBap.add(bap);
       var L = []; L[0] = po; L[1] = String(v[0]).trim(); L[13] = "Dari Master Data Letter (belum ada di Data Mitra Takeover)";
