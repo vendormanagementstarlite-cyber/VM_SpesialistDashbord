@@ -13562,7 +13562,7 @@ async function contactNudge() {
     catch (e) { RG.err = /tidak dikenal/i.test(e.message) ? "Backend belum versi v14. Tempel Kode v14 di Apps Script lalu Deploy ulang." : e.message; }
     RG.busy = false; badge(); render();
   }
-  var FILTERS = [["aktif_kerja", "Perlu tindakan"], ["diajukan", "Diajukan"], ["ttd", "Proses TTD"], ["lengkap", "TTD lengkap"], ["aktif", "Aktif"], ["semua", "Semua"]];
+  var FILTERS = [["aktif_kerja", "Perlu tindakan"], ["diajukan", "Diajukan"], ["ttd", "Proses TTD"], ["lengkap", "TTD lengkap"], ["aktif", "Aktif"], ["ditolak", "Ditolak"], ["batal", "Dibatalkan"], ["semua", "Semua"]];
   function list() {
     var q = RG.q.trim().toLowerCase();
     return RG.items.filter(function (x) {
@@ -13620,6 +13620,7 @@ async function contactNudge() {
         + (editable ? '<label class="rg-note"><span>Catatan verifikasi (internal)</span><textarea data-note="' + s.key + '" rows="2" placeholder="Kosongkan bila sesuai">' + E(notes[s.key] || "") + "</textarea></label>" : notes[s.key] ? '<div class="rg-cat">Catatan: ' + E(notes[s.key]) + "</div>" : "") + "</details>";
     }).join("") + "</div>";
     h += '<div class="rg-hist"><h4>Riwayat</h4>' + (it.hist || []).slice().reverse().map(function (y) { return "<div><b>" + E(y.aksi) + "</b><small>" + E(y.by) + " · " + E(whenT(y.at)) + "</small></div>"; }).join("") + "</div>";
+    if (isOwner()) h += '<div class="rg-act"><h4>Hapus registrasi</h4><p>Menghapus data registrasi ini dari daftar. Folder lampiran dipindahkan ke tempat sampah Drive (bisa dipulihkan 30 hari).</p><div class="rg-btns"><button class="btn btn-ghost text-rose-600" data-a="hapus"><i class="fa-solid fa-trash"></i>Hapus registrasi</button></div></div>';
     return h;
   }
   function attachPick(d) {
@@ -13674,6 +13675,13 @@ async function contactNudge() {
       try { await callApi("reg.decide", { id: RG.sel, act: act, note: note, notes: notes() }, 60000); toast(act === "tolak" ? "Registrasi ditolak" : "Registrasi dibatalkan", "success"); await load(true); openDet(RG.sel, true); }
       catch (e) { toast(e.message, "error", 7000); unbusy(b); }
     };
+    on("hapus", async function (b) {
+      var it0 = (RG.det && RG.det.item) || {};
+      if (!confirm("Hapus registrasi " + (it0.nomor || "") + " · " + (it0.nama || "") + "?" + (it0.status === "aktif" ? "\nRegistrasi ini sudah masuk Info Perseroan; baris di Info Perseroan tidak ikut terhapus." : "") + "\nFolder lampiran dipindahkan ke tempat sampah Drive.")) return;
+      busy(b, "Menghapus…");
+      try { await callApi("reg.delete", { id: RG.sel }, 60000); toast("Registrasi dihapus", "success"); RG.sel = null; RG.det = null; await load(true); }
+      catch (e) { toast(e.message, "error", 7000); unbusy(b); }
+    });
     on("tolak", function (b) { decide(b, "tolak", "Tolak registrasi ini? Calon mitra tidak bisa merevisi."); });
     on("batal", function (b) { decide(b, "batal", ""); });
     on("setujui", function (b) { openEditor(notes); });
