@@ -14370,7 +14370,7 @@ async function contactNudge() {
       var po = c ? b : b.split("_")[0].trim();
       if (!bap || !po || haveBap.has(bap)) return;
       haveBap.add(bap);
-      var L = []; L[0] = po; L[1] = String(v[0]).trim(); L[13] = "Dari Master Data Letter (belum ada di Data Mitra Takeover)";
+      var L = []; L[0] = po; L[1] = String(v[0]).trim(); 
       for (var j = 0; j < 40; j++) if (L[j] === undefined) L[j] = "";
       rows.push([VROW + i, L]); add++;
     });
@@ -14435,16 +14435,22 @@ async function contactNudge() {
     var oAdd = openRecAdd;
     window.openRecAdd = openRecAdd = function (e) { if (e === "takeover") { try { showToast(MSG, "info", 7000); } catch (x) { } return; } return oAdd.apply(this, arguments); };
   }
+  if (typeof renderTakeoverDetail === "function") {
+    var oDet = renderTakeoverDetail;
+    window.renderTakeoverDetail = renderTakeoverDetail = function (e) {
+      var r = oDet.apply(this, arguments);
+      try {
+        if (e && e.row >= VROW) {
+          var b = document.getElementById("detail-modal-body");
+          if (b) b.insertAdjacentHTML("afterbegin", '<div class="mb-3 px-3 py-2 rounded-xl text-[11px] bg-cyan-500/10 text-cyan-700 dark:text-cyan-300">PO ini berasal dari Master Data Letter dan belum ada di Data Mitra Takeover.</div>');
+        }
+      } catch (x) { }
+      return r;
+    };
+  }
   var st = document.createElement("style");
   st.textContent = '#takeover-table-body .cell-act,button[onclick*="openRecAdd(\'takeover\')"]{display:none!important}#tk-src-note{margin:0 0 10px;padding:8px 12px;border-radius:10px;font-size:12px;background:rgba(6,182,212,.1);color:#0e7490}';
   document.head.appendChild(st);
-  function note() {
-    var v = document.getElementById("view-takeover"); if (!v || document.getElementById("tk-src-note")) return;
-    var d = document.createElement("div"); d.id = "tk-src-note";
-    d.textContent = "Sumber data: VM Starlite Sheet (sheet lama tidak dipakai). Hanya-baca di aplikasi — ubah di Google Sheet lalu klik Sync. Baris dari Master Data Letter yang belum ada di takeover ditandai di kolom Remark.";
-    v.insertBefore(d, v.firstChild);
-  }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", note); else note();
 })();
 </script>
 </body>
