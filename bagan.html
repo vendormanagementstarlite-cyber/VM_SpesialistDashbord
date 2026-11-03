@@ -159,7 +159,7 @@ function start(j){
   S.z=0;fitZoom();paint();showPub(j);
 }
 /* susunan acuan utama (atasan -> bawahan); posisi non-direktur awalnya kosong, diisi lewat "Isi orang" */
-var TPL=[["Direktur Utama",-1],["Direktur",0],["Direktur Operation",1],["Project Manager",2],["Site Manager Operation",3],["SPV Project Administrasi Doc Control",4],["PIC Material",4],["Helpdesk",4],["Planning",4],["Leader Sales",4],["Sales",9],["Leader IKR",4],["IKR",11],["PIC Maintenance",4],["Teknisi Maintenance",13],["Implementasi Civil",4]];
+var TPL=[["Direktur Utama",-1],["Direktur",0],["Direktur Operation",1],["Project Manager",2],["Site Manager Operation",3],["SPV Project Administrasi Doc Control",4],["PIC Material",4],["Helpdesk",4],["Planning",2],["Leader Sales",4],["Sales",9],["Leader IKR",4],["IKR",11],["PIC Maintenance",4],["Teknisi Maintenance",13],["Implementasi Civil",4]];
 function tpl(r){var out=[],ids=[];TPL.forEach(function(x,i){var p=i===0&&r&&r.id?r:np("");if(i===0){p.atasan="";p.jabatan=p.jabatan||x[0];p.ket="aktif";if(!p.orang||!p.orang.length)p.orang=[blank()]}else{p.jabatan=x[0];p.atasan=ids[x[1]];p.ket="kosong";p.orang=[]}ids.push(p.id);out.push(p)});return{posisi:out}}
 function prefill(){var i=S.info,r=S.data.posisi.filter(function(p){return!p.atasan})[0];if(!i||!r||r.ket==="kosong")return;var o=per(r);
   if(!r.jabatan)r.jabatan="Direktur";if(!o.nama&&i.direksi)o.nama=i.direksi;
