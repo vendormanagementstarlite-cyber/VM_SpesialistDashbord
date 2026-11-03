@@ -104,7 +104,7 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
   <div class="card"><div class="cvh" style="margin:0"><h2 id="ttl">Struktur</h2><button class="g sm" id="gear" type="button" aria-label="Pengaturan email pemulihan" title="Pengaturan email pemulihan" style="width:40px;padding:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div><div id="stt" style="margin-top:8px"></div></div>
   <div class="card hide" id="emc"><label for="em2" id="eml">Email pemulihan PIN</label><div class="acts"><input id="em2" type="email" inputmode="email" placeholder="nama@perusahaan.com" style="flex:1;min-width:200px"><button class="t" id="em2s" type="button">Simpan email</button></div><div id="m3"></div></div>
   <details class="card hide" id="pubc"><summary>Bagan berlaku saat ini <span id="pubv"></span></summary><div class="prev" id="prev" style="margin-top:12px"></div></details>
-  <div class="card nt" id="ntc"><b>Isi struktur dengan lengkap dan terperinci</b><p class="s">Susunan di bawah adalah acuan utama dari Vendor Management. Lengkapi nama dan nomor HP aktif setiap orang (email boleh dikosongkan). Satu posisi boleh berisi lebih dari satu nama lewat tombol <b>+ Tambah nama</b>. Posisi yang belum terisi bisa diisi lewat tombol <b>Isi orang</b>, dan posisi yang tidak ada di perusahaan Anda bisa dihapus dengan tombol ✕. Cabang hanya untuk posisi: pakai tombol + di bawah atau di samping kotak. Posisi yang berisi lebih dari satu nama tidak bisa dicabangkan, dan posisi yang punya cabang hanya boleh satu nama.</p></div>
+  <div class="card nt" id="ntc"><b>Isi struktur dengan lengkap dan terperinci</b><p class="s">Susunan di bawah adalah acuan utama dari Vendor Management. Lengkapi nama dan nomor HP aktif setiap orang. Email wajib untuk posisi yang berisi satu nama, dan opsional untuk posisi berisi lebih dari satu nama. Satu posisi boleh berisi lebih dari satu nama lewat tombol <b>+ Tambah nama</b>. Posisi yang belum terisi bisa diisi lewat tombol <b>Isi orang</b>, dan posisi yang tidak ada di perusahaan Anda bisa dihapus dengan tombol ✕. Cabang hanya untuk posisi: pakai tombol + di bawah atau di samping kotak. Posisi yang berisi lebih dari satu nama tidak bisa dicabangkan, dan posisi yang punya cabang hanya boleh satu nama.</p></div>
   <div class="ed">
     <div class="card cv"><div class="cvh"><h2>Bagan struktur</h2>
       <div class="zm"><button class="g sm" id="zo" aria-label="Perkecil" type="button">−</button><span id="zl">100%</span><button class="g sm" id="zi" aria-label="Perbesar" type="button">+</button></div></div>
@@ -195,11 +195,11 @@ function lay(){
   var yt=[],y=PAD;for(var d=0;d<=maxD;d++){yt[d]=y;y+=hd[d]+GY}
   return{pos:pos,yt:yt,W:sw[root.id]+PAD*2,H:y-GY+PAD,root:root};
 }
-function badP(o){var e=[],em=(o.email||"").trim();if(!o.nama.trim())e.push("nama");if(!o.hp.trim()||!hpState(o.hp).ok)e.push("hp");if(em&&!MAILRE.test(em))e.push("email");return e}
+function badP(o,n){var e=[],em=(o.email||"").trim();if(!o.nama.trim())e.push("nama");if(!o.hp.trim()||!hpState(o.hp).ok)e.push("hp");if((n===1&&!em)||(em&&!MAILRE.test(em)))e.push("email");return e}
 function bad(p){
   if(p.ket==="kosong")return[];var e=[];
   if(!p.jabatan.trim())e.push("jabatan");
-  p.orang.forEach(function(o){badP(o).forEach(function(f){if(e.indexOf(f)<0)e.push(f)})});
+  p.orang.forEach(function(o){badP(o,p.orang.length).forEach(function(f){if(e.indexOf(f)<0)e.push(f)})});
   return e;
 }
 CW=300;GX=72;GY=76;PAD=64;
@@ -220,11 +220,11 @@ function paint(){
       +'<input data-f="jabatan" maxlength="80" placeholder="Jabatan" value="'+esc(p.jabatan)+'" autocomplete="off" class="'+jb+'">';
     if(ko)nd+='<div class="kl">Posisi kosong</div><button type="button" class="t sm" data-fill="1">Isi orang</button>';
     else{
-      p.orang.forEach(function(o,i){var pe=S.chk?badP(o):[],n=p.orang.length;
+      p.orang.forEach(function(o,i){var n=p.orang.length,pe=S.chk?badP(o,n):[];
         nd+='<div class="pr">'+(n>1?'<button type="button" class="d px" data-delp="'+i+'" aria-label="Hapus nama ini">✕</button>':"")
           +'<input data-f="nama" data-i="'+i+'" maxlength="80" placeholder="Nama" value="'+esc(o.nama)+'" autocomplete="off" class="'+(pe.indexOf("nama")>=0?"bad":"")+(n>1?" pad":"")+'">'
           +'<div class="pr2"><input data-f="hp" data-i="'+i+'" type="tel" inputmode="tel" maxlength="20" placeholder="No HP / WA *" value="'+esc(o.hp)+'" autocomplete="off" class="'+(pe.indexOf("hp")>=0?"bad":"")+'">'
-          +'<input data-f="email" data-i="'+i+'" type="email" inputmode="email" maxlength="80" placeholder="Email (opsional)" title="'+esc(o.email)+'" value="'+esc(o.email)+'" autocomplete="off" class="'+(pe.indexOf("email")>=0?"bad":"")+'"></div></div>'});
+          +'<input data-f="email" data-i="'+i+'" type="email" inputmode="email" maxlength="80" placeholder="'+(n>1?"Email (opsional)":"Email *")+'" title="'+esc(o.email)+'" value="'+esc(o.email)+'" autocomplete="off" class="'+(pe.indexOf("email")>=0?"bad":"")+'"></div></div>'});
       nd+=(p.orang.length<MAXP?'<button type="button" class="t sm ap'+(kidsOf(p.id).length?" lk":"")+'" data-addp="1"'+(kidsOf(p.id).length?' title="Posisi yang punya cabang hanya boleh satu nama"':"")+'>+ Tambah nama</button>':"");
     }
     nd+=(!ko&&p.orang.length>1?"":'<button type="button" class="pl c" data-add="child" title="Tambah bawahan (posisi baru)" aria-label="Tambah bawahan">+</button>')
@@ -275,10 +275,10 @@ function hpState(v){if(!String(v||"").trim())return{ok:true,empty:true};var n=hp
 function hpMsg(el,st){var h=el.parentNode.querySelector(".hs");if(!h)return;if(st.empty){h.textContent="";h.className="hs"}else if(st.ok){h.textContent="✓ Nomor valid";h.className="hs ok"}else{h.textContent="Nomor tidak valid. Contoh: 0812 3456 7890";h.className="hs no"}el.classList.toggle("bad",!st.ok)}
 $("send").onclick=function(){
   S.chk=true;var first=null,cnt=0,fi=0,ff="";
-  S.data.posisi.forEach(function(p){var e=bad(p);if(p.ket!=="kosong")p.orang.forEach(function(o){var hs=hpState(o.hp);if(hs.ok&&hs.norm)o.hp=hs.norm});e=bad(p);if(e.length){cnt++;if(!first){first=p;if(e.indexOf("jabatan")>=0)ff="jabatan";else{for(var k=0;k<p.orang.length;k++){var pe=badP(p.orang[k]);if(pe.length){fi=k;ff=pe[0];break}}}}}});
+  S.data.posisi.forEach(function(p){var e=bad(p);if(p.ket!=="kosong")p.orang.forEach(function(o){var hs=hpState(o.hp);if(hs.ok&&hs.norm)o.hp=hs.norm});e=bad(p);if(e.length){cnt++;if(!first){first=p;if(e.indexOf("jabatan")>=0)ff="jabatan";else{for(var k=0;k<p.orang.length;k++){var pe=badP(p.orang[k],p.orang.length);if(pe.length){fi=k;ff=pe[0];break}}}}}});
   paint();
   if(first){S.sel=first.id;paint();
-    msg("m2",cnt+" kotak belum lengkap (bertanda merah). Isi jabatan, nama, dan No HP/WhatsApp setiap orang. Email boleh dikosongkan.","err");focusNode(first.id,ff,ff==="jabatan"?null:fi);return}
+    msg("m2",cnt+" kotak belum lengkap (bertanda merah). Isi jabatan, nama, dan No HP/WhatsApp setiap orang. Email wajib untuk posisi satu nama, dan opsional untuk posisi berisi lebih dari satu nama.","err");focusNode(first.id,ff,ff==="jabatan"?null:fi);return}
   if(!S.ready){S.ready=true;$("notec").classList.remove("hide");$("send").textContent="Simpan bagan";$("notec").scrollIntoView({behavior:"smooth",block:"center"});return}
   if(!$("ack").checked)return msg("m2","Centang pernyataan bahwa data benar dan dapat dipertanggungjawabkan.","err");
   $("send").disabled=true;msg("m2","");
