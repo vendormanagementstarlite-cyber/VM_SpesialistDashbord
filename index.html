@@ -14128,6 +14128,164 @@ async function contactNudge() {
 })();
 
 </script>
+<script id="addon_v32_sp">
+/* v32 — Monitoring SP penuh di Cloudflare (D1 + Worker starlite-sp). Sheet "SP" tidak dibaca/ditulis lagi; email SP menulis balik rilis & status. */
+(function () {
+  "use strict";
+  var URL_SP = "https://starlite-sp.hsans-din.workers.dev/";
+  var HEAD = ["Letter No SP1", "Letter No SP2", "Letter No SP3", "PO", "Mitra", "Site", "Region", "PIC", "HR", "Sales Comm", "Dasar SP", "Release date", "Overdue", "Remark", "Email Mitra", "Unique"];
+  var REGIONS = ["JABAR", "JATIM", "JATENG", "JABODEBEK - BANTEN"];
+  var N = 16, SPU = {}, uid = 0, warned = false;
+  function tok() { try { return currentUser ? currentUser.token : ""; } catch (e) { return ""; } }
+  function owner() { try { return !!currentUser && currentUser.role === "owner"; } catch (e) { return false; } }
+  function sp(action, body) {
+    var ctl = new AbortController(), tm = setTimeout(function () { ctl.abort(); }, 30000);
+    return fetch(URL_SP, { method: "POST", signal: ctl.signal, headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(Object.assign({ action: action, token: tok() }, body || {})) })
+      .then(function (r) { return r.json().catch(function () { return { ok: false, error: "Balasan server tidak valid" }; }); })
+      .then(function (j) { if (!j || !j.ok) throw new Error((j && j.error) || "Gagal menghubungi database Monitoring SP"); return j; })
+      .catch(function (e) { throw e.name === "AbortError" ? new Error("Database Monitoring SP tidak merespons") : e; })
+      .finally(function () { clearTimeout(tm); });
+  }
+  function pad(v) { v = (v || []).map(function (x) { return x == null ? "" : String(x); }); while (v.length < N) v.push(""); return v.slice(0, N); }
+  function uniqKey(v) { return [v[4], v[5], v[3]].map(function (x) { return String(x || "").trim(); }).join("_"); }
+  function asRows(j) {
+    var rows = [[1, HEAD.slice()]], max = 1;
+    (j.rows || []).forEach(function (r) { rows.push([r.row, pad(r.v)]); if (r.row > max) max = r.row; });
+    return { rows: rows, count: max };
+  }
+  function toast_(m, t) { try { toast(m, t || "success", 7000); } catch (e) { } }
+  window.SP_CF = { call: sp, head: HEAD };
+
+  /* nomor urut terakhir per level dari nomor surat yang sudah ada (untuk penomoran berikutnya) */
+  function seqOf(rows) {
+    var yr = String(new Date(Date.now() + 7 * 3600e3).getUTCFullYear()), s = { y: yr, 1: 0, 2: 0, 3: 0 };
+    rows.forEach(function (r) {
+      [0, 1, 2].forEach(function (i) {
+        var m = String((r.v || r[1] || [])[i] || "").trim().match(/^(\d+)\s*\/\s*SP\s*([123])\b.*\/\s*(\d{4})$/i);
+        if (m && m[3] === yr && Number(m[1]) > s[Number(m[2])]) s[Number(m[2])] = Number(m[1]);
+      });
+    });
+    return s;
+  }
+  /* impor sekali jalan dari sheet lama bila database masih kosong (hanya Akun Utama) */
+  async function importOld(oFast, ent) {
+    var old = await oFast([ent]), o = old.sp; if (!o || !o.rows) return null;
+    var data = o.rows.filter(function (r) { return r[0] > 1; }).map(function (r) { return { row: r[0], v: pad(r[1]) }; }).filter(function (r) { return r.v.some(function (x) { return String(x).trim(); }); });
+    data.forEach(function (r) { if (!String(r.v[15] || "").trim()) r.v[15] = uniqKey(r.v); });
+    if (!data.length) return null;
+    await sp("sp.import", { rows: data, seq: seqOf(data) });
+    toast_("Monitoring SP dipindahkan ke database Cloudflare (" + data.length + " baris)");
+    return data;
+  }
+  async function listSp(oFast, ent) {
+    var j;
+    try { j = await sp("sp.list"); }
+    catch (e) {
+      if (!warned) { warned = true; toast_("Database Monitoring SP belum bisa dihubungi (" + e.message + "). Menampilkan data lama dari sheet.", "error"); }
+      var old = await oFast([ent]); return old.sp;
+    }
+    if (!(j.total > 0)) {
+      if (owner()) { try { await importOld(oFast, ent); j = await sp("sp.list"); } catch (e) { toast_("Impor SP gagal: " + e.message, "error"); var o2 = await oFast([ent]); return o2.sp; } }
+      else { var o3 = await oFast([ent]); return o3.sp; }
+    }
+    window.SP_CF.letters = j.letters || [];
+    return asRows(j);
+  }
+
+  /* ---- baca data ---- */
+  var oFast = window.fetchSheetsFast, oRows = window.fetchSheetRows;
+  window.fetchSheetsFast = async function (list) {
+    var ent = list.filter(function (e) { return e.k === "sp"; })[0];
+    if (!ent) return oFast.apply(this, arguments);
+    var rest = list.filter(function (e) { return e.k !== "sp"; });
+    var out = rest.length ? await oFast(rest) : {};
+    out.sp = await listSp(oFast, ent);
+    return out;
+  };
+  window.fetchSheetRows = async function (title) {
+    if (title === "SP") { var r = await listSp(oFast, { k: "sp", title: "SP", lastCol: "P" }); return r.rows; }
+    return oRows.apply(this, arguments);
+  };
+
+  /* nomor baris di D1 tetap (tidak bergeser saat ada yang dihapus) */
+  var oRem = window.recRemoveRow, oShift = window.recShiftRows;
+  window.recRemoveRow = function (e, t) {
+    if (e !== "sp") return oRem.apply(this, arguments);
+    STATE[e] = STATE[e].filter(function (x) { return x.row !== t; }); recDataChanged();
+  };
+  window.recShiftRows = function (e) { if (e !== "sp") return oShift.apply(this, arguments); };
+
+  /* ---- ubah data ---- */
+  var oCall = window.callApi;
+  function undoId(o) { var id = "sp" + Date.now() + "_" + (++uid); SPU[id] = o; return id; }
+  function logc(a, r) { try { logClient(a, r || ""); } catch (e) { } }
+  function jktDate() { var d = new Date(Date.now() + 7 * 3600e3); return ("0" + d.getUTCDate()).slice(-2) + "/" + ("0" + (d.getUTCMonth() + 1)).slice(-2) + "/" + d.getUTCFullYear(); }
+  function rowVals(n) { var r = (STATE.sp || []).filter(function (x) { return x.row === Number(n); })[0]; return r ? pad(r.raw) : null; }
+  function mitraEmails(name) {
+    var k = String(name || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); if (!k) return "";
+    var hit = (STATE.perseroan || []).filter(function (p) { return [p.nama, p.short].some(function (x) { return String(x || "").toUpperCase().replace(/[^A-Z0-9]/g, "") === k; }); })[0];
+    return hit ? String(hit.email || "") : "";
+  }
+  /* email SP: kirim data baris + email Info Perseroan ke server (sheet lama tidak lagi jadi sumber) */
+  function withSpRef(p) {
+    if (!p || !p.ref || p.ref.sheet !== "sp") return p;
+    var v = rowVals(p.ref.row); if (!v) return p;
+    var q = Object.assign({}, p); q.ref = Object.assign({}, p.ref, { vals: v, ip: mitraEmails(v[4]) }); return q;
+  }
+  async function afterMail(r) {
+    if (!r || !r.results) return;
+    for (var i = 0; i < r.results.length; i++) {
+      var x = r.results[i], it = x && x.item; if (!x || !x.ok || x.queued || !it || it.status && it.status !== "terkirim") continue;
+      var m = String(it.jenis || "").match(/^SP([123])$/), ref = it.ref || {}; if (!m || ref.sheet !== "sp" || !ref.row) continue;
+      try {
+        var cur = await sp("sp.get", { row: ref.row }), v = cur.values, c = { 11: jktDate() };
+        if (!/^final/i.test(String(v[12] || "").trim())) c[12] = "SP-" + m[1] + " Aktif";
+        await sp("sp.update", { row: ref.row, cols: c });
+        (it.wb = it.wb || []).push("Monitoring SP: rilis " + c[11] + (c[12] ? " · " + c[12] : ""));
+        logc("Email SP-" + m[1] + " terkirim", v[4] + " (baris " + ref.row + ")");
+        setTimeout(function () { try { if (typeof syncNow === "function") syncNow(); } catch (e) { } }, 800);
+      } catch (e) { (it.wb = it.wb || []).push("Monitoring SP gagal diperbarui: " + e.message); }
+    }
+  }
+
+  window.callApi = async function (action, payload, timeout) {
+    var p = payload || {};
+    if (action === "mail.preview" || action === "mail.send") {
+      var q = withSpRef(p), r0 = await oCall.call(this, action, q, timeout);
+      if (action === "mail.send") await afterMail(r0);
+      return r0;
+    }
+    if (action === "mail.approve") { var r1 = await oCall.apply(this, arguments); await afterMail(r1); return r1; }
+    if (action === "rows.undo" && SPU[p.id]) {
+      var u = SPU[p.id]; delete SPU[p.id]; var r;
+      if (u.type === "edit") { var c = {}; u.values.forEach(function (v, i) { c[i] = v; }); r = await sp("sp.update", { row: u.row, cols: c }); return { type: "edit", sheet: "sp", row: u.row, values: r.values }; }
+      if (u.type === "append") { await sp("sp.delete", { row: u.row }); return { type: "append", sheet: "sp", row: u.row }; }
+      r = await sp("sp.restore", { row: u.row, values: u.values }); return { type: "delete", sheet: "sp", row: u.row, values: r.values };
+    }
+    if (p.sheet !== "sp" || !/^rows\.(get|meta|update|append|delete)$/.test(action)) return oCall.apply(this, arguments);
+    var j;
+    if (action === "rows.meta") { var op = {}; op[6] = REGIONS.slice(); return { headers: HEAD.slice(), options: op }; }
+    if (action === "rows.get") { j = await sp("sp.get", { row: p.row }); return { row: j.row, values: j.values, headers: HEAD.slice() }; }
+    if (action === "rows.update") {
+      var before = pad(p.expect), ch = Object.assign({}, p.changes || {});
+      if (ch[3] != null || ch[4] != null || ch[5] != null) { var nv = before.slice(); Object.keys(ch).forEach(function (k) { nv[Number(k)] = ch[k]; }); ch[15] = uniqKey(nv); }
+      j = await sp("sp.update", { row: p.row, cols: ch, ifMatch: before });
+      logc("Ubah Monitoring SP", j.values[4] + " (baris " + j.row + ")");
+      return { row: j.row, values: j.values, undo: undoId({ type: "edit", row: j.row, values: before }) };
+    }
+    if (action === "rows.append") {
+      var v = pad([]); Object.keys(p.values || {}).forEach(function (k) { v[Number(k)] = p.values[k]; });
+      if (!String(v[15] || "").trim()) v[15] = uniqKey(v);
+      j = await sp("sp.add", { values: v });
+      logc("Tambah Monitoring SP", j.values[4] + " (baris " + j.row + ")");
+      return { row: j.row, values: j.values, undo: undoId({ type: "append", row: j.row }) };
+    }
+    var vals = pad(p.expect); j = await sp("sp.delete", { row: p.row });
+    logc("Hapus Monitoring SP", vals[4] + " (baris " + j.row + ")");
+    return { row: j.row, undo: undoId({ type: "delete", row: j.row, values: vals }) };
+  };
+})();
+</script>
 <script id="bagan_core">
 /* STARLITE · Bagan Struktur Mitra — penggambar bagan + unduh PNG/PDF (dipakai form mitra dan Info Perseroan) */
 (function (g) {
