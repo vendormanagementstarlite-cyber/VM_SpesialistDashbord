@@ -308,7 +308,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
   var spkOk = function (v) { return /^\s*\d{1,5}\s*\/\s*PRJ\s*\/\s*STARLITE\s*\/\s*[IVX]{1,4}\s*\/\s*20\d\d\s*$/i.test(v); };
   function boxSet(cls, html) { box.className = "full spk on " + cls; box.innerHTML = html; }
   function stg(s) { var L = [["Mengajukan", s.ajukan], ["Verifikasi", s.verif], ["Status IT", s.it]]; return '<ol class="stg">' + L.map(function (x) { return '<li class="' + x[1] + '"><i></i>' + x[0] + "</li>"; }).join("") + "</ol>"; }
-  function info(x) { return "<dl><dt>PO</dt><dd>" + esc(x.po) + "</dd><dt>Stasiun</dt><dd>" + esc(x.stasiun) + "</dd><dt>Mitra lama</dt><dd>" + esc(x.lama || "-") + "</dd><dt>Mitra pengganti</dt><dd>" + esc(x.baru || "-") + "</dd><dt>No SPK</dt><dd>" + (x.hasNo ? esc(x.noSpkN) : "Belum ada — wajib diisi") + "</dd><dt>Lampiran SPK</dt><dd>" + (x.hasSpk ? "Sudah ada" : "Belum ada — wajib diunggah") + "</dd></dl>"; }
+  function info(x) { return "<p style='margin:6px 0 2px;font-size:13px'><b>" + esc(x.stasiun) + "</b> · " + esc(x.po) + "<br><span style='opacity:.75'>" + esc(x.lama || "-") + " → " + esc(x.baru || "-") + "</span></p>"; }
   function setOpen(b) { rest.hidden = !b; }
   function picked() { return Array.prototype.slice.call(sibL.querySelectorAll("input:checked:not(:disabled)")).map(function (i) { return i.value; }); }
   function updNeed() {
@@ -331,7 +331,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
   function applyRow(x) {
     SEL = x; setOpen(false); need.hidden = true; sib.hidden = true; sibL.innerHTML = "";
     if (x.done) return boxSet("no", "<b class='t'>Migrasi PO ini sudah berstatus " + esc(x.status) + "</b>" + info(x) + "Silakan hubungi Tim VM bila perlu perubahan.");
-    if (x.locked) return boxSet("ok", "<b class='t'>Pengajuan sudah diterima</b>" + info(x) + stg(x.stage) + "<p style='margin:8px 0 0'>Diajukan " + esc(x.ts) + " · status: <b>" + esc(x.status || "Diajukan") + "</b>" + (x.it ? " · status IT: <b>" + esc(x.it) + "</b>" : "") + ". Perubahan hanya bisa bila VM menandai Revisi.</p>");
+    if (x.locked) return boxSet("ok", "<b class='t'>Pengajuan diterima</b>" + info(x) + stg(x.stage) + "<p style='margin:6px 0 0;font-size:12px;opacity:.8'>Diajukan " + esc(x.ts) + (x.it ? " · Status IT: <b>" + esc(x.it) + "</b>" : "") + "</p>");
     var rv = x.status === "Revisi";
     boxSet(rv ? "no" : "ok", "<b class='t'>" + (rv ? "Pengajuan perlu direvisi" : "✓ Data ditemukan di Data Mitra Takeover") + "</b>" + info(x) + (x.submitted ? stg(x.stage) : "") + (rv ? "<p style='margin:8px 0 0'><b>Catatan VM:</b> " + esc(x.revisi || "-") + "</p>" : ""));
     setVal("noSpk", x.noSpkN || ""); drawSib(x); updNeed();
