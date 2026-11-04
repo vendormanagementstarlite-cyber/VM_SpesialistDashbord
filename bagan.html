@@ -173,7 +173,7 @@ function start(j){
   S.data.posisi.forEach(function(p){var n=parseInt(String(p.id).replace(/\D/g,""),10);if(n>=S.nid)S.nid=n+1});
   
   if(!S.data.posisi.length)S.data.posisi.push(np(""));
-  normalize();prefill();emState(false);S.sel=(S.data.posisi.filter(function(p){return!p.atasan})[0]||S.data.posisi[0]).id;
+  normalize();ensureWajib();prefill();emState(false);S.sel=(S.data.posisi.filter(function(p){return!p.atasan})[0]||S.data.posisi[0]).id;
   S.z=0;fitZoom();paint();centerVp();showPub(j);
 }
 /* susunan acuan utama (atasan -> bawahan); posisi non-direktur awalnya kosong, diisi lewat "Isi orang" */
@@ -220,6 +220,10 @@ function bad(p){
   return e;
 }
 CW=300;GX=72;GY=76;PAD=64;
+function isFixed(p){var j=String(p.jabatan||"").trim().toLowerCase();return !!p.atasan&&WAJIB.some(function(w){return w.label.toLowerCase()===j})}
+function ensureWajib(){var root=S.data.posisi.filter(function(p){return!p.atasan})[0];if(!root)return false;var add=false;
+  WAJIB.forEach(function(w){var has=S.data.posisi.some(function(p){return String(p.jabatan||"").trim().toLowerCase()===w.label.toLowerCase()});
+    if(!has){var c=np(root.id);c.jabatan=w.label;S.data.posisi.push(c);add=true}});return add}
 function jabOpts(){var seen={},l=[];WAJIB.forEach(function(w){seen[w.label.toLowerCase()]=1;l.push(w.label)});SUGG.forEach(function(x){if(!seen[x.toLowerCase()]){seen[x.toLowerCase()]=1;l.push(x)}});return l}
 function jabUI(p,jb){var o=jabOpts(),cur=String(p.jabatan||""),inl=o.some(function(x){return x.toLowerCase()===cur.trim().toLowerCase()}),cust=p.cust||(cur&&!inl),h="";
   h+='<select data-f="jabsel" class="'+jb+'" aria-label="Pilih posisi"><option value="">Pilih posisi…</option>';
@@ -250,7 +254,7 @@ function paint(){
     var a=L.pos[p.id];if(!a)return;var ko=p.ket==="kosong",x=PAD+a.cx-CW/2,y=L.yt[a.d],e=S.chk?bad(p):[],root=!p.atasan,H=nodeH(p);
     var sibs=kidsOf(p.atasan||"__"),idx=sibs.indexOf(p),jb=S.chk&&!p.jabatan.trim()?"bad":"";
     nd+='<div class="nd'+(p.id===S.newId?" new":"")+(p.id===S.sel?" on":"")+(e.length?" bd":"")+(ko?" ko":"")+'" data-id="'+esc(p.id)+'" style="--c:'+COL[Math.min(a.d,3)]+";left:"+x+"px;top:"+y+"px;height:"+H+'px">'
-      +(root?"":'<div class="tb"><button type="button" class="g" data-mv="-1" aria-label="Geser kiri"'+(idx<=0?" disabled":"")+'>‹</button><button type="button" class="d" data-rm="1" aria-label="Hapus">✕</button><button type="button" class="g" data-mv="1" aria-label="Geser kanan"'+(idx<0||idx>=sibs.length-1?" disabled":"")+'>›</button></div>')
+      +(root?"":'<div class="tb"><button type="button" class="g" data-mv="-1" aria-label="Geser kiri"'+(idx<=0?" disabled":"")+'>‹</button>'+(isFixed(p)?"":'<button type="button" class="d" data-rm="1" aria-label="Hapus">✕</button>')+'<button type="button" class="g" data-mv="1" aria-label="Geser kanan"'+(idx<0||idx>=sibs.length-1?" disabled":"")+'>›</button></div>')
       +jabUI(p,jb);
     if(ko)nd+='<div class="kl">Posisi kosong</div><button type="button" class="t sm" data-fill="1">Isi orang</button>';
     else{
@@ -285,7 +289,7 @@ $("cw").addEventListener("click",function(e){
   if(e.target.closest("[data-fill]")){p.ket="aktif";per(p);paint();focusNode(p.id,"nama",0);return}
   if(e.target.closest("[data-addp]")){if(p.orang.length>=MAXP)return;if(kidsOf(p.id).length)return msg("m2","Posisi \""+(p.jabatan||"ini")+"\" punya cabang, jadi hanya boleh satu nama. Hapus cabangnya dulu jika ingin menambah nama.","err");msg("m2","");p.orang.push(blank());paint();focusNode(p.id,"nama",p.orang.length-1);return}
   var dp=e.target.closest("[data-delp]");if(dp){var sn=JSON.stringify(S.data);p.orang.splice(+dp.dataset.delp,1);undoShow("Nama dihapus");UN=sn;if(!p.orang.length)p.orang.push(blank());paint();return}
-  if(e.target.closest("[data-rm]")){var c=countDesc(p.id),snap=JSON.stringify(S.data);
+  if(e.target.closest("[data-rm]")){if(isFixed(p))return msg("m2","Posisi \""+p.jabatan+"\" wajib ada di setiap bagan, jadi tidak bisa dihapus.","err");var hasFix=false;(function ck(id){kidsOf(id).forEach(function(k){if(isFixed(k))hasFix=true;ck(k.id)})})(p.id);if(hasFix)return msg("m2","Posisi ini punya bawahan yang wajib ada, jadi tidak bisa dihapus.","err");var c=countDesc(p.id),snap=JSON.stringify(S.data);
     var gone={};(function mk(id){gone[id]=1;kidsOf(id).forEach(function(k){mk(k.id)})})(p.id);
     Object.keys(gone).forEach(function(id){var el=document.querySelector('#cw .nd[data-id="'+id+'"]');if(el)el.classList.add("gone")});
     setTimeout(function(){S.data.posisi=S.data.posisi.filter(function(x){return!gone[x.id]});S.sel=p.atasan;paint();undoShow(c?"Posisi dan "+c+" bawahannya dihapus":"Posisi dihapus");UN=snap},190)}});
@@ -310,7 +314,7 @@ function hpNorm(v){var d=String(v||"").replace(/[^\d+]/g,"");if(d.indexOf("+62")
 function hpState(v){if(!String(v||"").trim())return{ok:true,empty:true};var n=hpNorm(v);return HPRE.test(n)?{ok:true,norm:n}:{ok:false,norm:n}}
 function hpMsg(el,st){var h=el.parentNode.querySelector(".hs");if(!h)return;if(st.empty){h.textContent="";h.className="hs"}else if(st.ok){h.textContent="✓ Nomor valid";h.className="hs ok"}else{h.textContent="Nomor tidak valid. Contoh: 0812 3456 7890";h.className="hs no"}el.classList.toggle("bad",!st.ok)}
 $("send").onclick=function(){
-  S.chk=true;var first=null,cnt=0,fi=0,ff="";
+  if(ensureWajib())paint();S.chk=true;var first=null,cnt=0,fi=0,ff="";
   S.data.posisi.forEach(function(p){var e=bad(p);if(p.ket!=="kosong")p.orang.forEach(function(o){var hs=hpState(o.hp);if(hs.ok&&hs.norm)o.hp=hs.norm});e=bad(p);if(e.length){cnt++;if(!first){first=p;if(e.indexOf("jabatan")>=0)ff="jabatan";else{for(var k=0;k<p.orang.length;k++){var pe=badP(p.orang[k],isWajib(p));if(pe.length){fi=k;ff=pe[0];break}}}}}});
   paint();
   if(first){S.sel=first.id;paint();
