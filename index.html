@@ -9378,7 +9378,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
     var CK = [["hc", "HC sama persis dengan menu Pelanggan Aktif di portal (capture dashboard)"], ["ikr", "Akun Lead IKR mitra pengganti ada & aktif"], ["sales", "Akun Sales penampung ada & aktif"], ["dok", "BA, KML, dan SPK lengkap dan benar"]];
     var M = modal('<div class="mig-mh"><div><small>' + E(r.tujuan) + " · diajukan " + E(r.ts) + "</small><h3>" + E(r.baru) + " · " + E(r.stasiun) + "</h3><p>dari <b>" + E(r.lama) + "</b> · No SPK <b>" + E(r.noSpk || "-") + "</b>" + (r.pos && r.pos.length > 1 ? " · <b>" + r.pos.length + " PO</b>: " + E(r.pos.join(", ")) : " · " + E(r.po)) + "</p></div>" + chip(k) + '<button class="mig-ed" data-edit title="Ubah data pengajuan"><i class="fa-solid fa-pen"></i><span>Ubah data</span></button><button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
       + '<div class="mig-mb"><div class="mig-col">'
-      + '<section><h4>Pengaju</h4><p><b>' + E(r.nama) + "</b> · " + E(r.jabatan) + "<br>" + E(r.email) + (r.wa ? ' · <a class="mig-lnk" target="_blank" rel="noopener" href="' + E(waUrl(r, "")) + '"><i class="fa-brands fa-whatsapp"></i>' + E(r.wa) + "</a>" : "") + "</p></section>"
+      + '<section><h4>Email pengaju</h4><p>' + E(r.email || "-") + "</p></section>"
       + '<section><h4>Akun</h4><dl class="mig-dl"><dt>Sales penampung</dt><dd>' + E(r.sales || "-") + "</dd><dt>Lead IKR mitra lama</dt><dd>" + E(r.ikrLama || "-") + "</dd><dt>Lead IKR mitra pengganti</dt><dd>" + E(r.ikrBaru || "-") + "</dd></dl></section>"
       + '<section><h4>Dokumen</h4><div class="mig-docs">' + lnk(r.ba, "BA & capture dashboard") + lnk(r.kml, "File KML") + lnk(r.spk, "SPK") + "</div>"
       + '<div class="mig-batools"><button class="st-b" data-ba="edit"' + (r.ba ? "" : " disabled") + '><i class="fa-solid fa-pen-to-square"></i>Edit BA (PDF)</button><button class="st-b" data-ba="add"><i class="fa-solid fa-file-circle-plus"></i>Tambah file / capture ke BA</button></div></section>'
@@ -9425,7 +9425,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
           await save(d, rem, { note: rem.slice(0, 200) });
           toast("Status Verifikasi: " + d, "success");
           var link = await formUrl();
-          var msg = "Yth. " + (r.nama || "Bapak/Ibu") + ",\n\nPengajuan " + r.tujuan + " " + r.baru + " – " + r.stasiun + " (No SPK " + r.noSpk + ") berstatus " + d.toUpperCase() + ".\nCatatan: " + rem + "\n\nMohon perbaiki dan ajukan ulang melalui link berikut:\n" + (link || "(link form pengajuan)") + "\n\nVendor Management";
+          var msg = "Yth. Bapak/Ibu,\n\nPengajuan " + r.tujuan + " " + r.baru + " – " + r.stasiun + " (No SPK " + r.noSpk + ") berstatus " + d.toUpperCase() + ".\nCatatan: " + rem + "\n\nMohon perbaiki dan ajukan ulang melalui link berikut:\n" + (link || "(link form pengajuan)") + "\n\nVendor Management";
           M.close(); revisiShare(r, msg);
         } catch (e) { b.disabled = false; toast(e.message, "error", 7000); }
       };
@@ -9494,7 +9494,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
   // ---------- ubah data pengajuan (akun Sales / Lead IKR, No SPK, mitra, stasiun, dll.) ----------
   var EF = [["noSpk", "No SPK", "text", 1], ["tujuan", "Subjek pengajuan", "sel", 1],
             ["sales", "Akun email Sales penampung", "email", 1], ["ikrBaru", "Akun email Lead IKR mitra pengganti", "email", 1], ["ikrLama", "Akun email Lead IKR mitra lama", "email", 0],
-            ["nama", "Nama pengaju", "text", 1], ["jabatan", "Jabatan", "text", 0], ["wa", "No WhatsApp", "text", 0], ["email", "Email pengaju", "email", 1], ["kml", "Link file KML", "url", 0], ["spk", "Link file SPK", "url", 0]];
+            ["email", "Email pengaju", "email", 1], ["kml", "Link file KML", "url", 0], ["spk", "Link file SPK", "url", 0]];
   function editData(r) {
     var names = ((STATE.perseroan || []).map(function (x) { return x.nama; }).filter(Boolean)).filter(function (x, i, a) { return a.indexOf(x) === i; }).sort();
     var fld = function (f) {
