@@ -156,7 +156,7 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
         <div class="full spk" id="spk-box" aria-live="polite"></div>
         <div class="full" id="sib" hidden><div class="tip"><b>PO lain dengan stasiun dan mitra yang sama</b> — centang bila ikut diajukan dalam pengajuan ini (BA, KML, dan akun cukup diisi sekali).</div><div id="sib-l" style="display:grid;gap:6px;margin-top:8px"></div></div>
         <div class="full" id="spk-need" hidden>
-          <div class="tip warn" style="margin-bottom:10px">Lampiran SPK untuk PO ini belum ada di data kami. Isi nomor SPK dan unggah filenya.</div>
+          <div class="tip warn" style="margin-bottom:10px">Lampiran SPK untuk PO ini belum ada di data kami. Isi nomor SPK (sesuai dokumen) dan unggah filenya.</div>
           <label class="f full"><span class="req">Nomor SPK</span><input type="text" name="noSpk" placeholder="mis. 1547/PRJ/STARLITE/X/2026" autocomplete="off"></label>
           <div class="drop" data-k="spk" style="margin-top:10px"><input type="file" id="spk" accept=".pdf" aria-label="Unggah SPK"><span class="ic">SPK</span><span class="tx"><b class="req">File SPK (PDF)</b><small>Seret file ke sini atau klik · PDF, maks 15 MB</small></span><span class="go">Pilih file</span></div>
         </div>
@@ -286,7 +286,7 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
   var spkOk = function (v) { return /^\s*\d{1,5}\s*\/\s*PRJ\s*\/\s*STARLITE\s*\/\s*[IVX]{1,4}\s*\/\s*20\d\d\s*$/i.test(v); };
   function boxSet(cls, html) { box.className = "full spk on " + cls; box.innerHTML = html; }
   function stg(s) { var L = [["Mengajukan", s.ajukan], ["Verifikasi", s.verif], ["Status IT", s.it]]; return '<ol class="stg">' + L.map(function (x) { return '<li class="' + x[1] + '"><i></i>' + x[0] + "</li>"; }).join("") + "</ol>"; }
-  function info(x) { return "<dl><dt>PO</dt><dd>" + esc(x.po) + "</dd><dt>Stasiun</dt><dd>" + esc(x.stasiun) + "</dd><dt>Mitra lama</dt><dd>" + esc(x.lama || "-") + "</dd><dt>Mitra pengganti</dt><dd>" + esc(x.baru || "-") + "</dd></dl>"; }
+  function info(x) { return "<dl><dt>PO</dt><dd>" + esc(x.po) + "</dd><dt>Stasiun</dt><dd>" + esc(x.stasiun) + "</dd><dt>Mitra lama</dt><dd>" + esc(x.lama || "-") + "</dd><dt>Mitra pengganti</dt><dd>" + esc(x.baru || "-") + "</dd><dt>Lampiran SPK</dt><dd>" + (x.hasSpk ? "Sudah ada" : "Belum ada — wajib diunggah di bawah") + "</dd></dl>"; }
   function setOpen(b) { rest.hidden = !b; }
   function picked() { return Array.prototype.slice.call(sibL.querySelectorAll("input:checked:not(:disabled)")).map(function (i) { return i.value; }); }
   function updNeed() {
@@ -311,7 +311,7 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
     if (x.locked) return boxSet("ok", "<b class='t'>Pengajuan sudah diterima</b>" + info(x) + stg(x.stage) + "<p style='margin:8px 0 0'>Diajukan " + esc(x.ts) + " · status: <b>" + esc(x.status || "Diajukan") + "</b>" + (x.it ? " · status IT: <b>" + esc(x.it) + "</b>" : "") + ". Perubahan hanya bisa bila VM menandai Revisi.</p>");
     var rv = x.status === "Revisi";
     boxSet(rv ? "no" : "ok", "<b class='t'>" + (rv ? "Pengajuan perlu direvisi" : "✓ Data ditemukan di Data Mitra Takeover") + "</b>" + info(x) + (x.submitted ? stg(x.stage) : "") + (rv ? "<p style='margin:8px 0 0'><b>Catatan VM:</b> " + esc(x.revisi || "-") + "</p>" : ""));
-    need.hidden = !!x.hasSpk; if (!x.hasSpk) { setVal("noSpk", ""); } drawSib(x); updNeed();
+    need.hidden = !!x.hasSpk; if (!x.hasSpk) { setVal("noSpk", x.noSpkN || ""); } drawSib(x); updNeed();
     if (rv && x.prefill) { var p = x.prefill; setVal("email", p.email); setVal("nama", p.nama); setVal("jabatan", p.jabatan); setVal("wa", p.wa); setVal("sales", p.sales); setVal("ikrBaru", p.ikrBaru); setVal("ikrLama", p.ikrLama); var r = f.querySelector('input[name="tujuan"][value="' + p.tujuan + '"]'); if (r) r.checked = true; try { waCheck(); } catch (e) { } }
     setOpen(true);
   }
