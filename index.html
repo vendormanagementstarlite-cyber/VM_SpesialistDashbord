@@ -14232,30 +14232,60 @@ async function contactNudge() {
     var v = rowVals(p.ref.row); if (!v) return p;
     var q = Object.assign({}, p); q.ref = Object.assign({}, p.ref, { vals: v, ip: mitraEmails(v[4]) }); return q;
   }
-  async function afterMail(r) {
+  /* batas waktu SP: hari kerja (Sen-Jum), bawaan 5, bisa diubah di dialog email */
+  function pd(t) { var m = String(t || "").match(/(\d\d)\/(\d\d)\/(\d{4})/); return m ? new Date(Date.UTC(+m[3], +m[2] - 1, +m[1])) : null; }
+  function fd(d) { return ("0" + d.getUTCDate()).slice(-2) + "/" + ("0" + (d.getUTCMonth() + 1)).slice(-2) + "/" + d.getUTCFullYear(); }
+  function addWd(d, n) { var x = new Date(d.getTime()), k = 0; while (k < n) { x.setUTCDate(x.getUTCDate() + 1); var w = x.getUTCDay(); if (w !== 0 && w !== 6) k++; } return x; }
+  function wdBetween(a, b) { var x = new Date(a.getTime()), k = 0; while (x < b) { x.setUTCDate(x.getUTCDate() + 1); var w = x.getUTCDay(); if (w !== 0 && w !== 6) k++; } return k; }
+  function durVal() { var el = document.getElementById("mx-dur"), n = el ? Math.round(Number(el.value)) : 5; return n >= 1 && n <= 60 ? n : 5; }
+  window.SP_CF.addWd = addWd; window.SP_CF.wdBetween = wdBetween;
+  async function afterMail(r, dur) {
     if (!r || !r.results) return;
     for (var i = 0; i < r.results.length; i++) {
       var x = r.results[i], it = x && x.item; if (!x || !x.ok || x.queued || !it || it.status && it.status !== "terkirim") continue;
       var m = String(it.jenis || "").match(/^SP([123])$/), ref = it.ref || {}; if (!m || ref.sheet !== "sp" || !ref.row) continue;
       try {
-        var cur = await sp("sp.get", { row: ref.row }), v = cur.values, c = { 11: jktDate() };
-        if (!/^final/i.test(String(v[12] || "").trim())) c[12] = "SP-" + m[1] + " Aktif";
+        var cur = await sp("sp.get", { row: ref.row }), v = cur.values, c = { 11: jktDate() }, due = fd(addWd(pd(c[11]), dur || 5));
+        if (!/^final/i.test(String(v[12] || "").trim())) c[12] = "SP-" + m[1] + " Aktif · jatuh tempo " + due + " (" + (dur || 5) + " hari kerja)";
         await sp("sp.update", { row: ref.row, cols: c });
-        (it.wb = it.wb || []).push("Monitoring SP: rilis " + c[11] + (c[12] ? " · " + c[12] : ""));
+        (it.wb = it.wb || []).push("Monitoring SP: rilis " + c[11] + " · jatuh tempo " + due);
         logc("Email SP-" + m[1] + " terkirim", v[4] + " (baris " + ref.row + ")");
         setTimeout(function () { try { if (typeof syncNow === "function") syncNow(); } catch (e) { } }, 800);
       } catch (e) { (it.wb = it.wb || []).push("Monitoring SP gagal diperbarui: " + e.message); }
     }
   }
 
+  /* hitung keterlambatan dari tanggal jatuh tempo (hari kerja); teks "SP-2 Aktif" tidak lagi terbaca sebagai angka */
+  var oBuild = window.buildSp;
+  if (typeof oBuild === "function") window.buildSp = function (rows) {
+    var out = oBuild.apply(this, arguments);
+    out.forEach(function (e) {
+      var m = String(e.overdue_raw || "").match(/jatuh tempo (\d\d\/\d\d\/\d{4})/), due = m && pd(m[1]); if (!due) return;
+      var now = new Date(Date.now() + 7 * 3600e3), today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+      e.due_raw = m[1]; e.overdue = today > due ? wdBetween(due, today) : 0;
+    });
+    return out;
+  };
+  /* kolom "Batas waktu (hari kerja)" di dialog email SP */
+  try {
+    new MutationObserver(function () {
+      var act = document.querySelector("#mx-send"), sj = document.getElementById("mx-subj");
+      if (!act || !sj || document.getElementById("mx-dur") || !/^Surat Peringatan/i.test(sj.value)) return;
+      var box = act.parentNode, d = document.createElement("div");
+      d.style.cssText = "display:flex;align-items:center;gap:8px;margin:10px 0;font-size:12px";
+      d.innerHTML = '<label for="mx-dur" class="mx-lbl" style="margin:0">Batas waktu tindak lanjut (hari kerja)</label><input id="mx-dur" type="number" min="1" max="60" value="5" class="field" style="width:70px">';
+      box.parentNode.insertBefore(d, box);
+    }).observe(document.body, { childList: true, subtree: true });
+  } catch (e) { }
+
   window.callApi = async function (action, payload, timeout) {
     var p = payload || {};
     if (action === "mail.preview" || action === "mail.send") {
-      var q = withSpRef(p), r0 = await oCall.call(this, action, q, timeout);
-      if (action === "mail.send") await afterMail(r0);
+      var dv = durVal(), q = withSpRef(p), r0 = await oCall.call(this, action, q, timeout);
+      if (action === "mail.send") await afterMail(r0, dv);
       return r0;
     }
-    if (action === "mail.approve") { var r1 = await oCall.apply(this, arguments); await afterMail(r1); return r1; }
+    if (action === "mail.approve") { var r1 = await oCall.apply(this, arguments); await afterMail(r1, 5); return r1; }
     if (action === "rows.undo" && SPU[p.id]) {
       var u = SPU[p.id]; delete SPU[p.id]; var r;
       if (u.type === "edit") { var c = {}; u.values.forEach(function (v, i) { c[i] = v; }); r = await sp("sp.update", { row: u.row, cols: c }); return { type: "edit", sheet: "sp", row: u.row, values: r.values }; }
