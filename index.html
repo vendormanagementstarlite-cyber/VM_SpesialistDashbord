@@ -14334,6 +14334,26 @@ async function contactNudge() {
   };
 })();
 </script>
+<script id="addon_v33_signhist">
+/* v33 — riwayat Signing dari Supabase (sg_hist) ikut ditampilkan: dokumen yang selesai setelah pindah dari sheet tidak lagi hilang dari daftar */
+(function () {
+  "use strict";
+  try {
+    var o = window.sbList; if (typeof o !== "function") return;
+    window.sbList = async function () {
+      var r = await o.apply(this, arguments);
+      try {
+        if (!r || !r.docs) return r;
+        var h = await callApi("sign.list", {}, 120000), have = {};
+        r.docs.forEach(function (d) { have[d.id] = 1; });
+        var add = ((h && h.docs) || []).filter(function (d) { return d && d.id && !have[d.id]; });
+        if (add.length) r.docs = r.docs.concat(add).sort(function (a, b) { return String(b.createdAt).localeCompare(String(a.createdAt)); });
+      } catch (e) { console.warn("riwayat signing", e); }
+      return r;
+    };
+  } catch (e) { console.warn(e); }
+})();
+</script>
 <script id="bagan_core">
 /* STARLITE · Bagan Struktur Mitra — penggambar bagan + unduh PNG/PDF (dipakai form mitra dan Info Perseroan) */
 (function (g) {
