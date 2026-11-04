@@ -157,7 +157,7 @@ $("go").onclick=function(){
   var pin=$("pin").value;if(!/^\d{6}$/.test(pin))return msg("m1","PIN harus 6 angka.","err");
   var create=false;
   $("go").disabled=true;msg("m1","");
-  api("bg.open",{row:x.row,pin:pin,create:create}).then(function(j){S.row=x.row;S.pin=pin;S.name=x.name;start(j)}).catch(function(e){msg("m1",e.message,"err")}).finally(function(){$("go").disabled=false});
+  api("bg.open",{row:x.row,pin:pin,create:create}).then(function(j){return api("bg.wajib").then(function(w){WAJIB=(w.items||[]).filter(function(i){return i&&i.label})},function(){}).then(function(){S.row=x.row;S.pin=pin;S.name=x.name;start(j)})}).catch(function(e){msg("m1",e.message,"err")}).finally(function(){$("go").disabled=false});
 };
 function start(j){
   $("s-login").classList.add("hide");$("s-edit").classList.remove("hide");$("bar").classList.remove("hide");$("ttl").textContent=S.name;
