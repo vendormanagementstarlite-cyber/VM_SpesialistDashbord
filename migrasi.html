@@ -8,9 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#eef3f2;--card:#ffffff;--ink:#0f172a;--mute:#5b6b72;--line:#dbe4e2;--soft:#f6faf9;--acc:#0e7c6b;--acc2:#0b5f53;--accs:#e2f3ee;--bad:#c2410c;--bads:#fff1e8;--ok:#047857;--sky:#1d4ed8;--skys:#eaf0ff;--sh:0 1px 2px #0f172a0d,0 8px 24px -12px #0f172a26}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1211;--card:#111c1a;--ink:#e7efed;--mute:#93a4a0;--line:#24322f;--soft:#0e1816;--acc:#34c3a8;--acc2:#6ad9c4;--accs:#12302a;--bad:#fb923c;--bads:#2b1b10;--ok:#34d399;--sky:#93b4ff;--skys:#14203a;--sh:0 0 0 1px #24322f}}
-:root[data-theme="dark"]{--bg:#0a1211;--card:#111c1a;--ink:#e7efed;--mute:#93a4a0;--line:#24322f;--soft:#0e1816;--acc:#34c3a8;--acc2:#6ad9c4;--accs:#12302a;--bad:#fb923c;--bads:#2b1b10;--ok:#34d399;--sky:#93b4ff;--skys:#14203a;--sh:0 0 0 1px #24322f}
+:root{--bg:#eaf1fb;--card:#ffffff;--ink:#0b1b33;--mute:#5a6b85;--line:#d6e1f2;--soft:#f4f8fe;--acc:#2563eb;--acc2:#1d4ed8;--accs:#e6efff;--g1:#1e40af;--g2:#2563eb;--g3:#38bdf8;--bad:#c2410c;--bads:#fff1e8;--ok:#047857;--sky:#1d4ed8;--skys:#eaf0ff;--sh:0 1px 2px #0f172a0d,0 8px 24px -12px #0f172a26}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#08111f;--card:#0f1b30;--ink:#e6eefb;--mute:#8fa3c2;--line:#23365a;--soft:#0b1627;--acc:#5b9bff;--acc2:#93bbff;--accs:#13284a;--g1:#2563eb;--g2:#3b82f6;--g3:#38bdf8;--bad:#fb923c;--bads:#2b1b10;--ok:#34d399;--sky:#93b4ff;--skys:#14203a;--sh:0 0 0 1px #24322f}}
+:root[data-theme="dark"]{--bg:#08111f;--card:#0f1b30;--ink:#e6eefb;--mute:#8fa3c2;--line:#23365a;--soft:#0b1627;--acc:#5b9bff;--acc2:#93bbff;--accs:#13284a;--g1:#2563eb;--g2:#3b82f6;--g3:#38bdf8;--bad:#fb923c;--bads:#2b1b10;--ok:#34d399;--sky:#93b4ff;--skys:#14203a;--sh:0 0 0 1px #24322f}
 *{box-sizing:border-box}[hidden]{display:none!important}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
@@ -24,7 +24,7 @@ h1{font-size:27px;line-height:1.22;margin:0 0 16px;font-weight:800;letter-spacin
 .intro{margin-bottom:18px;font-size:14px}.intro p{margin:0 0 10px}
 .prep{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 0;padding:0;list-style:none}
 .prep li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:13px;line-height:1.45}
-.prep li::before{content:"";flex:0 0 18px;height:18px;margin-top:1px;border-radius:6px;background:var(--accs) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3 3 7-7' fill='none' stroke='%230e7c6b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
+.prep li::before{content:"";flex:0 0 18px;height:18px;margin-top:1px;border-radius:6px;background:var(--accs) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3 3 7-7' fill='none' stroke='%232563eb' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
 @media(max-width:600px){.prep{grid-template-columns:1fr}}
 form{display:flex;flex-direction:column;gap:16px}
 fieldset{border:0;margin:0;min-width:0}
@@ -127,6 +127,28 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 #wa-st.ok{color:var(--ok);font-weight:700}#wa-st.no{color:var(--bad);font-weight:700}
 .wa-ok{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:13px;cursor:pointer;animation:pop .2s ease}
 .wa-ok input{margin-top:3px;width:17px;height:17px;accent-color:var(--acc);flex:none}
+
+/* ===== tampilan biru gradasi ===== */
+body{background:radial-gradient(1100px 420px at 50% -120px,color-mix(in srgb,var(--g3) 28%,transparent),transparent 70%),linear-gradient(180deg,color-mix(in srgb,var(--g2) 10%,var(--bg)),var(--bg) 380px) fixed,var(--bg)}
+h1{background:linear-gradient(100deg,var(--g1),var(--g2) 55%,var(--g3));-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:2px}
+.card{border:1px solid color-mix(in srgb,var(--g2) 10%,var(--line));box-shadow:0 1px 2px #0b1b330d,0 14px 34px -18px color-mix(in srgb,var(--g1) 45%,transparent)}
+.intro{position:relative;overflow:hidden}
+.intro::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,var(--g1),var(--g2),var(--g3))}
+.sec i{background:linear-gradient(135deg,var(--g1),var(--g2) 60%,var(--g3));color:#fff;box-shadow:0 6px 14px -6px var(--g2)}
+button.send{background:linear-gradient(135deg,var(--g1),var(--g2) 55%,var(--g3));box-shadow:0 14px 28px -14px var(--g2);background-size:140% 100%;background-position:0 0;transition:background-position .35s,transform .15s,box-shadow .15s}
+button.send:hover:not(:disabled){background-position:100% 0;transform:translateY(-1px)}
+button.send:active:not(:disabled){transform:translateY(0)}
+a.btn{background:linear-gradient(135deg,var(--g1),var(--g2))}
+.opt:has(input:checked){background:linear-gradient(135deg,color-mix(in srgb,var(--g2) 12%,var(--card)),color-mix(in srgb,var(--g3) 14%,var(--card)));box-shadow:0 8px 20px -14px var(--g2)}
+.drop.has{border-color:var(--g2);background:linear-gradient(135deg,color-mix(in srgb,var(--g2) 9%,var(--card)),color-mix(in srgb,var(--g3) 10%,var(--card)))}
+.ring .fg{stroke:url(#rg)}
+.spk.ok{background:linear-gradient(135deg,color-mix(in srgb,var(--g2) 11%,var(--card)),color-mix(in srgb,var(--g3) 12%,var(--card)));border:1px solid color-mix(in srgb,var(--g2) 22%,transparent)}
+.stg li.done{background:linear-gradient(135deg,color-mix(in srgb,var(--g2) 14%,var(--card)),color-mix(in srgb,var(--g3) 16%,var(--card)));color:var(--ink)}.stg li.done i{background:linear-gradient(135deg,var(--g2),var(--g3))}
+.stg li.proses i{box-shadow:0 0 0 4px color-mix(in srgb,#d97706 25%,transparent)}
+input:focus{border-color:var(--g2);box-shadow:0 0 0 3px color-mix(in srgb,var(--g2) 24%,transparent)}
+header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,transparent))}
+.grid>*{min-width:0}@media(max-width:600px){.grid{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:reduce){button.send{transition:none}}
 </style>
 </head>
 <body>
@@ -238,7 +260,7 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 
 <div class="ov" id="ov" hidden>
   <div class="ovc" role="alertdialog" aria-live="polite" aria-label="Mengirim pengajuan">
-    <div class="ring"><svg viewBox="0 0 80 80"><circle class="bg" cx="40" cy="40" r="34" fill="none" stroke-width="7"/><circle class="fg" id="ring" cx="40" cy="40" r="34" fill="none" stroke-width="7" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg><b id="pct">0%</b></div>
+    <div class="ring"><svg viewBox="0 0 80 80"><circle class="bg" cx="40" cy="40" r="34" fill="none" stroke-width="7"/><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e40af"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs><circle class="fg" id="ring" cx="40" cy="40" r="34" fill="none" stroke-width="7" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg><b id="pct">0%</b></div>
     <h3 id="ov-t">Mengirim pengajuan…</h3>
     <p id="ov-s">Jangan tutup halaman ini.</p>
     <ul class="steps"><li data-s="read"><i></i>Membaca berkas</li><li data-s="up"><i></i>Mengunggah dokumen ke Drive</li><li data-s="save"><i></i>Menyimpan pengajuan</li></ul>
