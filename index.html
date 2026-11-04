@@ -9170,24 +9170,52 @@ body:has(#mig-ov) #st-nt{display:none!important}
   function chkOf(r) { return MIG.chk[r.ck] || {}; }
   function rowKey(r) { return r.ts + "|" + nk(r.po); }
   // ---------- data ----------
+  function applyMig(r) {
+    MIG.rows = (r.rows || []).map(function (x) { x.tsMs = parseTs(x.ts); return x; });
+    MIG.chk = r.chk || {}; MIG.settings = r.settings || MIG.settings; MIG.hasKey = !!r.formKey;
+  }
+  function waitN() { return MIG.rows.filter(function (r) { return stOf(r) === "wait"; }).length; }
+  // lapisan cepat Cloudflare: daftar dibaca dari worker (<1 dtk); sheet disinkronkan di latar belakang
+  function cfFast() {
+    if (!window.PS_CF) return Promise.resolve(false);
+    return PS_CF.call("mg.list").then(function (c) {
+      if (!c || !c.synced) return false;
+      applyMig(c); MIG.v = c.v; MIG.loaded = true; MIG.at = Date.now(); MIG.err = ""; return true;
+    }, function () { return false; });
+  }
   async function load(force) {
     if (!isOwner() || !srv() || MIG.off) return;
     if (MIG.loading) return MIG.loading;
     if (!force && MIG.loaded && Date.now() - MIG.at < 120000) return;
     MIG.loading = (async function () {
       try {
+        if (!MIG.loaded && await cfFast()) { badge(); if (isOpen()) render(); }
         var r = await callApi("mig.list", {}, 60000);
-        MIG.rows = (r.rows || []).map(function (x) { x.tsMs = parseTs(x.ts); return x; });
-        MIG.chk = r.chk || {}; MIG.settings = r.settings || MIG.settings; MIG.hasKey = !!r.formKey;
+        applyMig(r);
         MIG.loaded = true; MIG.at = Date.now(); MIG.err = "";
       } catch (e) {
-        MIG.err = e.message; MIG.loaded = true; MIG.at = Date.now();   // berhenti memuat, tampilkan pesan sekali (tidak berulang)
+        if (MIG.rows.length && !MIG.off && !/tidak dikenal|unknown action/i.test(e.message)) { MIG.at = Date.now(); }   // data dari Cloudflare tetap ditampilkan
+        else { MIG.err = e.message; MIG.loaded = true; MIG.at = Date.now(); }   // berhenti memuat, tampilkan pesan sekali (tidak berulang)
         if (/tidak dikenal|unknown action/i.test(e.message)) MIG.off = true;   // Code.gs di server belum versi Migrasi IKR
       }
       finally { MIG.loading = null; badge(); if (isOpen()) render(); }
     })();
     return MIG.loading;
   }
+  // pengajuan baru langsung muncul: cek penanda versi di Cloudflare tiap 20 detik
+  var pollBusy = false;
+  async function poll() {
+    if (pollBusy || MIG.loading || !MIG.loaded || MIG.off || !isOwner() || !srv() || !window.PS_CF || document.visibilityState !== "visible") return;
+    pollBusy = true;
+    try {
+      var m = await PS_CF.call("mg.meta");
+      if (m && m.v && MIG.v !== undefined && m.v !== MIG.v) {
+        var before = waitN(), had = MIG.rows.length;
+        if (await cfFast()) { badge(); if (isOpen()) render(); var n = waitN() - before; if (n > 0 && had) toast(n === 1 ? "Ada 1 pengajuan Migrasi IKR baru" : "Ada " + n + " pengajuan Migrasi IKR baru"); }
+      } else if (m && m.v && MIG.v === undefined) { MIG.v = m.v; }
+    } catch (e) { } finally { pollBusy = false; }
+  }
+  setInterval(poll, 20000);
   async function keyOf(r) { return r.ck; }
   async function keyAll() { for (var i = 0; i < MIG.rows.length; i++) await keyOf(MIG.rows[i]); }
   // ---------- pencocokan dengan Data Mitra Takeover & Tracker ----------
