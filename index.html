@@ -14344,7 +14344,9 @@ async function contactNudge() {
       var r = await o.apply(this, arguments);
       try {
         if (!r || !r.docs) return r;
-        var h = await callApi("sign.list", {}, 120000), have = {};
+        var h = await fetch(BACKEND.URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "sign.list", token: currentUser.token }) }).then(function (x) { return x.json(); });
+        if (!h || !h.ok) return r;
+        var have = {};
         r.docs.forEach(function (d) { have[d.id] = 1; });
         var add = ((h && h.docs) || []).filter(function (d) { return d && d.id && !have[d.id]; });
         if (add.length) r.docs = r.docs.concat(add).sort(function (a, b) { return String(b.createdAt).localeCompare(String(a.createdAt)); });
