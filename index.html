@@ -9350,6 +9350,10 @@ body:has(#mig-ov) #st-nt{display:none!important}
   async function openDetail(rowNo) {
     var r = MIG.rows.filter(function (x) { return x.row === rowNo; })[0]; if (!r) return;
     await keyOf(r);
+    if (!r.spk) {   // kolom N takeover belum bertautan: ambil lampiran SPK dari All SPK (cocok per PO / No SPK)
+      var ps = r.pos || [r.po], hit = (STATE.spk || []).filter(function (x) { return x.link && (ps.some(function (q) { return nk(q) === nk(x.po); }) || (r.noSpk && nk(x.no_spk) === nk(r.noSpk))); })[0];
+      if (hit) { r.spk = hit.link; r.spkFromAll = true; }
+    }
     var A = autoChecks(r), T = A.T, K = A.K, c = chkOf(r), it = c.items || {}, k = stOf(r);
     var st = hcStart(r, T, K), en = today();
     var lnk = function (u, t) { return u ? '<a href="' + E(u) + '" target="_blank" rel="noopener" class="mig-lnk"><i class="fa-solid fa-arrow-up-right-from-square"></i>' + t + "</a>" : '<span class="mig-none">' + t + " — tidak ada</span>"; };
