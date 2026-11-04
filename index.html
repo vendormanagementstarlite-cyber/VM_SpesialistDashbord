@@ -13088,7 +13088,7 @@ async function contactNudge() {
     $i("mx-tabs").innerHTML = t.map(function (x) { return '<button class="' + (MX.tab === x[0] ? "on" : "") + '" data-t="' + x[0] + '"><i class="fa-solid ' + x[1] + '"></i>' + x[2] + "</button>"; }).join("");
     $i("mx-tabs").querySelectorAll("[data-t]").forEach(function (b) { b.onclick = function () { MX.tab = b.dataset.t; render(); }; });
     var c = MX.cfg, cf = (c && c.cfg) || {};
-    $i("mx-from").innerHTML = c ? ('<span class="mx-meta"><i class="fa-solid fa-at"></i>' + (cf.useAlias ? E(c.from) + (c.alias ? "" : ' <span class="mx-bad">(alias belum aktif)</span>') : "Gmail STARLITE") + '</span>'
+    $i("mx-from").innerHTML = c ? ('<span class="mx-meta"><i class="fa-solid fa-at"></i>' + (cf.useAlias ? E(c.from) + (c.alias ? "" : ' <span class="mx-bad">(alias belum aktif)</span>') : E(c.sender || c.from || "akun pengirim")) + '</span>'
       + (cf.ccWajib ? '<span class="mx-meta"><i class="fa-solid fa-user-shield"></i>Cc wajib ' + E(cf.ccWajib) + "</span>" : "")
       + '<span class="mx-meta' + (c.quota >= 0 && c.quota < 10 ? " low" : "") + '"><i class="fa-solid fa-gauge"></i>Sisa kuota ' + (c.quota >= 0 ? c.quota : "-") + "/hari</span>") : "Memuat…";
   }
@@ -13281,8 +13281,8 @@ async function contactNudge() {
     var fld = function (lbl, attr, val, ph) { return '<label class="mx-lbl">' + E(lbl) + '</label><input class="field w-full" ' + attr + ' value="' + E(val || "") + '" placeholder="' + E(ph || "email; email") + '">'; };
     bd.innerHTML = (MX.cfg.sendAsFails && c.useAlias ? '<div class="mx-err"><b>Alias weave ditolak Gmail (' + MX.cfg.sendAsFails + " pemberitahuan gagal dalam 2 hari).</b> Matikan \"Kirim dari alias weave\" agar email kembali terkirim dari Gmail STARLITE.</div>" : "")
       + '<div class="mx-grid"><div class="mx-col">'
-      + '<section class="mx-sec"><h4><i class="fa-solid fa-paper-plane"></i>Pengirim</h4><p class="mx-note">Semua email keluar dari akun Gmail STARLITE. Balasan penerima masuk ke Gmail STARLITE. Kuota Gmail 100 penerima per hari.</p>'
-      + fld("Cc wajib di semua email", 'id="mx-ccw"', c.ccWajib) + '<p class="mx-note">Tidak bisa dihapus dari form kirim. Pisahkan dengan titik koma bila lebih dari satu.</p></section>'
+      + '<section class="mx-sec"><h4><i class="fa-solid fa-paper-plane"></i>Pengirim</h4><p class="mx-note">Pengirim email adalah akun pemilik Apps Script (' + E(MX.cfg.sender || MX.cfg.from) + '). Balasan penerima masuk ke akun itu. Tidak ada cc wajib.</p>'
+      + '</section>'
       + '<section class="mx-sec"><h4><i class="fa-solid fa-copy"></i>Cc tambahan per jenis dokumen</h4><div class="mx-g2">' + JENIS.map(function (x) { return '<div>' + fld(x[1], 'data-cc="' + x[0] + '"', (c.cc || {})[x[0]], "kosong = tidak ada") + "</div>"; }).join("") + "</div>"
       + '<p class="mx-note">Cc Migrasi IKR diatur di menu Migrasi IKR.</p></section>'
       + '<section class="mx-sec"><h4><i class="fa-solid fa-map-location-dot"></i>Cc per region</h4><p class="mx-note">Ditambahkan otomatis ke semua jenis dokumen sesuai region baris data.</p>' + (MX.cfg.regions || ["JABAR", "JATIM", "JATENG", "JABODEBEK - BANTEN"]).map(function (g) { return fld(g, 'data-cr="' + E(g) + '"', (c.ccRegion || {})[g], "email; email"); }).join("") + "</section>"
@@ -13296,7 +13296,7 @@ async function contactNudge() {
       + JENIS.map(function (x) { var t = (c.tpl || {})[x[0]] || {}; return '<details class="mx-tpl"><summary>' + E(x[1]) + (t.subject || t.core ? ' <span class="mx-tagx">diubah</span>' : "") + '</summary><input class="field w-full" data-ts="' + x[0] + '" value="' + E(t.subject || "") + '" placeholder="Subjek"><textarea class="field w-full" rows="5" data-tc="' + x[0] + '" placeholder="Isi inti">' + E(t.core || "") + "</textarea></details>"; }).join("") + "</section>"
       + '</div></div><div class="mx-act mx-sticky"><button class="btn btn-primary" id="mx-save"><i class="fa-solid fa-floppy-disk"></i>Simpan pengaturan</button></div>';
     $i("mx-save").onclick = async function () {
-      var cfg = { from: $i("mx-from-sel").value, allowFallback: $i("mx-fb").checked, useAlias: $i("mx-ua").checked, ccWajib: $i("mx-ccw").value, cc: {}, ccTipe: {}, ccRegion: {}, tpl: {} };
+      var cfg = { from: $i("mx-from-sel").value, allowFallback: $i("mx-fb").checked, useAlias: $i("mx-ua").checked, ccWajib: "", cc: {}, ccTipe: {}, ccRegion: {}, tpl: {} };
       bd.querySelectorAll("[data-cr]").forEach(function (i) { cfg.ccRegion[i.dataset.cr] = i.value; });
       bd.querySelectorAll("[data-cc]").forEach(function (i) { cfg.cc[i.dataset.cc] = i.value; });
       bd.querySelectorAll("[data-ct]").forEach(function (i) { if (i.value.trim()) cfg.ccTipe[i.dataset.ct] = i.value; });
