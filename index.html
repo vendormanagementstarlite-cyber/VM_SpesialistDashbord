@@ -9150,7 +9150,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
   function parseTs(s) { var m = String(s || "").match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/); return m ? new Date(+m[3], +m[2] - 1, +m[1], +(m[4] || 0), +(m[5] || 0)).getTime() : 0; }
   function ago(ts) { if (!ts) return ""; var d = Math.floor((Date.now() - ts) / 864e5); return d <= 0 ? "hari ini" : d + " hari"; }
   function chkOf(r) { return MIG.chk[r.ck] || {}; }
-  function rowKey(r) { return r.ts + "|" + nk(r.noSpk); }
+  function rowKey(r) { return r.ts + "|" + nk(r.po); }
   // ---------- data ----------
   async function load(force) {
     if (!isOwner() || !srv() || MIG.off) return;
@@ -9211,14 +9211,14 @@ body:has(#mig-ov) #st-nt{display:none!important}
     var own = spkNum(r.noSpk); a = a.filter(function (x, i) { return x && a.indexOf(x) === i && !(own && spkNum(x) && spkNum(x).n === own.n); }); return a.slice(0, 3).join(", ");
   }
   function autoChecks(r) {
-    var mT = matchBy(STATE.takeover || [], "att_spk", r), mK = matchBy(STATE.spk || [], "no_spk", r), T = mT.rows, K = mK.rows, out = [];
+    var mT = { rows: (STATE.takeover || []).filter(function (x) { return nk(x.po) === nk(r.po); }), how: "" }, mK = { rows: (STATE.spk || []).filter(function (x) { return nk(x.po) === nk(r.po); }), how: "" }, T = mT.rows, K = mK.rows, out = [];
     // sumber 1: Data Mitra Takeover (kolom Q = No SPK) · sumber 2: All SPK (TRACKER SPK VM)
     var src = T.length && K.length ? "Data Mitra Takeover & All SPK" : T.length ? "Data Mitra Takeover" : K.length ? "All SPK" : "";
     var how = mK.how || mT.how;
     var pos = []; T.concat(K).forEach(function (x) { poOf(x.po).forEach(function (p) { if (pos.indexOf(p) < 0) pos.push(p); }); });
     var sug = function () { var s = suggestSpk(r, src ? r.noSpk : ""); return s.length ? " · SPK yang cocok dengan stasiun & mitra ini: " + s.map(function (x) { return x.no + " (" + x.txt + ")"; }).join("; ") : ""; };
     if (src) out.push({ ok: how === "po" ? false : true, t: how === "po" ? "Kolom No SPK berisi nomor PO, bukan nomor SPK" : "No SPK ditemukan di " + src, d: (how === "nomor" ? "dicocokkan dari nomor urut (penulisan berbeda) · " : "") + (pos.length ? pos.length + " PO: " + pos.join(", ") : "tanpa nomor PO") + (how === "po" ? sug() : "") });
-    else out.push({ ok: false, t: r.noSpk && spkKey(r.noSpk) ? "No SPK tidak ditemukan di Data Mitra Takeover maupun All SPK" : "No SPK tidak diisi", d: (r.noSpk || "(kosong)") + sug() });
+    else out.push({ ok: false, t: r.noSpk && spkKey(r.noSpk) ? "PO tidak ditemukan di Data Mitra Takeover maupun All SPK" : "No SPK tidak diisi", d: (r.noSpk || "(kosong)") + sug() });
     if (src) {
       var uniq = function (a) { return a.filter(function (c, i) { return a.indexOf(c) === i; }); };
       var lamaC = uniq(T.map(function (t) { return t.before; }).concat(K.map(function (x) { return x.prev; })).filter(function (x) { return x && x !== "-"; }));
@@ -9285,7 +9285,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
       b.innerHTML = '<div class="flex items-center gap-3"><i class="fa-solid fa-people-arrows text-sm shrink-0 group-hover:scale-110 transition-transform"></i><span class="sidebar-text">Migrasi IKR</span></div><span id="sidebar-migrasi-badge" class="sidebar-text text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 hidden">0</span>';
       nt.after(b);
     }
-    var n = $("nav-migrasi"); n && n.classList.remove("hidden");
+    var n = $("nav-migrasi"); n && n.classList.add("hidden");   // Migrasi IKR kini bagian dari Data Mitra Takeover (bar di atas tabel)
     var th = document.querySelector('#desk-top .tb-actions [onclick^="toggleTheme"]');
     if (th && !$("mig-tb")) {
       var tb = document.createElement("div"); tb.id = "mig-tb"; tb.className = "mig-tb hidden";
@@ -9294,10 +9294,11 @@ body:has(#mig-ov) #st-nt{display:none!important}
       tb.querySelector('[data-t="reload"]').onclick = reloadNow; tb.querySelector('[data-t="form"]').onclick = function () { formLink(); }; tb.querySelector('[data-t="set"]').onclick = function () { settings(); };
     }
     var vt = $("view-takeover");
+    if (vt && !$("mig-tkbar")) { var bar = document.createElement("button"); bar.id = "mig-tkbar"; bar.type = "button"; bar.className = "mig-to-banner"; bar.style.cssText = "margin:0 0 10px;max-width:100%"; bar.setAttribute("onclick", "switchTab('migrasi')"); bar.innerHTML = '<i class="fa-solid fa-people-arrows"></i><span>Migrasi IKR · verifikasi pengajuan mitra</span><b id="mig-tk-badge" class="hidden" style="background:#d97706;color:#fff;border-radius:99px;padding:0 8px;font-size:11px">0</b><i class="fa-solid fa-chevron-right"></i>'; vt.insertBefore(bar, vt.firstChild); }
     if (vt && !$("view-migrasi")) { var v = document.createElement("section"); v.id = "view-migrasi"; v.className = "tab-view hidden space-y-5"; vt.after(v); }
   }
   function reloadNow() { MIG.off = false; MIG.err = ""; MIG.loaded = false; render(); load(true).then(function () { if (!MIG.err) toast("Pengajuan Migrasi IKR dimuat ulang", "success"); }); }
-  function badge() { var b = $("sidebar-migrasi-badge"); if (!b) return; var n = MIG.rows.filter(function (r) { return stOf(r) === "wait"; }).length; b.textContent = n; b.classList.toggle("hidden", !n); }
+  function badge() { var n = MIG.rows.filter(function (r) { return stOf(r) === "wait"; }).length; var t = $("mig-tk-badge"); if (t) { t.textContent = n; t.classList.toggle("hidden", !n); } var b = $("sidebar-migrasi-badge"); if (!b) return; b.textContent = n; b.classList.toggle("hidden", !n); }
   function filtered() {
     var q = String(MIG.q || "").trim().toLowerCase().replace(/\s+/g, " ");
     return MIG.rows.filter(function (r) {
@@ -9365,7 +9366,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
       + '<section><h4>Cek di portal</h4><div class="mig-range"><label>Dari<input type="date" id="mig-d1" class="field" value="' + st + '"></label><label>Sampai<input type="date" id="mig-d2" class="field" value="' + en + '"></label></div>'
       + '<div class="mig-portal"><button class="st-b" data-p="hc"><i class="fa-solid fa-users"></i>Cek HC · Pelanggan Aktif</button><button class="st-b" data-p="ikr"><i class="fa-solid fa-screwdriver-wrench"></i>Cek Lead IKR</button><button class="st-b" data-p="sales"><i class="fa-solid fa-user-tie"></i>Cek Lead Sales</button></div><p class="mig-note">Portal terbuka di tab browser tersendiri (tab yang sama dipakai ulang) dengan login portal Anda — cukup login sekali, aplikasi ini tetap terbuka di tab-nya. Untuk Lead IKR / Sales, email akunnya otomatis disalin — tempel di kolom cari portal.</p></section>'
       + '<section><h4>Checklist verifikator</h4><div class="mig-ck">' + CK.map(function (x) { return '<label><input type="checkbox" data-ck="' + x[0] + '"' + (it[x[0]] === true ? " checked" : "") + "><span>" + x[1] + "</span></label>"; }).join("") + '</div><label class="mig-hc">HC di portal (opsional)<input id="mig-hcv" class="field" inputmode="numeric" placeholder="mis. 53" value="' + E(c.hc || "") + '"></label></section>'
-      + '<section><h4>Keputusan</h4><textarea id="mig-rem" class="field w-full" rows="3" placeholder="Catatan untuk mitra (wajib bila Revisi / Tidak Sesuai)">' + E(r.remark || "") + '</textarea><div class="mig-dec"><button class="st-b dng" data-d="Tidak Sesuai"><i class="fa-solid fa-ban"></i>Tidak Sesuai</button><button class="st-b warn" data-d="Revisi"><i class="fa-solid fa-rotate-left"></i>Revisi</button><button class="st-b pri" data-d="lolos"><i class="fa-solid fa-circle-check"></i>Lolos → Kirim ke IT</button></div><p class="mig-st">Status Verifikasi (kolom R): <b>' + E(r.verif || "—") + "</b> · Status IT (kolom S): <b>" + E(r.it || "—") + "</b></p></section>"
+      + '<section><h4>Keputusan</h4><textarea id="mig-rem" class="field w-full" rows="3" placeholder="Catatan untuk pengaju (wajib bila Revisi — dikirim ke email pengaju)">' + E(r.remark || "") + '</textarea><div class="mig-dec"><button class="st-b" data-d="Verifikasi"><i class="fa-solid fa-magnifying-glass-check"></i>Sedang diverifikasi</button><button class="st-b warn" data-d="Revisi"><i class="fa-solid fa-rotate-left"></i>Revisi</button><button class="st-b pri" data-d="lolos"><i class="fa-solid fa-circle-check"></i>Lolos → Kirim ke IT</button></div><p class="mig-st">Status Migrasi (kolom J): <b>' + E(r.verif || "—") + "</b> · Status IT (kolom AA): <b>" + E(r.it || "—") + "</b></p></section>"
       + "</div></div>", "lg");
     var el = M.el, q = function (s) { return el.querySelector(s); };
     var items = function () { var o = {}; el.querySelectorAll("[data-ck]").forEach(function (cb) { o[cb.dataset.ck] = cb.checked; }); return o; };
@@ -9380,7 +9381,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
     el.querySelector("[data-edit]").onclick = function () { editData(r); };
     el.querySelectorAll("[data-ba]").forEach(function (b) { b.onclick = function () { if (b.dataset.ba === "edit") baEdit(r, []); else baAdd(r); }; });
     var save = async function (verif, remark, extra) {
-      var res = await callApi("mig.save", Object.assign({ row: r.row, ts: r.ts, noSpk: r.noSpk, verif: verif, remark: remark, chk: items(), hc: q("#mig-hcv").value.trim() }, extra || {}), 60000);
+      var res = await callApi("mig.save", Object.assign({ row: r.row, ts: r.ts, po: r.po, noSpk: r.noSpk, verif: verif, remark: remark, formUrl: verif === "Revisi" ? await formUrl() : "", chk: items(), hc: q("#mig-hcv").value.trim() }, extra || {}), 60000);
       if (res.item) { Object.assign(r, res.item); }
       if (res.chk) { MIG.chk[res.chk.key] = res.chk.value; r.ck = res.chk.key; }
       badge(); if (isOpen()) render();
@@ -9395,6 +9396,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
           return emailIt(r, T, function () { M.close(); });
         }
         var rem = q("#mig-rem").value.trim();
+        if (d === "Verifikasi") { b.disabled = true; try { await save(d, rem || undefined, { note: "Mulai verifikasi" }); toast("Status Migrasi: Verifikasi", "success"); } catch (e) { toast(e.message, "error", 7000); } b.disabled = false; return; }
         if (!rem) { rem = "Mohon diperbaiki: " + (miss.length ? miss.map(function (x) { return x[1]; }).join("; ") : "-"); q("#mig-rem").value = rem; return toast("Catatan terisi otomatis dari checklist — periksa lalu klik lagi", "info", 5000); }
         b.disabled = true;
         try {
@@ -9411,7 +9413,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
   var b64ToFile = function (x) { var bin = atob(x.b64), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); var nm = x.name || "BA.pdf"; return new File([u], nm, { type: x.mime || (/\.pdf$/i.test(nm) ? "application/pdf" : "application/octet-stream") }); };
   async function baFiles(r) {
     if (!r.ba) return [];
-    var res = await callApi("mig.bafile", { row: r.row, ts: r.ts, noSpk: r.noSpk }, 120000);
+    var res = await callApi("mig.bafile", { row: r.row, ts: r.ts, po: r.po, noSpk: r.noSpk }, 120000);
     return (res.files || []).map(b64ToFile);
   }
   async function baEdit(r, extra) {
@@ -9430,7 +9432,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
     try {
       var buf = new Uint8Array(await file.arrayBuffer()), bin = "", CH = 0x8000;
       for (var i = 0; i < buf.length; i += CH) bin += String.fromCharCode.apply(null, buf.subarray(i, i + CH));
-      var res = await callApi("mig.ba", { row: r.row, ts: r.ts, noSpk: r.noSpk, fileBase64: btoa(bin) }, 180000);
+      var res = await callApi("mig.ba", { row: r.row, ts: r.ts, po: r.po, noSpk: r.noSpk, fileBase64: btoa(bin) }, 180000);
       if (res.item) Object.assign(r, res.item); if (res.chk) { MIG.chk[res.chk.key] = res.chk.value; r.ck = res.chk.key; }
       toast("BA baru tersimpan di Drive & kolom M · BA lama tetap tersimpan", "success", 6000);
       try { switchTab("migrasi"); } catch (e) { } openDetail(r.row);
@@ -9468,18 +9470,18 @@ body:has(#mig-ov) #st-nt{display:none!important}
     go.onclick = function () { document.removeEventListener("paste", paste); go.disabled = true; go.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Membuka…'; baEdit(r, L.slice()); };
   }
   // ---------- ubah data pengajuan (akun Sales / Lead IKR, No SPK, mitra, stasiun, dll.) ----------
-  var EF = [["noSpk", "No SPK", "text", 1], ["tujuan", "Tujuan", "sel", 1], ["lama", "Mitra lama", "mitra", 1], ["baru", "Mitra pengganti", "mitra", 1], ["stasiun", "Stasiun", "text", 1],
+  var EF = [["noSpk", "No SPK", "text", 1], ["tujuan", "Subjek pengajuan", "sel", 1],
             ["sales", "Akun email Sales penampung", "email", 1], ["ikrBaru", "Akun email Lead IKR mitra pengganti", "email", 1], ["ikrLama", "Akun email Lead IKR mitra lama", "email", 0],
             ["nama", "Nama pengaju", "text", 1], ["jabatan", "Jabatan", "text", 0], ["wa", "No WhatsApp", "text", 0], ["email", "Email pengaju", "email", 1], ["kml", "Link file KML", "url", 0], ["spk", "Link file SPK", "url", 0]];
   function editData(r) {
     var names = ((STATE.perseroan || []).map(function (x) { return x.nama; }).filter(Boolean)).filter(function (x, i, a) { return a.indexOf(x) === i; }).sort();
     var fld = function (f) {
       var v = E(r[f[0]] || ""), req = f[3] ? ' <i class="rq">*</i>' : "";
-      var inp = f[2] === "sel" ? '<select class="field w-full" data-k="tujuan"><option' + (r.tujuan === "Migrasi Akun IKR" ? " selected" : "") + '>Migrasi Akun IKR</option><option' + (/create/i.test(r.tujuan) ? " selected" : "") + ">Create Stasiun (Stasiun Take Over)</option></select>"
+      var inp = f[2] === "sel" ? '<select class="field w-full" data-k="tujuan"><option' + (r.tujuan === "Migrasi Akun IKR" ? " selected" : "") + '>Migrasi Akun IKR</option><option' + (/create/i.test(r.tujuan) ? " selected" : "") + ">Create Site</option></select>"
         : '<input class="field w-full" data-k="' + f[0] + '" value="' + v + '"' + (f[2] === "email" ? ' type="email"' : "") + (f[2] === "mitra" ? ' list="mig-dlm"' : "") + (f[2] === "url" ? ' placeholder="https://drive.google.com/…"' : "") + ">";
       return '<label class="mig-ef' + (/kml|spk|sales|ikr|stasiun/.test(f[0]) ? " w2" : "") + '"><span>' + f[1] + req + "</span>" + inp + "</label>";
     };
-    var M = modal('<div class="mig-mh"><div><small>Pengajuan ' + E(r.ts) + '</small><h3>Ubah data pengajuan</h3><p>Perubahan langsung tersimpan di sheet Migrasi IKR dan tercatat di riwayat.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div>'
+    var M = modal('<div class="mig-mh"><div><small>Pengajuan ' + E(r.ts) + '</small><h3>Ubah data pengajuan</h3><p>Perubahan langsung tersimpan di Data Mitra Takeover dan tercatat di riwayat.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div>'
       + '<div class="mig-pad"><datalist id="mig-dlm">' + names.map(function (n) { return '<option value="' + E(n) + '">'; }).join("") + '</datalist><div class="mig-efg">' + EF.map(fld).join("") + '</div><p class="mig-note" id="mig-efn"></p>'
       + '<div class="mig-dec"><button class="st-b" data-x>Batal</button><button class="st-b pri" data-s><i class="fa-solid fa-floppy-disk"></i>Simpan perubahan</button></div></div>', "md");
     var el = M.el, note = el.querySelector("#mig-efn");
@@ -9490,7 +9492,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
       var ch = changes(); if (!Object.keys(ch).length) return toast("Belum ada yang diubah", "info");
       var b = this; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Menyimpan…';
       try {
-        var res = await callApi("mig.edit", { row: r.row, ts: r.ts, noSpk: r.noSpk, changes: ch }, 60000);
+        var res = await callApi("mig.edit", { row: r.row, ts: r.ts, po: r.po, noSpk: r.noSpk, changes: ch }, 60000);
         if (res.oldKey && res.oldKey !== res.chk.key) delete MIG.chk[res.oldKey];
         Object.assign(r, res.item); MIG.chk[res.chk.key] = res.chk.value; r.ck = res.chk.key;
         M.close(); toast("Data pengajuan diperbarui", "success"); badge(); if (isOpen()) render(); openDetail(r.row);
@@ -9498,18 +9500,18 @@ body:has(#mig-ov) #st-nt{display:none!important}
     };
   }
   function revisiShare(r, msg) {
-    var M = modal('<div class="mig-mh"><div><h3>Kabari mitra</h3><p>Status tersimpan di kolom R, catatan di kolom Q.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div><div class="mig-pad"><textarea class="field w-full mig-pre mig-big" rows="12" id="mig-msg">' + E(msg) + '</textarea><div class="mig-dec"><button class="st-b" data-c><i class="fa-solid fa-copy"></i>Salin pesan</button>' + (r.wa ? '<button class="st-b pri" data-w><i class="fa-brands fa-whatsapp"></i>Kirim WA ke ' + E(r.wa) + "</button>" : "") + "</div></div>", "md");
+    var M = modal('<div class="mig-mh"><div><h3>Kabari mitra</h3><p>Status tersimpan di kolom J, catatan di kolom K. Pengaju juga sudah dikabari lewat email.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div><div class="mig-pad"><textarea class="field w-full mig-pre mig-big" rows="12" id="mig-msg">' + E(msg) + '</textarea><div class="mig-dec"><button class="st-b" data-c><i class="fa-solid fa-copy"></i>Salin pesan</button>' + (r.wa ? '<button class="st-b pri" data-w><i class="fa-brands fa-whatsapp"></i>Kirim WA ke ' + E(r.wa) + "</button>" : "") + "</div></div>", "md");
     var t = function () { return M.el.querySelector("#mig-msg").value; };
     M.el.querySelector("[data-c]").onclick = function () { copyText(t(), "Pesan disalin"); };
     var w = M.el.querySelector("[data-w]"); if (w) w.onclick = function () { window.open(waUrl(r, t()), "_blank", "noopener"); };
   }
   function emailIt(r, T, done) {
     var body = itBody(r), subj = itSubject(r);
-    var isCreate = /create/i.test(r.tujuan), fin = isCreate ? "Done Verifikasi" : "Done Email IT";
+    var isCreate = /create/i.test(r.tujuan), fin = "Done Email IT";
     var M = modal('<div class="mig-mh"><div><small>Lolos verifikasi · status akhir: ' + fin + '</small><h3>Kirim ke Team IT</h3><p>Salin teks atau buka di Outlook Web, kirim, lalu tandai sudah dikirim.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div>'
       + '<div class="mig-pad"><dl class="mig-dl wide mig-cp"><dt>To</dt><dd><span>' + E(MIG.settings.to) + '</span><button class="mig-cpb" data-cp="to" title="Salin To"><i class="fa-solid fa-copy"></i></button></dd><dt>Cc</dt><dd><span>' + E(MIG.settings.cc) + '</span><button class="mig-cpb" data-cp="cc" title="Salin Cc"><i class="fa-solid fa-copy"></i></button></dd><dt>Subjek</dt><dd><b>' + E(subj) + '</b><button class="mig-cpb" data-cp="subj" title="Salin subjek"><i class="fa-solid fa-copy"></i></button></dd></dl><textarea class="field w-full mig-pre mig-big" rows="22" id="mig-body">' + E(body) + "</textarea>"
       + '<p class="mig-note"><i class="fa-solid fa-paperclip"></i> Lampirkan file BA dari Drive bila perlu: <a class="mig-lnk" target="_blank" rel="noopener" href="' + E(r.ba) + '">buka BA</a></p>'
-      + (T.length ? '<label class="mig-upd"><input type="checkbox" id="mig-updto" checked><span>Perbarui Data Mitra Takeover: <b>' + T.length + " PO</b> (" + E(T.map(function (t) { return t.po; }).join(", ")) + ") — kolom M jadi <b>" + fin + "</b>" + (isCreate ? "" : ", kolom X tanggal hari ini (bila kosong)") + "</span></label>" : "")
+      + ('<p class="mig-note"><i class="fa-solid fa-circle-info"></i> Setelah ditandai terkirim, kolom J (Status Migrasi) di Data Mitra Takeover jadi <b>' + fin + "</b>.</p>")
       + '<div class="mig-dec"><button class="st-b" data-c><i class="fa-solid fa-copy"></i>Salin teks</button><button class="st-b" data-o><i class="fa-solid fa-envelope-open-text"></i>Buka di Outlook Web</button><button class="st-b pri" data-s><i class="fa-solid fa-check-double"></i>Tandai sudah dikirim ke IT</button></div></div>', "xl");
     var el = M.el, txt = function () { return el.querySelector("#mig-body").value; };
     el.querySelector("[data-c]").onclick = function () { copyText(txt(), "Teks email disalin"); };
@@ -9519,7 +9521,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
       var b = this; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Menyimpan…';
       try {
         var upd = el.querySelector("#mig-updto");
-        var res = await callApi("mig.save", { row: r.row, ts: r.ts, noSpk: r.noSpk, verif: fin, updTakeover: upd ? upd.checked : false, toRows: T.map(function (t) { return t.row; }), note: "Email ke IT: " + subj }, 60000);
+        var res = await callApi("mig.save", { row: r.row, ts: r.ts, po: r.po, noSpk: r.noSpk, verif: fin, updTakeover: upd ? upd.checked : false, toRows: T.map(function (t) { return t.row; }), note: "Email ke IT: " + subj }, 60000);
         if (res.item) Object.assign(r, res.item); if (res.chk) { MIG.chk[res.chk.key] = res.chk.value; r.ck = res.chk.key; }
         M.close(); if (done) done(); badge(); if (isOpen()) render();
         toast("Status VM: " + fin + (res.takeoverRows && res.takeoverRows.length ? " · Data Takeover " + res.takeoverRows.length + " PO diperbarui" : ""), "success", 6000);
@@ -9553,8 +9555,8 @@ body:has(#mig-ov) #st-nt{display:none!important}
     window.renderTakeoverDetail = renderTakeoverDetail = function (t) {
       var r = oRT.apply(this, arguments);
       try {
-        if (isOwner() && MIG.loaded && t && t.att_spk) {
-          var m = MIG.rows.filter(function (x) { return nk(x.noSpk) === nk(t.att_spk); }).sort(function (a, b) { return b.tsMs - a.tsMs; })[0];
+        if (isOwner() && MIG.loaded && t && t.po) {
+          var m = MIG.rows.filter(function (x) { return nk(x.po) === nk(t.po); }).sort(function (a, b) { return b.tsMs - a.tsMs; })[0];
           var body = $("detail-modal-body");
           if (m && body) { body.insertAdjacentHTML("afterbegin", '<button class="mig-to-banner" data-mrow="' + m.row + '"><i class="fa-solid fa-people-arrows"></i><span>Migrasi IKR · diajukan ' + E(m.ts.split(" ")[0]) + "</span>" + chip(stOf(m)) + "</button>"); body.querySelector("[data-mrow]").onclick = function () { try { closeDetailModal(); } catch (e) { } switchTab("migrasi"); setTimeout(function () { openDetail(m.row); }, 300); }; }
         }
@@ -14339,7 +14341,7 @@ async function contactNudge() {
   var SS = "1xAG3if2KO1NQhi4EM9eQkJJdh_QN0GElrWxiPuRGkPU", TK = "Data Mitra Takeover", ML = "Master Data Letter", VROW = 100000;
   window.TK_SRC = { ss: SS, readOnly: true };
   // indeks susunan lama <- indeks sheet baru
-  var MAP = { 0: 0, 1: 1, 2: 2, 4: 3, 5: 4, 6: 5, 7: 6, 10: 7, 11: 8, 12: 9, 13: 10, 14: 11, 15: 12, 18: 14, 19: 15, 25: 16, 26: 17, 27: 18, 31: 19, 32: 20, 33: 21, 34: 22, 35: 23, 37: 25, 38: 26, 39: 30 };
+  var MAP = { 0: 0, 1: 1, 2: 2, 4: 3, 5: 4, 6: 5, 7: 6, 10: 7, 11: 8, 12: 9, 13: 10, 14: 11, 15: 12, 18: 14, 19: 15, 25: 16, 26: 17, 27: 18, 31: 19, 32: 20, 33: 21, 34: 22, 35: 23, 37: 25, 38: 26, 39: 31 };
   var HEAD = ["PO", "NO BAP PO CANCEL", "STASIUN", "MITRA LAMA (ALT)", "MITRA LAMA", "MITRA PENGGANTI", "REGION", "PIC", "REDLINE", "STATUS TAKE OVER", "BAP PO Cancel", "BASTM", "MIGRASI", "REMARK", "BASE ON", "ATC BA CANCEL", "ATC SPK", "TANGGAL SPK", "ATC BAP PO", "ATC BASTM", "", "", "", "", "", "HP PO", "HP ACTUAL", "HC", "", "", "", "DP DITERIMA", "BAST YANG DI TERIMA", "NOMINAL RETENSI", "NOMINAL HC", "NOMINAL DONASI", "STATUS MITRA", "ATC BAM", "STATUS MIGRASI IT", "UNIQUE"];
   var nb = function (s) { return String(s == null ? "" : s).replace(/\s+/g, " ").trim().toUpperCase(); };
 
@@ -14363,7 +14365,7 @@ async function contactNudge() {
   }
   async function tkLoad() {
     if (cache && Date.now() - cacheAt < 4000) return cache;
-    var p = [["ranges", "'" + TK + "'!A1:AE"], ["valueRenderOption", "FORMATTED_VALUE"], ["majorDimension", "ROWS"]];
+    var p = [["ranges", "'" + TK + "'!A1:AG"], ["valueRenderOption", "FORMATTED_VALUE"], ["majorDimension", "ROWS"]];
     var r = await apiGet("/values:batchGet", p, SS), vr = r.valueRanges || [];
     var tv = (vr[0] || {}).values || [], mv = [];   // Master Data Letter hanya untuk penomoran, tidak ditampilkan
     var rows = [[1, HEAD.slice()]], haveBap = new Set(), n = 0;
