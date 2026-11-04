@@ -13285,6 +13285,7 @@ async function contactNudge() {
       + fld("Cc wajib di semua email", 'id="mx-ccw"', c.ccWajib) + '<p class="mx-note">Tidak bisa dihapus dari form kirim. Pisahkan dengan titik koma bila lebih dari satu.</p></section>'
       + '<section class="mx-sec"><h4><i class="fa-solid fa-copy"></i>Cc tambahan per jenis dokumen</h4><div class="mx-g2">' + JENIS.map(function (x) { return '<div>' + fld(x[1], 'data-cc="' + x[0] + '"', (c.cc || {})[x[0]], "kosong = tidak ada") + "</div>"; }).join("") + "</div>"
       + '<p class="mx-note">Cc Migrasi IKR diatur di menu Migrasi IKR.</p></section>'
+      + '<section class="mx-sec"><h4><i class="fa-solid fa-map-location-dot"></i>Cc per region</h4><p class="mx-note">Ditambahkan otomatis ke semua jenis dokumen sesuai region baris data.</p>' + (MX.cfg.regions || ["JABAR", "JATIM", "JATENG", "JABODEBEK - BANTEN"]).map(function (g) { return fld(g, 'data-cr="' + E(g) + '"', (c.ccRegion || {})[g], "email; email"); }).join("") + "</section>"
       + '<details class="mx-sec mx-adv"><summary><i class="fa-solid fa-sliders"></i>Lanjutan: kirim dari alias weave</summary>'
       + '<label class="mx-tg"><input type="checkbox" id="mx-ua"' + (c.useAlias ? " checked" : "") + '><span>Kirim dari alias weave (butuh App Password akun weave yang berlaku)</span></label>'
       + '<label class="mx-lbl">Alamat alias</label><select id="mx-from-sel" class="field w-full">' + als.map(function (a) { return '<option value="' + E(a) + '"' + (a === MX.cfg.from ? " selected" : "") + ">" + E(a) + ((MX.cfg.aliases || []).indexOf(a) >= 0 ? " · terverifikasi" : " · belum terdaftar") + "</option>"; }).join("") + "</select>"
@@ -13295,7 +13296,8 @@ async function contactNudge() {
       + JENIS.map(function (x) { var t = (c.tpl || {})[x[0]] || {}; return '<details class="mx-tpl"><summary>' + E(x[1]) + (t.subject || t.core ? ' <span class="mx-tagx">diubah</span>' : "") + '</summary><input class="field w-full" data-ts="' + x[0] + '" value="' + E(t.subject || "") + '" placeholder="Subjek"><textarea class="field w-full" rows="5" data-tc="' + x[0] + '" placeholder="Isi inti">' + E(t.core || "") + "</textarea></details>"; }).join("") + "</section>"
       + '</div></div><div class="mx-act mx-sticky"><button class="btn btn-primary" id="mx-save"><i class="fa-solid fa-floppy-disk"></i>Simpan pengaturan</button></div>';
     $i("mx-save").onclick = async function () {
-      var cfg = { from: $i("mx-from-sel").value, allowFallback: $i("mx-fb").checked, useAlias: $i("mx-ua").checked, ccWajib: $i("mx-ccw").value, cc: {}, ccTipe: {}, tpl: {} };
+      var cfg = { from: $i("mx-from-sel").value, allowFallback: $i("mx-fb").checked, useAlias: $i("mx-ua").checked, ccWajib: $i("mx-ccw").value, cc: {}, ccTipe: {}, ccRegion: {}, tpl: {} };
+      bd.querySelectorAll("[data-cr]").forEach(function (i) { cfg.ccRegion[i.dataset.cr] = i.value; });
       bd.querySelectorAll("[data-cc]").forEach(function (i) { cfg.cc[i.dataset.cc] = i.value; });
       bd.querySelectorAll("[data-ct]").forEach(function (i) { if (i.value.trim()) cfg.ccTipe[i.dataset.ct] = i.value; });
       bd.querySelectorAll("[data-ts]").forEach(function (i) { var k = i.dataset.ts, co = bd.querySelector('[data-tc="' + k + '"]').value; if (i.value.trim() || co.trim()) cfg.tpl[k] = { subject: i.value, core: co }; });
