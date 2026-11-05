@@ -209,7 +209,6 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
         <label class="f"><span class="req">Akun email Lead IKR mitra pengganti</span><input type="email" name="ikrBaru" required>
           <small class="hint">Belum punya? Dashboard Mitra Starlite → menu <b>Management IKR</b> → <b>Tambah IKR</b> (kanan atas) → isi data → selesai.</small></label>
         <div class="tip warn">Saat menambahkan akun Lead IKR stasiunnya belum ada? Hubungi <a href="https://wa.me/6289627326602?text=Halo%2C%20saya%20ingin%20request%20create%20stasiun%20untuk%20akun%20Lead%20IKR.%0AMitra%20%3A%0AStasiun%20%3A" target="_blank" rel="noopener">+62 896-2732-6602</a> untuk request create stasiun.</div>
-        <label class="f"><span>Akun email Lead IKR mitra lama <span class="opt-t">(opsional)</span></span><input type="email" name="ikrLama"></label>
       </div>
     </fieldset>
 
@@ -288,8 +287,8 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
     var fd = new FormData(f), d = {}; fd.forEach(function (v, k) { if (typeof v === "string") d[k] = v.trim(); });
     var miss = Object.keys(LABEL).filter(function (k) { return !d[k]; });
     if (miss.length) return show("Belum diisi: " + miss.map(function (k) { return LABEL[k]; }).join(", "), fld(miss[0]));
-    var em = /^[^\s@]+@[^\s@]+\.[^\s@]+$/, bad = ["email", "sales", "ikrBaru", "ikrLama"].filter(function (k) { return d[k] && !em.test(d[k]); });
-    if (bad.length) return show("Format email belum benar: " + bad.map(function (k) { return LABEL[k] || "Email Lead IKR mitra lama"; }).join(", "), fld(bad[0]));
+    var em = /^[^\s@]+@[^\s@]+\.[^\s@]+$/, bad = ["email", "sales", "ikrBaru"].filter(function (k) { return d[k] && !em.test(d[k]); });
+    if (bad.length) return show("Format email belum benar: " + bad.map(function (k) { return LABEL[k]; }).join(", "), fld(bad[0]));
     var rv = SEL.status === "Revisi";
     updNeed();
     if (need.dataset.nn === "1" && !spkOk(d.noSpk || "")) return show("Nomor SPK wajib diisi dengan format yang benar. Contoh: 1547/PRJ/STARLITE/X/2026", fld("noSpk"));

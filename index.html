@@ -9306,7 +9306,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
   function itBody(r) {
     return "Yth. Team IT\n\nBerikut permintaan perpindahan Akun:\n\nMitra Lama          : " + offName(r.lama) + "\nMitra Baru          : " + offName(r.baru) + "\nNama Stasiun        : " + r.stasiun + "\nNo PO               : " + (r.pos || [r.po]).join(", ") + "\nNo SPK              : " + r.noSpk + (r.spk ? " (" + r.spk + ")" : "")
       + "\n\nSebagai pemenuhan syarat administrasi, bersama email ini kami lampirkan dokumen-dokumen pendukung sebagai berikut:\n\n1. Berita Acara Pemindahan Akun IKR: Terlampir" + (r.ba ? " (" + r.ba + ")" : "")
-      + "\n2. File KML stasiun yang dituju: " + (r.kml || "-") + "\n3. Akun email penampung: " + (r.sales || "-") + "\n4. Akun email Lead IKR mitra lama: " + (r.ikrLama || "-") + "\n5. Akun email Lead IKR mitra baru: " + (r.ikrBaru || "-")
+      + "\n2. File KML stasiun yang dituju: " + (r.kml || "-") + "\n3. Akun email penampung: " + (r.sales || "-") + "\n4. Akun email Lead IKR mitra pengganti: " + (r.ikrBaru || "-")
       + "\n\nMohon untuk segera di proses perpindahan akun.\n\nBest Regards\nVendor Management";
   }
   // buka di tab browser bernama (dipakai ulang tiap klik) — tanpa jendela pop-up berukuran khusus (pop-up layar penuh tampil hitam di sebagian laptop)
@@ -9407,7 +9407,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
     var M = modal('<div class="mig-mh"><div><small>' + E(r.tujuan) + " · diajukan " + E(r.ts) + "</small><h3>" + E(r.baru) + " · " + E(r.stasiun) + "</h3><p>dari <b>" + E(r.lama) + "</b> · No SPK <b>" + E(r.noSpk || "-") + "</b>" + (r.pos && r.pos.length > 1 ? " · <b>" + r.pos.length + " PO</b>: " + E(r.pos.join(", ")) : " · " + E(r.po)) + "</p></div>" + chip(k) + '<button class="mig-ed" data-edit title="Ubah data pengajuan"><i class="fa-solid fa-pen"></i><span>Ubah data</span></button><button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
       + '<div class="mig-mb"><div class="mig-col">'
       + '<section><h4>Email pengaju</h4><p>' + E(r.email || "-") + "</p></section>"
-      + '<section><h4>Akun</h4><dl class="mig-dl"><dt>Sales penampung</dt><dd>' + E(r.sales || "-") + "</dd><dt>Lead IKR mitra lama</dt><dd>" + E(r.ikrLama || "-") + "</dd><dt>Lead IKR mitra pengganti</dt><dd>" + E(r.ikrBaru || "-") + "</dd></dl></section>"
+      + '<section><h4>Akun</h4><dl class="mig-dl"><dt>Sales penampung</dt><dd>' + E(r.sales || "-") + "</dd><dt>Lead IKR mitra pengganti</dt><dd>" + E(r.ikrBaru || "-") + "</dd></dl></section>"
       + '<section><h4>Dokumen</h4><div class="mig-docs">' + lnk(r.ba, "BA & capture dashboard") + lnk(r.kml, "File KML") + lnk(r.spk, "SPK") + "</div>"
       + '<div class="mig-batools"><button class="st-b" data-ba="edit"' + (r.ba ? "" : " disabled") + '><i class="fa-solid fa-pen-to-square"></i>Edit BA (PDF)</button><button class="st-b" data-ba="add"><i class="fa-solid fa-file-circle-plus"></i>Tambah file / capture ke BA</button></div></section>'
       + '<section><h4>Cek otomatis</h4><ul class="mig-auto">' + A.list.map(function (x) { return '<li class="' + (x.ok === true ? "ok" : x.ok === false ? "bad" : "info") + '"><i class="fa-solid ' + (x.ok === true ? "fa-circle-check" : x.ok === false ? "fa-circle-xmark" : "fa-circle-info") + '"></i><span><b>' + E(x.t) + "</b><small>" + E(x.d) + "</small></span></li>"; }).join("") + "</ul></section>"
@@ -9521,7 +9521,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
   }
   // ---------- ubah data pengajuan (akun Sales / Lead IKR, No SPK, mitra, stasiun, dll.) ----------
   var EF = [["noSpk", "No SPK", "text", 1], ["tujuan", "Subjek pengajuan", "sel", 1],
-            ["sales", "Akun email Sales penampung", "email", 1], ["ikrBaru", "Akun email Lead IKR mitra pengganti", "email", 1], ["ikrLama", "Akun email Lead IKR mitra lama", "email", 0],
+            ["sales", "Akun email Sales penampung", "email", 1], ["ikrBaru", "Akun email Lead IKR mitra pengganti", "email", 1],
             ["email", "Email pengaju", "email", 1], ["kml", "Link file KML", "url", 0], ["spk", "Link file SPK", "url", 0]];
   function editData(r) {
     var names = ((STATE.perseroan || []).map(function (x) { return x.nama; }).filter(Boolean)).filter(function (x, i, a) { return a.indexOf(x) === i; }).sort();
