@@ -4908,7 +4908,7 @@ body:has(#notif-panel) #st-nt{display:none!important}   /* panel lonceng terbuka
 .mig-upd{margin-top:10px}
 .mig-l{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:800;color:#475569;margin-bottom:10px}
 .mig-to-banner{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:12px;border:0;background:#f0f9ff;box-shadow:inset 0 0 0 1px #bae6fd;font:inherit;font-size:11.5px;font-weight:700;color:#075985;cursor:pointer;text-align:left}
-.mig-to-banner span:first-of-type{flex:1}.dark .mig-to-banner{background:#0369a122;color:#7dd3fc;box-shadow:inset 0 0 0 1px #0369a155}
+.mig-to-banner{flex-wrap:wrap}.mig-it{font-style:normal;font-size:10.5px;font-weight:700;opacity:.85;white-space:nowrap}.mig-oldn{margin:0 0 8px;padding:8px 12px;border-radius:10px;background:#f1f5f9;color:#475569;font-size:11px}.dark .mig-oldn{background:#1e293b;color:#94a3b8}.mig-to-banner span:first-of-type{flex:1}.dark .mig-to-banner{background:#0369a122;color:#7dd3fc;box-shadow:inset 0 0 0 1px #0369a155}
 .mig-np{display:flex;align-items:center;gap:10px;width:calc(100% - 24px);margin:4px 12px 8px;padding:10px 12px;border-radius:12px;border:0;background:#fffbeb;box-shadow:inset 0 0 0 1px #fde68a;font:inherit;text-align:left;cursor:pointer;color:#92400e}
 .dark .mig-np{background:#d9770618;color:#fcd34d;box-shadow:inset 0 0 0 1px #d9770655}
 .mig-np span{flex:1}.mig-np b{display:block;font-size:12px}.mig-np small{font-size:10.5px}
@@ -9157,14 +9157,12 @@ body:has(#mig-ov) #st-nt{display:none!important}
   window.MIG = MIG;
   var VERIF_BAD = /^(Revisi|Tidak Sesuai|Done tidak sesuai)/i;
   function stOf(r) {
-    if (/^done$/i.test(r.it)) return "done";
-    if (/cancel/i.test(r.it)) return "cancel";
-    if (/^(Done Verifikasi|Done Email IT)$/i.test(r.verif)) return "done";   // sudah diverifikasi / sudah dikirim ke IT = selesai
-    if (/^Revisi/i.test(r.verif)) return "rev";
-    if (VERIF_BAD.test(r.verif)) return "bad";   // Tidak Sesuai / Done tidak sesuai prosedure
-    return "wait";
+    var v = String(r.verif || "");
+    if (/^(Done|No Need)/i.test(v) || /^done$/i.test(r.it)) return "done";   // Done Submission / Done Create Site / No Need = selesai
+    if (/^Revisi/i.test(v)) return "rev";
+    return "wait";   // Pengajuan
   }
-  var ST = { wait: ["Menunggu verifikasi", "#d97706", "fa-hourglass-half"], rev: ["Revisi", "#ea580c", "fa-rotate-left"], bad: ["Tidak sesuai", "#e11d48", "fa-circle-xmark"], done: ["Selesai", "#059669", "fa-circle-check"], cancel: ["Batal (IT)", "#64748b", "fa-ban"] };
+  var ST = { wait: ["Menunggu verifikasi", "#2563eb", "fa-hourglass-half"], rev: ["Revisi", "#ea580c", "fa-rotate-left"], bad: ["Tidak sesuai", "#e11d48", "fa-circle-xmark"], done: ["Selesai", "#059669", "fa-circle-check"], cancel: ["Batal (IT)", "#64748b", "fa-ban"] };
   function parseTs(s) { var m = String(s || "").match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/); return m ? new Date(+m[3], +m[2] - 1, +m[1], +(m[4] || 0), +(m[5] || 0)).getTime() : 0; }
   function ago(ts) { if (!ts) return ""; var d = Math.floor((Date.now() - ts) / 864e5); return d <= 0 ? "hari ini" : d + " hari"; }
   function chkOf(r) { return MIG.chk[r.ck] || {}; }
@@ -9354,10 +9352,10 @@ body:has(#mig-ov) #st-nt{display:none!important}
       return true;
     }).sort(function (a, b) { return b.tsMs - a.tsMs; });
   }
-  function chip(k) { var s = ST[k]; return '<span class="mig-chip" style="--c:' + s[1] + '"><i class="fa-solid ' + s[2] + '"></i>' + s[0] + "</span>"; }
+  function chip(k, r) { var s = ST[k], lb = r && r.verif ? r.verif : s[0]; return '<span class="mig-chip" style="--c:' + s[1] + '"><i class="fa-solid ' + s[2] + '"></i>' + E(lb) + "</span>"; }
   function render() {
     var v = $("view-migrasi"); if (!v) return;
-    var cnt = { wait: 0, rev: 0, bad: 0, done: 0, cancel: 0 }; MIG.rows.forEach(function (r) { cnt[stOf(r)]++; });
+    var cnt = { wait: 0, rev: 0, bad: 0, done: 0, cancel: 0 }; MIG.rows.forEach(function (r) { cnt[stOf(r)]++; }); var oldDone = +(MIG.settings && MIG.settings.doneOld) || 0; cnt.done += oldDone;
     var L = filtered();
     var card = function (k) { var s = ST[k]; return '<button class="mig-card' + (MIG.f === k ? " on" : "") + '" data-f="' + k + '" style="--c:' + s[1] + '"><i class="fa-solid ' + s[2] + '"></i><b>' + cnt[k] + "</b><span>" + s[0] + "</span></button>"; };
     v.innerHTML = '<div class="glass-panel rounded-2xl p-4 mig-head"><button type="button" class="field" title="Kembali ke Data Mitra Takeover" aria-label="Kembali ke Data Mitra Takeover" onclick="switchTab(\'takeover\')" style="width:40px;min-width:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;margin-right:10px"><i class="fa-solid fa-arrow-left"></i></button><div><h2>Migrasi IKR</h2><p>Verifikasi pengajuan Migrasi Akun IKR dan Create Site · data dari sheet <b>Data Mitra Takeover</b>' + (MIG.at ? " · dimuat " + new Date(MIG.at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) : "") + "</p></div>"
@@ -9366,10 +9364,10 @@ body:has(#mig-ov) #st-nt{display:none!important}
         : MIG.err ? '<div class="mig-err"><i class="fa-solid fa-triangle-exclamation"></i>Gagal memuat pengajuan: ' + E(MIG.err) + ' · klik Muat ulang untuk mencoba lagi</div>' : "")
       + (MIG.off ? "" : '<div class="mig-cards">' + ["wait", "rev", "done"].map(card).join("") + '<button class="mig-card' + (MIG.f === "all" ? " on" : "") + '" data-f="all" style="--c:#475569"><i class="fa-solid fa-layer-group"></i><b>' + MIG.rows.length + "</b><span>Semua</span></button></div>"
       + '<div class="glass-panel rounded-2xl p-4 space-y-3"><div class="flex flex-wrap gap-2"><div class="relative flex-1 min-w-[220px]"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i><input id="mig-q" class="field w-full pl-9" placeholder="Cari mitra, stasiun, No SPK, pengaju, email…" value="' + E(MIG.q) + '"></div><select id="mig-jenis" class="field"><option value="">Semua jenis</option><option' + (MIG.jenis === "Migrasi Akun IKR" ? " selected" : "") + '>Migrasi Akun IKR</option><option' + (MIG.jenis === "Create Site" ? " selected" : "") + ">Create Site</option></select></div>"
-      + (!MIG.loaded ? '<div class="mig-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Memuat pengajuan…</div>' : L.length ? '<div class="mig-list">' + L.map(function (r) {
+      + (!MIG.loaded ? '<div class="mig-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Memuat pengajuan…</div>' : L.length ? ((MIG.f === "done" && oldDone) ? '<p class="mig-oldn">Angka Selesai sudah termasuk ' + oldDone + " data lama yang selesai sebelum form ini dipakai (tidak ditampilkan di daftar).</p>" : "") + '<div class="mig-list">' + L.map(function (r) {
         var k = stOf(r), em = chkOf(r).emailAt ? Date.parse(chkOf(r).emailAt) : 0, late = k === "it" && em && Date.now() - em > 7 * 864e5;
-        return '<button class="mig-row" data-row="' + r.row + '"><span class="mig-d">' + E(r.ts.split(" ")[0]) + "<small>" + ago(r.tsMs) + '</small></span><span class="mig-m"><b>' + E(r.baru || "-") + " · " + E(r.stasiun || "-") + "</b><small>dari " + E(r.lama || "-") + " · " + E(r.noSpk || "tanpa No SPK") + (r.pos && r.pos.length > 1 ? " · " + r.pos.length + " PO" : "") + " · " + (/create/i.test(r.tujuan) ? "Create Site" : "Migrasi Akun") + "</small></span>" + chip(k) + (late ? '<span class="mig-late" title="Status IT masih kosong > 7 hari setelah email">IT > 7 hari</span>' : "") + "</button>";
-      }).join("") + "</div>" : '<div class="mig-empty"><i class="fa-regular fa-folder-open"></i>Tidak ada pengajuan pada filter ini.</div>') + "</div>");
+        return '<button class="mig-row" data-row="' + r.row + '"><span class="mig-d">' + E(r.ts.split(" ")[0]) + "<small>" + ago(r.tsMs) + '</small></span><span class="mig-m"><b>' + E(r.baru || "-") + " · " + E(r.stasiun || "-") + "</b><small>dari " + E(r.lama || "-") + " · " + E(r.noSpk || "tanpa No SPK") + (r.pos && r.pos.length > 1 ? " · " + r.pos.length + " PO" : "") + " · " + (/create/i.test(r.tujuan) ? "Create Site" : "Migrasi Akun") + "</small></span>" + chip(k, r) + (late ? '<span class="mig-late" title="Status IT masih kosong > 7 hari setelah email">IT > 7 hari</span>' : "") + "</button>";
+      }).join("") + "</div>" : '<div class="mig-empty"><i class="fa-regular fa-folder-open"></i>' + (MIG.rows.length ? "Tidak ada pengajuan pada filter ini." : "Belum ada pengajuan dari mitra.<br><small>Pengajuan tampil di sini setelah mitra mengirim form (status Pengajuan).</small>") + "</div>") + "</div>");
     if (MIG.off) { v.querySelector('[data-a="reload"]').onclick = reloadNow; v.querySelector('[data-a="form"]').onclick = formLink; v.querySelector('[data-a="set"]').onclick = settings; return; }
     v.querySelectorAll("[data-f]").forEach(function (b) { b.onclick = function () { MIG.f = b.dataset.f; render(); }; });
     v.querySelectorAll("[data-row]").forEach(function (b) { b.onclick = function () { openDetail(+b.dataset.row); }; });
@@ -9403,8 +9401,9 @@ body:has(#mig-ov) #st-nt{display:none!important}
     var A = autoChecks(r), T = A.T, K = A.K, c = chkOf(r), it = c.items || {}, k = stOf(r);
     var st = hcStart(r, T, K), en = today();
     var lnk = function (u, t) { return u ? '<a href="' + E(u) + '" target="_blank" rel="noopener" class="mig-lnk"><i class="fa-solid fa-arrow-up-right-from-square"></i>' + t + "</a>" : '<span class="mig-none">' + t + " — tidak ada</span>"; };
-    var CK = [["hc", "HC sama persis dengan menu Pelanggan Aktif di portal (capture dashboard)"], ["ikr", "Akun Lead IKR mitra pengganti ada & aktif"], ["sales", "Akun Sales penampung ada & aktif"], ["dok", "BA, KML, dan SPK lengkap dan benar"]];
-    var M = modal('<div class="mig-mh"><div><small>' + E(r.tujuan) + " · diajukan " + E(r.ts) + "</small><h3>" + E(r.baru) + " · " + E(r.stasiun) + "</h3><p>dari <b>" + E(r.lama) + "</b> · No SPK <b>" + E(r.noSpk || "-") + "</b>" + (r.pos && r.pos.length > 1 ? " · <b>" + r.pos.length + " PO</b>: " + E(r.pos.join(", ")) : " · " + E(r.po)) + "</p></div>" + chip(k) + '<button class="mig-ed" data-edit title="Ubah data pengajuan"><i class="fa-solid fa-pen"></i><span>Ubah data</span></button><button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
+    var isCreate = /create/i.test(r.tujuan);
+    var CK = [["hc", "HC sama persis dengan menu Pelanggan Aktif di portal (capture dashboard)"], ["ikr", "Akun Lead IKR mitra pengganti ada & aktif"], ["sales", "Akun Sales penampung ada & aktif"], ["dok", "BA, KML, dan SPK lengkap dan benar"]].filter(function (x) { return !(isCreate && x[0] === "hc"); });
+    var M = modal('<div class="mig-mh"><div><small>' + E(r.tujuan) + " · diajukan " + E(r.ts) + "</small><h3>" + E(r.baru) + " · " + E(r.stasiun) + "</h3><p>dari <b>" + E(r.lama) + "</b> · No SPK <b>" + E(r.noSpk || "-") + "</b>" + (r.pos && r.pos.length > 1 ? " · <b>" + r.pos.length + " PO</b>: " + E(r.pos.join(", ")) : " · " + E(r.po)) + "</p></div>" + chip(k, r) + '<button class="mig-ed" data-edit title="Ubah data pengajuan"><i class="fa-solid fa-pen"></i><span>Ubah data</span></button><button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
       + '<div class="mig-mb"><div class="mig-col">'
       + '<section><h4>Email pengaju</h4><p>' + E(r.email || "-") + "</p></section>"
       + '<section><h4>Akun</h4><dl class="mig-dl"><dt>Sales penampung</dt><dd>' + E(r.sales || "-") + "</dd><dt>Lead IKR mitra pengganti</dt><dd>" + E(r.ikrBaru || "-") + "</dd></dl></section>"
@@ -9416,7 +9415,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
       + '<section><h4>Cek di portal</h4><div class="mig-range"><label>Dari<input type="date" id="mig-d1" class="field" value="' + st + '"></label><label>Sampai<input type="date" id="mig-d2" class="field" value="' + en + '"></label></div>'
       + '<div class="mig-portal"><button class="st-b" data-p="hc"><i class="fa-solid fa-users"></i>Cek HC · Pelanggan Aktif</button><button class="st-b" data-p="ikr"><i class="fa-solid fa-screwdriver-wrench"></i>Cek Lead IKR</button><button class="st-b" data-p="sales"><i class="fa-solid fa-user-tie"></i>Cek Lead Sales</button></div><p class="mig-note">Portal terbuka di tab browser tersendiri (tab yang sama dipakai ulang) dengan login portal Anda — cukup login sekali, aplikasi ini tetap terbuka di tab-nya. Untuk Lead IKR / Sales, email akunnya otomatis disalin — tempel di kolom cari portal.</p></section>'
       + '<section><h4>Checklist verifikator</h4><div class="mig-ck">' + CK.map(function (x) { return '<label><input type="checkbox" data-ck="' + x[0] + '"' + (it[x[0]] === true ? " checked" : "") + "><span>" + x[1] + "</span></label>"; }).join("") + '</div><label class="mig-hc">HC di portal (opsional)<input id="mig-hcv" class="field" inputmode="numeric" placeholder="mis. 53" value="' + E(c.hc || "") + '"></label></section>'
-      + '<section><h4>Keputusan</h4><textarea id="mig-rem" class="field w-full" rows="3" placeholder="Catatan untuk pengaju (wajib bila Revisi — dikirim ke email pengaju)">' + E(r.remark || "") + '</textarea><div class="mig-dec"><button class="st-b" data-d="Verifikasi"><i class="fa-solid fa-magnifying-glass-check"></i>Sedang diverifikasi</button><button class="st-b warn" data-d="Revisi"><i class="fa-solid fa-rotate-left"></i>Revisi</button><button class="st-b pri" data-d="lolos"><i class="fa-solid fa-circle-check"></i>Lolos → Kirim ke IT</button></div><p class="mig-st">Status Migrasi (kolom J): <b>' + E(r.verif || "—") + "</b> · Status IT (kolom AA): <b>" + E(r.it || "—") + "</b></p></section>"
+      + '<section><h4>Keputusan</h4><textarea id="mig-rem" class="field w-full" rows="3" placeholder="Catatan untuk pengaju (wajib bila Revisi — dikirim ke email pengaju)">' + E(r.remark || "") + '</textarea><div class="mig-dec"><button class="st-b warn" data-d="Revisi"><i class="fa-solid fa-rotate-left"></i>Revisi</button>' + (isCreate ? '<button class="st-b pri" data-d="create"><i class="fa-solid fa-circle-check"></i>Verifikasi → Done Create Site</button>' : '<button class="st-b pri" data-d="lolos"><i class="fa-solid fa-circle-check"></i>Lolos → Kirim email ke IT</button>') + '</div><p class="mig-st">Status Migrasi (kolom J): <b>' + E(r.verif || "—") + "</b> · Status IT (kolom AA): <b>" + E(r.it || "—") + "</b></p></section>"
       + "</div></div>", "lg");
     var el = M.el, q = function (s) { return el.querySelector(s); };
     var items = function () { var o = {}; el.querySelectorAll("[data-ck]").forEach(function (cb) { o[cb.dataset.ck] = cb.checked; }); return o; };
@@ -9441,12 +9440,14 @@ body:has(#mig-ov) #st-nt{display:none!important}
     el.querySelectorAll("[data-d]").forEach(function (b) {
       b.onclick = async function () {
         var d = b.dataset.d, its = items(), miss = CK.filter(function (x) { return !its[x[0]]; });
-        if (d === "lolos") {
+        if (d === "lolos" || d === "create") {
           if (miss.length) return toast("Belum semua checklist dicentang: " + miss.map(function (x) { return x[1]; }).join("; "), "error", 7000);
-          return emailIt(r, T, function () { M.close(); });
+          if (d === "lolos") return emailIt(r, T, function () { M.close(); });
+          b.disabled = true;
+          try { await save("Done Create Site", undefined, { note: "Verifikasi Create Site (tanpa email)" }); M.close(); toast("Status: Done Create Site", "success", 6000); } catch (e) { b.disabled = false; toast(e.message, "error", 8000); }
+          return;
         }
         var rem = q("#mig-rem").value.trim();
-        if (d === "Verifikasi") { b.disabled = true; try { await save(d, rem || undefined, { note: "Mulai verifikasi" }); toast("Status Migrasi: Verifikasi", "success"); } catch (e) { toast(e.message, "error", 7000); } b.disabled = false; return; }
         if (!rem) { rem = "Mohon diperbaiki: " + (miss.length ? miss.map(function (x) { return x[1]; }).join("; ") : "-"); q("#mig-rem").value = rem; return toast("Catatan terisi otomatis dari checklist — periksa lalu klik lagi", "info", 5000); }
         b.disabled = true;
         try {
@@ -9520,7 +9521,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
     go.onclick = function () { document.removeEventListener("paste", paste); go.disabled = true; go.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Membuka…'; baEdit(r, L.slice()); };
   }
   // ---------- ubah data pengajuan (akun Sales / Lead IKR, No SPK, mitra, stasiun, dll.) ----------
-  var EF = [["noSpk", "No SPK", "text", 1], ["tujuan", "Subjek pengajuan", "sel", 1],
+  var EF = [["noSpk", "No SPK", "text", 1],
             ["sales", "Akun email Sales penampung", "email", 1], ["ikrBaru", "Akun email Lead IKR mitra pengganti", "email", 1],
             ["email", "Email pengaju", "email", 1], ["kml", "Link file KML", "url", 0], ["spk", "Link file SPK", "url", 0]];
   function editData(r) {
@@ -9557,7 +9558,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
   }
   function emailIt(r, T, done) {
     var body = itBody(r), subj = itSubject(r);
-    var isCreate = /create/i.test(r.tujuan), fin = "Done Email IT";
+    var fin = "Done Submission";
     var M = modal('<div class="mig-mh"><div><small>Lolos verifikasi · status akhir: ' + fin + '</small><h3>Kirim ke Team IT</h3><p>Salin teks atau buka di Outlook Web, kirim, lalu tandai sudah dikirim.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div>'
       + '<div class="mig-pad"><dl class="mig-dl wide mig-cp"><dt>To</dt><dd><span>' + E(MIG.settings.to) + '</span><button class="mig-cpb" data-cp="to" title="Salin To"><i class="fa-solid fa-copy"></i></button></dd><dt>Cc</dt><dd><span>' + E(MIG.settings.cc) + '</span><button class="mig-cpb" data-cp="cc" title="Salin Cc"><i class="fa-solid fa-copy"></i></button></dd><dt>Subjek</dt><dd><b>' + E(subj) + '</b><button class="mig-cpb" data-cp="subj" title="Salin subjek"><i class="fa-solid fa-copy"></i></button></dd></dl><textarea class="field w-full mig-pre mig-big" rows="22" id="mig-body">' + E(body) + "</textarea>"
       + '<p class="mig-note"><i class="fa-solid fa-paperclip"></i> Lampirkan file BA dari Drive bila perlu: <a class="mig-lnk" target="_blank" rel="noopener" href="' + E(r.ba) + '">buka BA</a></p>'
@@ -9608,7 +9609,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
         if (isOwner() && MIG.loaded && t && t.po) {
           var m = MIG.rows.filter(function (x) { return nk(x.po) === nk(t.po); }).sort(function (a, b) { return b.tsMs - a.tsMs; })[0];
           var body = $("detail-modal-body");
-          if (m && body) { body.insertAdjacentHTML("afterbegin", '<button class="mig-to-banner" data-mrow="' + m.row + '"><i class="fa-solid fa-people-arrows"></i><span>Migrasi IKR · diajukan ' + E(m.ts.split(" ")[0]) + "</span>" + chip(stOf(m)) + "</button>"); body.querySelector("[data-mrow]").onclick = function () { try { closeDetailModal(); } catch (e) { } switchTab("migrasi"); setTimeout(function () { openDetail(m.row); }, 300); }; }
+          if (m && body) { body.insertAdjacentHTML("afterbegin", '<button class="mig-to-banner" data-mrow="' + m.row + '"><i class="fa-solid fa-people-arrows"></i><span>Migrasi IKR · diajukan ' + E(m.ts.split(" ")[0]) + "</span>" + chip(stOf(m), m) + (m.it ? "<em class=\"mig-it\">Status IT: " + E(m.it) + "</em>" : "") + "</button>"); body.querySelector("[data-mrow]").onclick = function () { try { closeDetailModal(); } catch (e) { } switchTab("migrasi"); setTimeout(function () { openDetail(m.row); }, 300); }; }
         }
       } catch (e) { }
       return r;

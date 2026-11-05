@@ -121,12 +121,6 @@ button.send:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 @keyframes shake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
 @keyframes draw{to{stroke-dashoffset:0}}
 @media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}.tick path{stroke-dashoffset:0}}
-.wa-row{display:flex;gap:8px}.wa-row input{flex:1;min-width:0}
-.wa-test{flex:none;display:inline-flex;align-items:center;padding:0 14px;border-radius:12px;background:#25d366;color:#fff;font-weight:800;font-size:13px;text-decoration:none;transition:opacity .15s}
-.wa-test[aria-disabled="true"]{opacity:.35;pointer-events:none}
-#wa-st.ok{color:var(--ok);font-weight:700}#wa-st.no{color:var(--bad);font-weight:700}
-.wa-ok{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:13px;cursor:pointer;animation:pop .2s ease}
-.wa-ok input{margin-top:3px;width:17px;height:17px;accent-color:var(--acc);flex:none}
 
 /* ===== tampilan biru gradasi ===== */
 body{background:radial-gradient(1100px 420px at 50% -120px,color-mix(in srgb,var(--g3) 28%,transparent),transparent 70%),linear-gradient(180deg,color-mix(in srgb,var(--g2) 10%,var(--bg)),var(--bg) 380px) fixed,var(--bg)}
@@ -187,22 +181,14 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
 
     <div id="rest" hidden>
     <fieldset class="card">
-      <div class="sec"><i>2</i><div><h2>Subjek pengajuan</h2></div></div>
-      <div class="opts" role="radiogroup" aria-label="Subjek pengajuan">
-        <label class="opt"><input type="radio" name="tujuan" value="Migrasi Akun IKR" checked><b>Migrasi Akun IKR</b><small>Stasiun sudah ada HC (home connect) — akun IKR dipindah ke mitra pengganti</small></label>
-        <label class="opt"><input type="radio" name="tujuan" value="Create Site"><b>Create Site</b><small>Stasiun belum ada HC — dibuatkan site untuk mitra pengganti</small></label>
-      </div>
-    </fieldset>
-
-    <fieldset class="card">
-      <div class="sec"><i>3</i><div><h2>Data pengaju</h2></div></div>
+      <div class="sec"><i>2</i><div><h2>Data pengaju</h2></div></div>
       <div class="grid">
         <label class="f"><span class="req">Email</span><input type="email" name="email" autocomplete="email" placeholder="nama@perusahaan.co.id" required></label>
       </div>
     </fieldset>
 
     <fieldset class="card">
-      <div class="sec"><i>4</i><div><h2>Akun di Dashboard Mitra Starlite</h2></div></div>
+      <div class="sec"><i>3</i><div><h2>Akun di Dashboard Mitra Starlite</h2></div></div>
       <div class="stack">
         <label class="f"><span class="req">Akun email Sales penampung</span><input type="email" name="sales" required>
           <small class="hint">Belum punya? Buka Dashboard Mitra Starlite → menu <b>Management Sales</b> → <b>Tambah Sales</b> (kanan atas) → isi data dengan sesuai → selesai.</small></label>
@@ -213,7 +199,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
     </fieldset>
 
     <fieldset class="card">
-      <div class="sec"><i>5</i><div><h2>Berita Acara Pemindahan Akun IKR &amp; capture dashboard</h2></div></div>
+      <div class="sec"><i>4</i><div><h2>Berita Acara Pemindahan Akun IKR &amp; capture dashboard</h2></div></div>
       <div class="stack">
         <div class="tpl"><div><b>Format BA Pemindahan Akun IKR</b><small>Unduh template, isi, lalu mintakan tanda tangan.</small></div><a class="btn" href="https://docs.google.com/document/d/1yUGSmhfMniUf8DRPiXTfo0JMrJR4prMRApAmQWz6Ttg/export?format=docx" target="_blank" rel="noopener">Download template BA (.docx)</a></div>
         <p class="sub">Tanda tangan BA</p>
@@ -228,7 +214,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
     </fieldset>
 
     <fieldset class="card">
-      <div class="sec"><i>6</i><div><h2>File KML</h2></div></div>
+      <div class="sec"><i>5</i><div><h2>File KML</h2></div></div>
       <div class="stack">
         <div class="drop" data-k="kml"><input type="file" id="kml" accept=".kml" aria-label="Unggah KML"><span class="ic">KML</span><span class="tx"><b class="req">File KML stasiun tujuan</b><small>Wajib format .kml (bukan .kmz), maks 15 MB</small></span><span class="go">Pilih file</span></div>
       </div>
@@ -278,6 +264,106 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
 
   var fld = function (k) { return f.querySelector('[name="' + k + '"]'); };
 
+  // ---------- No PO / No SPK -> Data Mitra Takeover (stasiun, mitra lama & pengganti) + tahapan ----------
+  var SEL = null, qT = 0, lastQ = "", box = $("spk-box"), rest = $("rest"), need = $("spk-need"), sib = $("sib"), sibL = $("sib-l");
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var spkOk = function (v) { return /^\s*\d{1,5}\s*\/\s*PRJ\s*\/\s*STARLITE\s*\/\s*[IVX]{1,4}\s*\/\s*20\d\d\s*$/i.test(v); };
+  function boxSet(cls, html) { box.className = "full spk on " + cls; box.innerHTML = html; }
+  function stg(s) { var L = [["Mengajukan", s.ajukan], ["Verifikasi", s.verif], ["Status IT", s.it]]; return '<ol class="stg">' + L.map(function (x) { return '<li class="' + x[1] + '"><i></i>' + x[0] + "</li>"; }).join("") + "</ol>"; }
+  function info(x) { return "<p style='margin:6px 0 2px;font-size:13px'><b>" + esc(x.stasiun) + "</b> · " + esc(x.po) + "<br><span style='opacity:.75'>" + esc(x.lama || "-") + " → " + esc(x.baru || "-") + "</span></p>"; }
+  function setOpen(b) { rest.hidden = !b; }
+  function picked() { return Array.prototype.slice.call(sibL.querySelectorAll("input:checked:not(:disabled)")).map(function (i) { return i.value; }); }
+  function updNeed() {
+    if (!SEL) return; var nf = !SEL.hasSpk, nn = !SEL.hasNo;
+    sibL.querySelectorAll("input:checked").forEach(function (i) { if (i.dataset.nospk === "1") nf = true; if (i.dataset.nono === "1") nn = true; });
+    need.hidden = !(nf || nn); $("no-wrap").hidden = !nn; $("file-wrap").hidden = !nf; need.dataset.nf = nf ? "1" : ""; need.dataset.nn = nn ? "1" : "";
+    $("spk-tip").textContent = nf && nn ? "Nomor SPK dan lampiran SPK untuk PO ini belum ada. Isi nomor SPK (sesuai dokumen) dan unggah filenya." : nn ? "Kolom SPK baru berisi tautan tanpa nomor. Isi Nomor SPK sesuai dokumen." : "Nomor SPK sudah ada, tetapi lampirannya belum. Unggah file SPK (PDF).";
+  }
+  function drawSib(x) {
+    var L = x.siblings || []; sibL.innerHTML = ""; sib.hidden = !L.length;
+    L.forEach(function (o) {
+      var lb = document.createElement("label"); lb.style.cssText = "display:flex;gap:8px;align-items:center;font-size:13px";
+      var i = document.createElement("input"); i.type = "checkbox"; i.value = o.po; i.dataset.nospk = o.hasSpk ? "0" : "1"; i.dataset.nono = o.hasNo ? "0" : "1"; if (o.grouped) { i.checked = true; i.disabled = true; }
+      i.onchange = updNeed;
+      var t = document.createElement("span"); t.textContent = o.po + (o.grouped ? " (sudah satu pengajuan)" : (o.hasSpk && o.hasNo) ? "" : " · data SPK belum lengkap");
+      lb.appendChild(i); lb.appendChild(t); sibL.appendChild(lb);
+    });
+  }
+  function setVal(k, v) { var el = fld(k); if (el && v != null) el.value = v; }
+  function applyRow(x) {
+    SEL = x; setOpen(false); need.hidden = true; sib.hidden = true; sibL.innerHTML = "";
+    var sub = "<p style='margin:6px 0 0;font-size:12px;opacity:.8'>" + (x.ts ? "Diajukan " + esc(x.ts) : "") + (x.it ? (x.ts ? " · " : "") + "Status IT: <b>" + esc(x.it) + "</b>" : "") + "</p>";
+    if (x.blocked) return boxSet("no", "<b class='t'>" + esc(x.blocked) + "</b>" + info(x));
+    if (x.done) return boxSet("ok", "<b class='t'>✓ Selesai · " + esc(x.status) + "</b>" + info(x) + stg(x.stage) + sub);
+    if (x.locked) return boxSet("ok", "<b class='t'>Pengajuan diterima · menunggu verifikasi</b>" + info(x) + stg(x.stage) + sub + "<p style='margin:6px 0 0;font-size:12px;opacity:.8'>Data tidak bisa diubah selama diverifikasi. Bila perlu diperbaiki, pemberitahuan dikirim ke email pengaju.</p>");
+    var rv = x.status === "Revisi";
+    boxSet(rv ? "no" : "ok", "<b class='t'>" + (rv ? "Pengajuan perlu direvisi" : "✓ Data ditemukan · " + esc(x.jenis || "Migrasi Akun IKR")) + "</b>" + info(x) + (x.submitted ? stg(x.stage) : "") + (rv ? "<p style='margin:8px 0 0'><b>Catatan VM:</b> " + esc(x.revisi || "-") + "</p>" : ""));
+    setVal("noSpk", x.noSpkN || ""); drawSib(x); updNeed();
+    if (rv && x.prefill) { var p = x.prefill; setVal("email", p.email); setVal("sales", p.sales); setVal("ikrBaru", p.ikrBaru); }
+    setOpen(true);
+  }
+  function lookup() {
+    var v = fld("po").value.trim();
+    if (v === lastQ) return; lastQ = v; SEL = null; setOpen(false); need.hidden = true; sib.hidden = true;
+    if (!v) { box.className = "full spk"; return; }
+    if (v.length < 6) return;
+    boxSet("load", "<b class='t'><span class='spin'></span>Mencari di Data Mitra Takeover…</b>");
+    var q = v;
+    post("mig.lookup", { key: key, q: v }).then(function (r) {
+      if (q !== lastQ) return;
+      var rows = r.rows || [];
+      if (rows.length === 1) return applyRow(rows[0]);
+      boxSet("ok", "<b class='t'>PO ini punya beberapa stasiun — pilih salah satu</b>" + rows.map(function (x, i) { return "<button type='button' class='btn' data-i='" + i + "' style='display:block;width:100%;text-align:left;margin:6px 0'>" + esc(x.stasiun) + " · " + esc(x.lama || "-") + " → " + esc(x.baru || "-") + "</button>"; }).join(""));
+      box.querySelectorAll("[data-i]").forEach(function (b) { b.onclick = function () { applyRow(rows[+b.dataset.i]); }; });
+    }).catch(function (e) { if (q === lastQ) { SEL = null; boxSet("no", "<b class='t'>" + esc(e.message) + "</b>"); } });
+  }
+  fld("po").addEventListener("input", function () { clearTimeout(qT); qT = setTimeout(lookup, 600); });
+  fld("po").addEventListener("blur", lookup);
+
+  // ---------- unggah file: seret / pilih, animasi, hapus ----------
+  var FILES = {}, RULE = { ba: /\.(pdf|jpe?g|png|webp|heic)$/i, kml: /\.kml$/i, spk: /\.pdf$/i };
+  var MSG = { ba: "BA harus PDF atau foto", kml: "File KML wajib format .kml (bukan .kmz)", spk: "File SPK harus PDF" };
+  function drawDrop(k) {
+    var d = f.querySelector('.drop[data-k="' + k + '"]'), sm = d.querySelector("small"), go = d.querySelector(".go"), file = FILES[k];
+    if (!sm.dataset.def) sm.dataset.def = sm.textContent;
+    var old = d.querySelector(".x"); old && old.remove();
+    d.classList.remove("auto");
+    if (file) {
+      d.classList.add("has"); sm.textContent = file.name + " · " + (file.size / 1048576).toFixed(2) + " MB"; go.textContent = "Ganti";
+      var x = document.createElement("button"); x.type = "button"; x.className = "x"; x.title = "Hapus file"; x.textContent = "✕";
+      x.onclick = function (e) { e.preventDefault(); e.stopPropagation(); delete FILES[k]; d.querySelector("input").value = ""; drawDrop(k); };
+      d.appendChild(x);
+    } else { d.classList.remove("has"); sm.textContent = sm.dataset.def; go.textContent = "Pilih file"; }
+  }
+  function take(k, file) {
+    var d = f.querySelector('.drop[data-k="' + k + '"]');
+    if (!file) return;
+    var bad = !RULE[k].test(file.name) ? MSG[k] : file.size > MAX ? file.name + " lebih dari 15 MB" : "";
+    if (bad) { d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); show(bad); return; }
+    FILES[k] = file; drawDrop(k);
+  }
+  f.querySelectorAll(".drop").forEach(function (d) {
+    var k = d.dataset.k, inp = d.querySelector("input");
+    inp.addEventListener("change", function () { take(k, inp.files[0]); });
+    ["dragenter", "dragover"].forEach(function (ev) { d.addEventListener(ev, function (e) { e.preventDefault(); d.classList.add("over"); }); });
+    ["dragleave", "drop"].forEach(function (ev) { d.addEventListener(ev, function (e) { e.preventDefault(); d.classList.remove("over"); }); });
+    d.addEventListener("drop", function (e) { take(k, e.dataTransfer.files[0]); });
+    d.addEventListener("animationend", function () { d.classList.remove("shake"); });
+  });
+  function readB64(file) {
+    return new Promise(function (ok, bad) {
+      if (!file) return ok(null);
+      var r = new FileReader(); r.onload = function () { ok({ name: file.name, mime: file.type || "application/octet-stream", b64: String(r.result).split(",")[1] }); }; r.onerror = function () { bad(new Error("Gagal membaca " + file.name)); }; r.readAsDataURL(file);
+    });
+  }
+  function show(m, el) { err.textContent = m; err.classList.remove("on"); void err.offsetWidth; err.classList.add("on"); if (el) { el.classList.add("bad"); el.focus(); } else err.scrollIntoView({ behavior: "smooth", block: "center" }); }
+
+  // ---------- layar proses ----------
+  var ov = $("ov"), ring = $("ring"), pct = $("pct"), P = 0, tick = 0;
+  function setP(v) { P = Math.max(P, Math.min(100, v)); ring.style.strokeDashoffset = 213.6 * (1 - P / 100); pct.textContent = Math.round(P) + "%"; }
+  function step(s) { var seen = false; ov.querySelectorAll(".steps li").forEach(function (li) { if (li.dataset.s === s) { li.className = "now"; seen = true; } else li.className = seen ? "" : "ok"; }); }
+  function creep(to, ms) { clearInterval(tick); var t0 = Date.now(), from = P; tick = setInterval(function () { var k = 1 - Math.exp(-(Date.now() - t0) / ms); setP(from + (to - from) * k); }, 120); }
+  function ovOpen() { P = 0; setP(0); $("ov-t").textContent = "Mengirim pengajuan…"; $("ov-s").textContent = "Jangan tutup halaman ini."; ov.hidden = false; }
   function ovClose() { clearInterval(tick); ov.hidden = true; }
 
   var LABEL = { email: "Email", sales: "Email Sales penampung", ikrBaru: "Email Lead IKR mitra pengganti" };
@@ -297,8 +383,8 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
       if (!spkOk(d.noSpk || "")) return show("Nomor SPK wajib diisi dengan format yang benar. Contoh: 1547/PRJ/STARLITE/X/2026", fld("noSpk"));
       if (!FILES.spk) return show("Unggah file SPK (PDF) — lampiran SPK untuk PO ini belum ada.");
     }
-    if (!FILES.ba && !rv) return show("Unggah BA Pemindahan Akun IKR & capture dashboard (bagian 5).");
-    if (!FILES.kml && !rv) return show("Unggah file KML stasiun tujuan (bagian 6).");
+    if (!FILES.ba && !rv) return show("Unggah BA Pemindahan Akun IKR & capture dashboard (bagian 4).");
+    if (!FILES.kml && !rv) return show("Unggah file KML stasiun tujuan (bagian 5).");
     d.po = SEL.po; d.stasiun = SEL.stasiun; d.pos = picked();
     send.disabled = true; ovOpen(); step("read"); creep(18, 500);
     var size = ((FILES.ba ? FILES.ba.size : 0) + (FILES.kml ? FILES.kml.size : 0) + (FILES.spk ? FILES.spk.size : 0)) / 1048576;
@@ -310,7 +396,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
       step("save"); clearInterval(tick); setP(100); ov.querySelectorAll(".steps li").forEach(function (li) { li.className = "ok"; }); $("ov-t").textContent = "Pengajuan tersimpan"; $("ov-s").textContent = "Membuka ringkasan…";
       setTimeout(function () {
         ovClose();
-        var sum = $("sum"), rows = [["Subjek", d.tujuan], ["PO", [SEL.po].concat(picked()).join(", ")], ["Stasiun", SEL.stasiun], ["Mitra lama", SEL.lama], ["Mitra pengganti", SEL.baru], ["Status", "Diajukan"]];
+        var sum = $("sum"), rows = [["Jenis", SEL.jenis || "Migrasi Akun IKR"], ["PO", [SEL.po].concat(picked()).join(", ")], ["Stasiun", SEL.stasiun], ["Mitra lama", SEL.lama], ["Mitra pengganti", SEL.baru], ["Status", "Pengajuan"]];
         sum.innerHTML = ""; rows.forEach(function (r) { var dt = document.createElement("dt"), dd = document.createElement("dd"); dt.textContent = r[0]; dd.textContent = r[1]; sum.appendChild(dt); sum.appendChild(dd); });
         f.hidden = true; $("intro").hidden = true; $("done").classList.add("on"); window.scrollTo({ top: 0, behavior: "smooth" });
       }, 650);
@@ -319,7 +405,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
     }).then(function () { send.disabled = false; });
   });
   $("again").onclick = function () {
-    f.reset(); waCheck(); FILES = {}; SEL = null; lastQ = ""; box.className = "full spk"; need.hidden = true; sib.hidden = true; setOpen(false); ["ba", "kml", "spk"].forEach(drawDrop);
+    f.reset(); FILES = {}; SEL = null; lastQ = ""; box.className = "full spk"; need.hidden = true; sib.hidden = true; setOpen(false); ["ba", "kml", "spk"].forEach(drawDrop);
     $("done").classList.remove("on"); f.hidden = false; $("intro").hidden = false; window.scrollTo({ top: 0, behavior: "smooth" });
   };
 })();
