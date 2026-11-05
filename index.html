@@ -13174,15 +13174,35 @@ async function contactNudge() {
       + "</div><div class=\"mx-col\">"
       + (MX.row ? '<div class="mx-sel"><small>Dipilih</small><b>' + E(MX.row.title) + "</b><span>" + E(MX.row.sub) + "</span></div>" : '<div class="mx-empty">Pilih baris data di kiri.</div>')
       + (MX.row && att ? '<label class="mx-lbl">Lampiran (PDF, dikirim langsung)</label>' + (files.length ? '<div class="mx-files">' + files.map(function (f) { return '<label><input type="radio" name="mx-f" value="' + E(f.url) + '"' + (MX.file === f.url ? " checked" : "") + "><span>" + E(f.name) + "</span></label>"; }).join("") + "</div>" : "")
-        + '<input id="mx-file" class="field w-full" placeholder="atau tempel link Google Drive file PDF" value="' + E(files.some(function (f) { return f.url === MX.file; }) ? "" : MX.file) + '">' : "")
+        + '<div class="mx-upl"><input type="file" id="mx-upf" accept=".pdf,.jpg,.jpeg,.png,.docx,.xlsx,.zip,application/pdf,image/*" hidden><button type="button" class="btn btn-ghost" id="mx-upb"><i class="fa-solid fa-upload"></i>Unggah file dari perangkat</button>' + (MX.up && MX.file === MX.up.url ? '<span class="mx-upn"><i class="fa-solid fa-circle-check"></i><a href="' + E(MX.up.url) + '" target="_blank" rel="noopener">' + E(MX.up.name) + "</a></span>" : "") + "</div>"
+        + '<input id="mx-file" class="field w-full" placeholder="atau tempel link Google Drive file PDF" value="' + E(files.some(function (f) { return f.url === MX.file; }) || (MX.up && MX.file === MX.up.url) ? "" : MX.file) + '">' : "")
       + (MX.row ? '<div class="mx-act"><button class="btn btn-primary" id="mx-prev"><i class="fa-solid fa-eye"></i>Periksa & pratinjau</button></div>' : "")
       + '<div id="mx-draft"></div></div></div>';
-    bd.querySelectorAll("[data-j]").forEach(function (b) { b.onclick = function () { MX.jenis = b.dataset.j; MX.row = null; MX.draft = null; MX.file = ""; MX.q = ""; rKirim(); }; });
+    bd.querySelectorAll("[data-j]").forEach(function (b) { b.onclick = function () { MX.jenis = b.dataset.j; MX.row = null; MX.draft = null; MX.file = ""; MX.up = null; MX.q = ""; rKirim(); }; });
     var qi = $i("mx-q"); qi.oninput = function () { MX.q = qi.value; var pos = qi.selectionStart; rKirim(); var n = $i("mx-q"); n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) { } };
     bd.querySelectorAll("[data-r]").forEach(function (b) { b.onclick = function () { MX.row = rs.find(function (r) { return r.row === Number(b.dataset.r); }); MX.draft = null; var fs = (MX.row.files || []).filter(Boolean).concat(signFilesFor(MX.row)); if (!MX.file || !fs.some(function (f) { return f.url === MX.file; })) MX.file = (fs[0] || {}).url || MX.file || ""; rKirim(); }; });
     bd.querySelectorAll('input[name="mx-f"]').forEach(function (r) { r.onchange = function () { MX.file = r.value; var fi = $i("mx-file"); if (fi) fi.value = ""; }; });
     var fi = $i("mx-file"); if (fi) fi.oninput = function () { if (fi.value.trim()) { MX.file = fi.value.trim(); bd.querySelectorAll('input[name="mx-f"]').forEach(function (r) { r.checked = false; }); } };
     var pv = $i("mx-prev"); if (pv) pv.onclick = preview;
+    var ub = $i("mx-upb"), uf = $i("mx-upf");
+    if (ub && uf) {
+      ub.onclick = function () { uf.click(); };
+      uf.onchange = function () {
+        var f = uf.files && uf.files[0]; if (!f) return;
+        if (f.size > 15 * 1048576) { uf.value = ""; return toast("File lebih dari 15 MB. Kecilkan dulu atau tempel tautan Drive.", "error"); }
+        ub.disabled = true; ub.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Mengunggah…';
+        var rd = new FileReader();
+        rd.onerror = function () { ub.disabled = false; ub.innerHTML = '<i class="fa-solid fa-upload"></i>Unggah file dari perangkat'; toast("File tidak bisa dibaca", "error"); };
+        rd.onload = async function () {
+          try {
+            var r = await callApi("mail.upload", { name: f.name, b64: String(rd.result || "") }, 180000);
+            MX.up = { url: r.url, name: r.name }; MX.file = r.url; MX.draft = null;
+            toast("File terunggah: " + r.name, "success"); rKirim();
+          } catch (e) { toast(e.message || "Gagal mengunggah", "error"); ub.disabled = false; ub.innerHTML = '<i class="fa-solid fa-upload"></i>Unggah file dari perangkat'; }
+        };
+        rd.readAsDataURL(f);
+      };
+    }
     if (MX.draft) drawDraft();
   }
   function reqBase() { return { jenis: MX.jenis, ref: { sheet: JMAP[MX.jenis].src, row: MX.row.row, key: MX.row.key }, fileUrl: MX.jenis === "SPK_CANCEL" ? "" : MX.file }; }
@@ -14827,7 +14847,7 @@ window.copyBaganLink=function(){var u=location.href.split("#")[0].split("?")[0].
     PS_CF.call("bg.wajib").then(function(r){rows=(r.items||[]).map(function(x){return{ic:x.ic||"👤",label:x.label}});draw();msg("")}).catch(function(e){msg(e.message||"Gagal memuat",true)})};
 })();
 </script>
-<style id="sync_hub_css">
+<style id="sync_hub_css">.mx-upl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0}.mx-upn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#047857;min-width:0}.mx-upn a{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;color:inherit;text-decoration:underline}
 #sync-progress-wrap,#toast-container{display:none!important}
 .sh{display:none;position:relative;align-items:center;gap:8px;min-width:0;max-width:min(440px,44vw);height:38px;padding:0 14px;border-radius:12px;overflow:hidden;font-size:11.5px;font-weight:700;color:#0e7490;background:linear-gradient(135deg,rgba(6,182,212,.14),rgba(16,185,129,.12));border:1px solid rgba(6,182,212,.35);flex:0 1 auto}
 .sh.on{display:inline-flex}
