@@ -14722,9 +14722,9 @@ async function contactNudge() {
       var out = new Map(); out.failed = [];
       var F = ["sheets(data(startRow,rowData(values(hyperlink,formattedValue,textFormatRuns(format(link(uri))),chipRuns(chip(richLinkProperties(uri)))))))", "sheets(data(startRow,rowData(values(hyperlink,formattedValue,textFormatRuns(format(link(uri)))))))"], res = null;
       for (var t = 0; t < 3 && !res; t++) for (var m = 0; m < F.length && !res; m++) {
-        try { res = await apiGet("", [["ranges", "'" + TK + "'!M2:P" + Math.max(3000, last || 0)], ["ranges", "'" + TK + "'!Z2:Z" + Math.max(3000, last || 0)], ["includeGridData", "true"], ["fields", F[m]]], SS); } catch (e) { if (e && e.status !== 400) break; }
+        try { res = await apiGet("", [["ranges", "'" + TK + "'!M2:P3000"], ["ranges", "'" + TK + "'!Z2:Z3000"], ["includeGridData", "true"], ["fields", F[m]]], SS); } catch (e) { if (e && e.status !== 400) break; }
       }
-      if (!res) { out.failed.push([2, Math.max(3000, last || 0)]); if (prog) prog(); return out; }
+      if (!res) { out.failed.push([2, 3000]); if (prog) prog(); return out; }
       var d = res.sheets && res.sheets[0] && res.sheets[0].data && res.sheets[0].data[0], st = (d && d.startRow != null ? d.startRow : 1) + 1;
       var lk = function (v) { if (!v) return ""; var u = ""; try { u = extractLink(v); } catch (e) { } if (u) return u; var f = String(v.formattedValue || "").trim(); return /^https?:\/\/\S+$/i.test(f) ? f : ""; };
       var dz = res.sheets && res.sheets[0] && res.sheets[0].data && res.sheets[0].data[1], zr = (dz && dz.rowData) || [];
