@@ -87,7 +87,7 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
 
 .wj{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:2px 0 12px}.wj.hide{display:none}
 .wj button{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:4px 12px;border-radius:99px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;transition:background .15s,border-color .15s,transform .1s}
-.wj button:active{transform:scale(.96)}.wj button .i{font-size:16px}.wj button.ok{background:#f0fdf4;border-color:#86efac;color:#166534}.wj button.no{border-style:dashed;color:var(--mut)}
+.wj button:active{transform:scale(.96)}.wj button .i{font-size:16px}.wj button.ok{background:#f0fdf4;border-color:#86efac;color:#166534}.wj button.no{border-style:dashed;color:var(--mut)}.wj button.no.miss{border-style:solid;border-color:#fca5a5;background:#fef2f2;color:#b91c1c}.wj.shake{animation:wjs .4s}@keyframes wjs{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}@media (prefers-reduced-motion:reduce){.wj.shake{animation:none}}
 .nd select{width:100%;min-height:34px;padding:3px 6px;border:0;border-bottom:1px dashed #dbe3ee;background:transparent;font-size:15px;font-weight:600;color:var(--c);text-align:center;text-align-last:center;cursor:pointer}
 .nd select.bad{background:#fff1f2;border-bottom:2px solid var(--bad)}
 .nd.new{animation:ndin .26s ease-out}.nd.gone{animation:ndout .18s ease-in forwards;pointer-events:none}
@@ -116,7 +116,7 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
   <div class="card"><div class="cvh" style="margin:0"><h2 id="ttl">Struktur</h2><button class="g sm" id="gear" type="button" aria-label="Pengaturan email pemulihan" title="Pengaturan email pemulihan" style="width:40px;padding:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div><div id="stt" style="margin-top:8px"></div></div>
   <div class="card hide" id="emc"><label for="em2" id="eml">Email pemulihan PIN</label><div class="acts"><input id="em2" type="email" inputmode="email" placeholder="nama@perusahaan.com" style="flex:1;min-width:200px"><button class="t" id="em2s" type="button">Simpan email</button></div><div id="m3"></div></div>
   <details class="card hide" id="pubc"><summary>Bagan berlaku saat ini <span id="pubv"></span></summary><div class="prev" id="prev" style="margin-top:12px"></div></details>
-  <div class="card nt" id="ntc"><b>Isi struktur dengan lengkap dan terperinci</b><p class="s">Susunan di bawah adalah acuan utama dari Vendor Management. Lengkapi nama dan nomor HP aktif setiap orang. Posisi wajib (ikon di atas bagan) wajib mengisi nama, No HP, dan email. Posisi di bawahnya cukup nama dan No HP. Satu posisi boleh berisi lebih dari satu nama lewat tombol <b>+ Tambah nama</b>. Posisi yang belum terisi bisa diisi lewat tombol <b>Isi orang</b>, dan posisi yang tidak ada di perusahaan Anda bisa dihapus dengan tombol ✕. Cabang hanya untuk posisi: pakai tombol + di bawah atau di samping kotak. Posisi yang berisi lebih dari satu nama tidak bisa dicabangkan, dan posisi yang punya cabang hanya boleh satu nama.</p></div>
+  <div class="card nt" id="ntc"><b>Isi struktur dengan lengkap dan terperinci</b><p class="s">Susunan di bawah adalah acuan utama dari Vendor Management. Lengkapi nama dan nomor HP aktif setiap orang. Bagan Anda tentukan sendiri, tetapi semua posisi wajib (ikon di atas bagan) harus sudah ada sebelum dikirim, dan wajib mengisi nama, No HP, dan email. Posisi di bawahnya cukup nama dan No HP. Satu posisi boleh berisi lebih dari satu nama lewat tombol <b>+ Tambah nama</b>. Posisi yang belum terisi bisa diisi lewat tombol <b>Isi orang</b>, dan posisi yang tidak ada di perusahaan Anda bisa dihapus dengan tombol ✕. Cabang hanya untuk posisi: pakai tombol + di bawah atau di samping kotak. Posisi yang berisi lebih dari satu nama tidak bisa dicabangkan, dan posisi yang punya cabang hanya boleh satu nama.</p></div>
   <div class="ed">
     <div class="card cv"><div class="cvh"><h2>Bagan struktur</h2>
       <div class="zm"><button class="g sm" id="zo" aria-label="Perkecil" type="button">−</button><span id="zl">100%</span><button class="g sm" id="zi" aria-label="Perbesar" type="button">+</button></div></div>
@@ -220,8 +220,10 @@ function bad(p){
   return e;
 }
 CW=300;GX=72;GY=76;PAD=64;
-function isFixed(p){var j=String(p.jabatan||"").trim().toLowerCase();return !!p.atasan&&WAJIB.some(function(w){return w.label.toLowerCase()===j})}
-function ensureWajib(){var root=S.data.posisi.filter(function(p){return!p.atasan})[0];if(!root)return false;var add=false;
+function isFixed(p){return false}
+function ensureWajib(){return false}
+function missingWajib(){return WAJIB.filter(function(w){return !S.data.posisi.some(function(p){return String(p.jabatan||"").trim().toLowerCase()===w.label.toLowerCase()})})}
+function ensureWajibOld(){var root=S.data.posisi.filter(function(p){return!p.atasan})[0];if(!root)return false;var add=false;
   WAJIB.forEach(function(w){var has=S.data.posisi.some(function(p){return String(p.jabatan||"").trim().toLowerCase()===w.label.toLowerCase()});
     if(!has){var c=np(root.id);c.jabatan=w.label;S.data.posisi.push(c);add=true}});return add}
 function jabOpts(){var seen={},l=[];WAJIB.forEach(function(w){seen[w.label.toLowerCase()]=1;l.push(w.label)});SUGG.forEach(function(x){if(!seen[x.toLowerCase()]){seen[x.toLowerCase()]=1;l.push(x)}});return l}
@@ -232,7 +234,7 @@ function jabUI(p,jb){var o=jabOpts(),cur=String(p.jabatan||""),inl=o.some(functi
   if(cust)h+='<input data-f="jabatan" maxlength="80" placeholder="Nama posisi" value="'+esc(cur)+'" autocomplete="off" class="'+jb+'">';
   return h}
 function wjPaint(){var b=$("wj");if(!WAJIB.length){b.classList.add("hide");return}b.classList.remove("hide");
-  b.innerHTML=WAJIB.map(function(w){var has=S.data.posisi.some(function(p){return String(p.jabatan||"").trim().toLowerCase()===w.label.toLowerCase()});return'<button type="button" data-w="'+esc(w.label)+'" class="'+(has?"ok":"no")+'" title="'+(has?"Sudah ada, klik untuk menuju posisi":"Klik untuk menambah posisi")+'"><span class="i">'+esc(w.ic||"👤")+"</span>"+esc(w.label)+(has?" ✓":"")+"</button>"}).join("")}
+  b.innerHTML=WAJIB.map(function(w){var has=S.data.posisi.some(function(p){return String(p.jabatan||"").trim().toLowerCase()===w.label.toLowerCase()});return'<button type="button" data-w="'+esc(w.label)+'" class="'+(has?"ok":"no"+(S.chk?" miss":""))+'" title="'+(has?"Sudah ada, klik untuk menuju posisi":"Klik untuk menambah posisi")+'"><span class="i">'+esc(w.ic||"👤")+"</span>"+esc(w.label)+(has?" ✓":"")+"</button>"}).join("")}
 $("wj").addEventListener("click",function(e){var t=e.target.closest("[data-w]");if(!t)return;var lb=t.dataset.w,ex=S.data.posisi.filter(function(p){return String(p.jabatan||"").trim().toLowerCase()===lb.toLowerCase()})[0];
   if(ex){S.sel=ex.id;paint();focusNode(ex.id,"nama",0);return}
   var par=byId(S.sel)||S.data.posisi[0];if(S.data.posisi.length>=80)return msg("m2","Maksimal 80 posisi.","err");
@@ -314,12 +316,14 @@ function hpNorm(v){var d=String(v||"").replace(/[^\d+]/g,"");if(d.indexOf("+62")
 function hpState(v){if(!String(v||"").trim())return{ok:true,empty:true};var n=hpNorm(v);return HPRE.test(n)?{ok:true,norm:n}:{ok:false,norm:n}}
 function hpMsg(el,st){var h=el.parentNode.querySelector(".hs");if(!h)return;if(st.empty){h.textContent="";h.className="hs"}else if(st.ok){h.textContent="✓ Nomor valid";h.className="hs ok"}else{h.textContent="Nomor tidak valid. Contoh: 0812 3456 7890";h.className="hs no"}el.classList.toggle("bad",!st.ok)}
 $("send").onclick=function(){
-  if(ensureWajib())paint();S.chk=true;var first=null,cnt=0,fi=0,ff="";
+  var mw=missingWajib();
+  if(mw.length){S.chk=true;paint();msg("m2","Posisi wajib belum ada di bagan: "+mw.map(function(w){return w.label}).join(", ")+". Klik ikon posisi wajib di atas bagan untuk menambahkannya, lalu isi nama, No HP, dan email.","err");var wb=$("wj");if(wb){wb.scrollIntoView({behavior:"smooth",block:"center"});wb.classList.remove("shake");void wb.offsetWidth;wb.classList.add("shake")}return}
+  S.chk=true;var first=null,cnt=0,fi=0,ff="";
   S.data.posisi.forEach(function(p){var e=bad(p);if(p.ket!=="kosong")p.orang.forEach(function(o){var hs=hpState(o.hp);if(hs.ok&&hs.norm)o.hp=hs.norm});e=bad(p);if(e.length){cnt++;if(!first){first=p;if(e.indexOf("jabatan")>=0)ff="jabatan";else{for(var k=0;k<p.orang.length;k++){var pe=badP(p.orang[k],isWajib(p));if(pe.length){fi=k;ff=pe[0];break}}}}}});
   paint();
   if(first){S.sel=first.id;paint();
     msg("m2",cnt+" kotak belum lengkap (bertanda merah). Isi jabatan, nama, dan No HP/WhatsApp setiap orang. Email wajib hanya untuk posisi wajib dan direktur; posisi lain cukup nama dan No HP.","err");focusNode(first.id,ff,ff==="jabatan"?null:fi);return}
-  if(!S.ready){S.ready=true;$("notec").classList.remove("hide");$("send").textContent="Simpan bagan";$("notec").scrollIntoView({behavior:"smooth",block:"center"});return}
+  msg("m2","");if(!S.ready){S.ready=true;$("notec").classList.remove("hide");$("send").textContent="Simpan bagan";$("notec").scrollIntoView({behavior:"smooth",block:"center"});return}
   if(!$("ack").checked)return msg("m2","Centang pernyataan bahwa data benar dan dapat dipertanggungjawabkan.","err");
   $("send").disabled=true;msg("m2","");
   var data={posisi:S.data.posisi.map(function(p){return{id:p.id,jabatan:p.jabatan.trim(),level:p.level||"",atasan:p.atasan||"",ket:p.ket,orang:p.ket==="kosong"?[]:p.orang.map(function(o){return{nama:o.nama.trim(),hp:o.hp.trim(),email:(o.email||"").trim(),site:o.site||[]}})}})};
