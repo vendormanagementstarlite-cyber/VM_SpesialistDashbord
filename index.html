@@ -14270,6 +14270,7 @@ async function contactNudge() {
   window.SP_CF.addWd = addWd; window.SP_CF.wdBetween = wdBetween;
   async function afterMail(r, dur) {
     if (!r || !r.results) return;
+    var okN = 0;
     for (var i = 0; i < r.results.length; i++) {
       var x = r.results[i], it = x && x.item; if (!x || !x.ok || x.queued || !it || it.status && it.status !== "terkirim") continue;
       var m = String(it.jenis || "").match(/^SP([123])$/), ref = it.ref || {}; if (!m || ref.sheet !== "sp" || !ref.row) continue;
@@ -14279,8 +14280,19 @@ async function contactNudge() {
         await sp("sp.update", { row: ref.row, cols: c });
         (it.wb = it.wb || []).push("Monitoring SP: rilis " + c[11] + " · jatuh tempo " + due);
         logc("Email SP-" + m[1] + " terkirim", v[4] + " (baris " + ref.row + ")");
-        setTimeout(function () { try { if (typeof syncNow === "function") syncNow(); } catch (e) { } }, 800);
-      } catch (e) { (it.wb = it.wb || []).push("Monitoring SP gagal diperbarui: " + e.message); }
+        okN++;
+      } catch (e) { (it.wb = it.wb || []).push("Monitoring SP gagal diperbarui: " + e.message); try { toast_("Email SP terkirim, tetapi tanggal rilis gagal diperbarui: " + e.message, "error"); } catch (x) { } }
+    }
+    if (okN) {   // muat ulang daftar SP langsung dari database agar tanggal rilis & status tampil tanpa menunggu sync
+      try {
+        var jj = await sp("sp.list"), ar = asRows(jj);
+        window.SP_CF.letters = jj.letters || [];
+        STATE.sp = window.buildSp(ar.rows);
+        STATE.headers.sp = headerOf(ar.rows);
+        refreshAll();
+        try { saveSnapshot(); } catch (x) { }
+        try { toast_("Tanggal rilis SP diperbarui otomatis"); } catch (x) { }
+      } catch (e) { setTimeout(function () { try { if (typeof syncNow === "function") syncNow(); } catch (x) { } }, 300); }
     }
   }
 
