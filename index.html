@@ -14776,7 +14776,7 @@ async function contactNudge() {
       try {
         var u = (e.links && e.links[22 - 15]) || "", t = String((e.raw || [])[37] || "").trim();
         var chip = u ? '<button type="button" class="dd ok" title="BA Migrasi: buka" onclick="event.stopPropagation();sdPreviewUrl(' + jsArg(u) + ', ' + jsArg("BA Migrasi · PO " + e.po) + ', ' + jsArg("BA Migrasi") + ')">BAM</button>'
-          : (/^no need$/i.test(String(e.m || "").trim()) ? '<span class="dd ok" title="BA Migrasi: No Need">BAM</span>' : '<span class="dd no" title="BA Migrasi: belum ada">BAM</span>');
+          : (/^(no need|done)/i.test(String(e.m || "").trim()) ? '<span class="dd ok" title="BA Migrasi: ' + String(e.m || "").trim().replace(/[<>&"]/g, "") + ' (selesai)">BAM</span>' : '<span class="dd no" title="BA Migrasi: belum ada">BAM</span>');
         var dt = typeof spkShort === "function" ? spkShort(e) : "";
         var line = dt ? '<div class="c-sub" title="Tanggal rilis SPK"><i class="fa-regular fa-calendar mr-1"></i><span class="whitespace-nowrap">' + (typeof esc === "function" ? esc(dt) : dt) + "</span></div>" : "";
         return h.replace(/<\/div>\s*$/, chip + "</div>") + line;
