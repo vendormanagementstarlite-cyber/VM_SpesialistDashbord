@@ -14827,5 +14827,61 @@ window.copyBaganLink=function(){var u=location.href.split("#")[0].split("?")[0].
     PS_CF.call("bg.wajib").then(function(r){rows=(r.items||[]).map(function(x){return{ic:x.ic||"👤",label:x.label}});draw();msg("")}).catch(function(e){msg(e.message||"Gagal memuat",true)})};
 })();
 </script>
+<style id="sync_hub_css">
+#sync-progress-wrap,#toast-container{display:none!important}
+.sh{display:none;position:relative;align-items:center;gap:8px;min-width:0;max-width:min(440px,44vw);height:38px;padding:0 14px;border-radius:12px;overflow:hidden;font-size:11.5px;font-weight:700;color:#0e7490;background:linear-gradient(135deg,rgba(6,182,212,.14),rgba(16,185,129,.12));border:1px solid rgba(6,182,212,.35);flex:0 1 auto}
+.sh.on{display:inline-flex}
+.sh>i{flex:none;font-size:13px}
+.sh .t{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sh .p{flex:none;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px}
+.sh .b{position:absolute;left:0;bottom:0;height:3px;width:0;background:linear-gradient(90deg,#06b6d4,#10b981);transition:width .3s}
+.sh.ok{color:#047857;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.12)}
+.sh.er{color:#be123c;border-color:rgba(244,63,94,.45);background:rgba(244,63,94,.1)}
+html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{color:#fda4af}
+#sync-hub-m{width:100%;max-width:none;flex-basis:100%;margin-top:6px;height:34px}
+#mob-top{flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){.sh .b{transition:none}}
+</style>
+<script id="sync_hub">
+/* semua loading & notifikasi tampil di indikator sync (atas), bukan popup melayang */
+(function () {
+  var D = document.createElement("div"), M = document.createElement("div");
+  [D, M].forEach(function (e, i) {
+    e.className = "sh"; e.id = i ? "sync-hub-m" : "sync-hub-d"; e.setAttribute("role", "status"); e.setAttribute("aria-live", "polite");
+    e.innerHTML = '<i class="fa-solid fa-cloud-arrow-down"></i><span class="t"></span><span class="p"></span><span class="b"></span>';
+  });
+  var dt = document.getElementById("desk-top"), act = dt && dt.querySelector(".tb-actions"), mt = document.getElementById("mob-top");
+  if (dt) dt.insertBefore(D, act || null);
+  if (mt) mt.appendChild(M);
+  var prog = null, note = null, nt = null;
+  var IC = { ok: "fa-circle-check", er: "fa-triangle-exclamation", info: "fa-circle-info", load: "fa-cloud-arrow-down" };
+  function shown() { return !!((D.parentNode && D.getBoundingClientRect().width !== undefined && D.offsetParent !== null) || (M.parentNode && M.offsetParent !== null) || visible()); }
+  function visible() { return (dt && dt.offsetParent !== null) || (mt && mt.offsetParent !== null); }
+  function paint() {
+    var s = prog ? { c: "", i: IC.load, t: prog.l, p: Math.round(prog.p) + "%", w: Math.max(2, Math.min(100, prog.p)) + "%" }
+      : note ? { c: note.c, i: IC[note.c || "info"] || IC.info, t: note.m, p: "", w: "0%" } : null;
+    [D, M].forEach(function (e) {
+      if (!s) { e.classList.remove("on", "ok", "er"); return; }
+      e.classList.add("on"); e.classList.toggle("ok", s.c === "ok"); e.classList.toggle("er", s.c === "er");
+      e.firstChild.className = "fa-solid " + s.i; e.querySelector(".t").textContent = s.t; e.querySelector(".p").textContent = s.p;
+      e.querySelector(".b").style.width = s.w; e.title = s.t;
+    });
+  }
+  var oPg = window.setProgress, oTo = window.showToast, oQ = window.quietNote;
+  window.setProgress = function (l, p) {
+    if (!visible()) return oPg && oPg.apply(this, arguments);
+    prog = (l !== null && l != null && p != null) ? { l: String(l), p: Number(p) || 0 } : null; paint();
+  };
+  function push(m, type, ms) {
+    var c = type === "error" ? "er" : type === "success" ? "ok" : "info", d = Math.max(Number(ms) || 0, c === "er" ? 9000 : 3500);
+    note = { m: String(m == null ? "" : m).replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim(), c: c };
+    if (!note.m) { note = null; return paint(); }
+    clearTimeout(nt); nt = setTimeout(function () { note = null; paint(); }, d); paint();
+  }
+  window.showToast = function (m, t, a) { if (!visible()) return oTo && oTo.apply(this, arguments); push(m, t, a); };
+  window.quietNote = function (e) { if (!visible()) return oQ && oQ.apply(this, arguments); push(e, "info", 4500); };
+  window.SYNC_HUB = { push: push, paint: paint };
+})();
+</script>
 </body>
 </html>
