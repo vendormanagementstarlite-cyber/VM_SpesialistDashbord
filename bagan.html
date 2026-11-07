@@ -80,7 +80,7 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
   #s-edit,.layout{max-width:none}.vp{min-height:520px;max-height:calc(100vh - 250px)}
 }
 
-.nd{width:300px;height:auto;gap:4px}.nd .pr{display:grid;gap:3px;position:relative;padding-top:6px;border-top:1px dashed #dbe3ee}.nd .pr2{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.wjt{position:absolute;top:-1px;right:10px;background:#b91c1c;color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:0 0 6px 6px}.nd{width:300px;height:auto;gap:4px}.nd .pr{display:grid;gap:3px;position:relative;padding-top:6px;border-top:1px dashed #dbe3ee}.nd .pr2{display:grid;grid-template-columns:1fr 1fr;gap:4px}
 .nd .pr input[data-f=nama].pad{padding-right:30px}.nd .px{position:absolute;right:0;top:8px;min-height:0;width:26px;height:26px;padding:0;border-radius:8px;font-size:12px;z-index:2}
 .nd .ap{min-height:30px;font-size:13px;margin-top:2px}.nd .pr input[data-f=hp],.nd .pr input[data-f=email]{font-size:15px;padding:3px 4px}
 .nd .ap.lk{opacity:.5}
@@ -116,7 +116,7 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
   <div class="card"><div class="cvh" style="margin:0"><h2 id="ttl">Struktur</h2><button class="g sm" id="gear" type="button" aria-label="Pengaturan email pemulihan" title="Pengaturan email pemulihan" style="width:40px;padding:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div><div id="stt" style="margin-top:8px"></div></div>
   <div class="card hide" id="emc"><label for="em2" id="eml">Email pemulihan PIN</label><div class="acts"><input id="em2" type="email" inputmode="email" placeholder="nama@perusahaan.com" style="flex:1;min-width:200px"><button class="t" id="em2s" type="button">Simpan email</button></div><div id="m3"></div></div>
   <details class="card hide" id="pubc"><summary>Bagan berlaku saat ini <span id="pubv"></span></summary><div class="prev" id="prev" style="margin-top:12px"></div></details>
-  <div class="card nt" id="ntc"><b>Isi struktur dengan lengkap dan terperinci</b><p class="s">Susunan di bawah adalah acuan utama dari Vendor Management. Lengkapi nama dan nomor HP aktif setiap orang. Bagan Anda tentukan sendiri, tetapi semua posisi wajib (ikon di atas bagan) harus sudah ada sebelum dikirim, dan wajib mengisi nama, No HP, dan email. Posisi di bawahnya cukup nama dan No HP. Satu posisi boleh berisi lebih dari satu nama lewat tombol <b>+ Tambah nama</b>. Posisi yang belum terisi bisa diisi lewat tombol <b>Isi orang</b>, dan posisi yang tidak ada di perusahaan Anda bisa dihapus dengan tombol ✕. Cabang hanya untuk posisi: pakai tombol + di bawah atau di samping kotak. Posisi yang berisi lebih dari satu nama tidak bisa dicabangkan, dan posisi yang punya cabang hanya boleh satu nama.</p></div>
+  <div class="card nt" id="ntc"><b>Isi struktur dengan lengkap</b><p class="s">Posisi bertanda <b>WAJIB</b> harus terisi nama, No HP, dan email sebelum bagan bisa disimpan. Posisi lain cukup nama dan No HP. Tombol <b>+</b> menambah posisi, <b>+ Tambah nama</b> menambah orang, ✕ menghapus posisi.</p></div>
   <div class="ed">
     <div class="card cv"><div class="cvh"><h2>Bagan struktur</h2>
       <div class="zm"><button class="g sm" id="zo" aria-label="Perkecil" type="button">−</button><span id="zl">100%</span><button class="g sm" id="zi" aria-label="Perbesar" type="button">+</button></div></div>
@@ -157,7 +157,7 @@ $("go").onclick=function(){
   var pin=$("pin").value;if(!/^\d{6}$/.test(pin))return msg("m1","PIN harus 6 angka.","err");
   var create=false;
   $("go").disabled=true;msg("m1","");
-  api("bg.open",{row:x.row,pin:pin,create:create}).then(function(j){return api("bg.wajib").then(function(w){WAJIB=(w.items||[]).filter(function(i){return i&&i.label})},function(){}).then(function(){S.row=x.row;S.pin=pin;S.name=x.name;start(j)})}).catch(function(e){msg("m1",e.message,"err")}).finally(function(){$("go").disabled=false});
+  api("bg.open",{row:x.row,pin:pin,create:create}).then(function(j){return api("bg.wajib").then(function(w){WAJIB=(w.items||[]).filter(function(i){return i&&i.label});window.BG_WAJIB=WAJIB.map(function(i){return i.label})},function(){}).then(function(){S.row=x.row;S.pin=pin;S.name=x.name;start(j)})}).catch(function(e){msg("m1",e.message,"err")}).finally(function(){$("go").disabled=false});
 };
 function start(j){
   $("s-login").classList.add("hide");$("s-edit").classList.remove("hide");$("bar").classList.remove("hide");$("ttl").textContent=S.name;
@@ -222,7 +222,7 @@ function bad(p){
 CW=300;GX=72;GY=76;PAD=64;
 function isFixed(p){return false}
 function ensureWajib(){return false}
-function missingWajib(){return WAJIB.filter(function(w){return !S.data.posisi.some(function(p){return String(p.jabatan||"").trim().toLowerCase()===w.label.toLowerCase()})})}
+function missingWajib(){return WAJIB.filter(function(w){return !S.data.posisi.some(function(p){return String(p.jabatan||"").trim().toLowerCase()===w.label.toLowerCase()&&p.ket!=="kosong"&&(p.orang||[]).length&&p.orang.every(function(o){return badP(o,true).length===0})})})}
 function ensureWajibOld(){var root=S.data.posisi.filter(function(p){return!p.atasan})[0];if(!root)return false;var add=false;
   WAJIB.forEach(function(w){var has=S.data.posisi.some(function(p){return String(p.jabatan||"").trim().toLowerCase()===w.label.toLowerCase()});
     if(!has){var c=np(root.id);c.jabatan=w.label;S.data.posisi.push(c);add=true}});return add}
@@ -257,7 +257,7 @@ function paint(){
     var sibs=kidsOf(p.atasan||"__"),idx=sibs.indexOf(p),jb=S.chk&&!p.jabatan.trim()?"bad":"";
     nd+='<div class="nd'+(p.id===S.newId?" new":"")+(p.id===S.sel?" on":"")+(e.length?" bd":"")+(ko?" ko":"")+'" data-id="'+esc(p.id)+'" style="--c:'+COL[Math.min(a.d,3)]+";left:"+x+"px;top:"+y+"px;height:"+H+'px">'
       +(root?"":'<div class="tb"><button type="button" class="g" data-mv="-1" aria-label="Geser kiri"'+(idx<=0?" disabled":"")+'>‹</button>'+(isFixed(p)?"":'<button type="button" class="d" data-rm="1" aria-label="Hapus">✕</button>')+'<button type="button" class="g" data-mv="1" aria-label="Geser kanan"'+(idx<0||idx>=sibs.length-1?" disabled":"")+'>›</button></div>')
-      +jabUI(p,jb);
+      +(isWajib(p)?'<span class="wjt">WAJIB</span>':'')+jabUI(p,jb);
     if(ko)nd+='<div class="kl">Posisi kosong</div><button type="button" class="t sm" data-fill="1">Isi orang</button>';
     else{
       p.orang.forEach(function(o,i){var n=p.orang.length,rq=isWajib(p),pe=S.chk?badP(o,rq):[];
@@ -317,7 +317,7 @@ function hpState(v){if(!String(v||"").trim())return{ok:true,empty:true};var n=hp
 function hpMsg(el,st){var h=el.parentNode.querySelector(".hs");if(!h)return;if(st.empty){h.textContent="";h.className="hs"}else if(st.ok){h.textContent="✓ Nomor valid";h.className="hs ok"}else{h.textContent="Nomor tidak valid. Contoh: 0812 3456 7890";h.className="hs no"}el.classList.toggle("bad",!st.ok)}
 $("send").onclick=function(){
   var mw=missingWajib();
-  if(mw.length){S.chk=true;paint();msg("m2","Posisi wajib belum ada di bagan: "+mw.map(function(w){return w.label}).join(", ")+". Klik ikon posisi wajib di atas bagan untuk menambahkannya, lalu isi nama, No HP, dan email.","err");var wb=$("wj");if(wb){wb.scrollIntoView({behavior:"smooth",block:"center"});wb.classList.remove("shake");void wb.offsetWidth;wb.classList.add("shake")}return}
+  if(mw.length){S.chk=true;paint();msg("m2","Posisi wajib belum lengkap (nama, No HP, email): "+mw.map(function(w){return w.label}).join(", ")+". Klik ikon posisi wajib di atas bagan untuk mengisinya.","err");var wb=$("wj");if(wb){wb.scrollIntoView({behavior:"smooth",block:"center"});wb.classList.remove("shake");void wb.offsetWidth;wb.classList.add("shake")}return}
   S.chk=true;var first=null,cnt=0,fi=0,ff="";
   S.data.posisi.forEach(function(p){var e=bad(p);if(p.ket!=="kosong")p.orang.forEach(function(o){var hs=hpState(o.hp);if(hs.ok&&hs.norm)o.hp=hs.norm});e=bad(p);if(e.length){cnt++;if(!first){first=p;if(e.indexOf("jabatan")>=0)ff="jabatan";else{for(var k=0;k<p.orang.length;k++){var pe=badP(p.orang[k],isWajib(p));if(pe.length){fi=k;ff=pe[0];break}}}}}});
   paint();
