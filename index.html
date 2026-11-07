@@ -9308,7 +9308,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
   }
   function itSubject(r) { return "PERPINDAHAN AKUN - " + offName(r.baru) + " - " + r.stasiun; }
   function itBody(r) {
-    return "Yth. Team IT\n\nBerikut permintaan perpindahan Akun:\n\nMitra Lama          : " + offName(r.lama) + "\nMitra Baru          : " + offName(r.baru) + "\nNama Stasiun        : " + r.stasiun + "\nNo PO               : " + (r.pos || [r.po]).join(", ") + "\nNo SPK              : " + r.noSpk + (r.spk ? " (" + r.spk + ")" : "")
+    return "Yth. Team IT\n\nBerikut permintaan perpindahan Akun:\n\nMitra Lama          : " + offName(r.lama) + "\nMitra Baru          : " + offName(r.baru) + "\nNama Stasiun        : " + r.stasiun + "\nNo PO               : " + (r.pos || [r.po]).join(", ") + "\nNo SPK              : " + (r.spkNew ? r.spkNew.no + " (" + r.spkNew.url + ")" : r.noSpk + (r.spk ? " (" + r.spk + ")" : ""))
       + "\n\nSebagai pemenuhan syarat administrasi, bersama email ini kami lampirkan dokumen-dokumen pendukung sebagai berikut:\n\n1. Berita Acara Pemindahan Akun IKR: Terlampir" + (r.ba ? " (" + r.ba + ")" : "")
       + "\n2. File KML stasiun yang dituju: " + (r.kml || "-") + "\n3. Akun email penampung: " + (r.sales || "-") + "\n4. Akun email Lead IKR mitra pengganti: " + (r.ikrBaru || "-")
       + "\n\nMohon untuk segera di proses perpindahan akun.\n\nBest Regards\nVendor Management";
@@ -9372,7 +9372,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
       + '<div class="glass-panel rounded-2xl p-4 space-y-3"><div class="flex flex-wrap gap-2"><div class="relative flex-1 min-w-[220px]"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i><input id="mig-q" class="field w-full pl-9" placeholder="Cari mitra, stasiun, No SPK, pengaju, email…" value="' + E(MIG.q) + '"></div><select id="mig-jenis" class="field"><option value="">Semua jenis</option><option' + (MIG.jenis === "Migrasi Akun IKR" ? " selected" : "") + '>Migrasi Akun IKR</option><option' + (MIG.jenis === "Create Site" ? " selected" : "") + ">Create Site</option></select></div>"
       + (!MIG.loaded ? '<div class="mig-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Memuat pengajuan…</div>' : L.length ? ((MIG.f === "done" && oldDone) ? '<p class="mig-oldn">Angka Selesai sudah termasuk ' + oldDone + " data lama yang selesai sebelum form ini dipakai (tidak ditampilkan di daftar).</p>" : "") + '<div class="mig-list">' + L.map(function (r) {
         var k = stOf(r), em = chkOf(r).emailAt ? Date.parse(chkOf(r).emailAt) : 0, late = k === "it" && em && Date.now() - em > 7 * 864e5;
-        return '<button class="mig-row" data-row="' + r.row + '"><span class="mig-d">' + E(r.ts ? r.ts.split(" ")[0] : "–") + "<small>" + (r.ts ? ago(r.tsMs) : "tanpa cap waktu") + '</small></span><span class="mig-m"><b>' + E(r.baru || "-") + " · " + E(r.stasiun || "-") + "</b><small>dari " + E(r.lama || "-") + " · " + E(r.noSpk || "tanpa No SPK") + (r.pos && r.pos.length > 1 ? " · " + r.pos.length + " PO" : "") + " · " + (/create/i.test(r.tujuan) ? "Create Site" : "Migrasi Akun") + (r.it ? " · IT: " + E(r.it) : "") + "</small></span>" + chip(k, r) + (late ? '<span class="mig-late" title="Status IT masih kosong > 7 hari setelah email">IT > 7 hari</span>' : "") + "</button>";
+        return '<button class="mig-row" data-row="' + r.row + '"><span class="mig-d">' + E(r.ts ? r.ts.split(" ")[0] : "–") + "<small>" + (r.ts ? ago(r.tsMs) : "tanpa cap waktu") + '</small></span><span class="mig-m"><b>' + E(r.baru || "-") + " · " + E(r.stasiun || "-") + "</b><small>dari " + E(r.lama || "-") + (r.mitra2 ? " · ke-2 (sebelumnya " + E(r.mitra1 || "-") + ")" : "") + " · " + (r.spkNew ? '<b style="color:#b45309">SPK diganti → ' + E(r.spkNew.no) + "</b>" : E(r.noSpk || "tanpa No SPK")) + (r.pos && r.pos.length > 1 ? " · " + r.pos.length + " PO" : "") + " · " + (/create/i.test(r.tujuan) ? "Create Site" : "Migrasi Akun") + (r.it ? " · IT: " + E(r.it) : "") + "</small></span>" + chip(k, r) + (late ? '<span class="mig-late" title="Status IT masih kosong > 7 hari setelah email">IT > 7 hari</span>' : "") + "</button>";
       }).join("") + "</div>" : '<div class="mig-empty"><i class="fa-regular fa-folder-open"></i>' + (MIG.rows.length ? "Tidak ada pengajuan pada filter ini." : "Belum ada pengajuan dari mitra.<br><small>Pengajuan tampil di sini setelah mitra mengirim form (status Pengajuan).</small>") + "</div>") + "</div>");
     if (MIG.off) { v.querySelector('[data-a="reload"]').onclick = reloadNow; v.querySelector('[data-a="form"]').onclick = formLink; v.querySelector('[data-a="set"]').onclick = settings; return; }
     v.querySelectorAll("[data-f]").forEach(function (b) { b.onclick = function () { MIG.f = b.dataset.f; render(); }; });
@@ -9414,7 +9414,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
       + '<section><h4>Email pengaju</h4><p>' + E(r.email || "-") + "</p></section>"
       + '<section><h4>Status Migrasi IT</h4><p>' + E(r.it || "-") + "</p></section>"
       + '<section><h4>Akun</h4><dl class="mig-dl"><dt>Sales penampung</dt><dd>' + E(r.sales || "-") + "</dd><dt>Lead IKR mitra pengganti</dt><dd>" + E(r.ikrBaru || "-") + "</dd></dl></section>"
-      + '<section><h4>Dokumen</h4><div class="mig-docs">' + lnk(r.ba, "BA & capture dashboard") + lnk(r.kml, "File KML") + lnk(r.spk, "SPK") + "</div>"
+      + '<section><h4>Dokumen</h4><div class="mig-docs">' + lnk(r.ba, "BA & capture dashboard") + lnk(r.kml, "File KML") + lnk(r.spk, "SPK") + (r.spkNew ? lnk(r.spkNew.url, "SPK baru " + r.spkNew.no) : "") + "</div>" + (r.spkNew ? '<p style="margin:8px 0 0;padding:8px 10px;border-radius:10px;background:rgba(245,158,11,.12);font-size:12px">Mitra menyatakan No SPK di data <b>tidak sesuai</b> dan mengajukan <b>' + E(r.spkNew.no) + "</b>. Saat status diubah ke Done, kolom N diganti ke SPK baru dan SPK lama (" + E(r.spkNew.old ? (window.spkNoOf ? window.spkNoOf(r.spkNew.old) || r.spkNew.old : r.spkNew.old) : "-") + ") dicatat di REMARK.</p>" : "")
       + '<div class="mig-batools"><button class="st-b" data-ba="edit"' + (r.ba ? "" : " disabled") + '><i class="fa-solid fa-pen-to-square"></i>Edit BA (PDF)</button><button class="st-b" data-ba="add"><i class="fa-solid fa-file-circle-plus"></i>Tambah file / capture ke BA</button></div></section>'
       + '<section><h4>Cek otomatis</h4><ul class="mig-auto">' + A.list.map(function (x) { return '<li class="' + (x.ok === true ? "ok" : x.ok === false ? "bad" : "info") + '"><i class="fa-solid ' + (x.ok === true ? "fa-circle-check" : x.ok === false ? "fa-circle-xmark" : "fa-circle-info") + '"></i><span><b>' + E(x.t) + "</b><small>" + E(x.d) + "</small></span></li>"; }).join("") + "</ul></section>"
       + (c.h && c.h.length ? '<section><h4>Riwayat</h4><ul class="mig-hist">' + c.h.slice().reverse().map(function (h) { return "<li><b>" + E(h.act) + "</b> · " + E(h.by) + " · " + E(new Date(h.at).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })) + (h.note ? "<br><small>" + E(h.note) + "</small>" : "") + "</li>"; }).join("") + "</ul></section>" : "")
@@ -14683,11 +14683,11 @@ async function contactNudge() {
   var SS = "1xAG3if2KO1NQhi4EM9eQkJJdh_QN0GElrWxiPuRGkPU", TK = "Data Mitra Takeover", ML = "Master Data Letter", VROW = 100000;
   window.TK_SRC = { ss: SS, readOnly: true };
   // indeks susunan lama <- indeks sheet baru
-  var MAP = { 0: 0, 1: 1, 2: 2, 4: 3, 5: 4, 6: 5, 7: 6, 10: 7, 11: 8, 12: 9, 13: 10, 14: 11, 15: 12, 16: 13, 18: 14, 19: 15, 25: 16, 26: 17, 27: 18, 31: 19, 32: 20, 33: 21, 34: 22, 35: 23, 37: 25, 38: 26, 39: 31, 40: 24, 41: 27, 42: 28, 43: 29, 44: 30, 45: 32 };
-  // kolom sheet baru (0-based) -> indeks susunan lama; 40–45 = Y Subjek, AB Lead IKR, AC Sales, AD KML, AE Cap waktu, AG UNIQUE
+  var MAP = { 0: 0, 1: 1, 2: 2, 4: 3, 5: 4, 6: 5, 7: 6, 10: 7, 11: 8, 12: 9, 13: 10, 14: 11, 15: 12, 16: 13, 18: 14, 19: 15, 25: 16, 26: 17, 27: 18, 31: 19, 32: 20, 33: 21, 34: 22, 35: 23, 37: 25, 38: 26, 39: 31, 40: 24, 41: 27, 42: 28, 43: 29, 44: 30, 45: 34, 46: 33, 47: 32 };
+  // kolom sheet baru (0-based) -> indeks susunan lama; 40–45 = Y Subjek, AB Lead IKR, AC Sales, AD KML, AE Cap waktu, AI UNIQUE · 46 = AH Mitra ke-2 · 47 = AG ATC BASTM ke-2
   var RMAP = {}; Object.keys(MAP).forEach(function (k) { RMAP[MAP[k]] = +k; });
-  var NEWC = 33, LEGC = 46;
-  var HEAD = ["PO", "NO BAP PO CANCEL", "STASIUN", "MITRA LAMA (ALT)", "MITRA LAMA", "MITRA PENGGANTI", "REGION", "PIC", "REDLINE", "STATUS TAKE OVER", "BAP PO Cancel", "BASTM", "MIGRASI", "REMARK", "BASE ON", "ATC BA CANCEL", "ATC SPK", "TANGGAL SPK", "ATC BAP PO", "ATC BASTM", "", "", "", "", "", "HP PO", "HP ACTUAL", "HC", "", "", "", "DP DITERIMA", "BAST YANG DI TERIMA", "NOMINAL RETENSI", "NOMINAL HC", "NOMINAL DONASI", "STATUS MITRA", "ATC BAM", "STATUS MIGRASI IT", "UNIQUE"];
+  var NEWC = 35, LEGC = 48, M2 = 46, B2 = 47;   // M2 = Mitra ke-2 (AH), B2 = ATC BASTM ke-2 (AG)
+  var HEAD = ["PO", "NO BAP PO CANCEL", "STASIUN", "MITRA LAMA (ALT)", "MITRA LAMA", "MITRA PENGGANTI", "REGION", "PIC", "REDLINE", "STATUS TAKE OVER", "BAP PO Cancel", "BASTM", "MIGRASI", "REMARK", "BASE ON", "ATC BA CANCEL", "ATC SPK", "TANGGAL SPK", "ATC BAP PO", "ATC BASTM", "", "", "", "", "", "HP PO", "HP ACTUAL", "HC", "", "", "", "DP DITERIMA", "BAST YANG DI TERIMA", "NOMINAL RETENSI", "NOMINAL HC", "NOMINAL DONASI", "STATUS MITRA", "ATC BAM", "STATUS MIGRASI IT", "UNIQUE", "", "", "", "", "", "", "MITRA KE-2", "ATC BASTM KE-2"];
   var nb = function (s) { return String(s == null ? "" : s).replace(/\s+/g, " ").trim().toUpperCase(); };
 
   function toLegacy(vals) {
@@ -14710,7 +14710,7 @@ async function contactNudge() {
   }
   async function tkLoad() {
     if (cache && Date.now() - cacheAt < 4000) return cache;
-    var p = [["ranges", "'" + TK + "'!A1:AG"], ["valueRenderOption", "FORMATTED_VALUE"], ["majorDimension", "ROWS"]];
+    var p = [["ranges", "'" + TK + "'!A1:AI"], ["valueRenderOption", "FORMATTED_VALUE"], ["majorDimension", "ROWS"]];
     var r = await apiGet("/values:batchGet", p, SS), vr = r.valueRanges || [];
     var tv = (vr[0] || {}).values || [], mv = [];   // Master Data Letter hanya untuk penomoran, tidak ditampilkan
     var rows = [[1, HEAD.slice()]], haveBap = new Set(), n = 0;
@@ -14763,16 +14763,19 @@ async function contactNudge() {
       var out = new Map(); out.failed = [];
       var F = ["sheets(data(startRow,rowData(values(hyperlink,formattedValue,textFormatRuns(format(link(uri))),chipRuns(chip(richLinkProperties(uri)))))))", "sheets(data(startRow,rowData(values(hyperlink,formattedValue,textFormatRuns(format(link(uri)))))))"], res = null;
       for (var t = 0; t < 3 && !res; t++) for (var m = 0; m < F.length && !res; m++) {
-        try { res = await apiGet("", [["ranges", "'" + TK + "'!M2:P3000"], ["ranges", "'" + TK + "'!Z2:Z3000"], ["includeGridData", "true"], ["fields", F[m]]], SS); } catch (e) { if (e && e.status !== 400) break; }
+        try { res = await apiGet("", [["ranges", "'" + TK + "'!M2:P3000"], ["ranges", "'" + TK + "'!Z2:Z3000"], ["ranges", "'" + TK + "'!AG2:AG3000"], ["includeGridData", "true"], ["fields", F[m]]], SS); } catch (e) { if (e && e.status !== 400) break; }
       }
       if (!res) { out.failed.push([2, 3000]); if (prog) prog(); return out; }
       var d = res.sheets && res.sheets[0] && res.sheets[0].data && res.sheets[0].data[0], st = (d && d.startRow != null ? d.startRow : 1) + 1;
       var lk = function (v) { if (!v) return ""; var u = ""; try { u = extractLink(v); } catch (e) { } if (u) return u; var f = String(v.formattedValue || "").trim(); return /^https?:\/\/\S+$/i.test(f) ? f : ""; };
       var dz = res.sheets && res.sheets[0] && res.sheets[0].data && res.sheets[0].data[1], zr = (dz && dz.rowData) || [];
-      ((d && d.rowData) || []).forEach(function (rd, i) {
-        var v = rd.values || [], zv = ((zr[i] || {}).values || [])[0], L = [lk(v[0]), lk(v[1]), "", lk(v[2]), lk(v[3]), "", "", lk(zv)];
+      var dg = res.sheets && res.sheets[0] && res.sheets[0].data && res.sheets[0].data[2], gr = (dg && dg.rowData) || [];   // AG ATC BASTM ke-2
+      var nr = Math.max(((d && d.rowData) || []).length, zr.length, gr.length);
+      for (var i = 0; i < nr; i++) {
+        var v = ((((d && d.rowData) || [])[i]) || {}).values || [], zv = ((zr[i] || {}).values || [])[0], gv = ((gr[i] || {}).values || [])[0], L = [lk(v[0]), lk(v[1]), "", lk(v[2]), lk(v[3]), "", "", lk(zv)];
+        var g2 = lk(gv); if (g2) L[B2 - 15] = g2;
         if (L.some(Boolean)) out.set(st + i, L);
-      });
+      }
       if (prog) prog();
       return out;
     };
@@ -14801,7 +14804,7 @@ async function contactNudge() {
   try {
     if (typeof EDIT_SHEETS !== "undefined" && EDIT_SHEETS.takeover) {
       EDIT_SHEETS.takeover.lastCol = LEGC;
-      EDIT_SHEETS.takeover.locked = { 15: "BA Cancel", 18: "BAP PO", 19: "BASTM", 37: "BA Migrasi" };
+      EDIT_SHEETS.takeover.locked = { 15: "BA Cancel", 18: "BAP PO", 19: "BASTM", 37: "BA Migrasi", 47: "BASTM ke-2" };
       EDIT_SHEETS.takeover.fields = Object.keys(MAP).map(Number).sort(function (x, y) { return MAP[x] - MAP[y]; });   // urut sesuai kolom sheet
     }
   } catch (e) { }
@@ -14856,10 +14859,96 @@ async function contactNudge() {
         var itv = e ? String((e.raw || [])[38] || "").trim() : "", b2 = document.getElementById("detail-modal-body");
         if (e && e.id && e.row < VROW && isOpTk() && b2) b2.insertAdjacentHTML("afterbegin", '<div class="mb-3 flex justify-end"><button type="button" class="btn btn-ghost" onclick="openRecEdit(' + "'" + e.id + "'" + ')"><i class="fa-solid fa-pen"></i>Edit data</button></div>');
         if (itv && b2) b2.insertAdjacentHTML("afterbegin", '<div class="mb-3 px-3 py-2 rounded-xl text-[11px] bg-slate-500/10 text-slate-700 dark:text-slate-200"><i class="fa-solid fa-server mr-1"></i><b>Status Migrasi IT</b> (kolom AA): ' + (typeof esc === "function" ? esc(itv) : itv) + "</div>");
+        if (e && e.after2 && b2) {
+          var u2 = b2Url(e), bt = u2 ? '<a href="' + E_(u2) + '" target="_blank" rel="noopener" class="tk2-a"><i class="fa-solid fa-file-pdf"></i>Buka BASTM ke-2</a>' : e.att_bastm2 ? '<span class="tk2-a">' + E_(e.att_bastm2) + "</span>" : (canB2() ? '<button type="button" class="tk2-a" onclick="tkUpB2(' + jsArg(e.id) + ')"><i class="fa-solid fa-upload"></i>Unggah BASTM ke-2 (PDF)</button>' : '<span class="text-rose-600">BASTM ke-2 belum ada</span>');
+          b2.insertAdjacentHTML("afterbegin", '<div class="tk2-box"><div><i class="fa-solid fa-right-left mr-1"></i><b>Takeover ke-2</b> · ' + E_(e.before || "-") + " → " + E_(e.after || "-") + " → <b>" + E_(e.after2) + '</b> <span class="text-slate-500">(kolom AH)</span></div><div style="margin-top:6px">BASTM ke-2 (kolom AG): ' + bt + "</div></div>");
+        }
       } catch (x) { }
       return r;
     };
   }
+
+  // ===== Mitra ke-2 (AH) & BASTM ke-2 (AG) =====
+  var S_ = function (x) { return String(x == null ? "" : x).trim(); };
+  var E_ = function (x) { return typeof esc === "function" ? esc(x) : String(x == null ? "" : x).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var b2Url = function (e) { var u = (e.links && e.links[B2 - 15]) || ""; if (u) return u; var t = S_(e.att_bastm2); return /^https?:\/\//i.test(t) ? t : ""; };
+  var deco = function (e) {
+    if (!e || !e.raw) return e;
+    e.after2 = S_(e.raw[M2]); e.att_bastm2 = S_(e.raw[B2]);
+    if (e.after2) {
+      e.q = (e.q || "") + " | " + e.after2.toLowerCase() + " | takeover ke-2";
+      if (e.st === "selesai" && !e.att_bastm2 && !b2Url(e)) e.st = "proses";   // mitra ke-2 ada → BASTM ke-2 wajib sebelum Selesai
+    }
+    return e;
+  };
+  window.TK_DECO = deco;
+  if (typeof buildTakeover === "function") {
+    var oBuild = buildTakeover;
+    window.buildTakeover = buildTakeover = function () { var r = oBuild.apply(this, arguments); try { (r || []).forEach(deco); } catch (x) { } return r; };
+    try { if (typeof EDIT_SHEETS !== "undefined" && EDIT_SHEETS.takeover && EDIT_SHEETS.takeover.build === oBuild) EDIT_SHEETS.takeover.build = buildTakeover; } catch (x) { }
+  }
+  // kolom "Mitra After · Before": bila ada Mitra ke-2, baris atas = mitra ke-2 (aktif), baris bawah = rantai pergantian
+  try {
+    var colA = typeof TO_COLS !== "undefined" && TO_COLS.find(function (c) { return c.key === "after"; });
+    if (colA && typeof cLine === "function") {
+      var oTd = colA.td;
+      colA.td = function (e) {
+        if (!e.after2) return oTd.apply(this, arguments);
+        return '<td class="px-3 py-2.5">' + cLine(cTxt(e.after2, "font-bold text-emerald-700 dark:text-cyan-400", 118) + '<span class="tk2-b" title="Takeover ke-2: ' + E_(e.before) + " → " + E_(e.after) + " → " + E_(e.after2) + '">ke-2</span>')
+          + cSub('<span class="text-slate-400 mr-1">dari</span>' + cTxt(e.after, "", 125)) + "</td>";
+      };
+      colA.sortVal = function (e) { return e.after2 || e.after; };
+    }
+  } catch (x) { }
+  // No SPK: nama file chip yang panjang diringkas jadi nomor SPK (kolom tidak melebar)
+  var spkNo = function (t) {
+    t = S_(t); var m = t.match(/(\d{1,5})\s*\/?\s*PRJ\s*\/?\s*STARLITE\s*\/?\s*([IVX]{1,4})\s*\/?\s*(20\d\d)/i);
+    return m ? m[1] + "/PRJ/STARLITE/" + m[2].toUpperCase() + "/" + m[3] : "";
+  };
+  window.spkNoOf = spkNo;
+  if (typeof spkSub === "function") {
+    var oSpk = spkSub;
+    window.spkSub = spkSub = function (e) {
+      var raw = S_(e && e.att_spk); if (!raw) return oSpk.apply(this, arguments);
+      var n = spkNo(raw) || raw;
+      return '<span class="font-mono font-bold c-trunc text-indigo-700 dark:text-indigo-300" style="max-width:150px" title="No SPK ' + E_(raw) + '">' + E_(n) + "</span>" + (typeof cpBtn === "function" ? cpBtn(n, "No SPK") : "");
+    };
+  }
+  // unggah BASTM ke-2 (PDF) langsung ke kolom AG
+  var canB2 = function () { try { return currentUser && (currentUser.role === "owner" || (can("upload") && (currentUser.perms || {}).up_BASTM)); } catch (x) { return false; } };
+  window.tkUpB2 = function (id) {
+    var e = (STATE.takeover || []).find(function (x) { return x.id === id; }); if (!e) return;
+    if (!canB2()) return showToast("Akun Anda tidak memiliki akses submit BASTM", "error");
+    var inp = document.createElement("input"); inp.type = "file"; inp.accept = ".pdf,application/pdf";
+    inp.onchange = function () {
+      var f = inp.files && inp.files[0]; if (!f) return;
+      if (!/\.pdf$/i.test(f.name)) return showToast("BASTM ke-2 harus PDF", "error");
+      if (f.size > 15 * 1048576) return showToast("File melebihi 15 MB", "error");
+      var rd = new FileReader();
+      rd.onload = async function () {
+        showToast("Mengunggah BASTM ke-2…", "info", 4000);
+        try {
+          var b64 = String(rd.result).split(",")[1];
+          var r = await callApi("rows.attach", { sheet: "takeover", row: e.row, col: B2, mode: "file", file: { name: f.name, mime: "application/pdf", base64: b64 }, expect: e.raw }, 180000);
+          e.links = e.links || []; e.links[B2 - 15] = r.url || ""; if (Array.isArray(r.values)) { e.raw = r.values; } else e.raw[B2] = r.text || f.name;
+          try { if (typeof computeStatus === "function") e.st = computeStatus(e.k, e.l, e.m, e.status_to); } catch (x) { }
+          deco(e); try { renderTakeoverPage(); } catch (x) { }
+          try { if (document.getElementById("detail-modal-body") && typeof renderTakeoverDetail === "function") renderTakeoverDetail(e); } catch (x) { }
+          showToast("BASTM ke-2 tersimpan di kolom AG", "success");
+        } catch (x) { showToast(x.message || "Gagal mengunggah", "error", 8000); }
+      };
+      rd.readAsDataURL(f);
+    };
+    inp.click();
+  };
+  var b2Chip = function (e) {
+    if (!e || !e.after2) return "";
+    var u = b2Url(e);
+    if (u) return '<button type="button" class="dd ok" title="BASTM ke-2: buka" onclick="event.stopPropagation();sdPreviewUrl(' + jsArg(u) + ", " + jsArg("BASTM ke-2 · PO " + e.po) + ", " + jsArg("BASTM ke-2") + ')">BS2</button>';
+    if (e.att_bastm2) return '<span class="dd ok" title="BASTM ke-2: ' + E_(e.att_bastm2) + '">BS2</span>';
+    return canB2() ? '<button type="button" class="dd no" title="BASTM ke-2 belum ada — klik untuk unggah PDF" onclick="event.stopPropagation();tkUpB2(' + jsArg(e.id) + ')">BS2</button>' : '<span class="dd no" title="BASTM ke-2: belum ada">BS2</span>';
+  };
+  window.TK_B2CHIP = b2Chip;
   // Dokumen: tambah chip BAM (BA Migrasi) dari kolom ATC BAM
   if (typeof docDots === "function") {
     var oDots = docDots;
@@ -14874,12 +14963,12 @@ async function contactNudge() {
         var line = '<div class="c-sub tk-dt" title="Tanggal rilis SPK"><i class="fa-regular fa-calendar mr-1"' + (dt ? "" : ' style="visibility:hidden"') + '></i><span class="whitespace-nowrap">' + (dt ? (typeof esc === "function" ? esc(dt) : dt) : "&nbsp;") + "</span></div>";
         var itv = String((e.raw || [])[38] || "").trim();   // kolom AA: Status Migrasi IT
         if (itv && !/^(no need|po clos|hold)/i.test(String(e.m || "").trim())) line += '<div class="c-sub tk-it" title="Status Migrasi IT (kolom AA)"><i class="fa-solid fa-server mr-1"></i><span>IT: ' + (typeof esc === "function" ? esc(itv) : itv) + "</span></div>";
-        return h.replace(/<\/div>\s*$/, chip + "</div>") + line;
+        return h.replace(/<\/div>\s*$/, chip + b2Chip(e) + "</div>") + line;
       } catch (x) { return h; }
     };
   }
   var st = document.createElement("style");
-  st.textContent = '#takeover-table-body td[data-label="Status"]>span{white-space:nowrap}#takeover-table-body td[data-label="Status"] p{white-space:normal;line-height:1.3;max-width:118px;margin:5px auto 0;text-align:center}@media (max-width:767px){#takeover-table-body tr[data-id]{grid-template-columns:1fr!important;gap:7px!important}#takeover-table-body td span[style*="max-width"],#takeover-table-body td .c-trunc,#takeover-table-body td .rmk-txt,#takeover-table-body td .c-clamp{max-width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;-webkit-line-clamp:unset!important}#takeover-table-body td .c-line,#takeover-table-body td .c-sub{flex-wrap:nowrap;min-width:0}#takeover-table-body td{white-space:nowrap!important;overflow:hidden}#takeover-table-body td .fin-mini{display:flex!important;flex-wrap:nowrap;gap:3px;align-items:baseline;overflow:hidden}#takeover-table-body td .fin-mini b{margin-right:8px}}#tk-src-note{margin:0 0 10px;padding:8px 12px;border-radius:10px;font-size:12px;background:rgba(6,182,212,.1);color:#0e7490}';
+  st.textContent = '#takeover-table-body td[data-label="Status"]>span{white-space:nowrap}#takeover-table-body td[data-label="Status"] p{white-space:normal;line-height:1.3;max-width:118px;margin:5px auto 0;text-align:center}@media (max-width:767px){#takeover-table-body tr[data-id]{grid-template-columns:1fr!important;gap:7px!important}#takeover-table-body td span[style*="max-width"],#takeover-table-body td .c-trunc,#takeover-table-body td .rmk-txt,#takeover-table-body td .c-clamp{max-width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;-webkit-line-clamp:unset!important}#takeover-table-body td .c-line,#takeover-table-body td .c-sub{flex-wrap:nowrap;min-width:0}#takeover-table-body td{white-space:nowrap!important;overflow:hidden}#takeover-table-body td .fin-mini{display:flex!important;flex-wrap:nowrap;gap:3px;align-items:baseline;overflow:hidden}#takeover-table-body td .fin-mini b{margin-right:8px}}#tk-src-note{margin:0 0 10px;padding:8px 12px;border-radius:10px;font-size:12px;background:rgba(6,182,212,.1);color:#0e7490}.tk2-b{flex:none;margin-left:5px;padding:0 5px;border-radius:6px;font-size:9px;font-weight:800;line-height:15px;background:rgba(124,58,237,.12);color:#6d28d9}.dark .tk2-b{color:#c4b5fd}.tk2-box{margin-bottom:12px;padding:9px 12px;border-radius:12px;font-size:12px;background:rgba(124,58,237,.08);color:#4c1d95;border:1px solid rgba(124,58,237,.2)}.dark .tk2-box{color:#ddd6fe}.tk2-a{display:inline-flex;align-items:center;gap:5px;font-weight:700;color:#6d28d9;text-decoration:underline;background:none;border:0;cursor:pointer;padding:0}';
   document.head.appendChild(st);
 })();
 </script>

@@ -52,6 +52,8 @@ input.bad{border-color:var(--bad);box-shadow:0 0 0 3px color-mix(in srgb,var(--b
 .opt:has(input:focus-visible){outline:2px solid var(--acc);outline-offset:2px}
 .tip{display:block;padding:11px 13px;border-radius:12px;background:var(--soft);font-size:12.5px;line-height:1.5;color:var(--mute)}
 .tip.warn{background:var(--bads);color:var(--ink)}.tip a{font-weight:800}
+.sq{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}.sq label{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:12px;border:1px solid var(--line,#cbd5e1);font-size:13px;font-weight:700;cursor:pointer}.sq label:has(input:checked){border-color:var(--g2,#0ea5e9);background:var(--soft)}
+.chain{margin:6px 0 2px;font-size:13px;display:grid;gap:2px}.chain span{opacity:.75}.chain b.m2{color:var(--g2,#0369a1)}
 /* hasil cek No SPK di All SPK */
 .spk{border-radius:14px;padding:12px 14px;font-size:13px;display:none}
 .spk.on{display:block;animation:pop .25s ease}
@@ -170,6 +172,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
       <div class="grid">
         <label class="f full"><span class="req">No PO atau No SPK</span><input type="text" name="po" placeholder="mis. PO.2025.03.00107 atau 1547/PRJ/STARLITE/X/2026" autocomplete="off" required></label>
         <div class="full spk" id="spk-box" aria-live="polite"></div>
+        <div class="full" id="spk-q" hidden><div class="tip">No SPK di data kami: <b id="spk-q-no"></b>. Apakah No SPK ini sesuai dengan SPK Anda?</div><div class="sq" role="radiogroup" aria-label="No SPK sesuai?"><label><input type="radio" name="spkOk" value="ya">Sesuai</label><label><input type="radio" name="spkOk" value="tidak">Tidak sesuai</label></div></div>
         <div class="full" id="sib" hidden><div class="tip"><b>PO lain dengan stasiun dan mitra yang sama</b> — centang bila ikut diajukan dalam pengajuan ini (BA, KML, dan akun cukup diisi sekali).</div><div id="sib-l" style="display:grid;gap:6px;margin-top:8px"></div></div>
         <div class="full" id="spk-need" hidden>
           <div class="tip warn" style="margin-bottom:10px" id="spk-tip">Data SPK untuk PO ini belum lengkap.</div>
@@ -265,19 +268,28 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
   var fld = function (k) { return f.querySelector('[name="' + k + '"]'); };
 
   // ---------- No PO / No SPK -> Data Mitra Takeover (stasiun, mitra lama & pengganti) + tahapan ----------
-  var SEL = null, qT = 0, lastQ = "", box = $("spk-box"), rest = $("rest"), need = $("spk-need"), sib = $("sib"), sibL = $("sib-l");
+  var SEL = null, qT = 0, lastQ = "", box = $("spk-box"), rest = $("rest"), need = $("spk-need"), sib = $("sib"), sibL = $("sib-l"), spkQ = $("spk-q");
+  var spkAns = function () { var c = spkQ.querySelector("input[name=spkOk]:checked"); return c ? c.value : ""; };
+  spkQ.addEventListener("change", function () { if (spkAns() === "tidak") setVal("noSpk", ""); else if (SEL) setVal("noSpk", SEL.noSpkN || ""); updNeed(); });
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
   var spkOk = function (v) { return /^\s*\d{1,5}\s*\/\s*PRJ\s*\/\s*STARLITE\s*\/\s*[IVX]{1,4}\s*\/\s*20\d\d\s*$/i.test(v); };
   function boxSet(cls, html) { box.className = "full spk on " + cls; box.innerHTML = html; }
   function stg(s) { var L = [["Mengajukan", s.ajukan], ["Verifikasi", s.verif], ["Status IT", s.it]]; return '<ol class="stg">' + L.map(function (x) { return '<li class="' + x[1] + '"><i></i>' + x[0] + "</li>"; }).join("") + "</ol>"; }
-  function info(x) { return "<p style='margin:6px 0 2px;font-size:13px'><b>" + esc(x.stasiun) + "</b> · " + esc(x.po) + "<br><span style='opacity:.75'>" + esc(x.lama || "-") + " → " + esc(x.baru || "-") + "</span></p>"; }
+  function info(x) {
+    var m1 = x.mitra1 || (x.mitra2 ? "" : x.baru);
+    return "<div class='chain'><div><b>" + esc(x.stasiun) + "</b> · " + esc(x.po) + "</div><div><span>Mitra lama (D):</span> " + esc(x.lama || "-") + "</div><div><span>Mitra pengganti (E):</span> " + esc(m1 || "-") + "</div>"
+      + (x.mitra2 ? "<div><span>Mitra ke-2 (AH):</span> <b class='m2'>" + esc(x.mitra2) + "</b> · pengajuan atas nama mitra ini</div>" : "") + "</div>";
+  }
   function setOpen(b) { rest.hidden = !b; }
   function picked() { return Array.prototype.slice.call(sibL.querySelectorAll("input:checked:not(:disabled)")).map(function (i) { return i.value; }); }
   function updNeed() {
     if (!SEL) return; var nf = !SEL.hasSpk, nn = !SEL.hasNo;
+    // No SPK sudah ada (nomor + lampiran) → mitra wajib menyatakan sesuai / tidak sesuai
+    var ask = !!(SEL.hasSpk && SEL.hasNo && (SEL.spkNo || SEL.noSpkN)); spkQ.hidden = !ask; if (ask) $("spk-q-no").textContent = SEL.spkNo || SEL.noSpkN;
+    var ganti = ask && spkAns() === "tidak"; if (ganti) { nf = true; nn = true; }
     sibL.querySelectorAll("input:checked").forEach(function (i) { if (i.dataset.nospk === "1") nf = true; if (i.dataset.nono === "1") nn = true; });
-    need.hidden = !(nf || nn); $("no-wrap").hidden = !nn; $("file-wrap").hidden = !nf; need.dataset.nf = nf ? "1" : ""; need.dataset.nn = nn ? "1" : "";
-    $("spk-tip").textContent = nf && nn ? "Nomor SPK dan lampiran SPK untuk PO ini belum ada. Isi nomor SPK (sesuai dokumen) dan unggah filenya." : nn ? "Kolom SPK baru berisi tautan tanpa nomor. Isi Nomor SPK sesuai dokumen." : "Nomor SPK sudah ada, tetapi lampirannya belum. Unggah file SPK (PDF).";
+    need.hidden = !(nf || nn); $("no-wrap").hidden = !nn; $("file-wrap").hidden = !nf; need.dataset.nf = nf ? "1" : ""; need.dataset.nn = nn ? "1" : ""; need.dataset.ganti = ganti ? "1" : "";
+    $("spk-tip").textContent = ganti ? "No SPK tidak sesuai: isi No SPK Anda dan unggah dokumen SPK-nya (PDF). Data SPK di kami diganti setelah diverifikasi Tim VM." : nf && nn ? "Nomor SPK dan lampiran SPK untuk PO ini belum ada. Isi nomor SPK (sesuai dokumen) dan unggah filenya." : nn ? "Kolom SPK baru berisi tautan tanpa nomor. Isi Nomor SPK sesuai dokumen." : "Nomor SPK sudah ada, tetapi lampirannya belum. Unggah file SPK (PDF).";
   }
   function drawSib(x) {
     var L = x.siblings || []; sibL.innerHTML = ""; sib.hidden = !L.length;
@@ -291,8 +303,8 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
   }
   function setVal(k, v) { var el = fld(k); if (el && v != null) el.value = v; }
   function applyRow(x) {
-    SEL = x; setOpen(false); need.hidden = true; sib.hidden = true; sibL.innerHTML = "";
-    var sub = "<p style='margin:6px 0 0;font-size:12px;opacity:.8'>" + (x.ts ? "Diajukan " + esc(x.ts) : "") + (x.it ? (x.ts ? " · " : "") + "Status IT: <b>" + esc(x.it) + "</b>" : "") + "</p>";
+    SEL = x; setOpen(false); need.hidden = true; sib.hidden = true; sibL.innerHTML = ""; spkQ.hidden = true; spkQ.querySelectorAll("input").forEach(function (i) { i.checked = false; });
+    var sub = "<p style='margin:6px 0 0;font-size:12px;opacity:.8'>" + (x.ts ? "Diajukan " + esc(x.ts) : "") + (x.it ? (x.ts ? " · " : "") + "Status IT: <b>" + esc(x.it) + "</b>" : "") + (x.spkPend ? "<br>SPK pengganti diajukan: <b>" + esc(x.spkPend) + "</b> (menunggu verifikasi Tim VM)" : "") + "</p>";
     if (x.blocked) return boxSet("no", "<b class='t'>" + esc(x.blocked) + "</b>" + info(x));
     if (x.done) return boxSet("ok", "<b class='t'>✓ Selesai · " + esc(x.status) + "</b>" + info(x) + stg(x.stage) + sub);
     if (x.locked) return boxSet("ok", "<b class='t'>Pengajuan diterima · menunggu verifikasi</b>" + info(x) + stg(x.stage) + sub + "<p style='margin:6px 0 0;font-size:12px;opacity:.8'>Data tidak bisa diubah selama diverifikasi. Bila perlu diperbaiki, pemberitahuan dikirim ke email pengaju.</p>");
@@ -304,7 +316,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
   }
   function lookup() {
     var v = fld("po").value.trim();
-    if (v === lastQ) return; lastQ = v; SEL = null; setOpen(false); need.hidden = true; sib.hidden = true;
+    if (v === lastQ) return; lastQ = v; SEL = null; setOpen(false); need.hidden = true; sib.hidden = true; spkQ.hidden = true;
     if (!v) { box.className = "full spk"; return; }
     if (v.length < 6) return;
     boxSet("load", "<b class='t'><span class='spin'></span>Mencari di Data Mitra Takeover…</b>");
@@ -377,8 +389,10 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
     if (bad.length) return show("Format email belum benar: " + bad.map(function (k) { return LABEL[k]; }).join(", "), fld(bad[0]));
     var rv = SEL.status === "Revisi";
     updNeed();
+    if (!spkQ.hidden && !spkAns()) { spkQ.scrollIntoView({ behavior: "smooth", block: "center" }); return show("Pilih apakah No SPK " + (SEL.spkNo || SEL.noSpkN) + " sesuai dengan SPK Anda (bagian 1)."); }
+    d.spkOk = spkQ.hidden ? "" : spkAns();
     if (need.dataset.nn === "1" && !spkOk(d.noSpk || "")) return show("Nomor SPK wajib diisi dengan format yang benar. Contoh: 1547/PRJ/STARLITE/X/2026", fld("noSpk"));
-    if (need.dataset.nf === "1" && !FILES.spk) return show("Unggah file SPK (PDF) — lampiran SPK untuk PO ini belum ada.");
+    if (need.dataset.nf === "1" && !FILES.spk) return show(need.dataset.ganti === "1" ? "Unggah dokumen SPK Anda (PDF) — No SPK di data kami dinyatakan tidak sesuai." : "Unggah file SPK (PDF) — lampiran SPK untuk PO ini belum ada.");
     if (false) {
       if (!spkOk(d.noSpk || "")) return show("Nomor SPK wajib diisi dengan format yang benar. Contoh: 1547/PRJ/STARLITE/X/2026", fld("noSpk"));
       if (!FILES.spk) return show("Unggah file SPK (PDF) — lampiran SPK untuk PO ini belum ada.");
@@ -405,7 +419,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
     }).then(function () { send.disabled = false; });
   });
   $("again").onclick = function () {
-    f.reset(); FILES = {}; SEL = null; lastQ = ""; box.className = "full spk"; need.hidden = true; sib.hidden = true; setOpen(false); ["ba", "kml", "spk"].forEach(drawDrop);
+    f.reset(); FILES = {}; SEL = null; lastQ = ""; box.className = "full spk"; need.hidden = true; sib.hidden = true; spkQ.hidden = true; setOpen(false); ["ba", "kml", "spk"].forEach(drawDrop);
     $("done").classList.remove("on"); f.hidden = false; $("intro").hidden = false; window.scrollTo({ top: 0, behavior: "smooth" });
   };
 })();
