@@ -15026,7 +15026,7 @@ async function contactNudge() {
     return '<div class="doc-row ' + (has ? "" : "miss") + '"><div class="flex-1" style="min-width:140px"><p class="text-[12px] font-bold text-slate-800 dark:text-slate-100"><span class="rec-col mr-1">AG</span>BASTM ke-2 ' + st + "</p>"
       + (e.after2 ? '<p class="text-[10px] text-slate-500">Serah terima ke Mitra ke-2: ' + E_(e.after2) + "</p>" : "") + '</div><div class="flex flex-wrap gap-1.5 justify-end ml-auto">' + btn + "</div></div>";
   };
-  // BASTM ke-2 di dalam kartu BASTM (tetap 5 kartu, satu baris): hijau bila AG ada lampiran, merah hanya bila belum ada
+  // kartu BASTM ke-2 di deret Status Take Over (satu baris, gaya sama): hijau bila AG ada lampiran, merah hanya bila belum ada
   if (typeof stepper === "function") {
     var oStp = stepper;
     window.stepper = stepper = function (e) {
@@ -15037,9 +15037,10 @@ async function contactNudge() {
           var chip = u ? '<a href="#" onclick="event.preventDefault();sdPreviewUrl(' + jsArg(u) + ", " + jsArg("BASTM ke-2 · PO " + e.po) + ", " + jsArg("Kolom AG") + ')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/35 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold hover:bg-emerald-500/20"><i class="fa-solid fa-circle-check"></i>Lihat PDF<i class="fa-solid fa-arrow-up-right-from-square text-[8px] opacity-70"></i></a>'
             : has ? '<span class="text-[10px] font-bold text-emerald-700">' + E_(e.att_bastm2) + "</span>"
             : (canB2() ? '<button type="button" onclick="tkUpB2(' + jsArg(e.id) + ')" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px] font-bold"><i class="fa-solid fa-cloud-arrow-up"></i>Belum · unggah</button>' : '<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px] font-bold"><i class="fa-solid fa-circle-xmark"></i>Belum</span>');
-          var sub = '<div class="mt-1 pt-1 border-t border-' + c + '-500/30"><p class="text-[9px] font-extrabold uppercase text-' + c + '-700 dark:text-' + c + '-300">BASTM ke-2' + (has ? "" : " · belum ada") + '</p><div class="shrink-0 scale-90 origin-left">' + chip + "</div></div>";
-          var parts = h.split('<div class="px-2.5 py-2 rounded-lg'), k = parts.findIndex(function (x) { return x.indexOf('truncate">BASTM</span>') >= 0; });
-          if (k > 0) { parts[k] = parts[k].replace(/<\/div>\s*$/, sub + "</div>"); h = parts.join('<div class="px-2.5 py-2 rounded-lg'); }
+          var miss = '<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px] font-bold"><i class="fa-solid fa-circle-xmark"></i>Belum</span>';
+          var card = '<div class="px-2.5 py-2 rounded-lg bg-' + c + '-500/10 border border-' + c + '-500/30 min-w-0"><div class="flex items-center gap-1.5"><span class="w-4 h-4 rounded-full bg-' + c + '-500 text-white flex items-center justify-center text-[8px] shrink-0"><i class="fa-solid ' + (has ? "fa-check" : "fa-xmark") + '"></i></span><span class="text-[10px] font-extrabold uppercase text-slate-600 dark:text-slate-300 truncate">BASTM ke-2</span></div>'
+            + '<p class="text-[9px] leading-tight text-slate-500 dark:text-slate-400">Berita Acara Serah Terima Mitra ke-2</p><p class="mt-1 text-[10px] font-semibold text-' + c + '-700 dark:text-' + c + '-300 break-words leading-tight">' + (has ? "Done" : "Belum ada") + '</p><div class="shrink-0 scale-90 origin-left">' + (has ? chip : miss) + "</div></div>";
+          h = h.replace('<div class="grid grid-cols-2 md:grid-cols-5 gap-1.5">', '<div class="grid grid-cols-2 md:grid-cols-6 gap-1.5" style="grid-template-columns:repeat(6,minmax(0,1fr))">').replace(/<\/div>\s*$/, card + "</div>");
         }
       } catch (x) { }
       return h;
