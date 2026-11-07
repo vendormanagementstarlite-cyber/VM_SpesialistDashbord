@@ -14384,7 +14384,19 @@ async function contactNudge() {
     /* generate SP (Doc/PDF dari templat) memakai data baris dari database Cloudflare */
     if (/^(generate|generateAll|gen\.check|gen\.delete|spdoc\.regen)$/.test(action) && /^SP[123]$/.test(String(p.jenis || ""))) {
       var lv = Number(p.jenis.slice(2)) - 1, all = (STATE.sp || []).map(function (x) { return pad(x.raw); }).filter(function (v) { return String(v[lv] || "").trim(); });
-      if (action !== "generateAll") all = all.filter(function (v) { return String(v[lv]).trim() === String(p.key || "").trim(); });
+      if (action !== "generateAll") {
+        var want = String(p.key || "").trim(), hit = function (v) { return String(v[lv]).trim() === want; };
+        all = all.filter(hit);
+        if (!all.length) {   // nomor baru saja diterbitkan: data lokal belum memuat → ambil ulang dari database lalu cari lagi
+          try {
+            var j2 = await sp("sp.list"), ar2 = asRows(j2);
+            window.SP_CF.letters = j2.letters || [];
+            STATE.sp = window.buildSp(ar2.rows); STATE.headers.sp = headerOf(ar2.rows);
+            try { refreshAll(); saveSnapshot(); } catch (x) { }
+            all = (STATE.sp || []).map(function (x) { return pad(x.raw); }).filter(hit);
+          } catch (x) { }
+        }
+      }
       return oCall.call(this, action, Object.assign({}, p, { spRows: all }), timeout);
     }
     if (action === "sp.next") { var jn = await sp("sp.next"); return { ok: true, sp1: jn.sp1, sp2: jn.sp2, sp3: jn.sp3 }; }
