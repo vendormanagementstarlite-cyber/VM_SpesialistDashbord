@@ -15046,6 +15046,21 @@ async function contactNudge() {
       return h;
     };
   }
+  // Kelengkapan dokumen: bila ada BASTM ke-2 (AH terisi / AG ada) jumlah dokumen jadi 5
+  if (typeof docSlotsHtml === "function") {
+    var oDS = docSlotsHtml;
+    window.docSlotsHtml = docSlotsHtml = function (e) {
+      var h = oDS.apply(this, arguments);
+      try {
+        if (e && (e.after2 || b2Url(e) || e.att_bastm2)) {
+          var m = h.match(/font-bold">(\d)\/4<\/span>/); if (!m) return h;
+          var n = +m[1] + ((b2Url(e) || e.att_bastm2) ? 1 : 0), col = n === 5 ? "#0ca30c" : n >= 3 ? "#fab219" : "#d03b3b";
+          h = h.replace(m[0], 'font-bold">' + n + "/5</span>").replace(/width:\d+%;background:#[0-9a-f]{6}/i, "width:" + (20 * n) + "%;background:" + col).replace("SPK · BAP PO · BASTM · BA Cancel", "SPK · BAP PO · BASTM · BA Cancel · BASTM ke-2");
+        }
+      } catch (x) { }
+      return h;
+    };
+  }
   if (typeof docListHtml === "function") {
     var oDL = docListHtml;
     window.docListHtml = docListHtml = function (e) {
