@@ -14921,7 +14921,7 @@ async function contactNudge() {
         if (e && e.after2 && b2 && e.id && canEd) { var bx = b2.querySelector(".tk2-box"); }
         if (e && e.after2 && b2) {
           var u2 = b2Url(e), bt = u2 ? '<a href="' + E_(u2) + '" target="_blank" rel="noopener" class="tk2-a"><i class="fa-solid fa-file-pdf"></i>Buka BASTM ke-2</a>' : e.att_bastm2 ? '<span class="tk2-a">' + E_(e.att_bastm2) + "</span>" : (canB2() ? '<button type="button" class="tk2-a" onclick="tkUpB2(' + jsArg(e.id) + ')"><i class="fa-solid fa-upload"></i>Unggah BASTM ke-2 (PDF)</button>' : '<span class="text-rose-600">BASTM ke-2 belum ada</span>');
-          b2.insertAdjacentHTML("afterbegin", '<div class="tk2-box"><div><i class="fa-solid fa-right-left mr-1"></i><b>Takeover ke-2</b> · ' + E_(e.before || "-") + " → " + E_(e.after || "-") + " → <b>" + E_(e.after2) + '</b> <span class="text-slate-500">(kolom AH)</span></div><div style="margin-top:6px">BASTM ke-2 (kolom AG): ' + bt + "</div></div>");
+          b2.insertAdjacentHTML("afterbegin", '<div class="tk2-box"><div><i class="fa-solid fa-right-left mr-1"></i><b>Takeover ke-2</b> · ' + E_(e.before || "-") + " → " + E_(e.after || "-") + " → <b>" + E_(e.after2) + '</b> <span class="text-slate-500">(kolom AH)</span></div><div style="margin-top:6px">BASTM ke-2 (kolom AG): ' + bt + "</div>" + (window.TK_SIGNBOX ? TK_SIGNBOX(e) : "") + "</div>");
         }
       } catch (x) { }
       return r;
@@ -14935,10 +14935,15 @@ async function contactNudge() {
   var deco = function (e) {
     if (!e || !e.raw) return e;
     e.after2 = S_(e.raw[M2]); e.att_bastm2 = S_(e.raw[B2]);
+    // status BASTM (kolom L): bila Mitra ke-2 (AH) terisi, BASTM dianggap "Belum" sampai BASTM ke-2 (AG) ada. BASTM kolom P tetap bisa dilihat.
+    if (e.lApplied === undefined || e.l !== e.lApplied) e.l0 = e.l;
+    e.has2 = !!(e.att_bastm2 || b2Url(e));
     if (e.after2) {
-      e.q = (e.q || "") + " | " + e.after2.toLowerCase() + " | takeover ke-2";
-      if (e.st === "selesai" && !e.att_bastm2 && !b2Url(e)) e.st = "proses";   // mitra ke-2 ada → BASTM ke-2 wajib sebelum Selesai
-    }
+      if (!e.q2) { e.q = (e.q || "") + " | " + e.after2.toLowerCase() + " | takeover ke-2"; e.q2 = 1; }
+      e.l = e.has2 ? e.l0 : "Belum";
+    } else e.l = e.l0;
+    e.lApplied = e.l;
+    try { if (typeof computeStatus === "function") e.st = computeStatus(e.k, e.l, e.m, e.status_to); } catch (x) { }
     return e;
   };
   window.TK_DECO = deco;
@@ -14992,7 +14997,6 @@ async function contactNudge() {
           var b64 = String(rd.result).split(",")[1];
           var r = await callApi("rows.attach", { sheet: "takeover", row: e.row, col: B2, mode: "file", file: { name: f.name, mime: "application/pdf", base64: b64 }, expect: e.raw }, 180000);
           e.links = e.links || []; e.links[B2 - 15] = r.url || ""; if (Array.isArray(r.values)) { e.raw = r.values; } else e.raw[B2] = r.text || f.name;
-          try { if (typeof computeStatus === "function") e.st = computeStatus(e.k, e.l, e.m, e.status_to); } catch (x) { }
           deco(e); try { renderTakeoverPage(); } catch (x) { }
           try { if (document.getElementById("detail-modal-body") && typeof renderTakeoverDetail === "function") renderTakeoverDetail(e); } catch (x) { }
           showToast("BASTM ke-2 tersimpan di kolom AG", "success");
@@ -15041,6 +15045,70 @@ async function contactNudge() {
   var st = document.createElement("style");
   st.textContent = '#takeover-table-body td[data-label="Status"]>span{white-space:nowrap}#takeover-table-body td[data-label="Status"] p{white-space:normal;line-height:1.3;max-width:118px;margin:5px auto 0;text-align:center}@media (max-width:767px){#takeover-table-body tr[data-id]{grid-template-columns:1fr!important;gap:7px!important}#takeover-table-body td span[style*="max-width"],#takeover-table-body td .c-trunc,#takeover-table-body td .rmk-txt,#takeover-table-body td .c-clamp{max-width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;-webkit-line-clamp:unset!important}#takeover-table-body td .c-line,#takeover-table-body td .c-sub{flex-wrap:nowrap;min-width:0}#takeover-table-body td{white-space:nowrap!important;overflow:hidden}#takeover-table-body td .fin-mini{display:flex!important;flex-wrap:nowrap;gap:3px;align-items:baseline;overflow:hidden}#takeover-table-body td .fin-mini b{margin-right:8px}}#tk-src-note{margin:0 0 10px;padding:8px 12px;border-radius:10px;font-size:12px;background:rgba(6,182,212,.1);color:#0e7490}.tk2-b{flex:none;margin-left:5px;padding:0 5px;border-radius:6px;font-size:9px;font-weight:800;line-height:15px;background:rgba(124,58,237,.12);color:#6d28d9}.dark .tk2-b{color:#c4b5fd}.tk2-box{margin-bottom:12px;padding:9px 12px;border-radius:12px;font-size:12px;background:rgba(124,58,237,.08);color:#4c1d95;border:1px solid rgba(124,58,237,.2)}.dark .tk2-box{color:#ddd6fe}.tk2-a{display:inline-flex;align-items:center;gap:5px;font-weight:700;color:#6d28d9;text-decoration:underline;background:none;border:0;cursor:pointer;padding:0}';
   document.head.appendChild(st);
+})();
+</script>
+<script id="tk_b2_sign">
+/* Takeover: BASTM ke-2 (kolom AG) ⇄ Signing Document. Hanya BASTM ke-2 yang diteken lewat Signing; hasil TTD disimpan kembali ke kolom AG. */
+(function () {
+  var S_ = function (x) { return String(x == null ? "" : x).trim(); };
+  var E_ = function (x) { return typeof esc === "function" ? esc(x) : String(x == null ? "" : x).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var B2COL = 47, TAG = "TK-BS2";
+  var tagOf = function (e) { return "[" + TAG + ":" + e.po + "@" + e.row + "]"; };
+  var docsOf = function (e) {
+    var t = tagOf(e); try { return (SG.docs || []).filter(function (d) { return String(d.note || "").indexOf(t) >= 0; }); } catch (x) { return []; }
+  };
+  var byId = function (id) { return (STATE.takeover || []).find(function (x) { return x.id === id; }); };
+  var canSign = function () { try { return can("sirkulir"); } catch (x) { return false; } };
+  var b2u = function (e) { var u = (e.links && e.links[B2COL - 15]) || ""; if (u) return u; var t = S_(e.att_bastm2); return /^https?:\/\//i.test(t) ? t : ""; };
+  var loading = false;
+  window.TK_SIGNBOX = function (e) {
+    if (!e || !e.after2 || !canSign() || !b2u(e)) return "";
+    try { if (typeof SG !== "undefined" && !SG.loaded && !SG.loading && !loading && typeof sgLoad === "function") { loading = true; Promise.resolve(sgLoad(false)).catch(function () { }).then(function () { loading = false; try { if (document.getElementById("detail-modal-body") && !document.getElementById("detail-modal").classList.contains("hidden")) renderTakeoverDetail(e); } catch (x) { } }); } } catch (x) { }
+    var ds = docsOf(e), cur = b2u(e), h = '<div style="margin-top:8px;padding-top:8px;border-top:1px dashed rgba(124,58,237,.35)"><i class="fa-solid fa-file-signature mr-1"></i><b>Tanda tangan BASTM ke-2</b> (Signing Document)';
+    var fin = ds.filter(function (d) { return d.status === "selesai" && d.finalUrl; })[0], open = ds.filter(function (d) { return d.status !== "selesai"; })[0];
+    if (fin && fin.finalUrl === cur) h += '<div style="margin-top:4px" class="text-emerald-700"><i class="fa-solid fa-circle-check mr-1"></i>BASTM ke-2 di kolom AG sudah versi bertanda tangan.</div>';
+    else if (fin) h += '<div style="margin-top:6px"><button type="button" class="tk2-a" onclick="tkSaveSignedB2(' + jsArg(e.id) + ',' + jsArg(fin.id) + ')"><i class="fa-solid fa-floppy-disk"></i>Simpan hasil TTD ke kolom AG</button></div>';
+    else if (open) h += '<div style="margin-top:4px">Menunggu tanda tangan: <b>' + E_(open.name || "") + '</b> <button type="button" class="tk2-a" onclick="tkOpenSigning(' + jsArg(open.id) + ')"><i class="fa-solid fa-arrow-up-right-from-square"></i>Buka di Signing</button></div>';
+    if (!open) h += '<div style="margin-top:6px"><button type="button" class="tk2-a" onclick="tkSignB2(' + jsArg(e.id) + ')"><i class="fa-solid fa-file-signature"></i>' + (fin ? "Kirim lagi ke Signing" : "Kirim BASTM ke-2 ke Signing") + '</button></div>';
+    return h + "</div>";
+  };
+  window.tkOpenSigning = function (id) {
+    try { closeDetailModal(); } catch (x) { }
+    try { switchTab("sirkulir"); } catch (x) { return; }
+    setTimeout(function () { try { SG.open && SG.open.add(id); sgRender(); } catch (x) { } }, 400);
+  };
+  window.tkSignB2 = async function (id) {
+    var e = byId(id); if (!e) return;
+    if (!canSign()) return showToast("Akun Anda tidak memiliki akses Signing Document", "error");
+    var u = b2u(e); if (!u) return showToast("BASTM ke-2 (kolom AG) belum ada", "error");
+    showToast("Mengambil BASTM ke-2…", "info", 4000);
+    try {
+      var r = await callApi("att.fetch", { url: u }, 180000), bin = atob(r.b64 || ""), by = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) by[i] = bin.charCodeAt(i);
+      if (String.fromCharCode(by[0], by[1], by[2], by[3]) !== "%PDF") throw new Error("File BASTM ke-2 bukan PDF");
+      var nm = "BASTM ke-2 - PO " + e.po + " - " + e.after2;
+      try { closeDetailModal(); } catch (x) { }
+      switchTab("sirkulir"); sgNew();
+      SGW.note = "BASTM ke-2 · PO " + e.po + " · " + e.stasiun + " · " + e.before + " → " + e.after + " → " + e.after2 + " " + tagOf(e);
+      await sgPickPdf(new File([by], nm + ".pdf", { type: "application/pdf" }));
+      SGW.name = nm; SGW.note = SGW.note;
+      SGW.signers[0].name = e.after2; SGW.signers[0].jabatan = "Mitra ke-2";
+      sgWizard();
+      showToast("BASTM ke-2 siap di Signing. Tambahkan penanda tangan lain dan kotak TTD, lalu kirim.", "success", 8000);
+    } catch (x) { showToast(x.message || "Gagal membuka Signing", "error", 8000); }
+  };
+  window.tkSaveSignedB2 = async function (id, docId) {
+    var e = byId(id), d = (SG.docs || []).find(function (z) { return z.id === docId; }); if (!e || !d || !d.finalUrl) return;
+    if (!confirm("Simpan hasil tanda tangan ke kolom AG (BASTM ke-2)? File lama tetap tersimpan sebagai riwayat.")) return;
+    try {
+      var r = await callApi("rows.attach", { sheet: "takeover", row: e.row, col: B2COL, mode: "link", url: d.finalUrl, text: (d.finalName || d.name || "BASTM ke-2") + " (TTD)", expect: e.raw }, 120000);
+      e.links = e.links || []; e.links[B2COL - 15] = r.url || d.finalUrl; if (Array.isArray(r.values)) e.raw = r.values;
+      if (typeof TK_DECO === "function") TK_DECO(e);
+      try { renderTakeoverPage(); } catch (x) { }
+      try { renderTakeoverDetail(e); } catch (x) { }
+      showToast("Hasil TTD tersimpan di kolom AG", "success");
+    } catch (x) { showToast(x.message || "Gagal menyimpan", "error", 8000); }
+  };
 })();
 </script>
 <script id="bagan_link_btn">
