@@ -15126,6 +15126,56 @@ async function contactNudge() {
   document.head.appendChild(st);
 })();
 </script>
+<script id="gen_to_sign">
+/* Generate → Signing: setelah dokumen berhasil dibuat (ada PDF), tombol langsung membuka wizard Signing dengan PDF tsb. */
+(function () {
+  var last = null;
+  var E_ = function (x) { return typeof esc === "function" ? esc(x) : String(x == null ? "" : x).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var canSign = function () { try { return can("sirkulir"); } catch (x) { return false; } };
+  var oAP = window.apiPost;
+  window.apiPost = apiPost = async function (action, payload, timeout) {
+    var r = await oAP.apply(this, arguments);
+    try { if (action === "generate" && r && r.urls && r.urls.pdf) last = { url: r.urls.pdf, name: r.fileName || (payload && payload.key) || "Dokumen", jenis: payload && payload.jenis, key: payload && payload.key, t: Date.now() }; else if (action === "generate") last = null; } catch (x) { }
+    return r;
+  };
+  var oPS = window.procSuccess;
+  window.procSuccess = procSuccess = function (o) {
+    var r = oPS.apply(this, arguments);
+    try {
+      if (last && Date.now() - last.t < 20000 && canSign() && typeof sgNew === "function") {
+        var box = document.getElementById("proc-result"), btn = box && box.querySelector("button.btn-primary");
+        if (box && btn && !box.querySelector("#gen-sign-btn")) {
+          var b = document.createElement("button");
+          b.id = "gen-sign-btn"; b.type = "button"; b.className = "btn btn-ghost w-full mt-3";
+          b.innerHTML = '<i class="fa-solid fa-file-signature mr-1"></i>Lanjut ke Signing';
+          b.onclick = function () { window.genToSign(); };
+          box.insertBefore(b, btn); btn.classList.remove("mt-3"); btn.style.marginTop = "8px";
+        }
+      }
+    } catch (x) { }
+    return r;
+  };
+  window.genToSign = async function () {
+    var g = last; if (!g) return;
+    var b = document.getElementById("gen-sign-btn"); if (b) { b.disabled = true; b.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Menyiapkan…'; }
+    try {
+      var r = await callApi("att.fetch", { url: g.url }, 180000), bin = atob(r.b64 || ""), by = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) by[i] = bin.charCodeAt(i);
+      if (String.fromCharCode(by[0], by[1], by[2], by[3]) !== "%PDF") throw new Error("File hasil bukan PDF");
+      var nm = String(g.name || "Dokumen").replace(/\.pdf$/i, "");
+      try { procClose(); } catch (x) { }
+      switchTab("sirkulir"); sgNew();
+      SGW.note = "Dari Generate " + (g.jenis || "") + " · " + (g.key || "");
+      await sgPickPdf(new File([by], nm + ".pdf", { type: "application/pdf" }));
+      SGW.name = nm; sgWizard();
+      showToast("Dokumen siap di Signing. Tambahkan penanda tangan dan kotak TTD, lalu kirim.", "success", 7000);
+    } catch (x) {
+      if (b) { b.disabled = false; b.innerHTML = '<i class="fa-solid fa-file-signature mr-1"></i>Lanjut ke Signing'; }
+      showToast(x.message || "Gagal membuka Signing", "error", 8000);
+    }
+  };
+})();
+</script>
 <script id="tk_b2_sign">
 /* Takeover: BASTM ke-2 (kolom AG) ⇄ Signing Document. Hanya BASTM ke-2 yang diteken lewat Signing; hasil TTD disimpan kembali ke kolom AG. */
 (function () {
