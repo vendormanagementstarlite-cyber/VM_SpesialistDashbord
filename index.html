@@ -13667,7 +13667,9 @@ async function contactNudge() {
     try { var r = await callApi("reg.list", {}, 90000); RG.items = r.items || []; RG.loaded = true; RG.at = Date.now(); if (r.formUrl) FORM_URL = r.formUrl; }
     catch (e) { RG.err = /tidak dikenal/i.test(e.message) ? "Backend belum versi v14. Tempel Kode v14 di Apps Script lalu Deploy ulang." : e.message; }
     RG.busy = false; badge(); render();
+    try { var o = await callApi("reg.orphans", {}, 60000); RG.orph = (o.items || []).filter(function (x) { return x.sent; }); render(); } catch (e) { }
   }
+  async function recover(fid, b) { b.disabled = true; try { var r = await callApi("reg.recover", { folderId: fid }, 60000); showToast(r.already ? "Sudah tercatat: " + r.nomor : "Dipulihkan sebagai " + r.nomor, "success"); await load(true); } catch (e) { showToast(e.message, "error"); b.disabled = false; } }
   var FILTERS = [["aktif_kerja", "Perlu tindakan"], ["diajukan", "Diajukan"], ["ttd", "Proses TTD"], ["lengkap", "TTD lengkap"], ["aktif", "Aktif"], ["ditolak", "Ditolak"], ["batal", "Dibatalkan"], ["semua", "Semua"]];
   function list() {
     var q = RG.q.trim().toLowerCase();
@@ -13688,11 +13690,13 @@ async function contactNudge() {
       + '<div class="rg-bar"><div class="rg-tabs">' + FILTERS.map(function (f) { return (cnt[f[0]] || ["aktif_kerja", "semua"].indexOf(f[0]) >= 0) ? '<button class="' + (RG.f === f[0] ? "on" : "") + '" data-f="' + f[0] + '">' + E(f[1]) + "<b>" + (cnt[f[0]] || 0) + "</b></button>" : ""; }).join("") + "</div>"
       + '<label class="rg-srch"><i class="fa-solid fa-magnifying-glass"></i><input id="rg-q" placeholder="Cari nomor, perusahaan, PIC, NPWP" value="' + E(RG.q) + '"></label></div>'
       + (RG.err ? '<div class="rg-err">' + E(RG.err) + "</div>" : "")
+      + ((RG.orph || []).length ? '<div class="rg-err" style="background:#fffbeb;color:#92400e;border-color:#fcd34d"><b>' + RG.orph.length + ' pengajuan ada di folder tapi belum tercatat di aplikasi</b>' + RG.orph.map(function (x) { return '<div style="margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><a href="' + E(x.url) + '" target="_blank" rel="noopener" style="text-decoration:underline">' + E(x.name) + '</a>' + (x.backup ? '<button class="btn btn-ghost" data-rec="' + E(x.id) + '">Pulihkan</button>' : '<span>tanpa cadangan, input manual</span>') + '</div>'; }).join("") + "</div>" : "")
       + '<div class="glass-panel rounded-2xl rg-list">' + (!RG.loaded && RG.busy ? '<div class="rg-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Memuat registrasi…</div>'
         : L.length ? L.map(function (x) { return '<button class="rg-row' + (RG.sel === x.id ? " on" : "") + '" data-id="' + E(x.id) + '"><span class="rg-no">' + E(String(x.nomor || "").split("/")[0]) + '</span><span class="rg-nm"><b>' + E(x.nama) + "</b><small>" + E([x.nomor, x.direktur ? "Dir. " + x.direktur : "", x.pic ? "PIC " + x.pic : ""].filter(Boolean).join(" · ")) + '</small></span><span class="rg-dt">' + E(when(x.updatedAt || x.at)) + "</span>" + chip(x.status) + "</button>"; }).join("")
         : '<div class="rg-empty"><i class="fa-solid fa-id-card-clip"></i>' + (RG.items.length ? "Tidak ada registrasi pada filter ini." : "Belum ada registrasi. Bagikan tautan formulir ke calon mitra.") + (RG.items.length ? "" : '<button class="btn btn-primary" data-a="link"><i class="fa-solid fa-link"></i>Salin tautan formulir</button>') + "</div>") + "</div>"
       + '</div><aside class="rg-side" id="rg-side">' + (RG.sel ? side() : "") + "</aside></div>";
     v.querySelectorAll("[data-a=link]").forEach(function (b) { b.onclick = function () { try { copyText(FORM_URL, "Tautan formulir registrasi disalin"); } catch (e) { toast(FORM_URL); } }; });
+    v.querySelectorAll("[data-rec]").forEach(function (b) { b.onclick = function () { recover(b.dataset.rec, b); }; });
     var rl = v.querySelector("[data-a=reload]"); rl && (rl.onclick = function () { load(true); });
     v.querySelectorAll("[data-f]").forEach(function (b) { b.onclick = function () { RG.f = b.dataset.f; render(); }; });
     var qi = $("rg-q"); qi.oninput = function () { RG.q = qi.value; var p = qi.selectionStart; render(); var n = $("rg-q"); n.focus(); try { n.setSelectionRange(p, p); } catch (e) { } };
