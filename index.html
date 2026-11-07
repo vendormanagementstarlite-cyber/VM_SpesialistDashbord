@@ -9166,9 +9166,10 @@ body:has(#mig-ov) #st-nt{display:none!important}
     var v = String(r.verif || "");
     if (/^(Done|No Need)/i.test(v) || /^done$/i.test(r.it)) return "done";   // Done Submission / Done Create Site / No Need = selesai
     if (/^Revisi/i.test(v)) return "rev";
+    if (/^Not Yet/i.test(v) && !String(r.ts || "").trim()) return "nys";   // mitra belum mengirim form
     return "wait";   // Pengajuan
   }
-  var ST = { wait: ["Menunggu verifikasi", "#2563eb", "fa-hourglass-half"], rev: ["Revisi", "#ea580c", "fa-rotate-left"], bad: ["Tidak sesuai", "#e11d48", "fa-circle-xmark"], done: ["Selesai", "#059669", "fa-circle-check"], cancel: ["Batal (IT)", "#64748b", "fa-ban"] };
+  var ST = { nys: ["Belum mengajukan", "#64748b", "fa-hourglass-start"], wait: ["Menunggu verifikasi", "#2563eb", "fa-hourglass-half"], rev: ["Revisi", "#ea580c", "fa-rotate-left"], bad: ["Tidak sesuai", "#e11d48", "fa-circle-xmark"], done: ["Selesai", "#059669", "fa-circle-check"], cancel: ["Batal (IT)", "#64748b", "fa-ban"] };
   function parseTs(s) { var m = String(s || "").match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/); return m ? new Date(+m[3], +m[2] - 1, +m[1], +(m[4] || 0), +(m[5] || 0)).getTime() : 0; }
   function ago(ts) { if (!ts) return ""; var d = Math.floor((Date.now() - ts) / 864e5); return d <= 0 ? "hari ini" : d + " hari"; }
   function chkOf(r) { return MIG.chk[r.ck] || {}; }
@@ -9361,19 +9362,19 @@ body:has(#mig-ov) #st-nt{display:none!important}
   function chip(k, r) { var s = ST[k], lb = r && r.verif ? r.verif : s[0]; return '<span class="mig-chip" style="--c:' + s[1] + '"><i class="fa-solid ' + s[2] + '"></i>' + E(lb) + "</span>"; }
   function render() {
     var v = $("view-migrasi"); if (!v) return;
-    var cnt = { wait: 0, rev: 0, bad: 0, done: 0, cancel: 0 }; MIG.rows.forEach(function (r) { cnt[stOf(r)]++; }); var oldDone = +(MIG.settings && MIG.settings.doneOld) || 0; cnt.done += oldDone;
+    var cnt = { nys: 0, wait: 0, rev: 0, bad: 0, done: 0, cancel: 0 }; MIG.rows.forEach(function (r) { cnt[stOf(r)]++; }); var oldDone = +(MIG.settings && MIG.settings.doneOld) || 0; cnt.done += oldDone;
     var L = filtered();
     var card = function (k) { var s = ST[k]; return '<button class="mig-card' + (MIG.f === k ? " on" : "") + '" data-f="' + k + '" style="--c:' + s[1] + '"><i class="fa-solid ' + s[2] + '"></i><b>' + cnt[k] + "</b><span>" + s[0] + "</span></button>"; };
     v.innerHTML = '<div class="glass-panel rounded-2xl p-4 mig-head"><button type="button" class="field" title="Kembali ke Data Mitra Takeover" aria-label="Kembali ke Data Mitra Takeover" onclick="switchTab(\'takeover\')" style="width:40px;min-width:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;margin-right:10px"><i class="fa-solid fa-arrow-left"></i></button><div><h2>Migrasi IKR</h2><p>Verifikasi pengajuan Migrasi Akun IKR dan Create Site · data dari sheet <b>Data Mitra Takeover</b>' + (MIG.at ? " · dimuat " + new Date(MIG.at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) : "") + "</p></div>"
       + '<div class="mig-acts"><button class="btn btn-ghost" data-a="reload" title="Muat ulang"><i class="fa-solid fa-rotate"></i><span>Muat ulang</span></button><button class="btn btn-ghost" data-a="form"><i class="fa-solid fa-link"></i><span>Link form mitra</span></button><button class="btn btn-ghost" data-a="set"><i class="fa-solid fa-envelope"></i><span>Penerima email IT</span></button></div></div>'
       + (MIG.off ? '<div class="mig-off"><i class="fa-solid fa-plug-circle-xmark"></i><div><b>Server belum mendukung Migrasi IKR</b><p>Code.gs di Apps Script masih versi lama. Fitur ini aktif setelah Code.gs terbaru dipasang dan deployment diperbarui.</p></div></div>'
         : MIG.err ? '<div class="mig-err"><i class="fa-solid fa-triangle-exclamation"></i>Gagal memuat pengajuan: ' + E(MIG.err) + ' · klik Muat ulang untuk mencoba lagi</div>' : "")
-      + (MIG.off ? "" : '<div class="mig-cards">' + ["wait", "rev", "done"].map(card).join("") + '<button class="mig-card' + (MIG.f === "all" ? " on" : "") + '" data-f="all" style="--c:#475569"><i class="fa-solid fa-layer-group"></i><b>' + MIG.rows.length + "</b><span>Semua</span></button></div>"
+      + (MIG.off ? "" : '<div class="mig-cards">' + ["wait", "rev", "nys", "done"].map(card).join("") + '<button class="mig-card' + (MIG.f === "all" ? " on" : "") + '" data-f="all" style="--c:#475569"><i class="fa-solid fa-layer-group"></i><b>' + MIG.rows.length + "</b><span>Semua</span></button></div>"
       + '<div class="glass-panel rounded-2xl p-4 space-y-3"><div class="flex flex-wrap gap-2"><div class="relative flex-1 min-w-[220px]"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i><input id="mig-q" class="field w-full pl-9" placeholder="Cari mitra, stasiun, No SPK, pengaju, email…" value="' + E(MIG.q) + '"></div><select id="mig-jenis" class="field"><option value="">Semua jenis</option><option' + (MIG.jenis === "Migrasi Akun IKR" ? " selected" : "") + '>Migrasi Akun IKR</option><option' + (MIG.jenis === "Create Site" ? " selected" : "") + ">Create Site</option></select></div>"
       + (!MIG.loaded ? '<div class="mig-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Memuat pengajuan…</div>' : L.length ? ((MIG.f === "done" && oldDone) ? '<p class="mig-oldn">Angka Selesai sudah termasuk ' + oldDone + " data lama yang selesai sebelum form ini dipakai (tidak ditampilkan di daftar).</p>" : "") + '<div class="mig-list">' + L.map(function (r) {
         var k = stOf(r), em = chkOf(r).emailAt ? Date.parse(chkOf(r).emailAt) : 0, late = k === "it" && em && Date.now() - em > 7 * 864e5;
-        return '<button class="mig-row" data-row="' + r.row + '"><span class="mig-d">' + E(r.ts ? r.ts.split(" ")[0] : "–") + "<small>" + (r.ts ? ago(r.tsMs) : "tanpa cap waktu") + '</small></span><span class="mig-m"><b>' + E(r.baru || "-") + " · " + E(r.stasiun || "-") + "</b><small>dari " + E(r.lama || "-") + (r.mitra2 ? " · ke-2 (sebelumnya " + E(r.mitra1 || "-") + ")" : "") + " · " + (r.spkNew ? '<b style="color:#b45309">SPK diganti → ' + E(r.spkNew.no) + "</b>" : E(r.noSpk || "tanpa No SPK")) + (r.pos && r.pos.length > 1 ? " · " + r.pos.length + " PO" : "") + " · " + (/create/i.test(r.tujuan) ? "Create Site" : "Migrasi Akun") + (r.it ? " · IT: " + E(r.it) : "") + "</small></span>" + chip(k, r) + (late ? '<span class="mig-late" title="Status IT masih kosong > 7 hari setelah email">IT > 7 hari</span>' : "") + "</button>";
-      }).join("") + "</div>" : '<div class="mig-empty"><i class="fa-regular fa-folder-open"></i>' + (MIG.rows.length ? "Tidak ada pengajuan pada filter ini." : "Belum ada pengajuan dari mitra.<br><small>Pengajuan tampil di sini setelah mitra mengirim form (status Pengajuan).</small>") + "</div>") + "</div>");
+        return '<button class="mig-row" data-row="' + r.row + '"><span class="mig-d">' + E(r.ts ? r.ts.split(" ")[0] : "–") + "<small>" + (r.ts ? ago(r.tsMs) : k === "nys" ? "belum diajukan" : "tanpa cap waktu") + '</small></span><span class="mig-m"><b>' + E(r.baru || "-") + " · " + E(r.stasiun || "-") + "</b><small>dari " + E(r.lama || "-") + (r.mitra2 ? " · ke-2 (sebelumnya " + E(r.mitra1 || "-") + ")" : "") + " · " + (r.spkNew ? '<b style="color:#b45309">SPK diganti → ' + E(r.spkNew.no) + "</b>" : E(r.noSpk || "tanpa No SPK")) + (r.pos && r.pos.length > 1 ? " · " + r.pos.length + " PO" : "") + " · " + (/create/i.test(r.tujuan) ? "Create Site" : "Migrasi Akun") + (r.it ? " · IT: " + E(r.it) : "") + "</small></span>" + chip(k, r) + (late ? '<span class="mig-late" title="Status IT masih kosong > 7 hari setelah email">IT > 7 hari</span>' : "") + "</button>";
+      }).join("") + "</div>" : '<div class="mig-empty"><i class="fa-regular fa-folder-open"></i>' + (MIG.rows.length ? "Tidak ada pengajuan pada filter ini." : "Belum ada pengajuan dari mitra.<br><small>Pengajuan tampil di sini setelah mitra mengirim form (status Pengajuan). Stasiun berstatus Not Yet Submission tampil di kategori Belum mengajukan.</small>") + "</div>") + "</div>");
     if (MIG.off) { v.querySelector('[data-a="reload"]').onclick = reloadNow; v.querySelector('[data-a="form"]').onclick = formLink; v.querySelector('[data-a="set"]').onclick = settings; return; }
     v.querySelectorAll("[data-f]").forEach(function (b) { b.onclick = function () { MIG.f = b.dataset.f; render(); }; });
     v.querySelectorAll("[data-row]").forEach(function (b) { b.onclick = function () { openDetail(+b.dataset.row); }; });
@@ -9409,7 +9410,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
     var lnk = function (u, t) { return u ? '<a href="' + E(u) + '" target="_blank" rel="noopener" class="mig-lnk"><i class="fa-solid fa-arrow-up-right-from-square"></i>' + t + "</a>" : '<span class="mig-none">' + t + " — tidak ada</span>"; };
     var isCreate = /create/i.test(r.tujuan);
     var CK = [["hc", "HC sama persis dengan menu Pelanggan Aktif di portal (capture dashboard)"], ["ikr", "Akun Lead IKR mitra pengganti ada & aktif"], ["sales", "Akun Sales penampung ada & aktif"], ["dok", "BA, KML, dan SPK lengkap dan benar"]].filter(function (x) { return !(isCreate && x[0] === "hc"); });
-    var M = modal('<div class="mig-mh"><div><small>' + E(r.tujuan) + " · diajukan " + E(r.ts || "(tanpa cap waktu)") + "</small><h3>" + E(r.baru) + " · " + E(r.stasiun) + "</h3><p>dari <b>" + E(r.lama) + "</b> · No SPK <b>" + E(r.noSpk || "-") + "</b>" + (r.pos && r.pos.length > 1 ? " · <b>" + r.pos.length + " PO</b>: " + E(r.pos.join(", ")) : " · " + E(r.po)) + "</p></div>" + chip(k, r) + '<button class="mig-ed" data-edit title="Ubah data pengajuan"><i class="fa-solid fa-pen"></i><span>Ubah data</span></button><button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
+    var M = modal('<div class="mig-mh"><div><small>' + E(r.tujuan || "Migrasi Akun IKR") + " · " + (k === "nys" ? "belum diajukan mitra" : "diajukan " + E(r.ts || "(tanpa cap waktu)")) + "</small><h3>" + E(r.baru) + " · " + E(r.stasiun) + "</h3><p>dari <b>" + E(r.lama) + "</b> · No SPK <b>" + E(r.noSpk || "-") + "</b>" + (r.pos && r.pos.length > 1 ? " · <b>" + r.pos.length + " PO</b>: " + E(r.pos.join(", ")) : " · " + E(r.po)) + "</p></div>" + chip(k, r) + '<button class="mig-ed" data-edit title="Ubah data pengajuan"><i class="fa-solid fa-pen"></i><span>Ubah data</span></button><button class="x" data-x title="Tutup"><i class="fa-solid fa-xmark"></i></button></div>'
       + '<div class="mig-mb"><div class="mig-col">'
       + '<section><h4>Email pengaju</h4><p>' + E(r.email || "-") + "</p></section>"
       + '<section><h4>Status Migrasi IT</h4><p>' + E(r.it || "-") + "</p></section>"
@@ -14687,7 +14688,7 @@ async function contactNudge() {
   // kolom sheet baru (0-based) -> indeks susunan lama; 40–45 = Y Subjek, AB Lead IKR, AC Sales, AD KML, AE Cap waktu, AI UNIQUE · 46 = AH Mitra ke-2 · 47 = AG ATC BASTM ke-2
   var RMAP = {}; Object.keys(MAP).forEach(function (k) { RMAP[MAP[k]] = +k; });
   var NEWC = 35, LEGC = 48, M2 = 46, B2 = 47;   // M2 = Mitra ke-2 (AH), B2 = ATC BASTM ke-2 (AG)
-  var HEAD = ["PO", "NO BAP PO CANCEL", "STASIUN", "MITRA LAMA (ALT)", "MITRA LAMA", "MITRA PENGGANTI", "REGION", "PIC", "REDLINE", "STATUS TAKE OVER", "BAP PO Cancel", "BASTM", "MIGRASI", "REMARK", "BASE ON", "ATC BA CANCEL", "ATC SPK", "TANGGAL SPK", "ATC BAP PO", "ATC BASTM", "", "", "", "", "", "HP PO", "HP ACTUAL", "HC", "", "", "", "DP DITERIMA", "BAST YANG DI TERIMA", "NOMINAL RETENSI", "NOMINAL HC", "NOMINAL DONASI", "STATUS MITRA", "ATC BAM", "STATUS MIGRASI IT", "UNIQUE", "", "", "", "", "", "", "MITRA KE-2", "ATC BASTM KE-2"];
+  var HEAD = ["PO", "NO BAP PO CANCEL", "STASIUN", "MITRA LAMA (ALT)", "MITRA LAMA", "MITRA PENGGANTI", "REGION", "PIC", "REDLINE", "STATUS TAKE OVER", "BAP PO Cancel", "BASTM", "MIGRASI", "REMARK", "BASE ON", "ATC BA CANCEL", "ATC SPK", "TANGGAL SPK", "ATC BAP PO", "ATC BASTM", "", "", "", "", "", "HP PO", "HP ACTUAL", "HC", "", "", "", "DP DITERIMA", "BAST YANG DI TERIMA", "NOMINAL RETENSI", "NOMINAL HC", "NOMINAL DONASI", "STATUS MITRA", "ATC BAM", "STATUS MIGRASI IT", "UNIQUE", "", "", "", "", "", "", "MITRA AFTER KE-2", "ATC BASTM KE-2"];
   var nb = function (s) { return String(s == null ? "" : s).replace(/\s+/g, " ").trim().toUpperCase(); };
 
   function toLegacy(vals) {
@@ -14797,7 +14798,7 @@ async function contactNudge() {
     if (Array.isArray(r.values)) o.values = toLegArr(r.values, "");
     if (Array.isArray(r.formulas)) o.formulas = toLegArr(r.formulas, false);
     if (Array.isArray(r.links)) o.links = toLegArr(r.links, "");
-    if (Array.isArray(r.headers)) o.headers = toLegArr(r.headers, "");
+    if (Array.isArray(r.headers)) { o.headers = toLegArr(r.headers, ""); o.headers[M2] = "MITRA AFTER KE-2"; o.headers[B2] = "ATC BASTM KE-2"; }
     if (r.options && typeof r.options === "object") o.options = toLegObj(r.options);
     return o;
   };
@@ -14859,6 +14860,9 @@ async function contactNudge() {
         var itv = e ? String((e.raw || [])[38] || "").trim() : "", b2 = document.getElementById("detail-modal-body");
         if (e && e.id && e.row < VROW && isOpTk() && b2) b2.insertAdjacentHTML("afterbegin", '<div class="mb-3 flex justify-end"><button type="button" class="btn btn-ghost" onclick="openRecEdit(' + "'" + e.id + "'" + ')"><i class="fa-solid fa-pen"></i>Edit data</button></div>');
         if (itv && b2) b2.insertAdjacentHTML("afterbegin", '<div class="mb-3 px-3 py-2 rounded-xl text-[11px] bg-slate-500/10 text-slate-700 dark:text-slate-200"><i class="fa-solid fa-server mr-1"></i><b>Status Migrasi IT</b> (kolom AA): ' + (typeof esc === "function" ? esc(itv) : itv) + "</div>");
+        var canEd = false; try { canEd = !!currentUser && (currentUser.role === "owner" || isOpTk()); } catch (x) { }
+        if (e && !e.after2 && b2 && e.id && e.row < VROW && canEd) b2.insertAdjacentHTML("afterbegin", '<div class="tk2-box" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span><i class="fa-solid fa-right-left mr-1"></i><b>Mitra After ke-2</b> (kolom AH): belum ada</span><button type="button" class="tk2-a" onclick="tkAddM2(' + jsArg(e.id) + ')"><i class="fa-solid fa-plus"></i>Tambah Mitra After ke-2</button></div>');
+        if (e && e.after2 && b2 && e.id && canEd) { var bx = b2.querySelector(".tk2-box"); }
         if (e && e.after2 && b2) {
           var u2 = b2Url(e), bt = u2 ? '<a href="' + E_(u2) + '" target="_blank" rel="noopener" class="tk2-a"><i class="fa-solid fa-file-pdf"></i>Buka BASTM ke-2</a>' : e.att_bastm2 ? '<span class="tk2-a">' + E_(e.att_bastm2) + "</span>" : (canB2() ? '<button type="button" class="tk2-a" onclick="tkUpB2(' + jsArg(e.id) + ')"><i class="fa-solid fa-upload"></i>Unggah BASTM ke-2 (PDF)</button>' : '<span class="text-rose-600">BASTM ke-2 belum ada</span>');
           b2.insertAdjacentHTML("afterbegin", '<div class="tk2-box"><div><i class="fa-solid fa-right-left mr-1"></i><b>Takeover ke-2</b> · ' + E_(e.before || "-") + " → " + E_(e.after || "-") + " → <b>" + E_(e.after2) + '</b> <span class="text-slate-500">(kolom AH)</span></div><div style="margin-top:6px">BASTM ke-2 (kolom AG): ' + bt + "</div></div>");
@@ -14949,6 +14953,16 @@ async function contactNudge() {
     return canB2() ? '<button type="button" class="dd no" title="BASTM ke-2 belum ada — klik untuk unggah PDF" onclick="event.stopPropagation();tkUpB2(' + jsArg(e.id) + ')">BS2</button>' : '<span class="dd no" title="BASTM ke-2: belum ada">BS2</span>';
   };
   window.TK_B2CHIP = b2Chip;
+  // buka form Edit dan arahkan ke field Mitra After ke-2 (kolom AH)
+  window.tkAddM2 = async function (id) {
+    try { await openRecEdit(id); } catch (x) { return; }
+    var t0 = Date.now(), go = function () {
+      var el = document.querySelector('#rec-modal [data-c="' + M2 + '"]');
+      if (el) { var f = el.closest(".rec-field") || el; try { f.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (x) { } f.style.outline = "2px solid #7c3aed"; f.style.borderRadius = "10px"; setTimeout(function () { f.style.outline = ""; }, 4500); el.focus(); return; }
+      if (Date.now() - t0 < 15000 && !document.getElementById("rec-modal").classList.contains("hidden")) setTimeout(go, 150);
+    };
+    go();
+  };
   // Dokumen: tambah chip BAM (BA Migrasi) dari kolom ATC BAM
   if (typeof docDots === "function") {
     var oDots = docDots;
