@@ -9423,7 +9423,7 @@ body:has(#mig-ov) #st-nt{display:none!important}
       + '<section><h4>Cek di portal</h4><div class="mig-range"><label>Dari<input type="date" id="mig-d1" class="field" value="' + st + '"></label><label>Sampai<input type="date" id="mig-d2" class="field" value="' + en + '"></label></div>'
       + '<div class="mig-portal"><button class="st-b" data-p="hc"><i class="fa-solid fa-users"></i>Cek HC · Pelanggan Aktif</button><button class="st-b" data-p="ikr"><i class="fa-solid fa-screwdriver-wrench"></i>Cek Lead IKR</button><button class="st-b" data-p="sales"><i class="fa-solid fa-user-tie"></i>Cek Lead Sales</button></div><p class="mig-note">Portal terbuka di tab browser tersendiri (tab yang sama dipakai ulang) dengan login portal Anda — cukup login sekali, aplikasi ini tetap terbuka di tab-nya. Untuk Lead IKR / Sales, email akunnya otomatis disalin — tempel di kolom cari portal.</p></section>'
       + '<section><h4>Checklist verifikator</h4><div class="mig-ck">' + CK.map(function (x) { return '<label><input type="checkbox" data-ck="' + x[0] + '"' + (it[x[0]] === true ? " checked" : "") + "><span>" + x[1] + "</span></label>"; }).join("") + '</div><label class="mig-hc">HC di portal (opsional)<input id="mig-hcv" class="field" inputmode="numeric" placeholder="mis. 53" value="' + E(c.hc || "") + '"></label></section>'
-      + '<section><h4>Keputusan</h4><textarea id="mig-rem" class="field w-full" rows="3" placeholder="Catatan untuk pengaju (wajib bila Revisi — dikirim ke email pengaju)">' + E(r.remark || "") + '</textarea><div class="mig-dec"><button class="st-b warn" data-d="Revisi"><i class="fa-solid fa-rotate-left"></i>Revisi</button>' + (isCreate ? '<button class="st-b pri" data-d="create"><i class="fa-solid fa-circle-check"></i>Verifikasi → Done Create Site</button>' : '<button class="st-b pri" data-d="lolos"><i class="fa-solid fa-circle-check"></i>Lolos → Kirim email ke IT</button>') + '</div><p class="mig-st">Status Migrasi (kolom J): <b>' + E(r.verif || "—") + "</b> · Status IT (kolom AA): <b>" + E(r.it || "—") + "</b></p></section>"
+      + '<section><h4>Keputusan</h4><textarea id="mig-rem" class="field w-full" rows="3" placeholder="Catatan untuk pengaju (wajib bila Revisi — dikirim ke email pengaju)">' + E(r.remark || "") + '</textarea><div class="mig-dec"><button class="st-b warn" data-d="Revisi"><i class="fa-solid fa-rotate-left"></i>Revisi</button><label class="mig-nt" style="display:flex;align-items:center;gap:6px;font-size:11.5px;flex-basis:100%;margin:2px 0 4px"><input type="checkbox" id="mig-notify" checked' + (r.email ? "" : " disabled") + '><span>Kirim notifikasi revisi ke email pengaju' + (r.email ? " (" + E(r.email) + ")" : " — email pengaju kosong") + '</span></label>' + (isCreate ? '<button class="st-b pri" data-d="create"><i class="fa-solid fa-circle-check"></i>Verifikasi → Done Create Site</button>' : '<button class="st-b pri" data-d="lolos"><i class="fa-solid fa-circle-check"></i>Lolos → Kirim email ke IT</button>') + '</div><p class="mig-st">Status Migrasi (kolom J): <b>' + E(r.verif || "—") + "</b> · Status IT (kolom AA): <b>" + E(r.it || "—") + "</b></p></section>"
       + "</div></div>", "lg");
     var el = M.el, q = function (s) { return el.querySelector(s); };
     var items = function () { var o = {}; el.querySelectorAll("[data-ck]").forEach(function (cb) { o[cb.dataset.ck] = cb.checked; }); return o; };
@@ -9459,11 +9459,13 @@ body:has(#mig-ov) #st-nt{display:none!important}
         if (!rem) { rem = "Mohon diperbaiki: " + (miss.length ? miss.map(function (x) { return x[1]; }).join("; ") : "-"); q("#mig-rem").value = rem; return toast("Catatan terisi otomatis dari checklist — periksa lalu klik lagi", "info", 5000); }
         b.disabled = true;
         try {
-          await save(d, rem, { note: rem.slice(0, 200) });
-          toast("Status Verifikasi: " + d, "success");
+          var nt = q("#mig-notify"), wantMail = !!(nt && nt.checked && !nt.disabled), wasRev = (r.verif === "Revisi");
+          var sv = await save(d, rem, { note: rem.slice(0, 200), notify: wantMail, resend: wantMail && wasRev });
+          toast("Status Verifikasi: " + d + (wantMail ? (sv && sv.mailed ? " · email revisi terkirim ke pengaju" : " · email ke pengaju GAGAL dikirim") : ""), sv && wantMail && !sv.mailed ? "error" : "success", 7000);
+          var mailed = wantMail && sv && sv.mailed;
           var link = await formUrl();
           var msg = "Yth. Bapak/Ibu,\n\nPengajuan " + r.tujuan + " " + r.baru + " – " + r.stasiun + " (No SPK " + r.noSpk + ") berstatus " + d.toUpperCase() + ".\nCatatan: " + rem + "\n\nMohon perbaiki dan ajukan ulang melalui link berikut:\n" + (link || "(link form pengajuan)") + "\n\nVendor Management";
-          M.close(); revisiShare(r, msg);
+          M.close(); revisiShare(r, msg, mailed);
         } catch (e) { b.disabled = false; toast(e.message, "error", 7000); }
       };
     });
@@ -9558,8 +9560,8 @@ body:has(#mig-ov) #st-nt{display:none!important}
       } catch (e) { b.disabled = false; b.innerHTML = '<i class="fa-solid fa-floppy-disk"></i>Simpan perubahan'; toast(e.message, "error", 7000); }
     };
   }
-  function revisiShare(r, msg) {
-    var M = modal('<div class="mig-mh"><div><h3>Kabari mitra</h3><p>Status tersimpan di kolom J, catatan di kolom K. Pengaju juga sudah dikabari lewat email.</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div><div class="mig-pad"><textarea class="field w-full mig-pre mig-big" rows="12" id="mig-msg">' + E(msg) + '</textarea><div class="mig-dec"><button class="st-b" data-c><i class="fa-solid fa-copy"></i>Salin pesan</button>' + (r.wa ? '<button class="st-b pri" data-w><i class="fa-brands fa-whatsapp"></i>Kirim WA ke ' + E(r.wa) + "</button>" : "") + "</div></div>", "md");
+  function revisiShare(r, msg, mailed) {
+    var M = modal('<div class="mig-mh"><div><h3>Kabari mitra</h3><p>Status tersimpan di kolom J, catatan di kolom K. ' + (mailed ? 'Pengaju sudah dikabari lewat email.' : 'Email ke pengaju tidak dikirim — kabari lewat WhatsApp atau salin pesan.') + '</p></div><button class="x" data-x><i class="fa-solid fa-xmark"></i></button></div><div class="mig-pad"><textarea class="field w-full mig-pre mig-big" rows="12" id="mig-msg">' + E(msg) + '</textarea><div class="mig-dec"><button class="st-b" data-c><i class="fa-solid fa-copy"></i>Salin pesan</button>' + (r.wa ? '<button class="st-b pri" data-w><i class="fa-brands fa-whatsapp"></i>Kirim WA ke ' + E(r.wa) + "</button>" : "") + "</div></div>", "md");
     var t = function () { return M.el.querySelector("#mig-msg").value; };
     M.el.querySelector("[data-c]").onclick = function () { copyText(t(), "Pesan disalin"); };
     var w = M.el.querySelector("[data-w]"); if (w) w.onclick = function () { window.open(waUrl(r, t()), "_blank", "noopener"); };
