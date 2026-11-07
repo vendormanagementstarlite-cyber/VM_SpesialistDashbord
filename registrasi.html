@@ -207,10 +207,10 @@ var S = [
 var F = {}; S.forEach(function (s, i) { s.fields.forEach(function (f) { f.sec = i; F[f.key] = f; }); });
 
 // ---------- state ----------
-var Q = new URLSearchParams(location.search), REV = (Q.get("r") || "").toLowerCase();
+var Q = new URLSearchParams(location.search), REV = (Q.get("r") || "").toLowerCase(), LENG = (Q.get("lengkapi") || "").toLowerCase();
 var store = { get: function (k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }, del: function (k) { try { localStorage.removeItem(k); } catch (e) { } } };
-var DRAFT = REV ? "" : (store.get("reg_draft") || (function () { var a = new Uint8Array(12); crypto.getRandomValues(a); var s = Array.from(a, function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); store.set("reg_draft", s); return s; })());
-var SKEY = "reg_state_" + (REV || DRAFT);
+var DRAFT = REV ? "" : LENG ? (store.get("reg_dl_" + LENG) || (function () { var a = new Uint8Array(12); crypto.getRandomValues(a); var s = Array.from(a, function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); store.set("reg_dl_" + LENG, s); return s; })()) : (store.get("reg_draft") || (function () { var a = new Uint8Array(12); crypto.getRandomValues(a); var s = Array.from(a, function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); store.set("reg_draft", s); return s; })());
+var SKEY = "reg_state_" + (REV || (LENG ? "L" + LENG : DRAFT));
 var st = store.get(SKEY) || { step: 0, data: {}, files: {}, seen: {} };
 st.files = st.files || {}; st.data = st.data || {}; st.seen = st.seen || {};
 var V = { notes: {}, errs: {}, busy: false, pending: 0, sig: null, sigDirty: false, revNote: "", sigMode: "upload" };
@@ -490,7 +490,7 @@ async function submit() {
   var data = {}; Object.keys(F).forEach(function (k) { var f = F[k]; if (f.type !== "file" && visible(f)) data[k] = f.type === "check" ? st.data[k] === true : norm(st.data[k]); });
   var files = {}; Object.keys(st.files).forEach(function (k) { if (F[k] && visible(F[k])) files[k] = (st.files[k] || []).filter(function (x) { return x.id; }).map(function (x) { return { id: x.id, name: x.name }; }); });
   try {
-    var r = await api("reg.pub.submit", { d: DRAFT, data: data, files: files, sign: { img: V.sig.img }, hp: $("hpf").value, ua: navigator.userAgent }, 1);
+    var r = await api(LENG ? "reg.pub.complete" : "reg.pub.submit", { t: LENG, d: DRAFT, data: data, files: files, sign: { img: V.sig.img }, hp: $("hpf").value, ua: navigator.userAgent }, 1);
     if (!r.ok) {
       anim.close();
       V.errs = r.errors || {}; st.seen.__server = 1; var keys = Object.keys(V.errs);
@@ -498,7 +498,7 @@ async function submit() {
       var k0 = keys.find(function (k) { return F[k]; }), sec = k0 ? F[k0].sec : S.length - 1;
       toast(keys.length + " isian perlu diperbaiki: " + (V.errs[k0] || V.errs._ttd || ""), 6500); V.busy = false; go(sec); setTimeout(function () { paintErrors(true); var el = k0 && $("f_" + k0); el && el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60); return;
     }
-    store.del(SKEY); store.del("reg_draft");
+    store.del(SKEY); if (LENG) store.del("reg_dl_" + LENG); else store.del("reg_draft");
     await anim.finish(); done(r);
   } catch (e) { anim.close(); V.busy = false; bar(); toast("Gagal mengirim: " + e.message + ". Coba lagi.", 6000); }
 }
@@ -533,6 +533,7 @@ function sending() {
   };
 }
 function done(r) {
+  if (LENG) { $("bar").remove(); $("rail").remove(); $("main").innerHTML = '<section class="card done"><div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h2>Data berhasil dilengkapi</h2><p>Nomor registrasi</p><div class="no">' + esc(r.nomor) + "</div><p>Terima kasih. Tim Vendor Management akan memeriksa data Anda.</p></section>"; window.scrollTo(0, 0); return; }
   var link = location.origin + location.pathname + "?r=" + r.token;
   $("bar").remove(); $("rail").remove();
   $("main").innerHTML = '<section class="card done"><div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h2>Registrasi terkirim</h2>'
@@ -555,6 +556,14 @@ async function boot() {
     $("main").innerHTML = '<section class="card"><p class="lead">Memuat status registrasi…</p></section>';
     try { return statusPage(await api("reg.pub.get", { r: REV }, 2)); }
     catch (e) { $("main").innerHTML = '<section class="card"><h2>Tautan tidak bisa dibuka</h2><p class="lead">' + esc(e.message) + "</p></section>"; $("bar").remove(); $("rail").remove(); return; }
+  }
+  if (LENG) {
+    $("main").innerHTML = '<section class="card"><p class="lead">Memuat data registrasi…</p></section>';
+    try {
+      var g = await api("reg.pub.complete", { t: LENG, get: 1 }, 2);
+      if (!st.leng) { st.data = Object.assign({}, g.form || {}); st.files = {}; Object.keys(g.files || {}).forEach(function (k) { st.files[k] = (g.files[k] || []).map(function (x) { return { id: x.id, name: x.name, size: x.size, hash: x.hash }; }); }); st.leng = 1; st.step = 0; st.seen = {}; save(); }
+      V.sig = { img: "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", up: true, box: { pts: 999 } };
+    } catch (e) { $("main").innerHTML = '<section class="card"><h2>Tautan tidak bisa dibuka</h2><p class="lead">' + esc(e.message) + "</p></section>"; $("bar").remove(); $("rail").remove(); return; }
   }
   Object.keys(st.files).forEach(function (k) { st.files[k] = (st.files[k] || []).filter(function (x) { return x.id; }); });
   render();
