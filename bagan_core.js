@@ -44,8 +44,7 @@
       var p = n.p, em = p.ket === "kosong", ls = lines(p), bc = em ? "#cbd5e1" : BAND[Math.min(n.d, 3)], tc = em ? "#475569" : "#fff";
       s += '<g data-id="' + esc(p.id) + '"><rect x="' + n.x + '" y="' + n.y + '" width="' + W + '" height="' + L.H + '" rx="9" fill="' + (em ? "#f8fafc" : "#fff") + '" stroke="' + (em ? "#94a3b8" : bc) + '" stroke-width="1.3"' + (em ? ' stroke-dasharray="5 4"' : "") + "/>" +
         '<path d="M' + n.x + " " + (n.y + 28) + "V" + (n.y + 9) + "a9 9 0 0 1 9 -9H" + (n.x + W - 9) + "a9 9 0 0 1 9 9V" + (n.y + 28) + 'Z" fill="' + bc + '"/>' +
-        '<text x="' + (n.x + 12) + '" y="' + (n.y + 18.5) + '" font-size="12" font-weight="700" fill="' + tc + '">' + esc(cut(p.jabatan, isW(p, o) ? 17 : 24)) + "</text>";
-      if (isW(p, o)) { s += '<rect x="' + (n.x + W - 46) + '" y="' + (n.y + 6) + '" width="38" height="15" rx="7.5" fill="#fff"/><text x="' + (n.x + W - 27) + '" y="' + (n.y + 17) + '" font-size="9" font-weight="700" text-anchor="middle" fill="#b91c1c">WAJIB</text>'; }
+        '<text x="' + (n.x + 12) + '" y="' + (n.y + 18.5) + '" font-size="12" font-weight="700" fill="' + tc + '">' + esc(cut(p.jabatan, 28)) + "</text>";
       ls.forEach(function (l, i) { s += '<text x="' + (n.x + 12) + '" y="' + (n.y + 45 + i * 13) + '" font-size="' + (l.s ? 9.5 : 10.5) + '"' + (l.b ? ' font-weight="600"' : "") + ' fill="' + (l.m ? MUT : TXT) + '"' + (l.m ? ' font-style="italic"' : "") + ">" + esc(cut(l.t, l.s ? 31 : 29)) + "</text>"; });
       s += "</g>";
     });
