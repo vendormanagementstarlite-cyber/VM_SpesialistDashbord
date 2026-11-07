@@ -39,9 +39,9 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
 .acts{display:flex;gap:8px;flex-wrap:wrap}
 .pvh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}.pvh h2{flex:1}
 .prev{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff;max-height:70vh;touch-action:pan-x pan-y pinch-zoom}
-.zm{display:flex;align-items:center;gap:6px;margin-top:12px;flex-wrap:wrap}.zm button{padding:6px 12px;border:0;border-radius:9px;background:#e8f1fc;color:#0b5cad;font:inherit;font-size:13px;font-weight:800;cursor:pointer}.zm span{min-width:48px;text-align:center;font-size:12.5px;font-weight:700}#prev{cursor:grab;overscroll-behavior:contain}#prev.drag{cursor:grabbing;user-select:none}.prev svg{display:block;margin:0 auto}.prev .empty{padding:26px;text-align:center;color:var(--mut)}
+.pz{display:flex;align-items:center;gap:6px;margin-top:12px;flex-wrap:wrap}.pz button{padding:6px 12px;border:0;border-radius:9px;background:#e8f1fc;color:#0b5cad;font:inherit;font-size:13px;font-weight:800;cursor:pointer;min-height:0}.pz span{min-width:48px;text-align:center;font-size:12.5px;font-weight:700}#prev{cursor:grab;overscroll-behavior:contain}#prev.drag{cursor:grabbing;user-select:none}.prev svg{display:block;margin:0 auto}.prev .empty{padding:26px;text-align:center;color:var(--mut)}
 .bar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));z-index:20}
-.bar .in{max-width:1180px;margin:0 auto;display:flex;gap:8px}.bar .in>*{flex:1}
+.bar .in{max-width:1180px;margin:0 auto;display:flex;gap:8px}.bar .in>*{flex:1}.bar .in{align-items:center}.bar .in>label{flex:3;margin:0;font-size:13px;line-height:1.3;align-items:center}.bar .in>button{min-width:150px}@media(max-width:640px){.bar .in{flex-wrap:wrap}.bar .in>label{flex-basis:100%}}
 .seg{display:flex;background:#e8edf4;border-radius:13px;padding:4px;margin-bottom:14px;position:sticky;top:6px;z-index:15}
 .seg button{flex:1;background:none;color:#475569;min-height:40px;border-radius:10px;box-shadow:none}.seg button.on{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(15,23,42,.15)}
 .hide{display:none!important}.hs{font-size:12px;margin-top:4px;min-height:0}.hs.ok{color:var(--ok)}.hs.no{color:var(--bad)}details.card>summary{cursor:pointer;font-weight:700;list-style:none}details.card>summary::-webkit-details-marker{display:none}details.card>summary::after{content:"▾";float:right;color:var(--mut)}details.card[open]>summary::after{content:"▴"}.layout{max-width:760px;margin:0 auto}#s-edit{max-width:760px;margin:0 auto}
@@ -55,7 +55,7 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
 .full .prev{position:fixed;inset:0;z-index:50;max-height:none;border-radius:0}.fx{position:fixed;right:14px;top:14px;z-index:60}
 
 .ed{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}.vp{max-height:78vh}.ed>*{min-width:0;margin-bottom:0}
-.cvh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.cvh{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:nowrap}.cvh h2{flex:0 0 auto;margin:0;white-space:nowrap}.cvh .wj{flex:1 1 0;min-width:0;margin:0;padding-bottom:2px}.cvh .zm{flex:0 0 auto;margin-left:auto}@media(max-width:760px){.cvh{flex-wrap:wrap}.cvh .wj{order:3;flex-basis:100%}}
 .zm{display:flex;align-items:center;gap:6px;background:#f1f4fa;border-radius:12px;padding:3px}.zm span{min-width:44px;text-align:center;font-size:13px;font-weight:600;color:#334155}.zm .sm{min-height:36px;width:36px;padding:0;font-size:18px}
 .vp{overflow:auto;min-height:300px;max-height:68vh;border:1px solid var(--line);border-radius:14px;background-color:#fbfcff;background-image:radial-gradient(#d6dceb 1.1px,transparent 1.1px);background-size:20px 20px;touch-action:pan-x pan-y pinch-zoom}
 #cw{position:relative;margin:0 auto}#cw>div{position:absolute;left:0;top:0;transform-origin:0 0}
@@ -113,20 +113,20 @@ button.sm{min-height:38px;padding:0 12px;font-size:13.5px;border-radius:10px}
     <button id="fps" type="button">Simpan PIN baru</button></div></div><div id="m4"></div></div>
 </section>
 <section id="s-edit" class="hide">
-  <div class="card"><div class="cvh" style="margin:0"><h2 id="ttl">Struktur</h2><button class="g sm" id="gear" type="button" aria-label="Pengaturan email pemulihan" title="Pengaturan email pemulihan" style="width:40px;padding:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div><div id="stt" style="margin-top:8px"></div></div>
+  <div class="card"><div class="cvh" style="margin:0;justify-content:space-between"><h2 id="ttl">Struktur</h2><button class="g sm" id="gear" type="button" aria-label="Pengaturan email pemulihan" title="Pengaturan email pemulihan" style="width:40px;padding:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div><div id="stt" style="margin-top:8px"></div></div>
   <div class="card hide" id="emc"><label for="em2" id="eml">Email pemulihan PIN</label><div class="acts"><input id="em2" type="email" inputmode="email" placeholder="nama@perusahaan.com" style="flex:1;min-width:200px"><button class="t" id="em2s" type="button">Simpan email</button></div><div id="m3"></div></div>
-  <details class="card hide" id="pubc"><summary>Bagan berlaku saat ini <span id="pubv"></span></summary><div class="zm" id="zm"><button type="button" data-zz="-" aria-label="Perkecil">−</button><span id="zl">100%</span><button type="button" data-zz="+" aria-label="Perbesar">+</button><button type="button" data-zz="fit">Pas lebar</button><button type="button" data-zz="1">100%</button></div><div class="prev" id="prev" style="margin-top:12px"></div></details>
+  <details class="card hide" id="pubc"><summary>Bagan berlaku saat ini <span id="pubv"></span></summary><div class="pz" id="pz"><button type="button" data-zz="-" aria-label="Perkecil">−</button><span id="pzl">100%</span><button type="button" data-zz="+" aria-label="Perbesar">+</button><button type="button" data-zz="fit">Pas lebar</button><button type="button" data-zz="1">100%</button></div><div class="prev" id="prev" style="margin-top:12px"></div></details>
   <div class="card nt" id="ntc"><b>Isi struktur dengan lengkap</b><p class="s">Posisi bertanda <b>WAJIB</b> harus terisi nama, No HP, dan email sebelum bagan bisa disimpan. Posisi lain cukup nama dan No HP. Tombol <b>+</b> menambah posisi, <b>+ Tambah nama</b> menambah orang, ✕ menghapus posisi.</p></div>
   <div class="ed">
     <div class="card cv"><div class="cvh"><h2>Bagan struktur</h2>
-      <div class="zm"><button class="g sm" id="zo" aria-label="Perkecil" type="button">−</button><span id="zl">100%</span><button class="g sm" id="zi" aria-label="Perbesar" type="button">+</button></div></div>
       <div class="wj hide" id="wj" role="group" aria-label="Posisi wajib"></div>
+      <div class="zm"><button class="g sm" id="zo" aria-label="Perkecil" type="button">−</button><span id="zl">100%</span><button class="g sm" id="zi" aria-label="Perbesar" type="button">+</button></div></div>
       <div class="vp" id="vp"><div id="cw"></div></div></div><div id="undo" role="status" aria-live="polite"><span id="undot"></span><button type="button" id="undob">Urungkan</button></div>
   </div>
-  <div class="card hide" id="notec"><label for="note">Catatan untuk Vendor Management</label><textarea id="note" maxlength="480" placeholder="mis. Perubahan setelah rotasi tim"></textarea><label class="ck" style="margin-top:14px;align-items:flex-start"><input type="checkbox" id="ack" style="margin-top:2px"><span>Saya menyatakan data pada bagan ini benar dan dapat dipertanggungjawabkan.</span></label><div id="m2"></div></div>
+  <div class="card" id="notec"><label for="note">Catatan untuk Vendor Management</label><textarea id="note" maxlength="480" placeholder="mis. Perubahan setelah rotasi tim"></textarea><div id="m2"></div></div>
 </section>
 </main>
-<div class="bar hide" id="bar"><div class="in"><button id="send">Simpan bagan</button></div></div>
+<div class="bar hide" id="bar"><div class="in"><label class="ck" id="ackl"><input type="checkbox" id="ack"><span>Saya menyatakan data pada bagan ini benar dan dapat dipertanggungjawabkan.</span></label><button id="send">Simpan bagan</button></div></div>
 <script src="bagan_core.js"></script>
 <script>
 (function(){
@@ -160,7 +160,7 @@ $("go").onclick=function(){
   api("bg.open",{row:x.row,pin:pin,create:create}).then(function(j){return api("bg.wajib").then(function(w){WAJIB=(w.items||[]).filter(function(i){return i&&i.label});window.BG_WAJIB=WAJIB.map(function(i){return i.label})},function(){}).then(function(){S.row=x.row;S.pin=pin;S.name=x.name;start(j)})}).catch(function(e){msg("m1",e.message,"err")}).finally(function(){$("go").disabled=false});
 };
 function start(j){
-  $("s-login").classList.add("hide");$("s-edit").classList.remove("hide");$("bar").classList.remove("hide");$("ttl").textContent=S.name;
+  S.done=false;$("s-login").classList.add("hide");$("s-edit").classList.remove("hide");$("bar").classList.remove("hide");$("ttl").textContent=S.name;
   var st="";
   if(j.pending)st+='<span class="tag t-pend">⏳ Menunggu verifikasi</span>';
   if(j.published)st+='<span class="tag t-pub">✓ Bagan berlaku: versi '+j.published.no+"</span>";
@@ -169,7 +169,7 @@ function start(j){
   $("stt").innerHTML=st;
   var d=(j.pending||j.rejected||j.published||{}).data||j.seed||{posisi:[]};
   if(j.info)S.info=j.info;if(j.mail!==undefined)S.mail=j.mail;
-  S.data=JSON.parse(JSON.stringify(d));S.nid=1;S.chk=false;S.ready=false;$("notec").classList.add("hide");$("send").textContent="Simpan bagan";$("note").value="";$("ack").checked=false;
+  S.data=JSON.parse(JSON.stringify(d));S.nid=1;S.chk=false;S.ready=true;$("send").textContent="Simpan bagan";$("note").value="";$("ack").checked=false;
   S.data.posisi.forEach(function(p){var n=parseInt(String(p.id).replace(/\D/g,""),10);if(n>=S.nid)S.nid=n+1});
   
   if(!S.data.posisi.length)S.data.posisi.push(np(""));
@@ -308,17 +308,18 @@ $("cw").addEventListener("change",function(e){
   if(t.dataset.f==="hp"){var st=hpState(t.value);if(st.ok&&st.norm){t.value=st.norm;o.hp=st.norm}t.classList.toggle("bad",!st.ok)}
   if(t.dataset.f==="email"){var v=t.value.trim();t.value=v;o.email=v;t.classList.toggle("bad",!!v&&!MAILRE.test(v))}});
 $("zo").onclick=function(){if(S.z>0){S.z--;paint();centerVp()}};$("zi").onclick=function(){if(S.z<ZS.length-1){S.z++;paint();centerVp()}};
-function showPub(j){var c=$("pubc");if(!j.published){c.classList.add("hide");return}c.classList.remove("hide");$("pubv").textContent="· versi "+j.published.no;var r=BG.render(j.published.data);S.res=r;$("prev").innerHTML=r.svg;fit()}
-function zSet(z,cx,cy){var r=S.res,box=$("prev");if(!r||!r.w||!box)return;var sv=box.firstChild;if(!sv||!sv.setAttribute)return;var o=S.z||1;z=Math.max(.15,Math.min(3,z));var px=cx==null?box.clientWidth/2:cx,py=cy==null?box.clientHeight/2:cy,ox=box.scrollLeft+px,oy=box.scrollTop+py;S.z=z;sv.setAttribute("width",Math.round(r.w*z));sv.setAttribute("height",Math.round(r.h*z));sv.style.maxWidth="none";box.scrollLeft=ox*z/o-px;box.scrollTop=oy*z/o-py;var l=$("zl");if(l)l.textContent=Math.round(z*100)+"%"}
+function showPub(j){var c=$("pubc");if(!j.published){c.classList.add("hide");return}c.classList.remove("hide");$("pubv").textContent="· versi "+j.published.no;var r=BG.render(j.published.data,{copy:1});S.res=r;$("prev").innerHTML=r.svg;BG.bindCopy($("prev"));fit()}
+function zSet(z,cx,cy){var r=S.res,box=$("prev");if(!r||!r.w||!box)return;var sv=box.firstChild;if(!sv||!sv.setAttribute)return;var o=S.z||1;z=Math.max(.15,Math.min(3,z));var px=cx==null?box.clientWidth/2:cx,py=cy==null?box.clientHeight/2:cy,ox=box.scrollLeft+px,oy=box.scrollTop+py;S.z=z;sv.setAttribute("width",Math.round(r.w*z));sv.setAttribute("height",Math.round(r.h*z));sv.style.maxWidth="none";box.scrollLeft=ox*z/o-px;box.scrollTop=oy*z/o-py;var l=$("pzl");if(l)l.textContent=Math.round(z*100)+"%"}
 function zBy(f){zSet((S.z||1)*f)}
 function fit(){var r=S.res,box=$("prev");if(!r||!r.w||!box)return;S.z=1;zSet(Math.max(.6,Math.min(1,((box.clientWidth||320)-2)/r.w)));box.scrollLeft=0}
-(function(){var b=null,d=null;document.addEventListener("DOMContentLoaded",function(){b=$("prev");if(!b)return;var zb=$("zm");zb&&zb.addEventListener("click",function(e){var t=e.target.closest("[data-zz]");if(!t)return;var k=t.dataset.zz;if(k==="+")zBy(1.25);else if(k==="-")zBy(1/1.25);else if(k==="fit")fit();else zSet(1)});b.addEventListener("wheel",function(e){if(!e.ctrlKey)return;e.preventDefault();var q=b.getBoundingClientRect();zSet((S.z||1)*(e.deltaY<0?1.12:1/1.12),e.clientX-q.left,e.clientY-q.top)},{passive:false});b.addEventListener("mousedown",function(e){if(e.button!==0)return;d={x:e.clientX,y:e.clientY,l:b.scrollLeft,t:b.scrollTop};b.classList.add("drag")});window.addEventListener("mousemove",function(e){if(!d)return;b.scrollLeft=d.l-(e.clientX-d.x);b.scrollTop=d.t-(e.clientY-d.y)});window.addEventListener("mouseup",function(){d=null;b&&b.classList.remove("drag")})})})();
+(function(){var b=null,d=null;document.addEventListener("DOMContentLoaded",function(){b=$("prev");if(!b)return;var zb=$("pz");zb&&zb.addEventListener("click",function(e){var t=e.target.closest("[data-zz]");if(!t)return;var k=t.dataset.zz;if(k==="+")zBy(1.25);else if(k==="-")zBy(1/1.25);else if(k==="fit")fit();else zSet(1)});b.addEventListener("wheel",function(e){if(!e.ctrlKey)return;e.preventDefault();var q=b.getBoundingClientRect();zSet((S.z||1)*(e.deltaY<0?1.12:1/1.12),e.clientX-q.left,e.clientY-q.top)},{passive:false});b.addEventListener("mousedown",function(e){if(e.button!==0)return;d={x:e.clientX,y:e.clientY,l:b.scrollLeft,t:b.scrollTop};b.classList.add("drag")});window.addEventListener("mousemove",function(e){if(!d)return;b.scrollLeft=d.l-(e.clientX-d.x);b.scrollTop=d.t-(e.clientY-d.y)});window.addEventListener("mouseup",function(){d=null;b&&b.classList.remove("drag")})})})();
 $("pubc").addEventListener("toggle",fit);window.addEventListener("resize",fit);
 var HPRE=/^08\d{8,11}$/;
 function hpNorm(v){var d=String(v||"").replace(/[^\d+]/g,"");if(d.indexOf("+62")===0)d="0"+d.slice(3);else if(d.indexOf("62")===0)d="0"+d.slice(2);else if(d[0]==="8")d="0"+d;return d.replace(/\D/g,"")}
 function hpState(v){if(!String(v||"").trim())return{ok:true,empty:true};var n=hpNorm(v);return HPRE.test(n)?{ok:true,norm:n}:{ok:false,norm:n}}
 function hpMsg(el,st){var h=el.parentNode.querySelector(".hs");if(!h)return;if(st.empty){h.textContent="";h.className="hs"}else if(st.ok){h.textContent="✓ Nomor valid";h.className="hs ok"}else{h.textContent="Nomor tidak valid. Contoh: 0812 3456 7890";h.className="hs no"}el.classList.toggle("bad",!st.ok)}
 $("send").onclick=function(){
+  if(S.done)return;
   var mw=missingWajib();
   if(mw.length){S.chk=true;paint();msg("m2","Posisi wajib belum lengkap (nama, No HP, email): "+mw.map(function(w){return w.label}).join(", ")+". Klik ikon posisi wajib di atas bagan untuk mengisinya.","err");var wb=$("wj");if(wb){wb.scrollIntoView({behavior:"smooth",block:"center"});wb.classList.remove("shake");void wb.offsetWidth;wb.classList.add("shake")}return}
   S.chk=true;var first=null,cnt=0,fi=0,ff="";
@@ -326,11 +327,11 @@ $("send").onclick=function(){
   paint();
   if(first){S.sel=first.id;paint();
     msg("m2",cnt+" kotak belum lengkap (bertanda merah). Isi jabatan, nama, dan No HP/WhatsApp setiap orang. Email wajib hanya untuk posisi wajib dan direktur; posisi lain cukup nama dan No HP.","err");focusNode(first.id,ff,ff==="jabatan"?null:fi);return}
-  msg("m2","");if(!S.ready){S.ready=true;$("notec").classList.remove("hide");$("send").textContent="Simpan bagan";$("notec").scrollIntoView({behavior:"smooth",block:"center"});return}
-  if(!$("ack").checked)return msg("m2","Centang pernyataan bahwa data benar dan dapat dipertanggungjawabkan.","err");
+  msg("m2","");
+  if(!$("ack").checked){$("ackl").style.outline="2px solid #dc2626";setTimeout(function(){$("ackl").style.outline=""},1800);return msg("m2","Centang pernyataan bahwa data benar dan dapat dipertanggungjawabkan.","err")}
   $("send").disabled=true;msg("m2","");
   var data={posisi:S.data.posisi.map(function(p){return{id:p.id,jabatan:p.jabatan.trim(),level:p.level||"",atasan:p.atasan||"",ket:p.ket,orang:p.ket==="kosong"?[]:p.orang.map(function(o){return{nama:o.nama.trim(),hp:o.hp.trim(),email:(o.email||"").trim(),site:o.site||[]}})}})};
-  api("bg.submit",{row:S.row,pin:S.pin,data:data,note:"[Pernyataan: data benar dan dapat dipertanggungjawabkan] "+$("note").value}).then(function(j){start(j);$("stt").insertAdjacentHTML("beforeend",'<div class="msg okm">Bagan tersimpan dan langsung berlaku.</div>');window.scrollTo({top:0,behavior:"smooth"})}).catch(function(e){msg("m2",e.message,"err")}).finally(function(){$("send").disabled=false});
+  api("bg.submit",{row:S.row,pin:S.pin,data:data,note:"[Pernyataan: data benar dan dapat dipertanggungjawabkan] "+$("note").value}).then(function(j){start(j);S.done=true;$("bar").classList.add("hide");$("stt").insertAdjacentHTML("beforeend",'<div class="msg okm">Bagan tersimpan dan langsung berlaku.</div>');window.scrollTo({top:0,behavior:"smooth"})}).catch(function(e){msg("m2",e.message,"err")}).finally(function(){$("send").disabled=false});
 };
 })();
 </script></body></html>

@@ -8,7 +8,7 @@
     var o = (p.orang || []).filter(function (x) { return x.nama; }), out = [];
     if (p.ket === "kosong" || !o.length) return [{ t: "(posisi kosong)", m: 1 }];
     var many = o.length > 1, lim = many ? 2 : 3;
-    o.slice(0, lim).forEach(function (x) { out.push({ t: x.nama, b: 1 }); if (x.hp) out.push({ t: "HP " + x.hp }); if (x.email) out.push({ t: x.email, s: 1 }); });
+    o.slice(0, lim).forEach(function (x) { out.push({ t: x.nama, b: 1 }); if (x.hp) out.push({ t: "HP " + x.hp, c: x.hp }); if (x.email) out.push({ t: x.email, s: 1, c: x.email }); });
     if (o.length > lim) out.push({ t: "+" + (o.length - lim) + " orang", m: 1 });
     var sites = {}; o.forEach(function (x) { (x.site || []).forEach(function (s) { sites[s] = 1; }); });
     var ns = Object.keys(sites).length;
@@ -45,7 +45,7 @@
       s += '<g data-id="' + esc(p.id) + '"><rect x="' + n.x + '" y="' + n.y + '" width="' + W + '" height="' + L.H + '" rx="9" fill="' + (em ? "#f8fafc" : "#fff") + '" stroke="' + (em ? "#94a3b8" : bc) + '" stroke-width="1.3"' + (em ? ' stroke-dasharray="5 4"' : "") + "/>" +
         '<path d="M' + n.x + " " + (n.y + 28) + "V" + (n.y + 9) + "a9 9 0 0 1 9 -9H" + (n.x + W - 9) + "a9 9 0 0 1 9 9V" + (n.y + 28) + 'Z" fill="' + bc + '"/>' +
         '<text x="' + (n.x + 12) + '" y="' + (n.y + 18.5) + '" font-size="12" font-weight="700" fill="' + tc + '">' + esc(cut(p.jabatan, 28)) + "</text>";
-      ls.forEach(function (l, i) { s += '<text x="' + (n.x + 12) + '" y="' + (n.y + 45 + i * 13) + '" font-size="' + (l.s ? 9.5 : 10.5) + '"' + (l.b ? ' font-weight="600"' : "") + ' fill="' + (l.m ? MUT : TXT) + '"' + (l.m ? ' font-style="italic"' : "") + ">" + esc(cut(l.t, l.s ? 31 : 29)) + "</text>"; });
+      ls.forEach(function (l, i) { s += '<text x="' + (n.x + 12) + '" y="' + (n.y + 45 + i * 13) + '" font-size="' + (l.s ? 9.5 : 10.5) + '"' + (l.b ? ' font-weight="600"' : "") + ' fill="' + (l.m ? MUT : TXT) + '"' + (l.m ? ' font-style="italic"' : "") + ">" + esc(cut(l.t, l.s ? 31 : 29)) + "</text>"; if (o.copy && l.c) s += '<g class="bgcp" data-cp="' + esc(l.c) + '" transform="translate(' + (n.x + W - 22) + " " + (n.y + 45 + i * 13 - 10) + ')" style="cursor:pointer"><title>Salin</title><rect x="-3" y="-3" width="20" height="17" fill="#fff" fill-opacity="0.01"/><rect x="4" y="3" width="7" height="8" rx="1.3" fill="none" stroke="#64748b" stroke-width="1.1"/><rect x="1" y="0.5" width="7" height="8" rx="1.3" fill="#fff" stroke="#64748b" stroke-width="1.1"/></g>'; });
       s += "</g>";
     });
     var top = o.title ? 38 : 0, w = Math.max(L.w, 360), h = L.h + top;
@@ -106,5 +106,19 @@
     Object.keys(A).forEach(function (id) { if (!B[id]) out.push(["-", "Posisi dihapus: " + A[id].jabatan]); });
     return out;
   }
-  g.BG = { render: render, png: toPNG, pdf: pdf, save: save, diff: diff, esc: esc };
+  function bindCopy(el) {
+    if (!el || el.__bgcp) return; el.__bgcp = 1;
+    el.addEventListener("click", function (e) {
+      var t = e.target.closest ? e.target.closest("[data-cp]") : null; if (!t) return; e.preventDefault(); e.stopPropagation();
+      var v = t.getAttribute("data-cp"), done = function () {
+        var b = document.createElement("div"); b.textContent = "Disalin: " + (v.length > 34 ? v.slice(0, 33) + "…" : v); b.setAttribute("role", "status");
+        b.style.cssText = "position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:8px 14px;border-radius:10px;font:600 12.5px system-ui,sans-serif;z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,.3)";
+        document.body.appendChild(b); setTimeout(function () { b.remove(); }, 1600);
+        var r = t.querySelectorAll("rect[stroke]"); r.forEach(function (x) { x.setAttribute("stroke", "#16a34a"); }); setTimeout(function () { r.forEach(function (x) { x.setAttribute("stroke", "#64748b"); }); }, 1200);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(done, function () { fb(v); done(); }); else { fb(v); done(); }
+      function fb(s) { var a = document.createElement("textarea"); a.value = s; a.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); } catch (x) { } a.remove(); }
+    });
+  }
+  g.BG = { bindCopy: bindCopy, render: render, png: toPNG, pdf: pdf, save: save, diff: diff, esc: esc };
 })(window);

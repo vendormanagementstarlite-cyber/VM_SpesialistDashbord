@@ -14631,7 +14631,7 @@ async function contactNudge() {
   function lg() { try { return '<img class="bgl" alt="Starlite" src="' + LOGO_SRC + '">'; } catch (e) { return ""; } }
   /* overlay bagan */
   function zoomify(p) {
-    if (!p || p.dataset.z) return; var sv = p.querySelector("svg"); if (!sv) return; p.dataset.z = "1";
+    if (!p || p.dataset.z) return; var sv = p.querySelector("svg"); if (!sv) return; p.dataset.z = "1"; try { BG.bindCopy(p); } catch (e) { }
     var vb = (sv.getAttribute("viewBox") || "").split(/\s+/).map(Number), W = vb[2] || +sv.getAttribute("width") || 1000, H = vb[3] || +sv.getAttribute("height") || 600, z = 1;
     var bar = document.createElement("div"); bar.className = "zm";
     bar.innerHTML = '<button type="button" data-z="-" title="Perkecil">−</button><span data-z="l">100%</span><button type="button" data-z="+" title="Perbesar">+</button><button type="button" data-z="fit" title="Muat seluruh lebar">Pas lebar</button><button type="button" data-z="1" title="Ukuran asli">100%</button><small>Geser dengan drag atau scroll · Ctrl + scroll untuk zoom</small>';
@@ -14666,10 +14666,10 @@ async function contactNudge() {
       '<div class="row" style="margin-top:10px"><input readonly id="bg-lnk" value="' + esc(link()) + '" style="flex:1;min-width:200px"><button class="bt g" id="bg-cp">Salin tautan form</button></div><p style="margin:6px 0 0;font-size:11.5px;color:#64748b">PIN disimpan sebagai hash, jadi tidak bisa dilihat. Jika mitra lupa, atur PIN baru atau reset.</p></div>' : '<div class="c"><h3>Tautan form mitra</h3><div class="row" style="display:flex;gap:8px;flex-wrap:wrap"><input readonly id="bg-lnk" value="' + esc(link()) + '" style="flex:1;min-width:200px"><button class="bt g" id="bg-cp">Salin tautan form</button></div></div>');
     if (pend) {
       var df = BG.diff(pub && pub.data, pend.data);
-      h += '<div class="c"><h3>Revisi menunggu verifikasi</h3><p style="margin:0;font-size:12px;color:#64748b">Dikirim ' + fmtT(pend.at) + (pend.note ? " · Catatan: " + esc(pend.note) : "") + '</p><ul class="df">' + (df.length ? df.map(function (d) { return '<li class="' + (d[0] === "+" ? "a" : d[0] === "-" ? "d" : "m") + '">' + (d[0] === "+" ? "＋ " : d[0] === "-" ? "－ " : "✎ ") + esc(d[1]) + "</li>"; }).join("") : "<li>Tidak ada perubahan isi.</li>") + '</ul><div class="prev">' + BG.render(pend.data).svg + "</div>" +
+      h += '<div class="c"><h3>Revisi menunggu verifikasi</h3><p style="margin:0;font-size:12px;color:#64748b">Dikirim ' + fmtT(pend.at) + (pend.note ? " · Catatan: " + esc(pend.note) : "") + '</p><ul class="df">' + (df.length ? df.map(function (d) { return '<li class="' + (d[0] === "+" ? "a" : d[0] === "-" ? "d" : "m") + '">' + (d[0] === "+" ? "＋ " : d[0] === "-" ? "－ " : "✎ ") + esc(d[1]) + "</li>"; }).join("") : "<li>Tidak ada perubahan isi.</li>") + '</ul><div class="prev">' + BG.render(pend.data, { copy: 1 }).svg + "</div>" +
         (own ? '<div class="row" style="margin-top:10px"><button class="bt" id="bg-ok">Setujui dan terbitkan</button><input id="bg-why" placeholder="Alasan jika ditolak" style="flex:1;min-width:160px"><button class="bt r" id="bg-no">Tolak</button></div>' : "") + "</div>";
     }
-    if (pub) h += '<div class="c"><h3>Bagan berlaku · versi ' + pub.no + '</h3><p style="margin:0 0 8px;font-size:12px;color:#64748b">Terbit ' + fmt(pub.decided_at) + '</p><div class="prev">' + BG.render(pub.data).svg + '</div><div class="row" style="margin-top:10px"><button class="bt" id="bg-pdf">Unduh PDF</button><button class="bt g" id="bg-png">Unduh PNG</button></div></div>';
+    if (pub) h += '<div class="c"><h3>Bagan berlaku · versi ' + pub.no + '</h3><p style="margin:0 0 8px;font-size:12px;color:#64748b">Terbit ' + fmt(pub.decided_at) + '</p><div class="prev">' + BG.render(pub.data, { copy: 1 }).svg + '</div><div class="row" style="margin-top:10px"><button class="bt" id="bg-pdf">Unduh PDF</button><button class="bt g" id="bg-png">Unduh PNG</button></div></div>';
     else if (!pend) h += '<div class="c" style="color:#64748b">Mitra ini belum mengirim bagan struktur. Salin tautan form di atas dan kirim ke mitra.</div>';
     m.innerHTML = '<div class="bgw"><div class="bgh">' + lg() + '<b>' + esc(name) + '<small>Bagan struktur</small></b><button class="bt w" id="bgx">Tutup</button></div><div class="bgb">' + h + "</div></div>";
     $("bgx").onclick = close;
