@@ -483,6 +483,7 @@ $("next").onclick = function () {
   submit();
 };
 async function submit() {
+  if (V.busy) return;
   for (var i = 0; i < S.length; i++) { st.seen["s" + i] = 1; S[i].fields.forEach(function (f) { st.seen[f.key] = 1; }); if (Object.keys(stepErrors(i)).length) { toast("Masih ada isian yang perlu diperbaiki di langkah " + (i + 1) + "."); go(i); setTimeout(function () { paintErrors(true); }, 50); return; } }
   if (V.pending) { toast("Tunggu lampiran selesai terunggah."); return; }
   if (!(await review())) return;
