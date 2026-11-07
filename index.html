@@ -14898,10 +14898,11 @@ async function contactNudge() {
       var oTd = colA.td;
       colA.td = function (e) {
         if (!e.after2) return oTd.apply(this, arguments);
-        return '<td class="px-3 py-2.5">' + cLine(cTxt(e.after2, "font-bold text-emerald-700 dark:text-cyan-400", 118) + '<span class="tk2-b" title="Takeover ke-2: ' + E_(e.before) + " → " + E_(e.after) + " → " + E_(e.after2) + '">ke-2</span>')
-          + cSub('<span class="text-slate-400 mr-1">dari</span>' + cTxt(e.after, "", 125)) + "</td>";
+        // Mitra After (E) tetap di atas; Mitra ke-2 (AH) tepat di bawahnya; "dari" mitra before di baris terakhir
+        return '<td class="px-3 py-2.5">' + cLine(cTxt(e.after, "font-bold text-emerald-700 dark:text-cyan-400", 150))
+          + cLine('<span class="tk2-b" style="margin:0 5px 0 0" title="Takeover ke-2: ' + E_(e.before) + " → " + E_(e.after) + " → " + E_(e.after2) + '">ke-2</span>' + cTxt(e.after2, "font-bold text-violet-700 dark:text-violet-300", 118))
+          + cSub('<span class="text-slate-400 mr-1">dari</span>' + cTxt(e.before, "", 125)) + "</td>";
       };
-      colA.sortVal = function (e) { return e.after2 || e.after; };
     }
   } catch (x) { }
   // No SPK: nama file chip yang panjang diringkas jadi nomor SPK (kolom tidak melebar)
