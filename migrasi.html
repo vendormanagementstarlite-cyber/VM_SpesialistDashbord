@@ -145,6 +145,7 @@ input:focus{border-color:var(--g2);box-shadow:0 0 0 3px color-mix(in srgb,var(--
 header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,transparent))}
 .grid>*{min-width:0}@media(max-width:600px){.grid{grid-template-columns:minmax(0,1fr)}}
 @media (prefers-reduced-motion:reduce){button.send{transition:none}}
+.pantau{display:flex;gap:10px;align-items:flex-start;margin:14px 0 0;padding:12px 14px;border-radius:12px;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.45);font-size:13px;line-height:1.5;text-align:left}.pantau b{font-weight:700}.pantau svg{flex:none;width:18px;height:18px;margin-top:1px}
 </style>
 </head>
 <body>
@@ -161,6 +162,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
       <li>No PO atau No SPK. Lampiran SPK hanya diminta bila belum tersedia di data kami</li>
       <li>Akun email Sales penampung &amp; Lead IKR mitra pengganti di Dashboard Mitra Starlite</li>
     </ul>
+    <div class="pantau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div><b>Pantau terus progres pengajuan Anda di website ini.</b> Setelah mengajukan, buka kembali halaman ini lalu masukkan <b>No SPK atau No PO</b> untuk melihat tahapan terbaru, termasuk bila ada catatan revisi dari Vendor Management.</div></div>
   </section>
 
   <div id="blocked" class="card blocked" hidden></div>
@@ -232,7 +234,8 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
   <section class="card done" id="done" role="status">
     <svg class="tick" viewBox="0 0 76 76" aria-hidden="true"><circle cx="38" cy="38" r="38"/><path d="M24 39l9 9 19-20"/></svg>
     <h2>Pengajuan terkirim</h2>
-    <p>Vendor Management akan memverifikasi. Bila perlu diperbaiki, pemberitahuan dikirim ke email pengaju. Pantau tahapan dengan memasukkan No PO di form ini.</p>
+    <p>Vendor Management akan memverifikasi. Bila perlu diperbaiki, pemberitahuan dikirim ke email pengaju. </p>
+    <div class="pantau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div><b>Terus pantau progresnya di website ini.</b> Buka kembali halaman ini kapan saja, lalu masukkan <b>No SPK atau No PO</b> yang sama untuk melihat tahapan verifikasi terbaru.</div></div>
     <dl id="sum"></dl>
     <button class="send" type="button" id="again">Ajukan lagi</button>
   </section>
