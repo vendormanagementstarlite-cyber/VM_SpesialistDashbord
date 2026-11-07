@@ -15097,18 +15097,49 @@ async function contactNudge() {
       showToast("BASTM ke-2 siap di Signing. Tambahkan penanda tangan lain dan kotak TTD, lalu kirim.", "success", 8000);
     } catch (x) { showToast(x.message || "Gagal membuka Signing", "error", 8000); }
   };
-  window.tkSaveSignedB2 = async function (id, docId) {
+  var busyDoc = {}, doneKey = "tk_b2_saved";
+  var savedGet = function () { try { return JSON.parse(localStorage.getItem(doneKey) || "[]"); } catch (x) { return []; } };
+  var savedAdd = function (id) { try { var a = savedGet(); a.push(id); localStorage.setItem(doneKey, JSON.stringify(a.slice(-300))); } catch (x) { } };
+  window.tkSaveSignedB2 = async function (id, docId, auto) {
     var e = byId(id), d = (SG.docs || []).find(function (z) { return z.id === docId; }); if (!e || !d || !d.finalUrl) return;
-    if (!confirm("Simpan hasil tanda tangan ke kolom AG (BASTM ke-2)? File lama tetap tersimpan sebagai riwayat.")) return;
+    if (busyDoc[docId]) return; if (!auto && !confirm("Simpan hasil tanda tangan ke kolom AG (BASTM ke-2)? File lama tetap tersimpan sebagai riwayat.")) return;
+    busyDoc[docId] = 1;
     try {
       var r = await callApi("rows.attach", { sheet: "takeover", row: e.row, col: B2COL, mode: "link", url: d.finalUrl, text: (d.finalName || d.name || "BASTM ke-2") + " (TTD)", expect: e.raw }, 120000);
       e.links = e.links || []; e.links[B2COL - 15] = r.url || d.finalUrl; if (Array.isArray(r.values)) e.raw = r.values;
       if (typeof TK_DECO === "function") TK_DECO(e);
       try { renderTakeoverPage(); } catch (x) { }
       try { renderTakeoverDetail(e); } catch (x) { }
-      showToast("Hasil TTD tersimpan di kolom AG", "success");
-    } catch (x) { showToast(x.message || "Gagal menyimpan", "error", 8000); }
+      savedAdd(docId);
+      showToast(auto ? "BASTM ke-2 PO " + e.po + " sudah full TTD — otomatis tersimpan di kolom AG" : "Hasil TTD tersimpan di kolom AG", "success", auto ? 9000 : 4000);
+    } catch (x) { showToast((auto ? "Simpan otomatis BASTM ke-2 gagal: " : "") + (x.message || "Gagal menyimpan"), "error", 8000); }
+    finally { delete busyDoc[docId]; }
   };
+  // otomatis: dokumen Signing bertanda [TK-BS2:PO@baris] yang sudah Selesai/full TTD → simpan ke kolom AG
+  var rx = /\[TK-BS2:([^@\]]+)@(\d+)\]/;
+  window.tkAutoSignSave = function () {
+    try {
+      if (typeof SG === "undefined" || !SG.loaded || !(STATE.takeover || []).length || !currentUser) return;
+      var okRole = currentUser.role === "owner" || (can("upload") && (currentUser.perms || {}).up_BASTM); if (!okRole) return;
+      var seen = savedGet();
+      (SG.docs || []).forEach(function (d) {
+        if (d.status !== "selesai" || !d.finalUrl || seen.indexOf(d.id) >= 0 || busyDoc[d.id]) return;
+        var m = rx.exec(String(d.note || "")); if (!m) return;
+        var e = (STATE.takeover || []).find(function (x) { return x.po === m[1] && String(x.row) === m[2]; }); if (!e) return;
+        if (b2u(e) === d.finalUrl) { savedAdd(d.id); return; }
+        window.tkSaveSignedB2(e.id, d.id, true);
+      });
+    } catch (x) { }
+  };
+  if (typeof sgUpsert === "function") { var oUp = sgUpsert; window.sgUpsert = sgUpsert = function () { var r = oUp.apply(this, arguments); setTimeout(window.tkAutoSignSave, 300); return r; }; }
+  if (typeof sgLoad === "function") { var oLd = sgLoad; window.sgLoad = sgLoad = async function () { var r = await oLd.apply(this, arguments); setTimeout(window.tkAutoSignSave, 1500); return r; }; }
+  setInterval(function () {
+    try {
+      if (typeof SG === "undefined" || !SG.loaded || document.hidden) return;
+      window.tkAutoSignSave();
+      if ((SG.docs || []).some(function (d) { return d.status !== "selesai" && rx.test(String(d.note || "")); }) && !SG.loading) sgLoad(true);   // cek ulang dokumen BASTM ke-2 yang masih menunggu TTD
+    } catch (x) { }
+  }, 120000);
 })();
 </script>
 <script id="bagan_link_btn">
