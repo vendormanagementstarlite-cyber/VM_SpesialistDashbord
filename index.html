@@ -15351,18 +15351,18 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     });
   }
   var oPg = window.setProgress, oTo = window.showToast, oQ = window.quietNote;
-  window.setProgress = function (l, p) {
-    if (!visible()) return oPg && oPg.apply(this, arguments);
-    prog = (l !== null && l != null && p != null) ? { l: String(l), p: Number(p) || 0 } : null; paint();
-  };
+  // progres sinkron tidak ditampilkan di mana pun: cukup ikon Sync yang berputar
+  window.setProgress = function () { prog = null; paint(); return oPg && oPg.call(this, null); };
   function push(m, type, ms) {
     var c = type === "error" ? "er" : type === "success" ? "ok" : "info", d = Math.max(Number(ms) || 0, c === "er" ? 9000 : 3500);
     note = { m: String(m == null ? "" : m).replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim(), c: c };
     if (!note.m) { note = null; return paint(); }
     clearTimeout(nt); nt = setTimeout(function () { note = null; paint(); }, d); paint();
   }
-  window.showToast = function (m, t, a) { if (!visible()) return oTo && oTo.apply(this, arguments); push(m, t, a); };
-  window.quietNote = function (e) { if (!visible()) return oQ && oQ.apply(this, arguments); push(e, "info", 4500); };
+  // info/sukses terkait sinkron & memuat data tidak ditampilkan; kegagalan tetap tampil
+  var SYNC_RE = /^(Berhasil$|Menampilkan data cache|Sinkronisasi|Menghubungkan|Menyinkronkan|Memuat|Memproses|Mengunduh data|Selamat datang|Google Drive terhubung|Hak akses Anda diperbarui|Tracker diperbarui)|(SPK|PO Cancel) dimuat|diperbarui otomatis|diperbarui · [\d.,]+ baris|^Data .* diperbarui|Berhasil memuat/;
+  window.showToast = function (m, t, a) { if (t !== "error" && SYNC_RE.test(String(m == null ? "" : m))) return; if (!visible()) return oTo && oTo.apply(this, arguments); push(m, t, a); };
+  window.quietNote = function (e) { try { document.querySelectorAll("[data-last-sync]").forEach(function (x) { x.title = String(e); }); } catch (x) { } };
   window.SYNC_HUB = { push: push, paint: paint };
 })();
 </script>
