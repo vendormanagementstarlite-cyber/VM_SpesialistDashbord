@@ -15014,6 +15014,26 @@ async function contactNudge() {
     return canB2() ? '<button type="button" class="dd no" title="BASTM ke-2 belum ada — klik untuk unggah PDF" onclick="event.stopPropagation();tkUpB2(' + jsArg(e.id) + ')">BS2</button>' : '<span class="dd no" title="BASTM ke-2: belum ada">BS2</span>';
   };
   window.TK_B2CHIP = b2Chip;
+  // baris "BASTM ke-2 (AG)" pada daftar Kelengkapan Dokumen (rincian PO & dialog tambah dokumen)
+  var b2Row = function (e) {
+    if (!e || !(e.after2 || b2Url(e) || e.att_bastm2)) return "";
+    var u = b2Url(e), has = !!(u || e.att_bastm2), id = jsArg(e.id), ed = canB2();
+    var btn = has
+      ? (u ? '<button onclick="sdPreviewUrl(' + jsArg(u) + ", " + jsArg("BASTM ke-2 · PO " + e.po) + ", " + jsArg("Kolom AG") + ')" class="btn btn-ghost !py-1 !px-2 text-[11px]"><i class="fa-solid fa-eye"></i>Lihat</button>' : "")
+        + (ed ? '<button onclick="tkUpB2(' + id + ')" class="btn btn-ghost !py-1 !px-2 text-[11px]" title="Unggah BASTM ke-2 baru (riwayat tetap tersimpan)"><i class="fa-solid fa-arrows-rotate"></i>Ganti</button>' : "")
+      : (ed ? '<button onclick="tkUpB2(' + id + ')" class="btn btn-primary !py-1 !px-2 text-[11px]"><i class="fa-solid fa-cloud-arrow-up"></i>Unggah PDF</button>' : '<span class="text-[10px] text-slate-400">tidak punya akses upload</span>');
+    var st = has ? '<span class="doc-st ok"><i class="fa-solid fa-circle-check"></i>Ada</span>' : '<span class="doc-st bad"><i class="fa-solid fa-circle-xmark"></i>Belum ada</span>';
+    return '<div class="doc-row ' + (has ? "" : "miss") + '"><div class="flex-1" style="min-width:140px"><p class="text-[12px] font-bold text-slate-800 dark:text-slate-100"><span class="rec-col mr-1">AG</span>BASTM ke-2 ' + st + "</p>"
+      + (e.after2 ? '<p class="text-[10px] text-slate-500">Serah terima ke Mitra ke-2: ' + E_(e.after2) + "</p>" : "") + '</div><div class="flex flex-wrap gap-1.5 justify-end ml-auto">' + btn + "</div></div>";
+  };
+  if (typeof docListHtml === "function") {
+    var oDL = docListHtml;
+    window.docListHtml = docListHtml = function (e) {
+      var h = oDL.apply(this, arguments);
+      try { var r = b2Row(e); if (r) h = h.replace(/<\/div>\s*$/, r + "</div>"); } catch (x) { }
+      return h;
+    };
+  }
   // buka form Edit dan arahkan ke field Mitra After ke-2 (kolom AH)
   window.tkAddM2 = async function (id) {
     try { await openRecEdit(id); } catch (x) { return; }
