@@ -15213,12 +15213,12 @@ async function contactNudge() {
     var end = function () { quiet--; if (!STATE.syncing) spin(false); };
     p.then(end, end); return p;
   };
-  if (typeof setProgress === "function") { var oSP = setProgress; window.setProgress = setProgress = function (e, t) { return quiet > 0 ? oSP.call(this, null) : oSP.apply(this, arguments); }; }
+  if (typeof setProgress === "function") { var oSP = setProgress; window.setProgress = setProgress = function (e, t) { return oSP.call(this, null); }; }   // panel progres tidak pernah tampil
   if (typeof showToast === "function") {
     var oST = showToast;
     window.showToast = showToast = function (m) {
       var s = String(m || "");
-      if (/^Menampilkan data cache, memperbarui dari Google Sheets/.test(s) || (quiet > 0 && /^Sinkronisasi berhasil/.test(s))) return;
+      if (/^(Menampilkan data cache, memperbarui|Sinkronisasi berhasil|Sinkronisasi sedang berjalan)/.test(s) || /(diperbarui otomatis|^Tracker diperbarui|diperbarui · [\d.,]+ baris)/.test(s) && !/gagal/i.test(s)) return;   // info sinkron cukup lewat ikon Sync
       return oST.apply(this, arguments);
     };
   }
