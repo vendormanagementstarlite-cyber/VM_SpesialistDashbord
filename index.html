@@ -15199,6 +15199,33 @@ async function contactNudge() {
   }, 120000);
 })();
 </script>
+<script id="login_sync_quiet">
+/* Sinkronisasi otomatis (saat login / setelah simpan): tanpa panel progres & toast "Sinkronisasi berhasil" — cukup ikon Sync yang berputar di semua fitur */
+(function () {
+  "use strict";
+  if (typeof autoSyncGoogleSheets !== "function") return;
+  var orig = autoSyncGoogleSheets, quiet = 0;
+  var spin = function (on) { try { document.querySelectorAll('[id$="-sync"] > i.fa-rotate, [data-sync-ic]').forEach(function (i) { i.classList.toggle("animate-spin", on); }); } catch (x) { } };
+  window.autoSyncGoogleSheets = autoSyncGoogleSheets = function (opt) {
+    if (STATE.syncing || (opt && opt.manual)) return orig.apply(this, arguments);
+    quiet++; spin(true);
+    var p; try { p = Promise.resolve(orig.apply(this, arguments)); } catch (e) { p = Promise.reject(e); }
+    var end = function () { quiet--; if (!STATE.syncing) spin(false); };
+    p.then(end, end); return p;
+  };
+  if (typeof setProgress === "function") { var oSP = setProgress; window.setProgress = setProgress = function (e, t) { return quiet > 0 ? oSP.call(this, null) : oSP.apply(this, arguments); }; }
+  if (typeof showToast === "function") {
+    var oST = showToast;
+    window.showToast = showToast = function (m) {
+      var s = String(m || "");
+      if (/^Menampilkan data cache, memperbarui dari Google Sheets/.test(s) || (quiet > 0 && /^Sinkronisasi berhasil/.test(s))) return;
+      return oST.apply(this, arguments);
+    };
+  }
+  // ikon Sync fitur lain ikut berputar selama sinkronisasi berjalan (mis. refresh dari fitur lain)
+  setInterval(function () { try { if (quiet > 0 && STATE.syncing) spin(true); } catch (x) { } }, 700);
+})();
+</script>
 <script id="bagan_link_btn">
 window.copyBaganLink=function(){var u=location.href.split("#")[0].split("?")[0].replace(/[^\/]*$/,"")+"bagan.html";
  function ok(){showToast("Link form bagan disalin")}
