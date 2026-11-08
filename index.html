@@ -15700,12 +15700,12 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   // ---- dokumen baru dibuat → minta server mengirim notifikasi ke penandatangan (daftar penerima dihitung server dari data dokumen)
   if (typeof sbRpc === "function") {
     var bRpc = sbRpc;
-    var linkTry = 0;
+    var linkTry = 0, linkDone = "";
     window.sbRpc = sbRpc = function (fn, a) {
       var pr = bRpc.apply(this, arguments);
       // penandatangan masuk lewat link dokumen (PIN / sidik jari berhasil) → simpan link pribadinya supaya aplikasi terpasang langsung ke kotak masuk
-      if (a && a.p_t && !/^SBP-/.test(String(a.p_t)) && a.p_signer && a.p_pin && fn !== "sg_my_plink" && linkTry < 3 && !lsGet("sgp_link")) pr.then(function (r) {
-        if (!r || !r.ok || r.needPin || r.pinCreate || r.needBio || lsGet("sgp_link")) return; linkTry++;
+      if (a && a.p_t && !/^SBP-/.test(String(a.p_t)) && a.p_signer && a.p_pin && fn !== "sg_my_plink" && linkTry < 3 && linkDone !== a.p_t + "|" + a.p_signer) pr.then(function (r) {
+        if (!r || !r.ok || r.needPin || r.pinCreate || r.needBio) return; linkTry++; linkDone = a.p_t + "|" + a.p_signer;
         bRpc("sg_my_plink", { p_t: a.p_t, p_signer: a.p_signer, p_pin: a.p_pin }, 20000).then(function (x) { if (x && x.ok && /^SBP-[A-Za-z0-9_-]{6,80}$/.test(x.tok)) lsSet("sgp_link", x.tok); }).catch(function () { });
       }).catch(function () { });
       if (fn === "sg_create") pr.then(function (r) {
