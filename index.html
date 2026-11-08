@@ -15699,6 +15699,26 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
       return pr;
     };
   }
+  // ---- tombol "Pasang aplikasi" melayang: tampil di halaman tanda tangan mana pun (juga layar PIN), selama belum dipasang
+  function fab() {
+    if (standalone || !TT || lsGet("sgapp_fab_off") === "1" || document.getElementById("sgapp-fab")) return;
+    var inst = !!window.__pwaPrompt;
+    if (!inst && !(ios && !standalone)) return;
+    var d = document.createElement("div"); d.id = "sgapp-fab";
+    d.style.cssText = "position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:9998;display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:14px;background:#3558c8;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.28);font:600 13px/1.35 system-ui,sans-serif;max-width:520px;margin:0 auto";
+    d.innerHTML = inst
+      ? '<span><i class="fa-solid fa-mobile-screen-button"></i> Pasang Signing di perangkat ini, lengkap dengan notifikasi dokumen baru</span><span style="display:flex;gap:6px;flex:none"><button data-f="go" style="background:#fff;color:#3558c8;border:0;border-radius:10px;padding:7px 12px;font-weight:800">Pasang</button><button data-f="x" aria-label="Tutup" style="background:transparent;color:#fff;border:0;font-size:18px;padding:0 4px">×</button></span>'
+      : '<span>Pasang di iPhone/iPad: ketuk <b>Bagikan</b> lalu <b>Tambahkan ke Layar Utama</b></span><button data-f="x" aria-label="Tutup" style="background:transparent;color:#fff;border:0;font-size:18px;padding:0 4px">×</button>';
+    d.addEventListener("click", async function (e) {
+      var b = e.target.closest("[data-f]"); if (!b) return;
+      if (b.dataset.f === "x") { lsSet("sgapp_fab_off", "1"); d.remove(); return; }
+      var pr = window.__pwaPrompt; if (!pr) return; pr.prompt(); try { await pr.userChoice; } catch (x) { } window.__pwaPrompt = null; d.remove();
+    });
+    document.body.appendChild(d);
+  }
+  window.addEventListener("pwa-ready", fab);
+  window.addEventListener("appinstalled", function () { var d = document.getElementById("sgapp-fab"); if (d) d.remove(); });
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(fab, 800); }); else setTimeout(fab, 800);
   if (!person) return;   // bagian di bawah hanya untuk kotak masuk penandatangan (link pribadi)
 
   // ---- angka di ikon
