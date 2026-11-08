@@ -15296,7 +15296,7 @@ async function contactNudge() {
   };
   window.sgJenisPick = function (v) {
     SGW.jenis = v;
-    var k = sgJenisKind(v) || "LAIN"; if (!SGW.link) return;
+    var k = sgJenisKind(v) || "LAIN"; if (!SGW.link || !sgCanLink()) return;
     SGW.link.kind = k;
     var sel = document.querySelector('#sgw-body select[id$="-kind"]');
     if (sel) { sel.value = k; sel.dispatchEvent(new Event("change", { bubbles: true })); }
@@ -15307,6 +15307,20 @@ async function contactNudge() {
     try { var r = await sbOwner("sg_jenis_add", { p_name: v }, 30000); if (r.ok === false) throw new Error(r.error || "Gagal"); SGJ = r.jenis || SGJ; sgJenisPick(r.name || v); fill(); i.value = ""; document.getElementById("sgw-jenis-add").classList.add("hidden"); showToast('Kategori "' + SGW.jenis + '" ditambahkan', "success", 3000); }
     catch (x) { showToast(x.message || "Gagal menambah kategori", "error", 6000); }
   };
+  // ---- Integrasi lampiran Signing: hanya Akun Utama / Operator yang diberi akses ----
+  try { if (typeof PERMS !== "undefined" && !PERMS.some(function (p) { return p.key === "signlink"; })) PERMS.push({ key: "signlink", group: "Signing Document", label: "Integrasi lampiran otomatis (tautkan & lampirkan ke data)", icon: "fa-diagram-project" }); if (typeof DEFAULT_ROLE_PERMS !== "undefined") { DEFAULT_ROLE_PERMS.operator.signlink = false; DEFAULT_ROLE_PERMS.viewer.signlink = false; } } catch (e) { }
+  window.sgCanLink = function () { return !!currentUser && (currentUser.role === "owner" || (currentUser.role === "operator" && !!(currentUser.perms || {}).signlink)); };
+  var LINK_SEL = ".sgl-wrap,.sg-auto,[onclick*=\"sgIntegrate(\"]";
+  var stripLink = function (n) {
+    if (n.nodeType !== 1) return;
+    if (n.matches(LINK_SEL)) { n.remove(); return; }
+    n.querySelectorAll(LINK_SEL).forEach(function (x) { x.remove(); });
+  };
+  new MutationObserver(function (ms) { if (sgCanLink()) return; ms.forEach(function (m) { m.addedNodes.forEach(stripLink); }); }).observe(document.body, { childList: true, subtree: true });
+  var oInt = window.sgIntegrate;
+  if (typeof oInt === "function") window.sgIntegrate = sgIntegrate = function () { if (!sgCanLink()) return showToast("Integrasi lampiran hanya untuk Akun Utama atau Operator yang diberi akses", "error", 6000); return oInt.apply(this, arguments); };
+  var oCr = window.sgCreate;
+  if (typeof oCr === "function") window.sgCreate = sgCreate = function () { if (!sgCanLink()) { SGW.auto = null; SGW.link = { kind: "LAIN", refs: [] }; } return oCr.apply(this, arguments); };
   // jenis ikut terkirim ke sg_create
   var oRpc = window.sbRpc;
   window.sbRpc = sbRpc = function (fn, a) {
