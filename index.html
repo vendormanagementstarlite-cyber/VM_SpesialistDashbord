@@ -15754,6 +15754,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     if (perm !== "granted") throw new Error("Izin notifikasi ditolak. Aktifkan lewat pengaturan perangkat / browser.");
     var r = await getReg(), sub = await r.pushManager.getSubscription() || await r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(VAPID) });
     await sendSub(sub); subscribed = true; lsSet("sgapp_push", "1");
+    try { await r.showNotification("Notifikasi aktif", { body: "Anda akan diberi tahu saat ada dokumen yang harus ditandatangani.", icon: "icon-192.png", badge: "icon-192.png", tag: "sg-welcome" }); } catch (e) { }
   }
   async function resync() {   // langganan bisa berganti: daftarkan ulang diam-diam bila izin sudah diberikan
     if (!pushOK || Notification.permission !== "granted") return;
