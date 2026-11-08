@@ -12961,6 +12961,76 @@ async function contactNudge() {
 })();
 
 </script>
+<script id="sg_inbox_group">
+/* Kotak masuk penanda tangan: dokumen dikelompokkan per jenis (klik jenis → daftar dokumen), + "Tanda tangani semua <jenis>" */
+(function () {
+  if (typeof sgInboxRender !== "function") return;
+  var E_ = function (x) { return String(x == null ? "" : x).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var KEY = "sgg_open", NONE = "Tanpa jenis";
+  var jenisOf = function (it) { return String(it.jenis || "").trim() || ((window.SGP && SGP.jenisMap) || {})[it.id] || NONE; };
+  var rd = function () { try { return JSON.parse(sessionStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } };
+  var wr = function (o) { try { sessionStorage.setItem(KEY, JSON.stringify(o)); } catch (e) { } };
+  var bF = window.sgInboxFetch;
+  if (typeof bF === "function") window.sgInboxFetch = sgInboxFetch = async function () {
+    var a = await bF.apply(this, arguments);
+    try { var ids = (a.pending || []).map(function (x) { return x.id; }); if (ids.length && !(a.pending || []).some(function (x) { return x.jenis; })) { var r = await callApi("sign.jenismap", { ids: ids }, 20000); SGP.jenisMap = r.map || {}; } } catch (e) { SGP.jenisMap = SGP.jenisMap || {}; }
+    return a;
+  };
+  var base = sgInboxRender;
+  window.sgInboxRender = sgInboxRender = function () {
+    var out = base.apply(this, arguments);
+    try { group(); } catch (e) { console.warn(e); }
+    return out;
+  };
+  function group() {
+    var main = document.querySelector(".sg-main"); if (!main || main.querySelector(".sgg-wrap")) return;
+    var pend = (SGP.inbox && SGP.inbox.pending) || [], map = SGP.jenisMap || {};
+    if (!pend.length || !(Object.keys(map).length || pend.some(function (x) { return x.jenis; }))) return;
+    var items = [].slice.call(main.querySelectorAll(".sg-ibx-item:not(.done)")).filter(function (el) { return !el.closest(".sgi-done"); });
+    if (items.length !== pend.length) return;
+    var groups = {}, order = [];
+    pend.forEach(function (it, i) { var j = jenisOf(it); if (!groups[j]) { groups[j] = []; order.push(j); } groups[j].push({ it: it, el: items[i] }); });
+    var opened = typeof sgOpened === "function" ? sgOpened() : {}, st = rd(), wrap = document.createElement("div"); wrap.className = "sgg-wrap";
+    var par = items[0].parentNode, mark = document.createComment("g"); par.insertBefore(mark, items[0]);
+    order.forEach(function (j) {
+      var g = groups[j], ready = g.filter(function (x) { return opened[x.it.id]; }).length, isOpen = !!st[j];
+      var box = document.createElement("div"); box.className = "sgg" + (isOpen ? " open" : "");
+      box.innerHTML = '<button type="button" class="sgg-h"><span class="sgg-ic"><i class="fa-solid fa-folder-open"></i></span><span class="sgg-t"><b>' + E_(j) + "</b><small>" + g.length + " dokumen" + (ready ? " · " + ready + " sudah dibuka" : "") + '</small></span><span class="sgg-n">' + g.length + '</span><i class="fa-solid fa-chevron-down sgg-chev"></i></button><div class="sgg-b"></div>';
+      var body = box.querySelector(".sgg-b");
+      g.forEach(function (x) { body.appendChild(x.el); });
+      if (g.length > 1) {
+        var all = document.createElement("div"); all.className = "sgg-all";
+        all.innerHTML = '<small>' + (ready ? ready + " dari " + g.length + " dokumen sudah dibuka & siap" : "Buka dulu dokumennya (minimal sekali) agar bisa ditandatangani sekaligus") + '</small><button type="button" class="btn btn-primary shrink-0"' + (ready ? "" : " disabled") + '><i class="fa-solid fa-signature"></i>Tanda tangani semua ' + E_(j) + (ready ? " (" + ready + ")" : "") + "</button>";
+        all.querySelector("button").onclick = function () { window.sgSignAllJenis(j); };
+        body.appendChild(all);
+      }
+      box.querySelector(".sgg-h").onclick = function () { var o = box.classList.toggle("open"), s2 = rd(); s2[j] = o ? 1 : 0; wr(s2); };
+      wrap.appendChild(box);
+    });
+    par.insertBefore(wrap, mark); mark.remove();
+    items.forEach(function (el) { if (el.parentNode === wrap.parentNode) { } });
+  }
+  window.sgSignAllJenis = async function (j) {
+    var full = SGP.inbox.pending;
+    SGP.inbox.pending = full.filter(function (x) { return jenisOf(x) === j; });
+    try { await sgSignAll(); } finally { SGP.inbox.pending = full; }
+  };
+})();
+</script>
+<style id="sg_inbox_group_css">
+.sgg-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.sgg{border:1px solid #e2e8f0;border-radius:16px;background:#fff;overflow:hidden}
+.dark .sgg{background:rgba(30,41,59,.75);border-color:rgba(148,163,184,.18)}
+.sgg-h{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;text-align:left}
+.sgg-ic{width:34px;height:34px;border-radius:11px;background:#e0e7ff;color:#3558c8;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.sgg-t{flex:1;min-width:0}.sgg-t b{display:block;font-size:13.5px;font-weight:800}.sgg-t small{display:block;font-size:11px;color:#64748b}
+.sgg-n{min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#e11d48;color:#fff;font-size:11.5px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.sgg-chev{font-size:11px;color:#94a3b8;transition:transform .15s}.sgg.open .sgg-chev{transform:rotate(180deg)}
+.sgg-b{display:none;padding:0 10px 10px;border-top:1px solid #eef2f7}.sgg.open .sgg-b{display:block;padding-top:10px}
+.sgg-b .sg-ibx-item{margin-bottom:8px}
+.sgg-all{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;background:#eef2ff;border:1px solid #dbe3ff}
+.sgg-all small{font-size:11.5px;color:#475569}
+</style>
 <style id="addon_v27_mail_css">
 /* v27 · Email Dokumen */
 .mx-hdr{position:relative}
@@ -15200,7 +15270,7 @@ async function contactNudge() {
 })();
 </script>
 <script id="sg_jenis">
-/* Signing: jenis dokumen wajib saat membuat routing + kategori bisa ditambah; penanda tangan memverifikasi jenis & judul sebelum TTD */
+/* Signing: jenis dokumen wajib (kategori bisa ditambah, disimpan di Supabase: sg_jenis); pengelompokan inbox ada di sg_inbox_group */
 (function () {
   var E_ = function (x) { return typeof esc === "function" ? esc(x) : String(x == null ? "" : x).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
   window.SGJ = ["SPK Take Over", "BASTM", "BAP PO", "BA Cancel IKR & MS", "SP-1", "SP-2", "SP-3", "Lainnya"];
@@ -15209,52 +15279,22 @@ async function contactNudge() {
     return '<option value="">— Pilih jenis dokumen —</option>' + SGJ.map(function (j) { return '<option value="' + E_(j) + '"' + (j === cur ? " selected" : "") + ">" + E_(j) + "</option>"; }).join("");
   };
   var fill = function () { var s = document.getElementById("sgw-jenis"); if (s) { var v = s.value || SGW.jenis || ""; s.innerHTML = sgJenisOpts(); s.value = v; } };
-  var load = function () { callApi("sign.jenis", {}, 30000).then(function (r) { if (r && r.jenis && r.jenis.length) { SGJ = r.jenis; fill(); } }).catch(function () { }); };
+  var load = function () { sbOwner("sg_jenis_list", {}, 30000).then(function (r) { if (r && r.jenis && r.jenis.length) { SGJ = r.jenis; fill(); } }).catch(function () { }); };
   var oNew = window.sgNew;
   window.sgNew = sgNew = function () { var r = oNew.apply(this, arguments); load(); return r; };
   window.sgJenisNew = function () { var b = document.getElementById("sgw-jenis-add"); if (!b) return; b.classList.toggle("hidden"); var i = document.getElementById("sgw-jenis-new"); if (i && !b.classList.contains("hidden")) i.focus(); };
   window.sgJenisSave = async function () {
     var i = document.getElementById("sgw-jenis-new"), v = i && i.value.replace(/\s+/g, " ").trim(); if (!v) return;
-    try { var r = await callApi("sign.jenis", { add: v }, 30000); SGJ = r.jenis || SGJ; var m = SGJ.filter(function (j) { return j.toLowerCase() === v.toLowerCase(); })[0] || v; SGW.jenis = m; fill(); i.value = ""; document.getElementById("sgw-jenis-add").classList.add("hidden"); showToast('Kategori "' + m + '" ditambahkan', "success", 3000); }
+    try { var r = await sbOwner("sg_jenis_add", { p_name: v }, 30000); if (r.ok === false) throw new Error(r.error || "Gagal"); SGJ = r.jenis || SGJ; SGW.jenis = r.name || v; fill(); i.value = ""; document.getElementById("sgw-jenis-add").classList.add("hidden"); showToast('Kategori "' + SGW.jenis + '" ditambahkan', "success", 3000); }
     catch (x) { showToast(x.message || "Gagal menambah kategori", "error", 6000); }
   };
-  // ---- halaman penanda tangan: verifikasi jenis + judul sebelum menandatangani ----
-  var oPick = window.sgPublicPick;
-  if (typeof oPick === "function") window.sgPublicPick = sgPublicPick = function () {
-    var d = window.SGP && SGP.data;
-    if (d && d.doc && d.doc.jenis && !SGP.gateOk && d.me && d.me.status !== "selesai" && !d.isFinal) return sgGate(oPick, this, arguments);
-    return oPick.apply(this, arguments);
+  // jenis ikut terkirim ke sg_create
+  var oRpc = window.sbRpc;
+  window.sbRpc = sbRpc = function (fn, a) {
+    try { if (fn === "sg_create" && a && a.p_doc && typeof SGW !== "undefined" && SGW.jenis && !a.p_doc.jenis) a.p_doc.jenis = SGW.jenis; } catch (x) { }
+    return oRpc.apply(this, arguments);
   };
-  async function sgGate(go, self, args) {
-    var m = document.getElementById("sg-gate"); if (m) m.remove();
-    m = document.createElement("div"); m.id = "sg-gate"; m.className = "fixed inset-0 z-[95] flex items-center justify-center p-4 bg-cyberDark/60 backdrop-blur-sm";
-    m.innerHTML = '<div class="proc-card"><h3 class="text-[14px] font-extrabold text-slate-900 dark:text-white"><i class="fa-solid fa-shield-halved mr-1.5 text-cyan-600"></i>Pastikan dokumen yang Anda tandatangani</h3>' +
-      '<p class="text-[11.5px] text-slate-500 mt-1">Pilih jenis dan judul dokumen sesuai yang sedang Anda buka, agar tidak salah tanda tangan.</p>' +
-      '<label class="ulabel mt-3">Jenis dokumen</label><select id="sgg-j" class="field w-full"><option value="">Memuat…</option></select>' +
-      '<label class="ulabel mt-3">Judul dokumen</label><select id="sgg-t" class="field w-full" disabled><option value="">Pilih jenis dulu</option></select>' +
-      '<p id="sgg-e" class="hidden mt-3 p-2.5 rounded-lg bg-rose-500/10 text-[11px] font-semibold text-rose-700 dark:text-rose-300"></p>' +
-      '<div class="flex gap-2 mt-4"><button type="button" class="btn btn-ghost flex-1" id="sgg-x">Batal</button><button type="button" class="btn btn-primary flex-1" id="sgg-ok">Lanjut tanda tangan</button></div></div>';
-    document.body.appendChild(m);
-    var J = document.getElementById("sgg-j"), T = document.getElementById("sgg-t"), er = document.getElementById("sgg-e"), ch = {};
-    var err = function (t) { er.textContent = t; er.classList.toggle("hidden", !t); };
-    document.getElementById("sgg-x").onclick = function () { m.remove(); };
-    try {
-      var r = await callApi("sign.choices", { t: SGP.t, signer: SGP.signer, pin: SGP.pin }, 60000); ch = r.choices || {};
-      J.innerHTML = '<option value="">— Pilih jenis dokumen —</option>' + (r.jenisList || Object.keys(ch)).map(function (j) { return '<option value="' + E_(j) + '">' + E_(j) + "</option>"; }).join("");
-    } catch (x) { J.innerHTML = '<option value="">—</option>'; err(x.message || "Gagal memuat daftar dokumen"); }
-    J.onchange = function () {
-      err(""); var l = ch[J.value] || [];
-      T.disabled = !J.value; T.innerHTML = '<option value="">' + (!J.value ? "Pilih jenis dulu" : l.length ? "— Pilih judul dokumen —" : "Tidak ada dokumen jenis ini yang menunggu tanda tangan Anda") + "</option>" + l.map(function (t) { return '<option value="' + E_(t) + '">' + E_(t) + "</option>"; }).join("");
-    };
-    T.onchange = function () { err(""); };
-    document.getElementById("sgg-ok").onclick = function () {
-      if (!J.value) return err("Pilih jenis dokumen");
-      if (!T.value) return err("Pilih judul dokumen");
-      var dd = SGP.data.doc;
-      if (J.value.toLowerCase() !== String(dd.jenis).toLowerCase() || T.value !== dd.name) return err("Jenis atau judul tidak sesuai dengan dokumen yang sedang Anda buka. Periksa kembali sebelum menandatangani.");
-      SGP.gateOk = true; m.remove(); go.apply(self, args);
-    };
-  }
+
 })();
 </script>
 <script id="tk_b2_sign">
