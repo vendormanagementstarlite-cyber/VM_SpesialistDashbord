@@ -8,6 +8,26 @@
     <link rel="preconnect" href="https://sheets.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://psbgyndvyypllpyesqfi.supabase.co" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#3558c8">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Signing">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <script>
+    /* Aplikasi Signing (PWA): ingat link pribadi penandatangan; buka dari ikon (?app=sign) langsung ke kotak masuk */
+    (function () { try {
+        var q = new URLSearchParams(location.search), t = q.get('ttd') || '';
+        window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); window.__pwaPrompt = e; try { window.dispatchEvent(new Event('pwa-ready')); } catch (x) { } });
+        if (/^SBP-[A-Za-z0-9_-]{6,80}$/.test(t)) { try { localStorage.setItem('sgp_link', t); } catch (e) { } }
+        if (q.get('app') === 'sign' && !t) {
+            var s = ''; try { s = localStorage.getItem('sgp_link') || ''; } catch (e) { }
+            if (/^SBP-[A-Za-z0-9_-]{6,80}$/.test(s)) { location.replace(location.pathname + '?ttd=' + s + '&app=sign'); }
+            else { window.__sgAppNoLink = true; }
+        }
+    } catch (e) { } })();
+    </script>
     <script>
     /* Link tanda tangan (?ttd=): minta data & PDF SEKARANG, sebelum sisa aplikasi selesai dimuat */
     (function () { try {
@@ -15631,6 +15651,129 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   window.showToast = function (m, t, a) { if (t !== "error" && SYNC_RE.test(String(m == null ? "" : m))) return; if (!visible()) return oTo && oTo.apply(this, arguments); push(m, t, a); };
   window.quietNote = function (e) { try { document.querySelectorAll("[data-last-sync]").forEach(function (x) { x.title = String(e); }); } catch (x) { } };
   window.SYNC_HUB = { push: push, paint: paint };
+})();
+</script>
+<script id="sg_app">
+/* Aplikasi Signing (PWA): pasang di layar utama, angka dokumen di ikon, notifikasi dokumen baru (Web Push), pembaruan otomatis saat aplikasi dibuka */
+(function () {
+  var VAPID = "BH-RGotoUguC1MxzNEdpZiisoT10zS7KEnYozQp1MAubiOVty1EHwP09sOm3oUVgQUv7jLpLP2oWFDe5-DVpQOo";
+  var q = new URLSearchParams(location.search), TT = q.get("ttd") || "", person = /^SBP-/.test(TT);
+  var standalone = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var E_ = function (x) { return String(x == null ? "" : x).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var lsGet = function (k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } }, lsSet = function (k, v) { try { localStorage.setItem(k, v); } catch (e) { } };
+  var sgp = function () { return typeof SGP !== "undefined" ? SGP : null; };
+  var pending = function () { var p = sgp(); return (p && p.inbox && p.inbox.pending) || []; };
+  var pushOK = ("serviceWorker" in navigator) && ("PushManager" in window) && ("Notification" in window);
+  var reg = null, subscribed = false, known = null, timer = null;
+
+  // ---- service worker
+  if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+    navigator.serviceWorker.register("sw.js").then(function (r) { reg = r; }).catch(function () { });
+    navigator.serviceWorker.addEventListener("message", function (e) { if (e.data && e.data.type === "sg-refresh") refresh(true); });
+  }
+
+  // ---- layar "tempel link" bila aplikasi dibuka dari ikon tanpa link tersimpan
+  if (window.__sgAppNoLink) {
+    var ov = document.createElement("div");
+    ov.style.cssText = "position:fixed;inset:0;z-index:99999;background:#3558c8;color:#fff;display:flex;align-items:center;justify-content:center;padding:24px;font-family:system-ui,sans-serif";
+    ov.innerHTML = '<div style="max-width:420px;width:100%;text-align:center"><div style="font-size:22px;font-weight:800;margin-bottom:6px">Signing STARLITE</div><p style="opacity:.9;font-size:14px;margin:0 0 16px">Tempel link tanda tangan pribadi Anda yang dikirim oleh Vendor Management. Cukup sekali.</p><input id="sgapp-in" placeholder="https://…?ttd=SBP-…" style="width:100%;padding:12px;border-radius:12px;border:0;font-size:14px;color:#14213d"><button id="sgapp-go" style="margin-top:12px;width:100%;padding:12px;border-radius:12px;border:0;background:#fff;color:#3558c8;font-weight:800;font-size:15px">Buka</button><p id="sgapp-er" style="color:#ffd7d7;font-size:13px;min-height:18px"></p><a href="' + E_(location.pathname) + '" style="color:#fff;opacity:.85;font-size:13px">Buka dashboard</a></div>';
+    document.addEventListener("DOMContentLoaded", function () {
+      document.body.appendChild(ov);
+      document.getElementById("sgapp-go").onclick = function () {
+        var v = document.getElementById("sgapp-in").value.trim(), m = v.match(/SBP-[A-Za-z0-9_-]{6,80}/);
+        if (!m) { document.getElementById("sgapp-er").textContent = "Link tidak dikenali. Pastikan menyalin seluruh link dari pengirim."; return; }
+        lsSet("sgp_link", m[0]); location.replace(location.pathname + "?ttd=" + m[0] + "&app=sign");
+      };
+    });
+  }
+  // ---- dokumen baru dibuat → minta server mengirim notifikasi ke penandatangan (daftar penerima dihitung server dari data dokumen)
+  if (typeof sbRpc === "function") {
+    var bRpc = sbRpc;
+    window.sbRpc = sbRpc = function (fn) {
+      var pr = bRpc.apply(this, arguments);
+      if (fn === "sg_create") pr.then(function (r) {
+        var id = r && r.ok && r.doc && (r.doc.id || r.doc.docId); if (!id) return;
+        try { fetch("https://psbgyndvyypllpyesqfi.supabase.co/functions/v1/sg-push", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ doc_id: String(id) }), keepalive: true }).catch(function () { }); } catch (e) { }
+      }).catch(function () { });
+      return pr;
+    };
+  }
+  if (!person) return;   // bagian di bawah hanya untuk kotak masuk penandatangan (link pribadi)
+
+  // ---- angka di ikon
+  function setBadge(n) { try { if (navigator.setAppBadge) { if (n > 0) navigator.setAppBadge(n); else navigator.clearAppBadge(); } } catch (e) { } }
+
+  // ---- notifikasi (Web Push)
+  function b64(s) { var p = "=".repeat((4 - s.length % 4) % 4), r = atob((s + p).replace(/-/g, "+").replace(/_/g, "/")), o = new Uint8Array(r.length); for (var i = 0; i < r.length; i++) o[i] = r.charCodeAt(i); return o; }
+  async function getReg() { if (reg) return reg; reg = await navigator.serviceWorker.ready; return reg; }
+  async function sendSub(sub) {
+    var p = sgp(); if (!p || !p.me) throw new Error("Buka kotak masuk dulu");
+    var r = await sbRpc("sg_push_sub", { p_t: TT, p_pin: p.me.pin, p_sub: sub.toJSON(), p_ua: navigator.userAgent }, 20000);
+    if (!r || !r.ok) throw new Error((r && r.error) || "Gagal mengaktifkan notifikasi");
+  }
+  async function enablePush() {
+    if (!pushOK) throw new Error("Perangkat ini belum mendukung notifikasi" + (ios ? ". Di iPhone/iPad pasang dulu ke Layar Utama." : ""));
+    var perm = await Notification.requestPermission();
+    if (perm !== "granted") throw new Error("Izin notifikasi ditolak. Aktifkan lewat pengaturan perangkat / browser.");
+    var r = await getReg(), sub = await r.pushManager.getSubscription() || await r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(VAPID) });
+    await sendSub(sub); subscribed = true; lsSet("sgapp_push", "1");
+  }
+  async function resync() {   // langganan bisa berganti: daftarkan ulang diam-diam bila izin sudah diberikan
+    if (!pushOK || Notification.permission !== "granted") return;
+    try { var r = await getReg(), sub = await r.pushManager.getSubscription(); if (!sub) sub = await r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(VAPID) }); await sendSub(sub); subscribed = true; } catch (e) { }
+  }
+
+  // ---- bilah di kotak masuk
+  function bar() {
+    var main = document.querySelector(".sg-main"); if (!main) return;
+    var old = document.getElementById("sgapp-bar"); if (old) old.remove();
+    var items = [], canInstall = !standalone && !!window.__pwaPrompt;
+    if (canInstall) items.push('<button class="btn btn-primary" data-a="inst" style="padding:6px 12px;font-size:12px"><i class="fa-solid fa-download"></i> Pasang aplikasi</button>');
+    if (ios && !standalone) items.push('<span style="font-size:12px">Pasang di iPhone/iPad: ketuk <b>Bagikan</b> lalu <b>Tambahkan ke Layar Utama</b>, buka dari ikonnya, dan aktifkan notifikasi.</span>');
+    if (pushOK && !(ios && !standalone)) {
+      if (subscribed || (Notification.permission === "granted" && lsGet("sgapp_push"))) items.push('<span style="font-size:12px;color:#047857"><i class="fa-solid fa-bell"></i> Notifikasi aktif</span>');
+      else if (Notification.permission === "denied") items.push('<span style="font-size:12px;color:#b45309"><i class="fa-solid fa-bell-slash"></i> Notifikasi diblokir di pengaturan perangkat</span>');
+      else items.push('<button class="btn btn-ghost" data-a="push" style="padding:6px 12px;font-size:12px"><i class="fa-solid fa-bell"></i> Aktifkan notifikasi</button>');
+    }
+    if (!items.length) return;
+    var d = document.createElement("div"); d.id = "sgapp-bar"; d.style.cssText = "display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:8px 12px;margin:0 0 10px;border-radius:12px;background:rgba(53,88,200,.08);border:1px solid rgba(53,88,200,.18)";
+    d.innerHTML = items.join("");
+    main.insertBefore(d, main.firstChild);
+    d.addEventListener("click", async function (e) {
+      var b = e.target.closest("[data-a]"); if (!b) return;
+      if (b.dataset.a === "inst") { var pr = window.__pwaPrompt; if (!pr) return; pr.prompt(); try { await pr.userChoice; } catch (x) { } window.__pwaPrompt = null; bar(); }
+      else if (b.dataset.a === "push") { b.disabled = true; try { await enablePush(); try { toast("Notifikasi aktif", "success"); } catch (x) { } } catch (er) { try { toast(er.message, "error", 7000); } catch (x) { } } bar(); }
+    });
+  }
+  window.addEventListener("pwa-ready", function () { try { bar(); } catch (e) { } });
+
+  // ---- cek dokumen baru saat aplikasi terbuka
+  async function refresh(force) {
+    var p = sgp(); if (!p || !p.me || !p.me.pin) return;
+    if (!force && document.visibilityState !== "visible") return;
+    var n; try { n = await sbRpc("sg_inbox", { p_t: TT, p_pin: p.me.pin }, 20000); } catch (e) { return; }
+    if (!n || !n.ok || !n.pending) return;
+    var ids = n.pending.map(function (x) { return x.id + "|" + x.signer; }), old = known || [], fresh = ids.filter(function (i) { return old.indexOf(i) < 0; });
+    var changed = ids.length !== old.length || fresh.length;
+    known = ids; setBadge(ids.length);
+    if (!changed) return;
+    if (document.querySelector(".sg-main")) { p.inbox = n; try { sgInboxRender(); } catch (e) { } }
+    if (fresh.length && window.__sgKnownInit) { try { toast(fresh.length + " dokumen baru menunggu tanda tangan Anda", "success", 7000); } catch (e) { } try { if (navigator.vibrate) navigator.vibrate(120); } catch (e) { } }
+  }
+  document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") refresh(false); });
+
+  function after() {
+    var l = pending().map(function (x) { return x.id + "|" + x.signer; });
+    setBadge(l.length);
+    if (known === null) { known = l; window.__sgKnownInit = true; resync().then(function () { try { bar(); } catch (e) { } }); }
+    bar();
+    if (!timer) timer = setInterval(function () { refresh(false); }, 60000);
+  }
+  if (typeof sgInboxRender === "function") {
+    var base = sgInboxRender;
+    window.sgInboxRender = sgInboxRender = function () { var o = base.apply(this, arguments); try { after(); } catch (e) { console.warn(e); } return o; };
+  }
 })();
 </script>
 </body>
