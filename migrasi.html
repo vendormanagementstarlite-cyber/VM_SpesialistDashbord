@@ -162,7 +162,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
       <li>No PO atau No SPK. Lampiran SPK hanya diminta bila belum tersedia di data kami</li>
       <li>Akun email Sales penampung &amp; Lead IKR mitra pengganti di Dashboard Mitra Starlite</li>
     </ul>
-    <div class="pantau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div><b>Himbauan</b><ul class="him"><li>Satu No SPK dengan lebih dari dua PO: masukkan <b>No SPK</b>, seluruh PO di bawahnya terdaftar dalam satu pengajuan.</li><li>Semua PO dalam satu pengajuan memiliki cap waktu yang sama.</li><li>Pengajuan yang sudah terkirim tidak dapat diubah oleh pengaju. Perbaikan hanya melalui permintaan revisi dari Vendor Management.</li><li>Progres tampil di halaman ini dengan memasukkan No SPK atau No PO yang sama.</li></ul></div></div>
+    <div class="pantau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div><b>Himbauan</b><ul class="him"><li>Satu No SPK dengan lebih dari dua PO: masukkan <b>No SPK</b>, seluruh PO di bawahnya terdaftar dalam satu pengajuan.</li><li>Pengajuan yang sudah terkirim tidak dapat diubah oleh pengaju. Perbaikan hanya melalui permintaan revisi dari Vendor Management.</li><li>Progres tampil di halaman ini dengan memasukkan No SPK atau No PO yang sama.</li></ul></div></div>
   </section>
 
   <div id="blocked" class="card blocked" hidden></div>
@@ -297,6 +297,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
   }
   function drawSib(x) {
     var L = x.siblings || []; sibL.innerHTML = ""; sib.hidden = !L.length;
+    if (L.length) { var m = document.createElement("label"); m.style.cssText = "display:flex;gap:8px;align-items:center;font-size:13px"; var mi = document.createElement("input"); mi.type = "checkbox"; mi.checked = true; mi.disabled = true; var mt = document.createElement("span"); mt.textContent = x.po + " (PO ini)"; m.appendChild(mi); m.appendChild(mt); sibL.appendChild(m); }
     L.forEach(function (o) {
       var lb = document.createElement("label"); lb.style.cssText = "display:flex;gap:8px;align-items:center;font-size:13px";
       var i = document.createElement("input"); i.type = "checkbox"; i.value = o.po; i.dataset.nospk = o.hasSpk ? "0" : "1"; i.dataset.nono = o.hasNo ? "0" : "1"; if (o.grouped) { i.checked = true; i.disabled = true; }
