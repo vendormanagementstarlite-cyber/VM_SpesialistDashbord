@@ -11330,7 +11330,7 @@ function vmWaUrl(ctx) {
 }
 // PIN WAJIB setiap kali membuka link: tidak ada login tersimpan / perangkat yang diingat
 SGA.get = () => null; SGA.set = () => { };
-sgMeGet = () => null;
+sgMeGet = () => { try { const f = JSON.parse(sessionStorage.getItem("sgp_first") || "null"); if (f && f.exp > Date.now()) { sessionStorage.removeItem("sgp_first"); return f; } } catch (e) { } return null; };
 try { Object.keys(localStorage).filter(k => /^sgauth_/.test(k) || k === SGME.key).forEach(k => localStorage.removeItem(k)); } catch (e) { }
 let PINCTX = null;
 const isTok = p => /^dv:/.test(String(p || ''));
@@ -15688,12 +15688,42 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   if (window.__sgAppNoLink) {
     var ov = document.createElement("div");
     ov.style.cssText = "position:fixed;inset:0;z-index:99999;background:#3558c8;color:#fff;display:flex;align-items:center;justify-content:center;padding:24px;font-family:system-ui,sans-serif";
-    ov.innerHTML = '<div style="max-width:420px;width:100%;text-align:center"><div style="font-size:22px;font-weight:800;margin-bottom:6px">Signing STARLITE</div><p style="opacity:.9;font-size:14px;margin:0 0 16px">Tempel link tanda tangan pribadi Anda yang dikirim oleh Vendor Management. Cukup sekali.</p><input id="sgapp-in" placeholder="https://…?ttd=SBP-…" style="width:100%;padding:12px;border-radius:12px;border:0;font-size:14px;color:#14213d"><button id="sgapp-go" style="margin-top:12px;width:100%;padding:12px;border-radius:12px;border:0;background:#fff;color:#3558c8;font-weight:800;font-size:15px">Buka</button><p id="sgapp-er" style="color:#ffd7d7;font-size:13px;min-height:18px"></p><a href="' + E_(location.pathname) + '" style="color:#fff;opacity:.85;font-size:13px">Buka dashboard</a></div>';
+    var IN = "width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:0;font-size:15px;color:#14213d;margin-top:10px";
+    ov.innerHTML = '<div style="max-width:420px;width:100%;text-align:center"><div style="font-size:22px;font-weight:800;margin-bottom:6px">Signing STARLITE</div>'
+      + '<div id="sgapp-m1"><p style="opacity:.9;font-size:14px;margin:0 0 6px">Masuk dengan email dan PIN Anda. Berikutnya cukup PIN, sidik jari, atau Face ID.</p>'
+      + '<input id="sgapp-em" type="email" inputmode="email" autocomplete="email" autocapitalize="off" placeholder="Email Anda" style="' + IN + '">'
+      + '<input id="sgapp-pn" type="password" inputmode="numeric" autocomplete="current-password" maxlength="4" placeholder="PIN 4 angka" style="' + IN + ';letter-spacing:.4em;text-align:center">'
+      + '<button id="sgapp-login" style="margin-top:12px;width:100%;padding:12px;border-radius:12px;border:0;background:#fff;color:#3558c8;font-weight:800;font-size:15px">Masuk</button>'
+      + '<p id="sgapp-er1" style="color:#ffd7d7;font-size:13px;min-height:18px;margin:8px 0 0"></p>'
+      + '<a href="#" id="sgapp-tolink" style="color:#fff;opacity:.9;font-size:13px">Punya tautan dari admin? Tempel tautan</a></div>'
+      + '<div id="sgapp-m2" style="display:none"><p style="opacity:.9;font-size:14px;margin:0 0 16px">Tempel link tanda tangan pribadi Anda yang dikirim oleh Vendor Management. Cukup sekali.</p><input id="sgapp-in" placeholder="https://…?ttd=SBP-…" style="' + IN + ';margin-top:0"><button id="sgapp-go" style="margin-top:12px;width:100%;padding:12px;border-radius:12px;border:0;background:#fff;color:#3558c8;font-weight:800;font-size:15px">Buka</button><p id="sgapp-er" style="color:#ffd7d7;font-size:13px;min-height:18px"></p><a href="#" id="sgapp-toem" style="color:#fff;opacity:.9;font-size:13px">Kembali ke masuk dengan email</a></div>'
+      + '<p style="margin-top:14px"><a href="' + E_(location.pathname) + '" style="color:#fff;opacity:.85;font-size:13px">Buka dashboard</a></p></div>';
     document.addEventListener("DOMContentLoaded", function () {
       document.body.appendChild(ov);
-      document.getElementById("sgapp-go").onclick = function () {
-        var v = document.getElementById("sgapp-in").value.trim(), m = v.match(/SBP-[A-Za-z0-9_-]{6,80}/);
-        if (!m) { document.getElementById("sgapp-er").textContent = "Link tidak dikenali. Pastikan menyalin seluruh link dari pengirim."; return; }
+      var $o = function (i) { return document.getElementById(i); }, show = function (w) { $o("sgapp-m1").style.display = w === 1 ? "" : "none"; $o("sgapp-m2").style.display = w === 2 ? "" : "none"; };
+      $o("sgapp-tolink").onclick = function (e) { e.preventDefault(); show(2); };
+      $o("sgapp-toem").onclick = function (e) { e.preventDefault(); show(1); };
+      var label = function () { return ios ? "iPhone" : (/android/i.test(navigator.userAgent) ? "Android" : "Komputer"); };
+      var doLogin = async function () {
+        var em = $o("sgapp-em").value.trim(), pn = $o("sgapp-pn").value.trim(), er = $o("sgapp-er1"), b = $o("sgapp-login");
+        er.textContent = "";
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { er.textContent = "Isi alamat email yang benar"; return; }
+        if (!/^\d{4}$/.test(pn)) { er.textContent = "PIN harus 4 angka"; return; }
+        if (typeof sbRpc !== "function") { er.textContent = "Aplikasi belum siap, coba lagi sebentar"; return; }
+        b.disabled = true; b.textContent = "Memeriksa…";
+        try {
+          var r = await sbRpc("sg_login_email", { p_email: em, p_pin: pn, p_label: label() }, 30000);
+          if (!r || r.ok === false || !r.plink) throw new Error((r && r.error) || "Gagal masuk");
+          lsSet("sgp_link", r.plink);
+          try { sessionStorage.setItem("sgp_first", JSON.stringify({ key: r.key, name: r.name, pin: r.tok, exp: Date.now() + 120000 })); } catch (e) { }
+          location.replace(location.pathname + "?ttd=" + r.plink + "&app=sign");
+        } catch (e) { er.textContent = e.message || "Gagal masuk"; b.disabled = false; b.textContent = "Masuk"; }
+      };
+      $o("sgapp-login").onclick = doLogin;
+      [$o("sgapp-em"), $o("sgapp-pn")].forEach(function (x) { x.onkeydown = function (e) { if (e.key === "Enter") doLogin(); }; });
+      $o("sgapp-go").onclick = function () {
+        var v = $o("sgapp-in").value.trim(), m = v.match(/SBP-[A-Za-z0-9_-]{6,80}/);
+        if (!m) { $o("sgapp-er").textContent = "Link tidak dikenali. Pastikan menyalin seluruh link dari pengirim."; return; }
         lsSet("sgp_link", m[0]); location.replace(location.pathname + "?ttd=" + m[0] + "&app=sign");
       };
     });
