@@ -145,7 +145,7 @@ input:focus{border-color:var(--g2);box-shadow:0 0 0 3px color-mix(in srgb,var(--
 header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,transparent))}
 .grid>*{min-width:0}@media(max-width:600px){.grid{grid-template-columns:minmax(0,1fr)}}
 @media (prefers-reduced-motion:reduce){button.send{transition:none}}
-.pantau{display:flex;gap:10px;align-items:flex-start;margin:14px 0 0;padding:12px 14px;border-radius:12px;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.45);font-size:13px;line-height:1.5;text-align:left}.pantau b{font-weight:700}.pantau svg{flex:none;width:18px;height:18px;margin-top:1px}
+.him{margin:6px 0 0;padding-left:18px}.him li{margin:3px 0}#grp .po{display:flex;gap:8px;align-items:center;font-size:13px;margin:4px 0}#grp .po i{font-style:normal;opacity:.7;font-size:12px}.pantau{display:flex;gap:10px;align-items:flex-start;margin:14px 0 0;padding:12px 14px;border-radius:12px;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.45);font-size:13px;line-height:1.5;text-align:left}.pantau b{font-weight:700}.pantau svg{flex:none;width:18px;height:18px;margin-top:1px}
 </style>
 </head>
 <body>
@@ -154,7 +154,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
   <h1>Form Pengajuan Migrasi Akun IKR &amp; Create Site (Stasiun Take Over)</h1>
 
   <section class="card intro" id="intro">
-    <p>Form ini digunakan untuk mengajukan <b>Migrasi Akun IKR</b> atau <b>Create Site</b> pada kebutuhan Stasiun Take Over. Masukkan <b>No PO atau No SPK</b> — stasiun serta mitra lama dan pengganti terisi otomatis. Dengan No PO yang sama Anda juga bisa memantau tahapan pengajuan.</p>
+    <p>Form ini digunakan untuk mengajukan <b>Migrasi Akun IKR</b> atau <b>Create Site</b> pada kebutuhan Stasiun Take Over. Masukkan <b>No PO atau No SPK</b> — stasiun serta mitra lama dan pengganti terisi otomatis.</p>
     <p>Pastikan seluruh data sesuai dan lengkap. Pengajuan yang tidak memenuhi persyaratan atau datanya tidak lengkap akan dikembalikan kepada mitra untuk diperbaiki. Siapkan dulu:</p>
     <ul class="prep">
       <li>BA Pemindahan Akun IKR yang sudah full sign + capture dashboard</li>
@@ -162,7 +162,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
       <li>No PO atau No SPK. Lampiran SPK hanya diminta bila belum tersedia di data kami</li>
       <li>Akun email Sales penampung &amp; Lead IKR mitra pengganti di Dashboard Mitra Starlite</li>
     </ul>
-    <div class="pantau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div><b>Pantau terus progres pengajuan Anda di website ini.</b> Setelah mengajukan, buka kembali halaman ini lalu masukkan <b>No SPK atau No PO</b> untuk melihat tahapan terbaru, termasuk bila ada catatan revisi dari Vendor Management.</div></div>
+    <div class="pantau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div><b>Himbauan</b><ul class="him"><li>Satu No SPK dengan lebih dari dua PO: masukkan <b>No SPK</b>, seluruh PO di bawahnya terdaftar dalam satu pengajuan.</li><li>Semua PO dalam satu pengajuan memiliki cap waktu yang sama.</li><li>Pengajuan yang sudah terkirim tidak dapat diubah oleh pengaju. Perbaikan hanya melalui permintaan revisi dari Vendor Management.</li><li>Progres tampil di halaman ini dengan memasukkan No SPK atau No PO yang sama.</li></ul></div></div>
   </section>
 
   <div id="blocked" class="card blocked" hidden></div>
@@ -175,6 +175,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
         <label class="f full"><span class="req">No PO atau No SPK</span><input type="text" name="po" placeholder="mis. PO.2025.03.00107 atau 1547/PRJ/STARLITE/X/2026" autocomplete="off" required></label>
         <div class="full spk" id="spk-box" aria-live="polite"></div>
         <div class="full" id="spk-q" hidden><div class="tip">No SPK di data kami: <b id="spk-q-no"></b>. Apakah No SPK ini sesuai dengan SPK Anda?</div><div class="sq" role="radiogroup" aria-label="No SPK sesuai?"><label><input type="radio" name="spkOk" value="ya">Sesuai</label><label><input type="radio" name="spkOk" value="tidak">Tidak sesuai</label></div></div>
+        <div class="full" id="grp" hidden></div>
         <div class="full" id="sib" hidden><div class="tip"><b>PO lain dengan stasiun dan mitra yang sama</b> — centang bila ikut diajukan dalam pengajuan ini (BA, KML, dan akun cukup diisi sekali).</div><div id="sib-l" style="display:grid;gap:6px;margin-top:8px"></div></div>
         <div class="full" id="spk-need" hidden>
           <div class="tip warn" style="margin-bottom:10px" id="spk-tip">Data SPK untuk PO ini belum lengkap.</div>
@@ -234,8 +235,8 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
   <section class="card done" id="done" role="status">
     <svg class="tick" viewBox="0 0 76 76" aria-hidden="true"><circle cx="38" cy="38" r="38"/><path d="M24 39l9 9 19-20"/></svg>
     <h2>Pengajuan terkirim</h2>
-    <p>Vendor Management akan memverifikasi. Bila perlu diperbaiki, pemberitahuan dikirim ke email pengaju. </p>
-    <div class="pantau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div><b>Terus pantau progresnya di website ini.</b> Buka kembali halaman ini kapan saja, lalu masukkan <b>No SPK atau No PO</b> yang sama untuk melihat tahapan verifikasi terbaru.</div></div>
+    <p>Vendor Management akan memverifikasi. Bila perlu diperbaiki, pemberitahuan dikirim ke email pengaju.</p>
+    
     <dl id="sum"></dl>
     <button class="send" type="button" id="again">Ajukan lagi</button>
   </section>
@@ -271,7 +272,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
   var fld = function (k) { return f.querySelector('[name="' + k + '"]'); };
 
   // ---------- No PO / No SPK -> Data Mitra Takeover (stasiun, mitra lama & pengganti) + tahapan ----------
-  var SEL = null, qT = 0, lastQ = "", box = $("spk-box"), rest = $("rest"), need = $("spk-need"), sib = $("sib"), sibL = $("sib-l"), spkQ = $("spk-q");
+  var SEL = null, qT = 0, lastQ = "", box = $("spk-box"), rest = $("rest"), need = $("spk-need"), grp = $("grp"), sib = $("sib"), sibL = $("sib-l"), spkQ = $("spk-q");
   var spkAns = function () { var c = spkQ.querySelector("input[name=spkOk]:checked"); return c ? c.value : ""; };
   spkQ.addEventListener("change", function () { if (spkAns() === "tidak") setVal("noSpk", ""); else if (SEL) setVal("noSpk", SEL.noSpkN || ""); updNeed(); });
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
@@ -304,22 +305,35 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
       lb.appendChild(i); lb.appendChild(t); sibL.appendChild(lb);
     });
   }
+  function drawGrp(x) {
+    var g = x.spkGroup; grp.hidden = !g; grp.innerHTML = ""; if (!g) return;
+    var ok = g.pos.filter(function (o) { return o.open; }), no = g.pos.filter(function (o) { return !o.open; });
+    grp.innerHTML = "<div class='tip'><b>No SPK " + esc(g.no) + " mencakup " + g.n + " PO.</b> " + ok.length + " PO diajukan bersama dalam satu pengajuan:</div>"
+      + ok.map(function (o) { return "<div class='po'>✓ <b>" + esc(o.po) + "</b></div>"; }).join("")
+      + (no.length ? "<div class='tip warn' style='margin-top:8px'>Tidak ikut (sudah diajukan atau selesai):</div>" + no.map(function (o) { return "<div class='po'>" + esc(o.po) + " <i>" + esc(o.status || "-") + "</i></div>"; }).join("") : "");
+  }
   function setVal(k, v) { var el = fld(k); if (el && v != null) el.value = v; }
   function applyRow(x) {
-    SEL = x; setOpen(false); need.hidden = true; sib.hidden = true; sibL.innerHTML = ""; spkQ.hidden = true; spkQ.querySelectorAll("input").forEach(function (i) { i.checked = false; });
-    var sub = "<p style='margin:6px 0 0;font-size:12px;opacity:.8'>" + (x.ts ? "Diajukan " + esc(x.ts) : "") + (x.it ? (x.ts ? " · " : "") + "Status IT: <b>" + esc(x.it) + "</b>" : "") + (x.spkPend ? "<br>SPK pengganti diajukan: <b>" + esc(x.spkPend) + "</b> (menunggu verifikasi Tim VM)" : "") + "</p>";
+    SEL = x; setOpen(false); need.hidden = true; grp.hidden = true; sib.hidden = true; sibL.innerHTML = ""; spkQ.hidden = true; spkQ.querySelectorAll("input").forEach(function (i) { i.checked = false; });
+    var pl = x.pengajuan && x.pengajuan.length > 1 ? "<p style='margin:6px 0 0;font-size:13px'><b>PO dalam pengajuan ini (" + x.pengajuan.length + "):</b> " + x.pengajuan.map(esc).join(", ") + "</p>" : "";
+    var sub = pl + "<p style='margin:6px 0 0;font-size:12px;opacity:.8'>" + (x.ts ? "Cap waktu " + esc(x.ts) : "") + (x.it ? (x.ts ? " · " : "") + "Status IT: <b>" + esc(x.it) + "</b>" : "") + (x.spkPend ? "<br>SPK pengganti diajukan: <b>" + esc(x.spkPend) + "</b> (menunggu verifikasi Tim VM)" : "") + "</p>";
     if (x.blocked) return boxSet("no", "<b class='t'>" + esc(x.blocked) + "</b>" + info(x));
     if (x.done) return boxSet("ok", "<b class='t'>✓ Selesai · " + esc(x.status) + "</b>" + info(x) + stg(x.stage) + sub);
-    if (x.locked) return boxSet("ok", "<b class='t'>Pengajuan diterima · menunggu verifikasi</b>" + info(x) + stg(x.stage) + sub + "<p style='margin:6px 0 0;font-size:12px;opacity:.8'>Data tidak bisa diubah selama diverifikasi. Bila perlu diperbaiki, pemberitahuan dikirim ke email pengaju.</p>");
+    if (x.locked) return boxSet("ok", "<b class='t'>Pengajuan diterima · menunggu verifikasi</b>" + info(x) + stg(x.stage) + sub + "<p style='margin:6px 0 0;font-size:12px;opacity:.8'>Data tidak dapat diubah oleh pengaju. Bila perlu diperbaiki, permintaan revisi dikirim ke email pengaju.</p>");
+    if (x.needSpk) {
+      boxSet("no", "<b class='t'>No SPK " + esc(x.needSpk) + " mencakup " + (x.spkGroup ? x.spkGroup.n : "beberapa") + " PO</b>" + info(x) + "<p style='margin:8px 0 0'>Pengajuan dilakukan lewat No SPK agar seluruh PO ikut terdaftar.</p><button type='button' class='btn' id='useSpk' style='margin-top:8px'>Gunakan No SPK ini</button>");
+      drawGrp(x); $("useSpk").onclick = function () { fld("po").value = x.needSpk; lastQ = ""; lookup(); };
+      return;
+    }
     var rv = x.status === "Revisi";
     boxSet(rv ? "no" : "ok", "<b class='t'>" + (rv ? "Pengajuan perlu direvisi" : "✓ Data ditemukan · " + esc(x.jenis || "Migrasi Akun IKR")) + "</b>" + info(x) + (x.submitted ? stg(x.stage) : "") + (rv ? "<p style='margin:8px 0 0'><b>Catatan VM:</b> " + esc(x.revisi || "-") + "</p>" : ""));
-    setVal("noSpk", x.noSpkN || ""); drawSib(x); updNeed();
+    setVal("noSpk", x.noSpkN || ""); drawGrp(x); drawSib(x); updNeed();
     if (rv && x.prefill) { var p = x.prefill; setVal("email", p.email); setVal("sales", p.sales); setVal("ikrBaru", p.ikrBaru); }
     setOpen(true);
   }
   function lookup() {
     var v = fld("po").value.trim();
-    if (v === lastQ) return; lastQ = v; SEL = null; setOpen(false); need.hidden = true; sib.hidden = true; spkQ.hidden = true;
+    if (v === lastQ) return; lastQ = v; SEL = null; setOpen(false); need.hidden = true; grp.hidden = true; sib.hidden = true; spkQ.hidden = true;
     if (!v) { box.className = "full spk"; return; }
     if (v.length < 6) return;
     boxSet("load", "<b class='t'><span class='spin'></span>Mencari di Data Mitra Takeover…</b>");
@@ -402,7 +416,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
     }
     if (!FILES.ba && !rv) return show("Unggah BA Pemindahan Akun IKR & capture dashboard (bagian 4).");
     if (!FILES.kml && !rv) return show("Unggah file KML stasiun tujuan (bagian 5).");
-    d.po = SEL.po; d.stasiun = SEL.stasiun; d.pos = picked();
+    d.po = SEL.po; d.stasiun = SEL.stasiun; d.q = lastQ; d.pos = SEL.spkGroup ? [] : picked();
     send.disabled = true; ovOpen(); step("read"); creep(18, 500);
     var size = ((FILES.ba ? FILES.ba.size : 0) + (FILES.kml ? FILES.kml.size : 0) + (FILES.spk ? FILES.spk.size : 0)) / 1048576;
     Promise.all([readB64(FILES.ba), readB64(FILES.spk), readB64(FILES.kml)]).then(function (x) {
@@ -413,7 +427,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
       step("save"); clearInterval(tick); setP(100); ov.querySelectorAll(".steps li").forEach(function (li) { li.className = "ok"; }); $("ov-t").textContent = "Pengajuan tersimpan"; $("ov-s").textContent = "Membuka ringkasan…";
       setTimeout(function () {
         ovClose();
-        var sum = $("sum"), rows = [["Jenis", SEL.jenis || "Migrasi Akun IKR"], ["PO", [SEL.po].concat(picked()).join(", ")], ["Stasiun", SEL.stasiun], ["Mitra lama", SEL.lama], ["Mitra pengganti", SEL.baru], ["Status", "Pengajuan"]];
+        var sum = $("sum"), rows = [["Jenis", SEL.jenis || "Migrasi Akun IKR"], ["PO", (res.pos && res.pos.length ? res.pos : [SEL.po].concat(picked())).join(", ")], ["Stasiun", SEL.stasiun], ["Mitra lama", SEL.lama], ["Mitra pengganti", SEL.baru], ["Cap waktu", res.ts || "-"], ["Status", "Pengajuan"]].concat(res.skipped && res.skipped.length ? [["Tidak ikut", res.skipped.join(", ")]] : []);
         sum.innerHTML = ""; rows.forEach(function (r) { var dt = document.createElement("dt"), dd = document.createElement("dd"); dt.textContent = r[0]; dd.textContent = r[1]; sum.appendChild(dt); sum.appendChild(dd); });
         f.hidden = true; $("intro").hidden = true; $("done").classList.add("on"); window.scrollTo({ top: 0, behavior: "smooth" });
       }, 650);
@@ -422,7 +436,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
     }).then(function () { send.disabled = false; });
   });
   $("again").onclick = function () {
-    f.reset(); FILES = {}; SEL = null; lastQ = ""; box.className = "full spk"; need.hidden = true; sib.hidden = true; spkQ.hidden = true; setOpen(false); ["ba", "kml", "spk"].forEach(drawDrop);
+    f.reset(); FILES = {}; SEL = null; lastQ = ""; box.className = "full spk"; need.hidden = true; grp.hidden = true; sib.hidden = true; spkQ.hidden = true; setOpen(false); ["ba", "kml", "spk"].forEach(drawDrop);
     $("done").classList.remove("on"); f.hidden = false; $("intro").hidden = false; window.scrollTo({ top: 0, behavior: "smooth" });
   };
 })();
