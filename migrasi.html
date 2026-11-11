@@ -176,7 +176,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
         <div class="full spk" id="spk-box" aria-live="polite"></div>
         <div class="full" id="spk-q" hidden><div class="tip">No SPK di data kami: <b id="spk-q-no"></b>. Apakah No SPK ini sesuai dengan SPK Anda?</div><div class="sq" role="radiogroup" aria-label="No SPK sesuai?"><label><input type="radio" name="spkOk" value="ya">Sesuai</label><label><input type="radio" name="spkOk" value="tidak">Tidak sesuai</label></div></div>
         <div class="full" id="grp" hidden></div>
-        <div class="full" id="sib" hidden><div class="tip"><b>PO lain dengan stasiun dan mitra yang sama</b> — centang bila ikut diajukan dalam pengajuan ini (BA, KML, dan akun cukup diisi sekali).</div><div id="sib-l" style="display:grid;gap:6px;margin-top:8px"></div></div>
+        <div class="full" id="sib" hidden><div class="tip"><b>PO lain dengan stasiun dan mitra yang sama</b> — otomatis ikut diajukan dalam pengajuan ini (BA, KML, dan akun cukup diisi sekali).</div><div id="sib-l" style="display:grid;gap:6px;margin-top:8px"></div></div>
         <div class="full" id="spk-need" hidden>
           <div class="tip warn" style="margin-bottom:10px" id="spk-tip">Data SPK untuk PO ini belum lengkap.</div>
           <label class="f full" id="no-wrap"><span class="req">Nomor SPK</span><input type="text" name="noSpk" placeholder="mis. 1547/PRJ/STARLITE/X/2026" autocomplete="off"></label>
@@ -285,7 +285,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
       + (x.mitra2 ? "<div><span>Mitra ke-2 (AH):</span> <b class='m2'>" + esc(x.mitra2) + "</b> · pengajuan atas nama mitra ini</div>" : "") + "</div>";
   }
   function setOpen(b) { rest.hidden = !b; }
-  function picked() { return Array.prototype.slice.call(sibL.querySelectorAll("input:checked:not(:disabled)")).map(function (i) { return i.value; }); }
+  function picked() { return Array.prototype.slice.call(sibL.querySelectorAll("input[data-sib]")).map(function (i) { return i.value; }); }
   function updNeed() {
     if (!SEL) return; var nf = !SEL.hasSpk, nn = !SEL.hasNo;
     // No SPK sudah ada (nomor + lampiran) → mitra wajib menyatakan sesuai / tidak sesuai
@@ -300,8 +300,7 @@ header .logo{filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--g2) 35%,trans
     if (L.length) { var m = document.createElement("label"); m.style.cssText = "display:flex;gap:8px;align-items:center;font-size:13px"; var mi = document.createElement("input"); mi.type = "checkbox"; mi.checked = true; mi.disabled = true; var mt = document.createElement("span"); mt.textContent = x.po + " (PO ini)"; m.appendChild(mi); m.appendChild(mt); sibL.appendChild(m); }
     L.forEach(function (o) {
       var lb = document.createElement("label"); lb.style.cssText = "display:flex;gap:8px;align-items:center;font-size:13px";
-      var i = document.createElement("input"); i.type = "checkbox"; i.value = o.po; i.dataset.nospk = o.hasSpk ? "0" : "1"; i.dataset.nono = o.hasNo ? "0" : "1"; if (o.grouped) { i.checked = true; i.disabled = true; }
-      i.onchange = updNeed;
+      var i = document.createElement("input"); i.type = "checkbox"; i.value = o.po; if (!o.grouped) i.dataset.sib = "1"; i.checked = true; i.disabled = true; i.dataset.nospk = o.hasSpk ? "0" : "1"; i.dataset.nono = o.hasNo ? "0" : "1"; 
       var t = document.createElement("span"); t.textContent = o.po + (o.grouped ? " (sudah satu pengajuan)" : (o.hasSpk && o.hasNo) ? "" : " · data SPK belum lengkap");
       lb.appendChild(i); lb.appendChild(t); sibL.appendChild(lb);
     });
