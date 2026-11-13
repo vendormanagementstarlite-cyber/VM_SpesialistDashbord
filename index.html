@@ -4823,7 +4823,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
       return Promise.all(ws).then(function () { return { people: people, fail: fail }; });
     }).then(function (r) {
       K.people = r.people; K.loaded = true; K.at = Date.now(); K.loading = false; K.prog = '';
-      K.posOpts = []; var seen = {}; K.wajib.concat(r.people.map(function (p) { return p.posisi; })).forEach(function (x) { var k = x.toLowerCase(); if (x && !seen[k]) { seen[k] = 1; K.posOpts.push(x); } });
+      K.posOpts = []; var seen = {}; (K.wajib && K.wajib.length ? K.wajib : r.people.map(function (p) { return p.posisi; })).forEach(function (x) { var k = x.toLowerCase(); if (x && !seen[k]) { seen[k] = 1; K.posOpts.push(x); } });
       var rs = {}; r.people.forEach(function (p) { String(p.reg || '').split(', ').forEach(function (x) { if (x) rs[x] = 1; }); }); K.regOpts = Object.keys(rs).sort();
       if (r.fail) toast(r.fail + ' mitra gagal dimuat. Tekan muat ulang.', 'error');
       render(); loadLog(false);
