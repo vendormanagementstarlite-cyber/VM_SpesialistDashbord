@@ -4932,9 +4932,31 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     if (!K.help) return '';
     return '<div class="kc-c kc-help"><div class="kc-row"><b>Fungsi &amp; cara pakai Kontak &amp; Undangan</b><span class="kc-sp"></span><button class="kc-b g s" data-a="help">Tutup</button></div><div class="kc-hg"><div><b>Fungsi</b><ul>' +
       '<li><b>Direktori</b>: seluruh orang di bagan mitra (posisi, nama, HP, email) dalam satu tabel.</li><li><b>Cari semua</b> dan <b>Filter lengkap</b> untuk mempersempit (Tier 1, posisi, region, status bagan, kontak bermasalah).</li>' +
-      '<li><b>Ikon WA</b>: buka chat ke nomor tersebut dengan isi pesan sesuai Format WA.</li><li><b>Ikon amplop</b>: kirim email otomatis ke alamat tersebut sesuai Format email.</li><li><b>Kirim</b>: kirim massal ke hasil filter. <b>Riwayat</b>: catatan semua kiriman.</li></ul></div>' +
-      '<div><b>Cara pakai</b><ol><li>Pilih penerima lewat filter, misal Tier 1 dan Site Manager.</li><li>Pilih <b>Format WA</b> / <b>Format email</b> di bawah kolom cari (isi format bisa diubah kapan saja di Pengaturan).</li><li>Satu orang: klik ikon WA atau amplop di barisnya.</li><li>Banyak orang: buka tab <b>Kirim</b>, cek pratinjau, lalu kirim.</li><li>Cek hasilnya di tab <b>Riwayat</b>.</li></ol>' +
+      '<li><b>Ikon WA</b>: buka chat ke nomor tersebut dengan isi pesan sesuai Format WA.</li><li><b>Kirim email ke N mitra</b>: satu klik langsung mengirim email otomatis ke setiap mitra pada hasil filter (satu email per mitra, ke semua alamat valid mitra itu) sesuai Format email.</li><li><b>Ikon amplop</b>: kirim email hanya ke satu orang.</li><li><b>Kirim</b>: kirim massal ke hasil filter. <b>Riwayat</b>: catatan semua kiriman.</li></ul></div>' +
+      '<div><b>Cara pakai</b><ol><li>Pilih penerima lewat filter, misal Tier 1 dan Site Manager.</li><li>Pilih <b>Format WA</b> / <b>Format email</b> di bawah kolom cari (isi format bisa diubah kapan saja di Pengaturan).</li><li>Semua mitra hasil filter: klik <b>Kirim email ke N mitra</b>. Satu orang: klik ikon WA atau amplop di barisnya.</li><li>Ingin cek pratinjau atau uji kirim dulu: buka tab <b>Kirim</b>.</li><li>Cek hasilnya di tab <b>Riwayat</b>.</li></ol>' +
       '<div class="kc-mute" style="margin-top:6px">Hanya Akun Utama (atau akun yang diberi akses) yang bisa mengirim. Tier 1 diambil dari data Info Perseroan.</div></div></div></div>';
+  }
+  function mailGroups(list) {
+    var by = {}, ord = [];
+    list.forEach(function (p) { var r = p.row; if (!by[r]) { by[r] = []; ord.push(r); } by[r].push(p); });
+    var out = [];
+    ord.forEach(function (r) {
+      var a = by[r], em = [], pos = [], nm = [];
+      a.forEach(function (p) { if (mailOk(p.email) && em.indexOf(p.email.trim().toLowerCase()) < 0) em.push(p.email.trim().toLowerCase()); if (pos.indexOf(p.posisi) < 0) pos.push(p.posisi); if (nm.indexOf(p.nama) < 0) nm.push(p.nama); });
+      if (em.length) out.push({ k: 'm' + r, to: em, mitra: a[0].mitra, posisi: pos.join(', '), nama: nm.join(', '), people: a });
+    });
+    return out;
+  }
+  function mailAll() {
+    if (!canSend() || K.s.busy) return;
+    var t = emTpl(); if (!t.isi) return toast('Format email belum ada. Atur di Pengaturan.', 'error');
+    var grp = mailGroups(filtered()); if (!grp.length) return toast('Tidak ada mitra dengan email valid pada filter ini.', 'error');
+    var s = K.s, sv = [s.subj, s.body]; s.subj = t.subjek; s.body = t.isi;
+    sendBatch(grp, false).then(function () {
+      s.subj = sv[0]; s.body = sv[1];
+      var ok = 0, bad = 0; grp.forEach(function (m) { var x = s.res[m.k]; if (x && x.ok) { ok++; m.people.forEach(function (p) { K.sent[p.key] = 1; }); } else bad++; });
+      toast('Email terkirim ke ' + ok + ' mitra' + (bad ? ', ' + bad + ' tidak terkirim (lihat Riwayat)' : ''), bad ? 'error' : 'success'); render();
+    }, function () { s.subj = sv[0]; s.body = sv[1]; });
   }
   function emTpl() { var l = tplList('email'); return l.filter(function (t) { return t.id === K.emTpl; })[0] || l[0] || { id: '', nama: '', subjek: '', isi: '' }; }
   function mailOne(p) {
@@ -4975,7 +4997,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
       (canSend() ? '<input id="kc-gn" class="kc-sm" placeholder="Nama kelompok baru" value="' + E(K.grpName) + '"><button class="kc-b g s" data-a="grpsave">Simpan filter</button>' : '') +
       '</div><div class="kc-row"><label class="kc-mute">Format WA</label><select id="kc-wat" class="kc-sm">' + tplList('wa').map(function (t) { return opt(t.id, t.nama, waTpl().id); }).join('') + '</select>' +
       '<label class="kc-mute">Format email</label><select id="kc-emt" class="kc-sm">' + tplList('email').map(function (t) { return opt(t.id, t.nama, emTpl().id); }).join('') + '</select>' +
-      '<span class="kc-sep"></span><button class="kc-b g s" data-a="copy">Salin tabel</button><button class="kc-b g s" data-a="reload">Muat ulang</button>' + (canSend() ? '<button class="kc-b g s" data-a="settings">Pengaturan</button>' : '') + '</div></div>' +
+      '<span class="kc-sep"></span>' + (canSend() ? (function () { var mg = mailGroups(list); return '<button class="kc-b s kc-mall" data-a="mailall"' + (mg.length && !K.s.busy ? '' : ' disabled') + ' title="Kirim email otomatis ke setiap mitra pada hasil filter, sesuai Format email">' + (K.s.busy ? 'Mengirim…' : 'Kirim email ke ' + mg.length + ' mitra') + '</button>'; })() : '') + '<button class="kc-b g s" data-a="copy">Salin tabel</button><button class="kc-b g s" data-a="reload">Muat ulang</button>' + (canSend() ? '<button class="kc-b g s" data-a="settings">Pengaturan</button>' : '') + '</div></div>' +
       '<span class="kc-mute" id="kc-prog">' + E(K.prog) + '</span></div>';
     var ctrl = canSend();
     var rows = list.slice(0, K.limit).map(function (p) {
@@ -5133,6 +5155,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     var w1 = t.closest && t.closest('[data-wa1]'); if (w1) { var it = sendItems().filter(function (x) { return x.k === w1.dataset.wa1; })[0]; if (it) { var url = waLink(it, fillTpl(K.s.body, it, K.s.link)); if (url) { window.open(url, '_blank', 'noopener'); K.s.waDone[it.k] = 1; callApi('kon.mark', { rows: [{ mitra: it.mitra, posisi: it.posisi, nama: it.nama, to: hp62(it.hp), subjek: 'WA massal' }] }, 20000).catch(function () { }); render(); } } return; }
     if (!act) return;
     if (act === 'nobagan') { e.preventDefault(); toast(K.noBaganList.slice(0, 40).join(', ') + (K.noBaganList.length > 40 ? ' …' : ''), 'info', 12000); return; }
+    if (act === 'mailall') return mailAll();
     if (act === 'help') { K.help = !K.help; return render(); }
     if (act === 'adv') { K.adv = !K.adv; return render(); }
     if (act === 'reset') { K.f = emptyF(); K.limit = 60; return render(); }
