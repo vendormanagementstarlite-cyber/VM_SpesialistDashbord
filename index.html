@@ -4885,6 +4885,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
 
   /* ---------- tampilan ---------- */
   var CSS = '#view-perseroan.kc-on>:not(#kc-host):not(#kc-bar){display:none!important}#view-perseroan:not(.kc-on)>#kc-host,#view-perseroan:not(.kc-on)>#kc-bar{display:none}#kc-bar{display:inline-flex;align-items:center;gap:8px;margin:0!important;flex-wrap:wrap}' +
+    '#rg-switch.kc-m button[data-m].on{background:none;color:#64748b;box-shadow:none}#desk-top.kc-hdr>div:first-child{display:flex;align-items:center;gap:10px}#desk-top.kc-hdr>div:first-child>p,#desk-top.kc-hdr>div:first-child>h2{display:none}#ps-toolbar.ps-nl button[title="Tambah Data"]{display:none}#view-perseroan.kc-top #kc-bar:empty{display:none}' +
     '#view-perseroan.kc-on .rg-switch button[data-m].on{background:none;color:#64748b;box-shadow:none}' +
     '#kc-host{display:flex;flex-direction:column;gap:12px;margin-top:12px;min-width:0}' +
     '.kc-c{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px;min-width:0}.dark .kc-c{background:#0f172a;border-color:#1e293b}' +
@@ -5106,7 +5107,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
       '<div class="kc-ddw"><button type="button" class="kc-b g kc-dd' + (K.adv ? ' on' : '') + '" data-a="adv" aria-haspopup="true" aria-expanded="' + !!K.adv + '">Filter lengkap' + (nfx ? '<span class="kc-bd">' + nfx + '</span>' : '') + '<svg class="kc-cv" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg></button></div>' +
       '<button type="button" class="kc-ic" data-a="reset" title="Reset semua filter" aria-label="Reset semua filter"' + (nf ? '' : ' disabled') + '><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>' +
       '<button type="button" class="kc-ic" data-a="xlsxdir" title="Unduh Excel (.xlsx)" aria-label="Unduh Excel"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 20h16"/></svg></button>' +
-      '<span class="kc-gw"><button type="button" class="kc-ic' + (K.gm ? ' on' : '') + '" data-a="settings" title="Pengaturan, Kirim, dan Riwayat" aria-label="Pengaturan, Kirim, dan Riwayat" aria-haspopup="true" aria-expanded="' + !!K.gm + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>' + (K.gm ? '<div class="kc-gm" role="menu">' + (canSend() ? '<button type="button" role="menuitem" data-a="gmsend">Kirim pesan</button>' : '') + '<button type="button" role="menuitem" data-a="gmlog">Riwayat</button>' + (canSend() ? '<button type="button" role="menuitem" data-a="gmset">Pengaturan pesan</button>' : '') + '</div>' : '') + '</span>' +
+      '<span class="kc-gw"><button type="button" class="kc-ic' + (K.gm ? ' on' : '') + '" data-a="settings" title="Pengaturan, Kirim, dan Riwayat" aria-label="Pengaturan, Kirim, dan Riwayat" aria-haspopup="true" aria-expanded="' + !!K.gm + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>' + (K.gm ? '<div class="kc-gm" role="menu">' + (canSend() ? '<button type="button" role="menuitem" data-a="gmsend">Kirim pesan</button>' : '') + '<button type="button" role="menuitem" data-a="gmlog">Riwayat</button>' + (canSend() ? '<button type="button" role="menuitem" data-a="gmset">Pengaturan pesan</button>' : '') + '<button type="button" role="menuitem" data-a="gmhelp">Fungsi &amp; cara pakai</button></div>' : '') + '</span>' +
       (canSend() ? (function () { var mg = mailGroups(list), mc = {}; mg.forEach(function (m) { mc[m.mitra] = 1; }); var nm = Object.keys(mc).length; return '<button class="kc-b s kc-mall" data-a="mailall"' + (mg.length && !K.s.busy ? '' : ' disabled') + ' title="Kirim email otomatis ke setiap mitra pada hasil filter, sesuai Format email">' + (K.s.busy ? 'Mengirim…' : 'Kirim email ke ' + nm + ' mitra' + (mg.length > nm ? ' (' + mg.length + ' email)' : '')) + '</button>'; })() : '') +
       (K.adv ? '<div class="kc-dp" role="dialog" aria-label="Filter lengkap"><div class="kc-dg">' +
         fgrp('Mitra', 'tier', [['t1', 'Mitra Tier 1'], ['non', 'Non-Tier 1']]) +
@@ -5218,7 +5219,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   function render() {
     var host = g('kc-host'); if (!host || !host.parentNode.classList.contains('kc-on')) return;
     var keep = document.activeElement, kid = keep && keep.getAttribute && (keep.getAttribute('data-f') || keep.getAttribute('data-s') || keep.getAttribute('data-lq') || (keep.id || '')), pos = keep && keep.selectionStart;
-    var bar = g('kc-bar'); if (bar) bar.innerHTML = '<button type="button" class="kc-ic" data-a="kcback" title="' + (K.tab === 'dir' ? 'Kembali ke Info Perseroan' : 'Kembali ke Direktori') + '" aria-label="' + (K.tab === 'dir' ? 'Kembali ke Info Perseroan' : 'Kembali ke Direktori') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><b class="kc-bt">' + (K.tab === 'send' ? 'Kirim pesan' : K.tab === 'log' ? 'Riwayat' : 'Kontak &amp; Undangan') + '</b><button class="kc-b g s" data-a="help">Fungsi &amp; cara pakai</button>';
+    var bar = g('kc-bar'), vtop = g('view-perseroan') && g('view-perseroan').classList.contains('kc-top'); if (bar) bar.innerHTML = vtop ? (K.tab === 'dir' ? '' : '<b class="kc-bt">' + (K.tab === 'send' ? 'Kirim pesan' : 'Riwayat') + '</b>') : '<button type="button" class="kc-ic" data-a="kcback" title="' + (K.tab === 'dir' ? 'Kembali ke Info Perseroan' : 'Kembali ke Direktori') + '" aria-label="' + (K.tab === 'dir' ? 'Kembali ke Info Perseroan' : 'Kembali ke Direktori') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><b class="kc-bt">' + (K.tab === 'send' ? 'Kirim pesan' : K.tab === 'log' ? 'Riwayat' : 'Kontak &amp; Undangan') + '</b><button class="kc-b g s" data-a="help">Fungsi &amp; cara pakai</button>';
     var hs = document.getElementById('perseroan-sync'); if (hs) hs.classList.toggle('kc-ld', !!K.loading);
     var body = '';
     try {
@@ -5330,8 +5331,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     var w1 = t.closest && t.closest('[data-wa1]'); if (w1) { var it = sendItems().filter(function (x) { return x.k === w1.dataset.wa1; })[0]; if (it) { var url = waLink(it, fillTpl(K.s.body, it, K.s.link)); if (url) { window.open(url, '_blank', 'noopener'); K.s.waDone[it.k] = 1; callApi('kon.mark', { rows: [{ mitra: it.mitra, posisi: it.posisi, nama: it.nama, to: hp62(it.hp), subjek: 'WA massal' }] }, 20000).catch(function () { }); render(); } } return; }
     if (!act) return;
     if (act === 'nobagan') { e.preventDefault(); toast(K.noBaganList.slice(0, 40).join(', ') + (K.noBaganList.length > 40 ? ' …' : ''), 'info', 12000); return; }
-    if (act === 'kcback' && K.tab !== 'dir') { K.tab = 'dir'; return render(); }
-    if (act === 'kcback') { var vw = g('view-perseroan'), kb = vw && vw.querySelector('[data-kc]'); if (vw) vw.classList.remove('kc-on'); if (kb) kb.classList.remove('on'); K.adv = false; var lb = vw && vw.querySelector('#rg-switch [data-m=list]'); if (lb) lb.click(); return; }
+    if (act === 'kcback') return kcBack();
     if (act === 'mailall') return mailAll();
     if (act === 'xlsxdir') return xlsxDir();
     if (act === 'xlsxlog') return xlsxLog();
@@ -5347,6 +5347,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     if (act === 'copy') return copyTable();
     if (act === 'reload') { K.logLoaded = false; return load(true); }
     if (act === 'settings') { K.gm = !K.gm; return render(); }
+    if (act === 'gmhelp') { K.gm = false; K.help = true; return render(); }
     if (act === 'gmsend') { K.gm = false; K.tab = 'send'; return render(); }
     if (act === 'gmlog') { K.gm = false; K.tab = 'log'; loadLog(true); return render(); }
     if (act === 'gmset') { K.gm = false; render(); return openSettings(); }
@@ -5390,6 +5391,32 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     }
   }
 
+  function kcBack() {
+    if (K.tab !== 'dir') { K.tab = 'dir'; return render(); }
+    var vw = g('view-perseroan'), sw = g('rg-switch'), kb = sw && sw.querySelector('[data-kc]');
+    if (vw) vw.classList.remove('kc-on'); if (kb) kb.classList.remove('on'); K.adv = false;
+    var lb = sw && sw.querySelector('[data-m=list]'); if (lb) lb.click();
+    setTimeout(syncTop, 120);
+  }
+  /* ---------- tab & tombol kembali dipindah ke header (desktop) ---------- */
+  var BACKSVG = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
+  function syncTop() {
+    var view = g('view-perseroan'), sw = g('rg-switch'), dt = g('desk-top'); if (!view || !sw) return;
+    var left = dt && dt.firstElementChild, on = view.classList.contains('kc-on');
+    var want = !!(left && view.getClientRects().length && dt.getClientRects().length);
+    if (want) {
+      if (!g('kc-tback')) { var bb = document.createElement('button'); bb.type = 'button'; bb.id = 'kc-tback'; bb.className = 'kc-ic'; bb.title = 'Kembali'; bb.setAttribute('aria-label', 'Kembali'); bb.innerHTML = BACKSVG; bb.addEventListener('click', function () { kcBack(); setTimeout(syncTop, 150); }); left.insertBefore(bb, left.firstChild); }
+      if (sw.parentNode !== left) left.appendChild(sw);
+      dt.classList.add('kc-hdr'); view.classList.add('kc-top');
+    } else {
+      if (sw.parentNode !== view) view.insertBefore(sw, view.firstChild);
+      var b2 = g('kc-tback'); if (b2) b2.remove();
+      if (dt) dt.classList.remove('kc-hdr'); view.classList.remove('kc-top');
+    }
+    sw.classList.toggle('kc-m', on);
+    var b3 = g('kc-tback'); if (b3) b3.style.display = on ? '' : 'none';
+    var tb = g('ps-toolbar'); if (tb) tb.classList.toggle('ps-nl', on || view.classList.contains('rg-on'));
+  }
   /* ---------- pasang tab ke Info Perseroan ---------- */
   function mount() {
     var view = g('view-perseroan'), sw = g('rg-switch');
@@ -5399,15 +5426,16 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     var btn = sw.querySelector('[data-kc]');
     if (!btn) {
       btn = document.createElement('button'); btn.setAttribute('role', 'tab'); btn.setAttribute('data-kc', '1'); btn.innerHTML = '<i class="fa-solid fa-address-book"></i>Kontak &amp; Undangan';
-      btn.onclick = function () { view.classList.remove('rg-on'); sw.querySelectorAll('[data-m]').forEach(function (x) { x.classList.remove('on'); }); view.classList.add('kc-on'); btn.classList.add('on'); render(); load(false); };
+      btn.onclick = function () { view.classList.remove('rg-on'); sw.querySelectorAll('[data-m]').forEach(function (x) { x.classList.remove('on'); }); view.classList.add('kc-on'); btn.classList.add('on'); render(); load(false); setTimeout(syncTop, 0); };
       sw.appendChild(btn);
-      sw.addEventListener('click', function (e) { if (e.target.closest('[data-m]')) { view.classList.remove('kc-on'); btn.classList.remove('on'); } }, true);
+      sw.addEventListener('click', function (e) { if (e.target.closest('[data-m]')) { view.classList.remove('kc-on'); btn.classList.remove('on'); setTimeout(syncTop, 150); } }, true);
     }
     if (!g('kc-bar')) { var bar0 = document.createElement('div'); bar0.id = 'kc-bar'; sw.insertAdjacentElement('afterend', bar0); bar0.addEventListener('click', onHost); }
     if (!g('kc-host')) {
       var host = document.createElement('div'); host.id = 'kc-host'; view.appendChild(host);
       host.addEventListener('click', onHost); host.addEventListener('change', onChange); host.addEventListener('input', onInput);
     }
+    try { syncTop(); } catch (e) { }
     if (view.classList.contains('kc-on')) { var hh = g('kc-host'), bb = g('kc-bar'); if ((hh && !hh.firstChild) || (bb && !bb.firstChild)) { try { render(); } catch (e) { } } }
   }
   document.addEventListener('click', function (e) {
@@ -5418,6 +5446,8 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     K.logLoaded = false;
     Promise.resolve(p).catch(function () { }).then(function () { load(true); });
   }, true);
+  document.addEventListener('click', function () { setTimeout(function () { try { syncTop(); } catch (e) { } }, 150); }, true);
+  window.addEventListener('resize', function () { try { syncTop(); } catch (e) { } });
   setInterval(function () { try { mount(); } catch (e) { } }, 1200);
   document.addEventListener('DOMContentLoaded', function () { try { mount(); } catch (e) { } });
 
