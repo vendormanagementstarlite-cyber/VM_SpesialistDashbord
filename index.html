@@ -4885,7 +4885,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
 
   /* ---------- tampilan ---------- */
   var CSS = '#view-perseroan.kc-on>:not(#kc-host):not(#kc-bar){display:none!important}#view-perseroan:not(.kc-on)>#kc-host,#view-perseroan:not(.kc-on)>#kc-bar{display:none}#kc-bar{display:inline-flex;align-items:center;gap:8px;margin:0!important;flex-wrap:wrap}' +
-    '#rg-switch.kc-m button[data-m].on{background:none;color:#64748b;box-shadow:none}#desk-top.kc-hdr>div:first-child{display:flex;align-items:center;gap:10px}#desk-top.kc-hdr>div:first-child>p,#desk-top.kc-hdr>div:first-child>h2{display:none}#ps-toolbar.ps-nl button[title="Tambah Data"]{display:none}#view-perseroan.kc-top #kc-bar:empty{display:none}' +
+    '#rg-switch.kc-m button[data-m].on{background:none;color:#64748b;box-shadow:none}#desk-top.kc-hdr>div:first-child{display:flex;align-items:center;gap:10px}#desk-top.kc-hdr>div:first-child>p,#desk-top.kc-hdr>div:first-child>h2{display:none}#ps-toolbar.ps-nl button[title="Tambah Data"]{display:none}#view-perseroan.kc-hdrv #kc-bar:empty{display:none}' +
     '#view-perseroan.kc-on .rg-switch button[data-m].on{background:none;color:#64748b;box-shadow:none}' +
     '#kc-host{display:flex;flex-direction:column;gap:12px;margin-top:12px;min-width:0}' +
     '.kc-c{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px;min-width:0}.dark .kc-c{background:#0f172a;border-color:#1e293b}' +
@@ -5219,7 +5219,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   function render() {
     var host = g('kc-host'); if (!host || !host.parentNode.classList.contains('kc-on')) return;
     var keep = document.activeElement, kid = keep && keep.getAttribute && (keep.getAttribute('data-f') || keep.getAttribute('data-s') || keep.getAttribute('data-lq') || (keep.id || '')), pos = keep && keep.selectionStart;
-    var bar = g('kc-bar'), vtop = g('view-perseroan') && g('view-perseroan').classList.contains('kc-top'); if (bar) bar.innerHTML = vtop ? (K.tab === 'dir' ? '' : '<b class="kc-bt">' + (K.tab === 'send' ? 'Kirim pesan' : 'Riwayat') + '</b>') : '<button type="button" class="kc-ic" data-a="kcback" title="' + (K.tab === 'dir' ? 'Kembali ke Info Perseroan' : 'Kembali ke Direktori') + '" aria-label="' + (K.tab === 'dir' ? 'Kembali ke Info Perseroan' : 'Kembali ke Direktori') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><b class="kc-bt">' + (K.tab === 'send' ? 'Kirim pesan' : K.tab === 'log' ? 'Riwayat' : 'Kontak &amp; Undangan') + '</b><button class="kc-b g s" data-a="help">Fungsi &amp; cara pakai</button>';
+    var bar = g('kc-bar'), vtop = g('view-perseroan') && g('view-perseroan').classList.contains('kc-hdrv'); if (bar) bar.innerHTML = vtop ? (K.tab === 'dir' ? '' : '<b class="kc-bt">' + (K.tab === 'send' ? 'Kirim pesan' : 'Riwayat') + '</b>') : '<button type="button" class="kc-ic" data-a="kcback" title="' + (K.tab === 'dir' ? 'Kembali ke Info Perseroan' : 'Kembali ke Direktori') + '" aria-label="' + (K.tab === 'dir' ? 'Kembali ke Info Perseroan' : 'Kembali ke Direktori') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><b class="kc-bt">' + (K.tab === 'send' ? 'Kirim pesan' : K.tab === 'log' ? 'Riwayat' : 'Kontak &amp; Undangan') + '</b><button class="kc-b g s" data-a="help">Fungsi &amp; cara pakai</button>';
     var hs = document.getElementById('perseroan-sync'); if (hs) hs.classList.toggle('kc-ld', !!K.loading);
     var body = '';
     try {
@@ -5407,11 +5407,11 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     if (want) {
       if (!g('kc-tback')) { var bb = document.createElement('button'); bb.type = 'button'; bb.id = 'kc-tback'; bb.className = 'kc-ic'; bb.title = 'Kembali'; bb.setAttribute('aria-label', 'Kembali'); bb.innerHTML = BACKSVG; bb.addEventListener('click', function () { kcBack(); setTimeout(syncTop, 150); }); left.insertBefore(bb, left.firstChild); }
       if (sw.parentNode !== left) left.appendChild(sw);
-      dt.classList.add('kc-hdr'); view.classList.add('kc-top');
+      dt.classList.add('kc-hdr'); view.classList.add('kc-hdrv');
     } else {
       if (sw.parentNode !== view) view.insertBefore(sw, view.firstChild);
       var b2 = g('kc-tback'); if (b2) b2.remove();
-      if (dt) dt.classList.remove('kc-hdr'); view.classList.remove('kc-top');
+      if (dt) dt.classList.remove('kc-hdr'); view.classList.remove('kc-hdrv');
     }
     sw.classList.toggle('kc-m', on);
     var b3 = g('kc-tback'); if (b3) b3.style.display = on ? '' : 'none';
