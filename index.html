@@ -4751,7 +4751,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   var K = { cfg: null, cfgErr: '', people: [], loaded: false, loading: false, at: 0, prog: '', log: [], logLoaded: false, contacted: {},
     f: { tier: [], pos: [], reg: [], st: [], kt: [], q: '' }, adv: false, og: 'pos', help: false, mailBusy: {}, sent: {}, emTpl: '', sel: {}, st: { rsvp: [], q: [], bounce: {} }, rsv: {}, fixOpen: false, rsvpAc: '', tab: 'dir', limit: 60, regOpts: [], posOpts: [], wajib: [], total: 0, noBagan: 0, noBaganList: [],
     s: { src: 'filter', ch: 'email', unit: 'orang', tpl: '', subj: '', body: '', link: '', event: '', attach: '', when: '', remOn: false, remWhen: '', testTo: '', busy: false, res: {}, waDone: {}, confirm: false, msg: '' }, grpName: '' };
-  try { K.s.testTo = localStorage.getItem('kc_testto') || ''; K.waTpl = localStorage.getItem('kc_wat') || ''; K.emTpl = localStorage.getItem('kc_emt') || ''; } catch (e) { }
+  try { K.s.testTo = localStorage.getItem('kc_testto') || ''; K.waTpl = localStorage.getItem('kc_wat') || ''; K.emTpl = localStorage.getItem('kc_emt') || ''; if (K.emTpl === '_auto') K.emTpl = ''; } catch (e) { }
 
   var E = function (v) { return typeof esc === 'function' ? esc(v) : String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var toast = function (m, t) { try { showToast(m, t || 'info'); } catch (e) { } };
@@ -4917,6 +4917,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     '.kc-t{border-radius:14px;background:#fff}.dark .kc-t{background:#0f172a}.kc-t table{font-size:13px}.kc-t th{position:sticky;top:0;font-weight:600;letter-spacing:.01em;padding:10px;background:#f8fafc}.dark .kc-t th{background:#111a2e}.kc-t td{padding:10px;border-bottom:1px solid #eef2f7}.dark .kc-t td{border-color:#18233a}.kc-t tbody tr:last-child td{border-bottom:0}.kc-t tbody tr:hover td{background:rgba(11,92,173,.04)}.kc-em{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
     '.kc-tg{font-weight:600;font-size:10.5px;padding:1px 7px}.kc-wa{font-size:11.5px;padding:2px 8px;margin-right:4px}' +
     '.kc-note{border-radius:12px}.kc-md>div{gap:14px}.kc-tpl{border-radius:12px;padding:12px}' +
+    '.kc-snd{max-width:760px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:12px}.kc-stp{border:1px solid rgba(100,116,139,.28);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}.kc-no{width:24px;height:24px;border-radius:99px;background:#0b5cad;color:#fff;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center;flex:none}.kc-sg{display:inline-flex;gap:4px;padding:3px;border-radius:12px;background:rgba(100,116,139,.14);align-self:flex-start;max-width:100%}.kc-sg button{border:0;background:none;color:inherit;opacity:.75;padding:7px 18px;border-radius:9px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}.kc-sg button.on{background:#0b5cad;color:#fff;opacity:1}.kc-lst{display:flex;flex-direction:column;border:1px solid rgba(100,116,139,.28);border-radius:10px;max-height:220px;overflow:auto}.kc-li{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 12px;padding:8px 12px;border-bottom:1px solid rgba(100,116,139,.2);font-size:13px}.kc-li:last-child{border-bottom:0}.kc-eml{border:1px solid rgba(100,116,139,.28);border-radius:12px;overflow:hidden}.kc-eh{display:flex;gap:10px;padding:8px 14px;border-bottom:1px solid rgba(100,116,139,.2);font-size:12.5px;min-width:0}.kc-eh span{opacity:.65;width:56px;flex:none}.kc-eh b{font-weight:600;overflow-wrap:anywhere}.kc-eb{white-space:pre-wrap;word-break:break-word;line-height:1.6;padding:14px;font-size:13.5px}.kc-wab{white-space:pre-wrap;word-break:break-word;line-height:1.5;padding:12px 14px;border-radius:14px 14px 14px 4px;background:rgba(22,163,74,.16);max-width:520px;font-size:13.5px}.kc-more summary{cursor:pointer;font-weight:600;font-size:13px;color:#0b5cad}.dark .kc-more summary{color:#5aa2e8}.kc-more textarea,.kc-more input{margin-top:6px}.kc-bigb{padding:12px 18px;font-size:14.5px;border-radius:12px;align-self:flex-start}' +
     '.kc-sp{flex:1}.kc-srow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:relative}.kc-big{flex:1;min-width:220px}.kc-ddw{display:inline-flex;position:relative}' +
     '.kc-ic{width:36px;height:36px;border-radius:10px;border:1px solid #cbd5e1;background:transparent;color:#64748b;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}.kc-ic:disabled{opacity:.4;cursor:not-allowed}.kc-ic:not(:disabled):hover{color:#0b5cad;border-color:#0b5cad}.dark .kc-ic{border-color:#334155}' +
     '.kc-b.kc-dd{display:inline-flex;align-items:center;gap:8px;padding:9px 12px 9px 14px;border:1px solid #cbd5e1;background:transparent;color:inherit}.kc-b.kc-dd.on{border-color:#0b5cad;box-shadow:0 0 0 3px rgba(11,92,173,.18)}.dark .kc-b.kc-dd{border-color:#334155}' +
@@ -4971,17 +4972,17 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     if (!K.help) return '';
     return '<div class="kc-c kc-help"><div class="kc-row"><b>Fungsi &amp; cara pakai Kontak &amp; Undangan</b><span class="kc-sp"></span><button class="kc-b g s" data-a="help">Tutup</button></div><div class="kc-hg"><div><b>Fungsi</b><ul>' +
       '<li><b>Direktori</b>: seluruh orang di bagan mitra (posisi, nama, HP, email) dalam satu tabel.</li><li><b>Cari semua</b> dan <b>Filter lengkap</b> untuk mempersempit (Tier 1, posisi, region, status bagan, kontak bermasalah).</li>' +
-      '<li><b>Ikon WA</b>: buka chat ke nomor tersebut dengan isi pesan sesuai Format WA.</li><li><b>Kirim email ke N mitra</b>: satu klik langsung mengirim email otomatis ke setiap mitra pada hasil filter (satu email per mitra, ke semua alamat valid mitra itu) sesuai Format email.</li><li><b>Konfirmasi hadir</b>: tombol "Tambah tombol konfirmasi hadir" di tab Kirim menyisipkan tautan Hadir / Tidak hadir. Jawaban penerima tercatat otomatis dan tampil di kolom Keterangan serta tab Riwayat.</li><li><b>Kirim terjadwal &amp; pengingat</b>: isi waktu di tab Kirim, dan centang pengingat agar yang belum menjawab diingatkan otomatis.</li><li><b>Lampiran &amp; CC</b>: tautan file Drive dan salinan email diatur di tab Kirim dan Pengaturan.</li><li><b>Perbaikan kontak</b>: kirim permintaan konfirmasi data ke orang yang HP atau emailnya bermasalah.</li><li><b>Unduh Excel</b>: hasil filter, riwayat, dan konfirmasi hadir dalam format .xlsx.</li><li><b>Kirim</b>: kirim massal ke hasil filter. <b>Riwayat</b>: catatan semua kiriman.</li></ul></div>' +
-      '<div><b>Cara pakai</b><ol><li>Pilih penerima lewat filter, misal Tier 1 dan Site Manager.</li><li>Pilih <b>Format WA</b> / <b>Format email</b> di Pengaturan (ikon gerigi), isi format bisa diubah kapan saja.</li><li>Semua mitra hasil filter: klik <b>Kirim email ke N mitra</b>. Satu orang: klik ikon WA di barisnya.</li><li>Ingin cek pratinjau atau uji kirim dulu: buka tab <b>Kirim</b>.</li><li>Cek hasilnya di tab <b>Riwayat</b>.</li></ol>' +
+      '<li><b>Ikon WA</b>: buka chat ke nomor tersebut dengan isi pesan sesuai Format WA.</li><li><b>Kirim email ke N orang</b>: satu klik langsung mengirim email ke setiap orang pada hasil filter. Tiap orang menerima emailnya sendiri, dengan nama, posisi, dan mitranya, sesuai Format email.</li><li><b>Konfirmasi hadir</b>: tombol "Tambah tombol konfirmasi hadir" di tab Kirim menyisipkan tautan Hadir / Tidak hadir. Jawaban penerima tercatat otomatis dan tampil di kolom Keterangan serta tab Riwayat.</li><li><b>Kirim terjadwal &amp; pengingat</b>: isi waktu di tab Kirim, dan centang pengingat agar yang belum menjawab diingatkan otomatis.</li><li><b>Lampiran &amp; CC</b>: tautan file Drive dan salinan email diatur di tab Kirim dan Pengaturan.</li><li><b>Perbaikan kontak</b>: kirim permintaan konfirmasi data ke orang yang HP atau emailnya bermasalah.</li><li><b>Unduh Excel</b>: hasil filter, riwayat, dan konfirmasi hadir dalam format .xlsx.</li><li><b>Kirim</b>: kirim massal ke hasil filter. <b>Riwayat</b>: catatan semua kiriman.</li></ul></div>' +
+      '<div><b>Cara pakai</b><ol><li>Pilih penerima lewat filter, misal Tier 1 dan Site Manager.</li><li>Atur <b>Format email</b> dan <b>Format WhatsApp</b> di Pengaturan (ikon gerigi), isinya bisa diubah kapan saja.</li><li>Semua orang hasil filter: klik <b>Kirim email ke N orang</b>. Satu orang: klik ikon WA di barisnya.</li><li>Ingin cek pratinjau atau uji kirim dulu: buka tab <b>Kirim</b>.</li><li>Cek hasilnya di tab <b>Riwayat</b>.</li></ol>' +
       '<div class="kc-mute" style="margin-top:6px">Hanya Akun Utama (atau akun yang diberi akses) yang bisa mengirim. Tier 1 diambil dari data Info Perseroan.</div></div></div></div>';
   }
   function tplForPerson(p) {
-    if (K.emTpl === '_auto') { var pt = (K.cfg && K.cfg.pt) || {}, id = pt[String(p.posisi || '').toLowerCase()], l = tplList('email'); return l.filter(function (t) { return t.id === id; })[0] || l[0] || emTpl(); }
+    if (false) { var pt = (K.cfg && K.cfg.pt) || {}, id = pt[String(p.posisi || '').toLowerCase()], l = tplList('email'); return l.filter(function (t) { return t.id === id; })[0] || l[0] || emTpl(); }
     return emTpl();
   }
   function mailGroups(list, tplFn) {
     var by = {}, ord = [];
-    list.forEach(function (p) { var t = (tplFn || tplForPerson)(p), key = p.row + '|' + (t && t.id || ''); if (!by[key]) { by[key] = { tpl: t, a: [] }; ord.push(key); } by[key].a.push(p); });
+    list.forEach(function (p) { var t = (tplFn || tplForPerson)(p), key = p.key + '|' + (t && t.id || ''); if (!by[key]) { by[key] = { tpl: t, a: [] }; ord.push(key); } by[key].a.push(p); });
     var out = [];
     ord.forEach(function (key) {
       var a = by[key].a, em = [], pos = [], nm = [];
@@ -4994,7 +4995,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   function defEvent(t) { var tgl = ''; try { tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { } return (t && t.nama || 'Undangan') + ' ' + tgl; }
   function sendGroups(grp, extra) {
     if (!canSend() || K.s.busy) return;
-    if (!grp.length) return toast('Tidak ada mitra dengan email valid pada filter ini.', 'error');
+    if (!grp.length) return toast('Tidak ada penerima dengan email valid pada filter ini.', 'error');
     var s = K.s, sv = { event: s.event, link: s.link, attach: s.attach, remOn: s.remOn }; extra = extra || {};
     if (extra.link != null) s.link = extra.link;
     var needR = grp.some(function (m) { return RSVPRE.test((m.subj || '') + ' ' + (m.body || '')); });
@@ -5003,7 +5004,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     var restore = function () { s.event = sv.event; s.link = sv.link; s.attach = sv.attach; s.remOn = sv.remOn; };
     return sendBatch(grp, false).then(function () {
       var ok = 0, bad = 0; grp.forEach(function (m) { var x = s.res[m.k]; if (x && x.ok) { ok++; m.people.forEach(function (p) { K.sent[p.key] = 1; }); } else bad++; });
-      restore(); toast((extra.label || 'Email') + ' terkirim ke ' + ok + ' mitra' + (bad ? ', ' + bad + ' tidak terkirim (lihat Riwayat)' : ''), bad ? 'error' : 'success'); render();
+      restore(); toast((extra.label || 'Email') + ' terkirim ke ' + ok + ' penerima' + (bad ? ', ' + bad + ' tidak terkirim (lihat Riwayat)' : ''), bad ? 'error' : 'success'); render();
     }, restore);
   }
   function mailAll() { sendGroups(mailGroups(filtered())); }
@@ -5108,7 +5109,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
       '<button type="button" class="kc-ic" data-a="reset" title="Reset semua filter" aria-label="Reset semua filter"' + (nf ? '' : ' disabled') + '><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>' +
       '<button type="button" class="kc-ic" data-a="xlsxdir" title="Unduh Excel (.xlsx)" aria-label="Unduh Excel"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 20h16"/></svg></button>' +
       '<span class="kc-gw"><button type="button" class="kc-ic' + (K.gm ? ' on' : '') + '" data-a="settings" title="Pengaturan, Kirim, dan Riwayat" aria-label="Pengaturan, Kirim, dan Riwayat" aria-haspopup="true" aria-expanded="' + !!K.gm + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>' + (K.gm ? '<div class="kc-gm" role="menu">' + (canSend() ? '<button type="button" role="menuitem" data-a="gmsend">Kirim pesan</button>' : '') + '<button type="button" role="menuitem" data-a="gmlog">Riwayat</button>' + (canSend() ? '<button type="button" role="menuitem" data-a="gmset">Pengaturan pesan</button>' : '') + '<button type="button" role="menuitem" data-a="gmhelp">Fungsi &amp; cara pakai</button></div>' : '') + '</span>' +
-      (canSend() ? (function () { var mg = mailGroups(list), mc = {}; mg.forEach(function (m) { mc[m.mitra] = 1; }); var nm = Object.keys(mc).length; return '<button class="kc-b s kc-mall" data-a="mailall"' + (mg.length && !K.s.busy ? '' : ' disabled') + ' title="Kirim email otomatis ke setiap mitra pada hasil filter, sesuai Format email">' + (K.s.busy ? 'Mengirim…' : 'Kirim email ke ' + nm + ' mitra' + (mg.length > nm ? ' (' + mg.length + ' email)' : '')) + '</button>'; })() : '') +
+      (canSend() ? (function () { var mg = mailGroups(list), mc = {}; mg.forEach(function (m) { mc[m.mitra] = 1; }); var nm = Object.keys(mc).length; return '<button class="kc-b s kc-mall" data-a="mailall"' + (mg.length && !K.s.busy ? '' : ' disabled') + ' title="Kirim email otomatis ke setiap mitra pada hasil filter, sesuai Format email">' + (K.s.busy ? 'Mengirim…' : 'Kirim email ke ' + mg.length + ' orang') + '</button>'; })() : '') +
       (K.adv ? '<div class="kc-dp" role="dialog" aria-label="Filter lengkap"><div class="kc-dg">' +
         fgrp('Mitra', 'tier', [['t1', 'Mitra Tier 1'], ['non', 'Non-Tier 1']]) +
         fgrp('Posisi', 'pos', K.posOpts.map(function (x) { return [x, x]; })) +
@@ -5138,59 +5139,54 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
 
   function sendItems() {
     var rec = recipients(), s = K.s, out = [];
-    if (s.ch === 'email' && s.unit === 'mitra') {
-      var by = {}; rec.forEach(function (p) { (by[p.row] = by[p.row] || []).push(p); });
-      Object.keys(by).forEach(function (r) {
-        var a = by[r], em = []; a.forEach(function (p) { if (mailOk(p.email) && em.indexOf(p.email.toLowerCase()) < 0) em.push(p.email.toLowerCase()); });
-        var pos = [], nm = []; a.forEach(function (p) { if (pos.indexOf(p.posisi) < 0) pos.push(p.posisi); if (nm.indexOf(p.nama) < 0) nm.push(p.nama); });
-        out.push({ k: 'm' + r, to: em, mitra: a[0].mitra, posisi: pos.join(', '), nama: nm.join(', ') });
-      });
-    } else rec.forEach(function (p) { out.push({ k: p.key, to: mailOk(p.email) ? [p.email.toLowerCase()] : [], mitra: p.mitra, posisi: p.posisi, nama: p.nama, hp: p.hp }); });
+    rec.forEach(function (p) { out.push({ k: p.key, to: mailOk(p.email) ? [p.email.toLowerCase()] : [], mitra: p.mitra, posisi: p.posisi, nama: p.nama, hp: p.hp }); });
     return out;
   }
+  function activeTpl(ch) { return ch === 'wa' ? waTpl() : emTpl(); }
   function viewSend() {
     var s = K.s, c = K.cfg || {};
     if (!canSend()) return '<div class="kc-c"><div class="kc-note">Pengiriman hanya untuk Akun Utama Hasanudin atau akun yang diberi akses olehnya.</div></div>';
-    var rec = recipients(), items = sendItems(), tpls = tplList(s.ch);
-    if (!s.tpl && tpls[0]) { s.tpl = tpls[0].id; s.subj = tpls[0].subjek; s.body = tpls[0].isi; }
-    var withTo = items.filter(function (i) { return i.to.length; }).length, noTo = items.length - withTo;
-    var first = items.filter(function (i) { return s.ch === 'wa' ? hp62(i.hp) : i.to.length; })[0];
-    var rv = function (t) { return String(t).replace(/\{tautan_hadir\}/g, '[tautan Hadir]').replace(/\{tautan_tidak\}/g, '[tautan Tidak hadir]'); };
-    var pv = first ? rv(fillTpl(s.body, first, s.link, s.event)) : '', ps = first ? rv(fillTpl(s.subj, first, s.link, s.event)) : '';
-    var remain = Math.max(0, (c.limit || 100) - (c.today || 0));
-    var h = '<div class="kc-c" style="display:flex;flex-direction:column;gap:12px">';
+    var em = s.ch === 'email', at = activeTpl(s.ch);
+    if (s.tplFor !== s.ch + '|' + at.id) { s.tplFor = s.ch + '|' + at.id; s.tpl = at.id; s.subj = at.subjek || ''; s.body = at.isi || ''; }
+    var items = sendItems(), withTo = items.filter(function (i) { return i.to.length; }).length, noTo = items.length - withTo;
+    var wl = items.filter(function (i) { return hp62(i.hp); }), first = (em ? items.filter(function (i) { return i.to.length; }) : wl)[0];
+    var later = s.mode === 'later', needEv = RSVPRE.test(String(s.body) + ' ' + String(s.subj));
+    var pv = first ? fillTpl(s.body, first, s.link, s.event) : '', ps = first ? fillTpl(s.subj, first, s.link, s.event) : '';
+    var sg = function (a, v, l, on) { return '<button type="button" class="' + (on ? 'on' : '') + '" data-a="' + a + '" data-v="' + v + '">' + l + '</button>'; };
+    var n = em ? withTo : wl.length, h = '<div class="kc-c kc-snd">';
+    h += '<span class="kc-tg">Khusus Akun Utama yang diberi akses</span>';
     if (c.from && c.fromOk === false) h += '<div class="kc-note">Skrip terpasang atas akun <b>' + E(c.as || '?') + '</b>, bukan <b>' + E(c.from) + '</b>. Email akan keluar dari akun tersebut kecuali ' + E(c.from) + ' ditambahkan sebagai alias "Kirim sebagai".</div>';
-    h += '<div class="kc-g2"><div><div class="kc-mute">Penerima</div><select data-s="src">' + opt('filter', 'Hasil filter Direktori (' + filtered().length + ' orang)', s.src) + opt('sel', 'Yang dicentang (' + selected().length + ' orang)', s.src) + '</select></div>' +
-      '<div><div class="kc-mute">Saluran</div><select data-s="ch">' + opt('email', 'Email (kirim langsung)', s.ch) + opt('wa', 'WhatsApp (klik berurutan)', s.ch) + '</select></div>' +
-      (s.ch === 'email' ? '<div><div class="kc-mute">Satuan email</div><select data-s="unit">' + opt('orang', 'Satu email per orang', s.unit) + opt('mitra', 'Satu email per mitra', s.unit) + '</select></div>' : '') +
-      '<div><div class="kc-mute">Template</div><select data-s="tpl">' + tpls.map(function (t) { return opt(t.id, t.nama, s.tpl); }).join('') + '</select></div></div>';
-    if (s.ch === 'email') h += '<div><div class="kc-mute">Subjek</div><input data-s="subj" value="' + E(s.subj) + '"></div>';
-    h += '<div><div class="kc-row" style="justify-content:space-between"><span class="kc-mute">Isi pesan (bisa diubah di sini sebelum kirim)</span><span class="kc-row">' + ['nama', 'posisi', 'mitra', 'tanggal', 'acara', 'tautan'].map(function (v) { return '<button class="kc-chip" data-ins="{' + v + '}">{' + v + '}</button>'; }).join('') + '</span></div><textarea data-s="body" id="kc-body">' + E(s.body) + '</textarea></div>' +
-      '<div class="kc-g2"><div><div class="kc-mute">Tautan dokumen / agenda / Zoom (opsional, mengisi {tautan})</div><input data-s="link" placeholder="https://" value="' + E(s.link) + '"></div>' +
-      '<div class="kc-row" style="align-items:flex-end"><button class="kc-b g s" data-a="tplsave">Perbarui template ini</button><button class="kc-b g s" data-a="tplnew">Simpan sebagai template baru</button></div></div>';
-    if (s.ch === 'email') h += '<div class="kc-g3"><div><div class="kc-mute">Nama acara (mengisi {acara}, wajib bila ada tombol konfirmasi hadir)</div><input data-s="event" placeholder="Contoh: Rapat Evaluasi Mitra Tier 1" value="' + E(s.event) + '"></div>' +
-      '<div><div class="kc-mute">Lampiran: tautan file Google Drive, satu per baris (maks 5)</div><textarea data-s="attach" style="min-height:62px" placeholder="https://drive.google.com/file/d/…">' + E(s.attach) + '</textarea></div>' +
-      '<div class="kc-row" style="align-items:flex-end"><button class="kc-b g s" data-a="addrsvp" title="Menambahkan tautan Hadir / Tidak hadir ke isi pesan">Tambah tombol konfirmasi hadir</button></div></div>';
-    h += '<div><div class="kc-mute">Pratinjau' + (first ? ' — ' + E(first.nama + ' · ' + first.mitra) : '') + '</div>' + (first ? (s.ch === 'email' ? '<div style="font-weight:700;margin:4px 0">' + E(ps) + '</div>' : '') + '<div class="kc-pre">' + E(pv) + '</div>' : '<div class="kc-note">Belum ada penerima dengan ' + (s.ch === 'wa' ? 'nomor HP' : 'email') + ' valid. Atur filter di tab Direktori.</div>') + '</div>';
-    if (s.ch === 'email') {
-      h += '<div class="kc-row"><span class="kc-mute"><b>' + withTo + '</b> email siap kirim' + (noTo ? ', <b>' + noTo + '</b> tanpa email valid (dilewati)' : '') + '. Sisa batas hari ini: <b>' + remain + '</b>' + (c.quota != null ? ' · kuota Google: ' + c.quota : '') + '.</span></div>' +
-        '<div class="kc-g3"><div><div class="kc-mute">Kirim terjadwal (kosongkan untuk kirim sekarang)</div><input type="datetime-local" data-s="when" value="' + E(s.when) + '"></div>' +
-        '<div><label class="kc-row" style="gap:6px"><input type="checkbox" data-s="remOn"' + (s.remOn ? ' checked' : '') + '><span class="kc-mute">Pengingat otomatis bagi yang belum konfirmasi</span></label><input type="datetime-local" data-s="remWhen" value="' + E(s.remWhen) + '"' + (s.remOn ? '' : ' disabled') + '></div></div>' +
-        '<div class="kc-row"><input data-s="testTo" placeholder="Email untuk uji kirim" style="max-width:260px" value="' + E(s.testTo) + '"><button class="kc-b g" data-a="test"' + (s.busy || !first ? ' disabled' : '') + '>Kirim uji ke saya</button><span style="flex:1"></span>' +
-        (s.confirm ? '<span class="kc-note" style="display:inline-flex;gap:8px;align-items:center">Kirim email ke <b>' + withTo + '</b> penerima dari ' + E(c.from || '') + '? <button class="kc-b s" data-a="go">Ya, kirim</button><button class="kc-b g s" data-a="cancel">Batal</button></span>' : (s.when ? '<button class="kc-b" data-a="sched"' + (s.busy || !withTo ? ' disabled' : '') + '>Jadwalkan ' + withTo + ' email</button>' : '<button class="kc-b" data-a="confirm"' + (s.busy || !withTo ? ' disabled' : '') + '>Kirim ke ' + withTo + ' penerima</button>')) + '</div>';
+    h += '<div class="kc-stp"><div class="kc-row"><span class="kc-no">1</span><b>Kirim lewat apa?</b></div><div class="kc-sg">' + sg('setch', 'email', 'Email', em) + sg('setch', 'wa', 'WhatsApp', !em) + '</div>' +
+      '<div class="kc-mute">Penerima mengikuti filter Direktori (<b>' + recipients().length + ' orang</b>).</div>' +
+      (em ? '<div class="kc-note o">Setiap orang menerima emailnya sendiri, berisi nama, posisi, dan mitranya. Semua terkirim sekaligus dengan satu klik. <b>' + withTo + '</b> email siap kirim' + (noTo ? ', <b>' + noTo + '</b> dilewati karena tidak ada email valid' : '') + '.</div>' : '<div class="kc-note o">WhatsApp dikirim satu per satu. <b>' + wl.length + '</b> orang punya nomor valid' + (items.length - wl.length ? ', ' + (items.length - wl.length) + ' dilewati' : '') + '.</div>') +
+      '<div class="kc-lst">' + items.slice(0, 80).map(function (i) { var ok = em ? i.to.length : hp62(i.hp); return '<div class="kc-li"><b>' + E(i.nama) + '</b><span class="kc-mute">' + E(i.posisi) + ' · ' + E(i.mitra) + (ok ? '' : ' · ' + (em ? 'tanpa email' : 'tanpa HP')) + '</span></div>'; }).join('') + (items.length > 80 ? '<div class="kc-li kc-mute">…dan ' + (items.length - 80) + ' lainnya</div>' : '') + '</div></div>';
+    h += '<div class="kc-stp"><div class="kc-row"><span class="kc-no">2</span><b>Pesan</b><span class="kc-sp"></span><span class="kc-mute">Format: <b>' + E(at.nama || (em ? 'Email' : 'WhatsApp')) + '</b></span><button type="button" class="kc-b g s" data-a="gmset">Ubah format</button></div>';
+    if (em && needEv) h += '<div><div class="kc-mute">Nama acara (wajib, ada tombol konfirmasi hadir)</div><input data-s="event" placeholder="Contoh: Rapat Evaluasi Mitra Tier 1" value="' + E(s.event) + '"></div>';
+    h += '<div><div class="kc-mute">Tautan Zoom / dokumen (opsional)</div><input data-s="link" placeholder="https://" value="' + E(s.link) + '"></div>';
+    if (first) h += (em ? '<div class="kc-eml"><div class="kc-eh"><span>Kepada</span><b>' + E(first.nama) + '</b></div><div class="kc-eh"><span>Dari</span><b>' + E(c.from || '') + '</b></div><div class="kc-eh"><span>Subjek</span><b>' + E(ps) + '</b></div><div class="kc-eb">' + E(pv) + '</div></div>' : '<div class="kc-wab">' + E(pv) + '</div>') + '<div class="kc-mute" style="text-align:center">Pratinjau untuk ' + E(first.nama + ' · ' + first.mitra) + '. Setiap penerima mendapat nama, posisi, dan mitranya sendiri.</div>';
+    else h += '<div class="kc-note">Belum ada penerima dengan ' + (em ? 'email' : 'nomor HP') + ' valid. Atur filter di tab Direktori.</div>';
+    h += '<details class="kc-more"' + (s.edOpen ? ' open' : '') + '><summary>Edit isi pesan</summary>' + (em ? '<div class="kc-mute">Subjek</div><input data-s="subj" value="' + E(s.subj) + '">' : '') + '<div class="kc-mute">Isi (hanya untuk pengiriman ini; format permanen diubah di Pengaturan)</div><textarea id="kc-body" data-s="body" style="min-height:150px">' + E(s.body) + '</textarea></details></div>';
+    if (em) h += '<details class="kc-more kc-stp"><summary>Opsi lainnya: lampiran dan uji kirim</summary><div><div class="kc-mute">Lampiran: tautan file Google Drive, satu per baris (maks 5)</div><textarea data-s="attach" style="min-height:62px" placeholder="https://drive.google.com/file/d/…">' + E(s.attach) + '</textarea></div><div class="kc-row"><input data-s="testTo" placeholder="Email untuk uji kirim" style="max-width:260px" value="' + E(s.testTo) + '"><button type="button" class="kc-b g" data-a="test"' + (s.busy || !first ? ' disabled' : '') + '>Kirim uji ke saya</button></div></details>';
+    h += '<div class="kc-stp"><div class="kc-row"><span class="kc-no">3</span><b>Kirim</b></div>';
+    if (em) {
+      var rdy = !s.busy && withTo && (!later || s.when) && (!needEv || String(s.event || '').trim());
+      h += '<div class="kc-sg">' + sg('setmode', 'now', 'Kirim sekarang', !later) + sg('setmode', 'later', 'Jadwalkan', later) + '</div>' + (later ? '<input type="datetime-local" data-s="when" value="' + E(s.when) + '" style="max-width:260px">' : '') +
+        '<div class="kc-mute">Sisa batas hari ini: <b>' + Math.max(0, (c.limit || 100) - (c.today || 0)) + '</b>' + (c.quota != null ? ' · kuota Google: ' + c.quota : '') + '</div>' +
+        (s.confirm ? '<div class="kc-note" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">Kirim email ke <b>' + withTo + '</b> penerima dari ' + E(c.from || '') + '? <button type="button" class="kc-b s" data-a="go">Ya, kirim</button><button type="button" class="kc-b g s" data-a="cancel">Batal</button></div>' :
+          '<button type="button" class="kc-b kc-bigb" data-a="' + (later ? 'sched' : 'confirm') + '"' + (rdy ? '' : ' disabled') + '>' + (later ? 'Jadwalkan ' + withTo + ' email' : 'Kirim ' + withTo + ' email') + '</button>' + (needEv && !String(s.event || '').trim() ? '<div class="kc-mute">Isi nama acara dulu.</div>' : (later && !s.when ? '<div class="kc-mute">Pilih tanggal dan jam kirim.</div>' : '')));
       var rs = Object.keys(s.res).map(function (k) { return s.res[k]; });
       if (s.busy || rs.length) {
         var ok = rs.filter(function (r) { return r.ok; }).length, bad = rs.filter(function (r) { return !r.ok; });
         h += '<div><div class="kc-bar"><i style="width:' + (withTo ? Math.round(rs.length * 100 / withTo) : 0) + '%"></i></div><div class="kc-mute" style="margin-top:4px">' + rs.length + ' / ' + withTo + ' diproses · ' + ok + ' terkirim · ' + bad.length + ' tidak terkirim</div></div>';
-        if (bad.length && !s.busy) h += '<div class="kc-note e">' + bad.slice(0, 12).map(function (r) { return E((r.mitra || '') + ' — ' + (r.nama || '') + ': ' + r.st + (r.note ? ' (' + r.note + ')' : '')); }).join('<br>') + (bad.length > 12 ? '<br>…dan ' + (bad.length - 12) + ' lainnya (lihat tab Riwayat)' : '') + '</div><div class="kc-row"><button class="kc-b g s" data-a="retry">Kirim ulang yang gagal/ditunda</button></div>';
+        if (bad.length && !s.busy) h += '<div class="kc-note e">' + bad.slice(0, 12).map(function (r) { return E((r.mitra || '') + ' — ' + (r.nama || '') + ': ' + r.st + (r.note ? ' (' + r.note + ')' : '')); }).join('<br>') + (bad.length > 12 ? '<br>…dan ' + (bad.length - 12) + ' lainnya (lihat tab Riwayat)' : '') + '</div><div class="kc-row"><button type="button" class="kc-b g s" data-a="retry">Kirim ulang yang gagal/ditunda</button></div>';
       }
       if (s.msg) h += '<div class="kc-note o">' + E(s.msg) + '</div>';
     } else {
-      var wl = items.filter(function (i) { return hp62(i.hp); }), done = wl.filter(function (i) { return s.waDone[i.k]; }).length;
-      h += '<div class="kc-row"><span class="kc-mute"><b>' + wl.length + '</b> nomor valid, <b>' + done + '</b> sudah dibuka.' + (items.length - wl.length ? ' ' + (items.length - wl.length) + ' tanpa HP valid dilewati.' : '') + '</span><span style="flex:1"></span><button class="kc-b" data-a="wanext"' + (done >= wl.length ? ' disabled' : '') + '>Buka WA berikutnya</button><button class="kc-b g" data-a="wareset">Ulangi dari awal</button></div>' +
-        '<div class="kc-t"><table style="min-width:520px"><thead><tr><th>Mitra</th><th>Posisi</th><th>Nama</th><th>No HP</th><th></th></tr></thead><tbody>' + wl.slice(0, 80).map(function (i) { return '<tr><td>' + E(i.mitra) + '</td><td>' + E(i.posisi) + '</td><td>' + E(i.nama) + '</td><td>' + E(i.hp) + '</td><td>' + (s.waDone[i.k] ? '<span class="kc-tg">Dibuka</span>' : '<button class="kc-b g s" data-wa1="' + E(i.k) + '">Buka WA</button>') + '</td></tr>'; }).join('') + '</tbody></table></div>';
+      var done = wl.filter(function (i) { return s.waDone[i.k]; }).length, nx = wl.filter(function (i) { return !s.waDone[i.k]; })[0];
+      h += '<div class="kc-mute">WhatsApp dibuka satu per satu. Tekan tombol, kirim pesan di WA, lalu lanjut ke penerima berikutnya. Sudah dibuka: <b>' + done + '</b> dari ' + wl.length + '.</div>' +
+        '<div class="kc-row"><button type="button" class="kc-b kc-bigb" data-a="wanext"' + (nx ? '' : ' disabled') + '>' + (nx ? 'Buka WA untuk ' + E(nx.nama) : 'Semua sudah dibuka') + '</button><button type="button" class="kc-b g" data-a="wareset">Ulangi dari awal</button></div>';
     }
-    return h + '</div>';
+    return h + '</div></div>';
   }
 
   function jadwalView() {
@@ -5281,37 +5277,29 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   /* ---------- pengaturan ---------- */
   function openSettings() {
     var c = K.cfg || {}, md = document.createElement('div'); md.className = 'kc-md'; md.id = 'kc-md';
-    var tpl = JSON.parse(JSON.stringify(c.tpl || [])), pt = JSON.parse(JSON.stringify(c.pt || {})), rt = JSON.parse(JSON.stringify(c.rtpl || {}));
+    var tpl = JSON.parse(JSON.stringify(c.tpl || []));
+    var eId = emTpl().id, wId = waTpl().id;
+    function by(id) { return tpl.filter(function (t) { return t.id === id; })[0]; }
     function paint() {
-      md.innerHTML = '<div><div class="kc-row" style="justify-content:space-between"><h3>Pengaturan Kontak & Undangan</h3><span><button class="kc-b g s" data-x="reload" title="Ambil ulang data bagan mitra">Muat ulang data</button> <button class="kc-b g s" data-x="close">Tutup</button></span></div>' +
-        '<div class="kc-tpl"><b>Format pesan yang dipakai</b><span class="kc-mute">Dipakai oleh ikon WA, ikon email, dan tombol Kirim email di Direktori.</span><div class="kc-g2"><div><div class="kc-mute">Format WA</div><select data-fmt="wa">' + tplList('wa').map(function (t) { return opt(t.id, t.nama, waTpl().id); }).join('') + '</select></div><div><div class="kc-mute">Format email</div><select data-fmt="em">' + tplList('email').map(function (t) { return opt(t.id, t.nama, K.emTpl === '_auto' ? '_auto' : emTpl().id); }).join('') + opt('_auto', 'Otomatis per posisi', K.emTpl) + '</select></div></div></div>' +
-        '<div class="kc-tpl"><b>Template pesan</b><span class="kc-mute">Variabel: {nama} {posisi} {mitra} {tanggal} {tautan}</span>' + tpl.map(function (t, i) {
-          return '<div class="kc-tpl"><div class="kc-g2"><input data-ti="' + i + '" data-k="nama" value="' + E(t.nama) + '" placeholder="Nama template"><select data-ti="' + i + '" data-k="kanal">' + opt('both', 'Email & WA', t.kanal) + opt('email', 'Email saja', t.kanal) + opt('wa', 'WA saja', t.kanal) + '</select></div><input data-ti="' + i + '" data-k="subjek" value="' + E(t.subjek) + '" placeholder="Subjek email"><textarea data-ti="' + i + '" data-k="isi">' + E(t.isi) + '</textarea><div class="kc-row"><button class="kc-b r s" data-x="deltpl" data-i="' + i + '">Hapus</button></div></div>';
-        }).join('') + '<div class="kc-row"><button class="kc-b g s" data-x="addtpl">Tambah template</button><button class="kc-b s" data-x="tpl">Simpan template</button></div></div>' +
-        '<div class="kc-tpl"><b>Batas kirim harian</b><span class="kc-mute">Terpakai hari ini: ' + (c.today || 0) + '. Pengirim: ' + E(c.from || '') + '.</span><div class="kc-row"><input id="kc-lim" type="number" min="1" max="1500" value="' + E(c.limit || 100) + '" style="max-width:120px"><button class="kc-b s" data-x="limit">Simpan batas</button></div></div>' +
-        '<div class="kc-tpl"><b>Salinan (CC) setiap email</b><span class="kc-mute">Maksimal 5 alamat, pisahkan dengan koma.</span><div class="kc-row"><input id="kc-cc" value="' + E((c.cc || []).join(', ')) + '" placeholder="alamat1@…, alamat2@…"><button class="kc-b s" data-x="cc">Simpan CC</button></div></div>' +
-        '<div class="kc-tpl"><b>Template otomatis per posisi</b><span class="kc-mute">Dipakai saat Format email = "Otomatis per posisi". Posisi tanpa pilihan memakai template pertama.</span>' + (K.wajib || []).map(function (ps) { var cur = pt[String(ps).toLowerCase()] || ''; return '<div class="kc-g2"><span>' + E(ps) + '</span><select data-pt="' + E(String(ps).toLowerCase()) + '">' + opt('', '(template pertama)', cur) + tplList('email').map(function (t) { return opt(t.id, t.nama, cur); }).join('') + '</select></div>'; }).join('') + '<div class="kc-row"><button class="kc-b s" data-x="pt">Simpan pemetaan</button></div></div>' +
-        '<div class="kc-tpl"><b>Pesan pengingat konfirmasi hadir</b><span class="kc-mute">Variabel: {nama} {posisi} {mitra} {acara} {tautan_hadir} {tautan_tidak}</span><input id="kc-rs" value="' + E(rt.subjek || '') + '" placeholder="Subjek"><textarea id="kc-ri">' + E(rt.isi || '') + '</textarea><div class="kc-row"><button class="kc-b s" data-x="rtpl">Simpan pengingat</button></div></div>' +
-        ((c.grp || []).length ? '<div class="kc-tpl"><b>Kelompok tersimpan</b>' + c.grp.map(function (x, i) { return '<div class="kc-row"><span style="flex:1">' + E(x.nama) + '</span><button class="kc-b r s" data-x="delgrp" data-i="' + i + '">Hapus</button></div>'; }).join('') + '</div>' : '') + '</div>';
+      var et = by(eId) || { subjek: '', isi: '' }, wt = by(wId) || { isi: '' };
+      md.innerHTML = '<div><div class="kc-row" style="justify-content:space-between"><h3>Pengaturan format pesan</h3><span><button class="kc-b g s" data-x="reload" title="Ambil ulang data bagan mitra">Muat ulang data</button> <button class="kc-b g s" data-x="close">Tutup</button></span></div>' +
+        '<div class="kc-g2"><div class="kc-tpl"><b>Format email</b><div class="kc-mute">Subjek</div><input data-fe="subjek" value="' + E(et.subjek) + '"><div class="kc-mute">Isi</div><textarea data-fe="isi" style="min-height:210px">' + E(et.isi) + '</textarea></div>' +
+        '<div class="kc-tpl"><b>Format WhatsApp</b><div class="kc-mute">Isi</div><textarea data-fw="isi" style="min-height:290px">' + E(wt.isi) + '</textarea></div></div>' +
+        '<div class="kc-row"><span class="kc-chip">{nama}</span><span class="kc-chip">{posisi}</span><span class="kc-chip">{mitra}</span><span class="kc-chip">{tanggal}</span><span class="kc-chip">{tautan}</span><span class="kc-mute">terisi otomatis untuk setiap penerima.</span></div>' +
+        '<div class="kc-row"><button class="kc-b" data-x="save">Simpan format</button></div>' +
+        '<div class="kc-mute">Pengaturan dan pengiriman hanya untuk Akun Utama yang diberi akses. Pengirim: ' + E(c.from || '') + '.</div></div>';
     }
     paint(); document.body.appendChild(md);
-    md.addEventListener('input', function (e) { var t = e.target; if (t.dataset && t.dataset.ti != null) tpl[+t.dataset.ti][t.dataset.k] = t.value; });
-    md.addEventListener('change', function (e) { var t = e.target; if (t.dataset && t.dataset.ti != null) tpl[+t.dataset.ti][t.dataset.k] = t.value; if (t.dataset && t.dataset.fmt) { var fk = t.dataset.fmt === 'wa' ? 'kc_wat' : 'kc_emt'; if (t.dataset.fmt === 'wa') K.waTpl = t.value; else K.emTpl = t.value; try { localStorage.setItem(fk, t.value); } catch (er) { } render(); }
-      if (t.dataset && t.dataset.pt != null) { if (t.value) pt[t.dataset.pt] = t.value; else delete pt[t.dataset.pt]; } });
+    md.addEventListener('input', function (e) { var t = e.target, d = t.dataset || {}; if (d.fe) { var a = by(eId); if (a) a[d.fe] = t.value; } if (d.fw) { var b = by(wId); if (b) b[d.fw] = t.value; } });
     md.addEventListener('click', function (e) {
       var b = e.target.closest('[data-x]'); if (!b) { if (e.target === md) md.remove(); return; }
       var x = b.dataset.x;
       if (x === 'close') return md.remove();
       if (x === 'reload') { md.remove(); K.logLoaded = false; return load(true); }
-      var done = function (m) { return function (r) { c = K.cfg; toast(m, 'success'); paint(); }; }, fail = function (er) { toast(er.message, 'error'); };
-      if (x === 'tpl') return saveCfg('tpl', tpl).then(done('Template disimpan'), fail);
-      if (x === 'limit') return saveCfg('limit', parseInt(g('kc-lim').value, 10)).then(done('Batas harian disimpan'), fail);
-      if (x === 'cc') return saveCfg('cc', g('kc-cc').value).then(done('CC disimpan'), fail);
-      if (x === 'pt') return saveCfg('pt', pt).then(done('Pemetaan disimpan'), fail);
-      if (x === 'rtpl') return saveCfg('rtpl', { subjek: g('kc-rs').value, isi: g('kc-ri').value }).then(done('Pengingat disimpan'), fail);
-      if (x === 'addtpl') { tpl.push({ id: 't' + Date.now().toString(36), nama: 'Template baru', kanal: 'both', subjek: '', isi: '' }); return paint(); }
-      if (x === 'deltpl') { tpl.splice(+b.dataset.i, 1); return paint(); }
-      if (x === 'delgrp') { var gr = (c.grp || []).slice(); gr.splice(+b.dataset.i, 1); return saveCfg('grp', gr).then(done('Kelompok dihapus'), fail); }
+      if (x === 'save') {
+        var ee = by(eId), ww = by(wId); if (!ee || !ww || !String(ee.isi).trim() || !String(ww.isi).trim()) return toast('Isi format email dan WhatsApp tidak boleh kosong', 'error');
+        return saveCfg('tpl', tpl).then(function () { K.s.tplFor = ''; toast('Format disimpan', 'success'); md.remove(); render(); }, function (er) { toast(er.message, 'error'); });
+      }
     });
   }
 
@@ -5338,6 +5326,8 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     if (act === 'xlsxrsvp') return xlsxRsvp();
     if (act === 'fixtoggle') { e.preventDefault(); K.fixOpen = !K.fixOpen; return render(); }
     if (act === 'fixall') return fixAll();
+    if (act === 'setch') { K.s.ch = a.dataset.v; K.s.res = {}; K.s.waDone = {}; K.s.confirm = false; return render(); }
+    if (act === 'setmode') { K.s.mode = a.dataset.v; K.s.confirm = false; return render(); }
     if (act === 'addrsvp') { var ta2 = g('kc-body'); var add = '\n\nMohon konfirmasi kehadiran Bapak/Ibu:\nHadir: {tautan_hadir}\nTidak hadir: {tautan_tidak}'; if (K.s.body.indexOf('{tautan_hadir}') < 0) K.s.body += add; return render(); }
     if (act === 'sched') { if (needEvent()) return toast('Isi nama acara terlebih dahulu', 'error'); return doSched(); }
     if (act === 'help') { K.help = !K.help; return render(); }
