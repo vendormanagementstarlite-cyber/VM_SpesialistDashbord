@@ -69,7 +69,7 @@ label.f.e input,label.f.e select,label.f.e textarea{border-color:var(--bad)}
 .pgr{display:flex;align-items:center;gap:14px}.pgr .tx{font-size:12.5px;font-weight:700;color:var(--ink2);white-space:nowrap}
 .pgr .tk{flex:1;height:6px;border-radius:6px;background:var(--line2);overflow:hidden}.pgr .tk i{display:block;height:100%;background:var(--blue);border-radius:6px}
 .pgr .bt{display:flex;gap:10px;flex:none}.pgr .bt .btn.pri{min-width:200px}@media (max-width:560px){.pgr{flex-wrap:wrap;gap:10px 12px}.pgr .bt{order:3;flex:1 0 100%}.pgr .bt .btn.pri{flex:1;min-width:0}}
-.bk2{margin:12px 0 6px}.bk2 .bl{font-size:13px;font-weight:700;margin-bottom:6px}.bk2 .files{margin:0 0 8px}
+.bk3{margin:14px 0 6px}.bk3>.bl{font-size:13px;font-weight:700;margin-bottom:2px}.bk3 .bk2{margin:8px 0 10px;padding:12px;border:1px solid #dbe6f3;border-radius:12px;background:#fbfdff}.bk2{margin:12px 0 6px}.bk2 .bl{font-size:13px;font-weight:700;margin-bottom:6px}.bk2 .files{margin:0 0 8px}
 .drop.sm{min-height:0;flex-direction:row;justify-content:flex-start;text-align:left;gap:12px;padding:12px 14px;font-size:13.5px}.drop.sm small{display:block;font-size:12px;color:var(--mute);margin-top:1px}.bk2.e .drop{border-color:var(--bad);background:#fffafa}
 .bk2 .link{display:inline-flex;align-items:center;gap:6px;margin-top:4px}.bk2 .link svg{width:17px;height:17px}
 .chk{display:flex;align-items:flex-start;gap:10px;margin:12px 0 0;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fbfdff;cursor:pointer;font-size:13.5px;line-height:1.5}
@@ -119,6 +119,8 @@ label.f.e input,label.f.e select,label.f.e textarea{border-color:var(--bad)}
 <input type="file" id="in-gal" accept="image/jpeg,image/png,application/pdf" multiple hidden>
 <script>
 var API = "https://script.google.com/macros/s/AKfycby9hJGo8rN0atk6OguUTA4v4Eq2skh1j3ic-jm1U6Rf-AE_JlHgW9MzPZCrlXHSpW-Y/exec";
+var JN = [{ k: "invoice", t: "Invoice" }, { k: "capture", t: "Tangkapan layar aplikasi", s: "Halaman akun yang menampilkan nama atau email akun dan paketnya" }, { k: "hasil", t: "Hasil dari aplikasi", s: "Contoh hasil kerja atau keluaran yang dibuat memakai aplikasi ini" }];
+var JT = {}; JN.forEach(function (j) { JT[j.k] = j.t; });
 var BAYAR = ["Tunai", "Transfer", "Kartu debit atau kredit pribadi", "Dompet digital"];
 var MAX_MB = 5, MAX_ITEMS = 20, CATS = ["Transportasi", "Parkir dan tol", "Konsumsi", "Material kecil", "Cetak dan ATK", "Langganan aplikasi", "Lainnya"];
 var BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
@@ -155,7 +157,7 @@ var IC = {
 var S = store.get("rmb_draft") || {};
 S.d = S.d || rid(12); S.files = (S.files || []).filter(function (f) { return f.id; }); S.items = S.items || []; S.me = S.me || store.get("rmb_me") || {}; if (S.v !== 2) { S.v = 2; S.step = 1; S.max = 1; S.items = (S.items || []).map(function (it) { return Object.assign({ tempat: "", bayar: "", manual: true }, it); }); } S.step = S.step || 1; S.max = S.max || S.step;
 var V = { busy: false, errs: {}, form: "", thumbs: {}, res: null, view: null, picFor: null, confirm: null, pending: 0 };
-var save = function () { if (TOK) return; store.set("rmb_draft", { d: S.d, files: S.files.filter(function (f) { return f.id; }).map(function (f) { return { id: f.id, name: f.name, size: f.size, mime: f.mime }; }), items: S.items, me: Object.assign({}, S.me, { setuju: false }), step: S.step, max: S.max, v: 2 }); };
+var save = function () { if (TOK) return; store.set("rmb_draft", { d: S.d, files: S.files.filter(function (f) { return f.id; }).map(function (f) { return { id: f.id, name: f.name, size: f.size, mime: f.mime, jenis: f.jenis || "" }; }), items: S.items, me: Object.assign({}, S.me, { setuju: false }), step: S.step, max: S.max, v: 2 }); };
 function fileById(id) { return S.files.filter(function (f) { return f.id === id || f.key === id; })[0]; }
 function syncItems() {   // setiap bukti yang belum dipakai menjadi satu item baru
   var used = {}; S.items.forEach(function (it) { it.files = (it.files || []).filter(function (k) { return fileById(k); }); it.files.forEach(function (k) { used[k] = 1; }); });
@@ -174,12 +176,12 @@ async function shrink(file) {
   } catch (e) { return file; }
 }
 var b64 = function (file) { return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(String(r.result).split(",")[1]); }; r.onerror = function () { rej(new Error("Gagal membaca file")); }; r.readAsDataURL(file); }); };
-async function addFiles(list, forItem) {
+async function addFiles(list, forItem, jenis) {
   for (var i = 0; i < list.length; i++) {
     var raw = list[i];
     if (S.files.length >= 30) { toast("Maksimal 30 bukti per pengajuan"); break; }
     if (!/^(image\/|application\/pdf)/.test(raw.type || "")) { toast(raw.name + ": hanya foto atau PDF"); continue; }
-    var f = { key: "k" + rid(4), name: raw.name || "bukti.jpg", size: raw.size, mime: raw.type, pct: 5, up: true };
+    var f = { key: "k" + rid(4), name: raw.name || "bukti.jpg", size: raw.size, mime: raw.type, pct: 5, up: true, jenis: jenis || "" };
     S.files.push(f); if (forItem) forItem.files.push(f.key);
     try { if (/^image\//.test(raw.type)) V.thumbs[f.key] = URL.createObjectURL(raw); } catch (e) { }
     render(); upload(f, raw, forItem);
@@ -197,7 +199,7 @@ async function upload(f, raw, forItem) {
     if (!r) throw last || new Error("Gagal mengunggah");
     var old = f.key; Object.assign(f, r.file, { up: false, pct: 100, err: "" });
     if (V.thumbs[old]) V.thumbs[f.id] = V.thumbs[old];
-    S.items.forEach(function (it, i) { it.files = it.files.map(function (k) { return k === old ? f.id : k; }); if (it.files.indexOf(f.id) >= 0) delete V.errs["item" + i + ".files"]; });
+    S.items.forEach(function (it, i) { it.files = it.files.map(function (k) { return k === old ? f.id : k; }); if (it.files.indexOf(f.id) >= 0) delete V.errs["item" + i + ".files"]; if (f.jenis) delete V.errs["item" + i + ".jn_" + f.jenis]; });
   } catch (e) { f.up = false; f.err = /koneksi|fetch|network/i.test(e.message) ? "Koneksi terputus, hapus lalu unggah ulang" : e.message; }
   clearInterval(tm); V.pending--; save(); render();
 }
@@ -250,16 +252,32 @@ function view1() {
   bar(pgr(1, '<button class="btn pri" data-a="next">Lanjut ke Rincian Biaya</button>'));
   return h;
 }
-function buktiBox(it, i) {
-  var e = V.errs["item" + i + ".files"], h = '<div class="bk2' + (e ? " e" : "") + '"><div class="bl">Bukti nota atau tanda terima<b class="rq">*</b></div>';
-  if (it.files.length) h += '<div class="files">' + it.files.map(function (k) {
+function fileCards(list) {
+  return list.length ? '<div class="files">' + list.map(function (k) {
     var f = fileById(k); if (!f) return "";
     return '<div class="fc' + (f.err ? " err" : "") + '">' + thumb(f, "th") + '<button class="x" data-a="rm" data-k="' + esc(k) + '" aria-label="Hapus ' + esc(f.name) + '">' + IC.x + "</button>" +
       (f.up ? '<div class="pg"><i data-pg="' + esc(k) + '" style="width:' + (f.pct || 0) + '%"></i></div>' : "") +
       '<div class="nm"><b>' + esc(f.name) + "</b><span>" + (f.err ? esc(f.err) : f.up ? "Mengunggah…" : kb(f.size || 0)) + "</span></div></div>";
-  }).join("") + "</div>";
-  h += '<div class="drop sm" data-a="addbk" data-i="' + i + '" data-dz="' + i + '" role="button" tabindex="0">' + IC.up + '<span><b>Pilih berkas</b> atau tarik ke sini<small>JPG, PNG, atau PDF, maksimal ' + MAX_MB + ' MB per berkas</small></span></div>' +
-    '<button class="link" data-a="cambk" data-i="' + i + '">' + IC.cam + " Ambil foto dengan kamera</button>";
+  }).join("") + "</div>" : "";
+}
+function dropBox(i, j) {
+  var at = ' data-i="' + i + '"' + (j ? ' data-j="' + j + '"' : "");
+  return '<div class="drop sm" data-a="addbk"' + at + ' data-dz="' + i + '"' + (j ? ' data-dj="' + j + '"' : "") + ' role="button" tabindex="0">' + IC.up + '<span><b>Pilih berkas</b> atau tarik ke sini<small>JPG, PNG, atau PDF, maksimal ' + MAX_MB + ' MB per berkas</small></span></div>' +
+    '<button class="link" data-a="cambk"' + at + ">" + IC.cam + " Ambil foto dengan kamera</button>";
+}
+function buktiBox(it, i) {
+  if (it.kat === "Langganan aplikasi") {
+    var e0 = V.errs["item" + i + ".files"], h2 = '<div class="bk3"><div class="bl">Berkas wajib langganan aplikasi<b class="rq">*</b></div><div class="sub" style="margin:0 0 8px">Ketiga berkas di bawah harus dilampirkan.</div>';
+    JN.forEach(function (j, n) {
+      var list = it.files.filter(function (k) { var f = fileById(k); return f && f.jenis === j.k; }), e = V.errs["item" + i + ".jn_" + j.k];
+      h2 += '<div class="bk2' + (e ? " e" : "") + '"><div class="bl">' + (n + 1) + ". " + j.t + '<b class="rq">*</b></div>' + (j.s ? '<div class="sub" style="margin:-2px 0 6px">' + j.s + "</div>" : "") + fileCards(list) + dropBox(i, j.k) + (e ? '<span class="em">' + esc(e) + "</span>" : "") + "</div>";
+    });
+    var other = it.files.filter(function (k) { var f = fileById(k); return f && !f.jenis; });
+    if (other.length) h2 += '<div class="bk2 e"><div class="bl">Berkas belum ditentukan jenisnya</div>' + fileCards(other) + '<span class="em">Hapus berkas ini lalu unggah ulang pada kolom yang sesuai.</span></div>';
+    return h2 + (e0 && !JN.some(function (j) { return V.errs["item" + i + ".jn_" + j.k]; }) ? '<span class="em">' + esc(e0) + "</span>" : "") + "</div>";
+  }
+  var e = V.errs["item" + i + ".files"], h = '<div class="bk2' + (e ? " e" : "") + '"><div class="bl">Bukti nota atau tanda terima<b class="rq">*</b></div>';
+  h += fileCards(it.files) + dropBox(i, "");
   return h + (e ? '<span class="em">' + esc(e) + "</span>" : "") + "</div>";
 }
 function view2() {
@@ -269,7 +287,7 @@ function view2() {
     var p = "item" + i + ".", sub = it.kat === "Langganan aplikasi";
     h += '<div class="item"><div class="top"><b>Item ' + (i + 1) + "</b>" + (S.items.length > 1 ? '<button class="link bad" data-a="rmitem" data-i="' + i + '">Hapus item</button>' : "") + "</div>" +
       '<div class="g2">' + fld(p + "tgl", "Tanggal nota", it.tgl, ' type="date" max="' + today() + '"') + fld(p + "kat", "Kategori", it.kat, "", "select", { list: CATS, ph: "Pilih kategori" }) + "</div>" +
-      (sub ? '<div class="hint" style="margin:0 0 4px">Tulis nama aplikasi dan periodenya, contoh: Claude Pro, langganan November 2026. Lampirkan invoice atau tanda terima. Bila tagihan dalam dolar, isi nilai rupiah sesuai mutasi kartu atau rekening.</div>' : "") +
+      (sub ? '<div class="hint" style="margin:0 0 4px">Tulis nama aplikasi dan periodenya, contoh: Claude Pro, langganan November 2026. Lampirkan tiga berkas wajib di bawah. Bila tagihan dalam dolar, isi nilai rupiah sesuai mutasi kartu atau rekening.</div>' : "") +
       '<div class="g2">' + fld(p + "tempat", sub ? "Penyedia layanan" : "Tempat atau vendor", it.tempat, ' placeholder="' + (sub ? "Contoh: Anthropic" : "Contoh: SPBU Pertamina Serang") + '"') + fld(p + "bayar", "Metode pembayaran", it.bayar, "", "select", { list: BAYAR, ph: "Pilih metode" }) + "</div>" +
       fld(p + "ket", "Keterangan", it.ket, ' placeholder="' + (sub ? "Contoh: Claude Pro, langganan November 2026" : "Contoh: tol Jakarta–Cikampek, kunjungan mitra") + '"') +
       '<div class="g2">' + fld(p + "nilai", "Nilai (Rp)", it.nilai ? String(num(it.nilai)).replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "", ' inputmode="numeric" placeholder="0"') + "<div></div></div>" +
@@ -294,7 +312,7 @@ function view3() {
 function draftObj() {
   var me = S.me;
   return { nomor: "Dibuat setelah dikirim", status: "draf", label: "Draf", at: new Date().toISOString(), nama: me.nama, email: me.email, data: me, total: total(), hist: [],
-    items: S.items.map(function (it) { return { kat: it.kat, tgl: it.tgl, tempat: it.tempat, bayar: it.bayar, ket: it.ket, nilai: num(it.nilai), files: it.files.map(function (k) { var f = fileById(k); return f ? { id: f.id || f.key, name: f.name, mime: f.mime } : null; }).filter(Boolean) }; }) };
+    items: S.items.map(function (it) { return { kat: it.kat, tgl: it.tgl, tempat: it.tempat, bayar: it.bayar, ket: it.ket, nilai: num(it.nilai), files: it.files.map(function (k) { var f = fileById(k); return f ? { id: f.id || f.key, name: f.name, mime: f.mime, jenis: f.jenis || "" } : null; }).filter(Boolean) }; }) };
 }
 function view4() {
   var me = S.me, e = V.errs.setuju, h = steps(4) + formErr();
@@ -310,7 +328,7 @@ function statusBadge(st, label) { var c = st === "dibayar" ? "ok" : st === "dito
 function maskRek(v) { v = String(v || ""); return v.length > 4 ? "•••• " + v.slice(-4) : v; }
 function formView(x, local, full) {
   var d = x.data || {}, n = 0, pics = "";
-  x.items.forEach(function (it, i) { (it.files || []).forEach(function (f) { n++; var u = V.thumbs[f.id]; pics += '<figure><div class="im" data-im="' + esc(f.id) + '" data-mime="' + esc(f.mime || "") + '"' + (u ? ' style="background-image:url(\'' + u + '\')"' : "") + ">" + (u ? "" : /pdf/.test(f.mime || "") ? "PDF" : x.status === "draf" ? "Foto terlampir" : "Memuat…") + "</div><figcaption>Bukti " + n + " · item " + (i + 1) + " · " + esc(f.name) + "</figcaption></figure>"; }); });
+  x.items.forEach(function (it, i) { (it.files || []).forEach(function (f) { n++; var u = V.thumbs[f.id]; pics += '<figure><div class="im" data-im="' + esc(f.id) + '" data-mime="' + esc(f.mime || "") + '"' + (u ? ' style="background-image:url(\'' + u + '\')"' : "") + ">" + (u ? "" : /pdf/.test(f.mime || "") ? "PDF" : x.status === "draf" ? "Foto terlampir" : "Memuat…") + "</div><figcaption>Bukti " + n + " · item " + (i + 1) + " · " + (JT[f.jenis] ? esc(JT[f.jenis]) + " · " : "") + esc(f.name) + "</figcaption></figure>"; }); });
   var hist = x.hist || [], when = function (a) { var h = hist.filter(function (y) { return y.aksi === a; }).pop(); return h ? tgl(h.at) : ""; };
   var vm = x.status === "siap_bayar" || x.status === "dibayar" ? ["ok", "Disetujui " + when("Disetujui")] : x.status === "ditolak" ? ["bad", "Ditolak"] : x.status === "dikembalikan" ? ["wait", "Dikembalikan"] : x.status === "batal" ? ["off", "Dibatalkan"] : x.status === "draf" ? ["off", "Belum"] : ["wait", "Menunggu"];
   var fn = x.status === "dibayar" ? ["ok", "Dibayar " + tgl(x.pay && x.pay.tgl) + (x.pay && x.pay.ref ? " · Ref. " + x.pay.ref : "")] : x.status === "siap_bayar" ? ["wait", "Menunggu"] : ["off", "Belum"];
@@ -383,13 +401,14 @@ document.addEventListener("input", function (ev) {
   save();
 });
 document.addEventListener("change", function (ev) { var t = ev.target; if (t.getAttribute && t.getAttribute("data-f") && (t.tagName === "SELECT" || t.type === "checkbox")) { t.dispatchEvent(new Event("input", { bubbles: true })); render(); } });
-$("in-cam").addEventListener("change", function () { addFiles(Array.from(this.files), V.picFor); V.picFor = null; this.value = ""; });
-$("in-gal").addEventListener("change", function () { addFiles(Array.from(this.files), V.picFor); V.picFor = null; this.value = ""; });
+$("in-cam").addEventListener("change", function () { addFiles(Array.from(this.files), V.picFor, V.picJ); V.picFor = null; V.picJ = null; this.value = ""; });
+$("in-gal").addEventListener("change", function () { addFiles(Array.from(this.files), V.picFor, V.picJ); V.picFor = null; V.picJ = null; this.value = ""; });
 function dzOf(ev) { return ev.target.closest && ev.target.closest("[data-dz]"); }
 document.addEventListener("dragover", function (ev) { var d = dzOf(ev); if (d) { ev.preventDefault(); d.classList.add("over"); } });
 document.addEventListener("dragleave", function (ev) { var d = dzOf(ev); if (d) d.classList.remove("over"); });
-document.addEventListener("drop", function (ev) { var d = dzOf(ev); if (d) { ev.preventDefault(); d.classList.remove("over"); var it = S.items[+d.getAttribute("data-dz")]; if (it) addFiles(Array.from(ev.dataTransfer.files || []), it); } });
-document.addEventListener("keydown", function (ev) { var d = ev.target.getAttribute && ev.target.getAttribute("data-dz"); if (d != null && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); V.picFor = S.items[+d]; $("in-gal").click(); } });
+document.addEventListener("drop", function (ev) { var d = dzOf(ev); if (d) { ev.preventDefault(); d.classList.remove("over"); var it = S.items[+d.getAttribute("data-dz")]; if (it) addFiles(Array.from(ev.dataTransfer.files || []), it, d.getAttribute("data-dj") || ""); } });
+document.addEventListener("keydown", function (ev) { var d = ev.target.getAttribute && ev.target.getAttribute("data-dz"); if (d != null && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); V.picFor = S.items[+d]; V.picJ = ev.target.getAttribute("data-dj") || ""; $("in-gal").click(); } });
+function fjOf(it) { var m = {}; if (it.kat === "Langganan aplikasi") it.files.forEach(function (k) { var f = fileById(k); if (f && f.jenis) m[f.id] = f.jenis; }); return m; }
 function newItem() { return { kat: "", tgl: "", tempat: "", bayar: "", ket: "", nilai: "", files: [], manual: true }; }
 function check(step) {
   var e = {}, me = S.me, s = function (v) { return String(v || "").trim(); };
@@ -408,7 +427,13 @@ function check(step) {
       if (!it.tgl) e[p + "tgl"] = "Isi tanggal nota."; else if (it.tgl > today()) e[p + "tgl"] = "Tanggal tidak boleh di masa depan.";
       if (!it.kat) e[p + "kat"] = "Pilih kategori."; if (s(it.tempat).length < 2) e[p + "tempat"] = "Isi tempat atau vendor."; if (!it.bayar) e[p + "bayar"] = "Pilih metode pembayaran.";
       if (s(it.ket).length < 3) e[p + "ket"] = "Tulis keterangan biaya."; if (!num(it.nilai)) e[p + "nilai"] = "Isi nilai biaya.";
-      if (!it.files.length) e[p + "files"] = "Lampirkan minimal satu bukti."; else if (it.files.some(function (k) { var f = fileById(k); return !f || !f.id || f.err; })) e[p + "files"] = "Ada bukti yang gagal terunggah. Hapus lalu unggah ulang.";
+      if (it.kat === "Langganan aplikasi") {
+        var ms = JN.filter(function (j) { return !it.files.some(function (k) { var f = fileById(k); return f && f.jenis === j.k; }); });
+        ms.forEach(function (j) { e[p + "jn_" + j.k] = "Wajib diunggah: " + j.t + "."; });
+        if (ms.length) e[p + "files"] = "Berkas wajib belum lengkap: " + ms.map(function (j) { return j.t; }).join(", ") + ".";
+        else if (it.files.some(function (k) { var f = fileById(k); return f && !f.jenis; })) e[p + "files"] = "Ada berkas yang belum ditentukan jenisnya.";
+      } else if (!it.files.length) e[p + "files"] = "Lampirkan minimal satu bukti.";
+      if (!e[p + "files"] && it.files.some(function (k) { var f = fileById(k); return !f || !f.id || f.err; })) e[p + "files"] = "Ada bukti yang gagal terunggah. Hapus lalu unggah ulang.";
     });
   }
   if (step === 3) {
@@ -438,7 +463,7 @@ async function send() {
   if (ks.length) { var st = Math.min.apply(null, ks.map(stepOf).filter(Boolean)); if (st !== S.step) { S.step = st; save(); } toast("Periksa isian yang ditandai"); showErrs(); return; }
   V.busy = true; render();
   var me = S.me, body = { d: S.d, trap: ($("trap") || {}).value || "", data: { nama: me.nama, jabatan: me.jabatan, divisi: me.divisi, email: me.email, hp: me.hp, proyek: me.proyek, keperluan: me.keperluan, catatan: me.catatan || "", bank: me.bank, norek: me.norek, an: me.an, setuju: !!me.setuju },
-    items: S.items.map(function (it) { return { kat: it.kat, tgl: it.tgl, tempat: it.tempat, bayar: it.bayar, ket: it.ket, nilai: num(it.nilai), files: it.files.map(function (k) { return fileById(k).id; }) }; }) };
+    items: S.items.map(function (it) { return { kat: it.kat, tgl: it.tgl, tempat: it.tempat, bayar: it.bayar, ket: it.ket, nilai: num(it.nilai), files: it.files.map(function (k) { return fileById(k).id; }), fj: fjOf(it) }; }) };
   if (TOK) body.r = TOK;
   try {
     var r = await api("rmb.pub.submit", body);
@@ -449,7 +474,7 @@ async function send() {
       S.step = st2; save(); showErrs(); return;
     }
     store.set("rmb_me", { nama: me.nama, jabatan: me.jabatan, divisi: me.divisi, email: me.email, hp: me.hp, proyek: me.proyek });
-    var items = body.items.map(function (it, i) { return Object.assign({}, it, { files: S.items[i].files.map(function (k) { var f = fileById(k); return { id: f.id, name: f.name, mime: f.mime }; }) }); });
+    var items = body.items.map(function (it, i) { return Object.assign({}, it, { files: S.items[i].files.map(function (k) { var f = fileById(k); return { id: f.id, name: f.name, mime: f.mime, jenis: f.jenis || "" }; }) }); });
     V.res = { nomor: r.nomor, token: r.token, revisi: r.revisi, email: me.email, item: { nomor: r.nomor, status: "diajukan", label: "Menunggu verifikasi", at: new Date().toISOString(), nama: me.nama, email: me.email, data: body.data, items: items, total: r.total, hist: [] } };
     store.del("rmb_draft");
     try { history.replaceState(null, "", location.pathname + "?r=" + r.token); } catch (e) { }
@@ -477,14 +502,14 @@ document.addEventListener("click", async function (ev) {
   else if (a === "go") { V.errs = {}; go(+b.getAttribute("data-s")); }
   else if (a === "additem") { S.items.push(newItem()); save(); render(); }
   else if (a === "rmitem") { var it = S.items[+b.getAttribute("data-i")]; if (!it) return; it.files.forEach(function (k) { S.files = S.files.filter(function (f) { return (f.id || f.key) !== k; }); }); S.items.splice(+b.getAttribute("data-i"), 1); V.errs = {}; save(); render(); }
-  else if (a === "addbk") { V.picFor = S.items[+b.getAttribute("data-i")]; $("in-gal").click(); }
-  else if (a === "cambk") { V.picFor = S.items[+b.getAttribute("data-i")]; $("in-cam").click(); }
+  else if (a === "addbk") { V.picFor = S.items[+b.getAttribute("data-i")]; V.picJ = b.getAttribute("data-j") || ""; $("in-gal").click(); }
+  else if (a === "cambk") { V.picFor = S.items[+b.getAttribute("data-i")]; V.picJ = b.getAttribute("data-j") || ""; $("in-cam").click(); }
   else if (a === "send") send();
   else if (a === "pdf") downloadPdf(b);
   else if (a === "new") { store.del("rmb_draft"); location.href = location.pathname; }
   else if (a === "fix") {
     var x = V.view; S = { v: 2, d: rid(12), step: 4, max: 4, me: Object.assign({}, x.data, { email: x.email, nama: x.nama, setuju: false }), files: [], items: [] };
-    x.items.forEach(function (it) { var ks = []; (it.files || []).forEach(function (f) { S.files.push({ id: f.id, name: f.name, mime: f.mime, size: f.size }); ks.push(f.id); }); S.items.push({ kat: it.kat, tgl: it.tgl, tempat: it.tempat || "", bayar: it.bayar || "", ket: it.ket, nilai: it.nilai, files: ks, manual: true }); });
+    x.items.forEach(function (it) { var ks = []; (it.files || []).forEach(function (f) { S.files.push({ id: f.id, name: f.name, mime: f.mime, size: f.size, jenis: f.jenis || "" }); ks.push(f.id); }); S.items.push({ kat: it.kat, tgl: it.tgl, tempat: it.tempat || "", bayar: it.bayar || "", ket: it.ket, nilai: it.nilai, files: ks, manual: true }); });
     V.editing = true; V.errs = {}; V.form = ""; render(); window.scrollTo(0, 0);
   }
   else if (a === "cancel") { V.confirm = { t: "Batalkan pengajuan?", m: "Pengajuan " + V.view.nomor + " akan dibatalkan dan tidak diproses. Tindakan ini tidak dapat diurungkan.", y: "Ya, batalkan" }; render(); }
