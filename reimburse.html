@@ -17,8 +17,9 @@ button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
 .hd{display:flex;align-items:center;gap:16px;padding:16px 18px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 1px 0 var(--line2)}
 .hd img{height:58px;width:auto;flex:none}.hd h1{margin:0;font-size:19px;line-height:1.25;font-weight:800;letter-spacing:-.01em}.hd p{margin:3px 0 0;font-size:13px;color:var(--ink2)}
 .steps{display:flex;gap:6px;margin:14px 0 12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.steps::-webkit-scrollbar{display:none}
-.steps div{flex:none;display:flex;align-items:center;gap:7px;padding:7px 12px 7px 7px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:12.5px;font-weight:600;color:var(--ink2);white-space:nowrap}
+.steps>*{flex:none;display:flex;align-items:center;gap:7px;padding:7px 12px 7px 7px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:12.5px;font-weight:600;color:var(--ink2);white-space:nowrap}
 .steps i{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--line2);font-style:normal;font-size:11.5px;font-weight:800;color:var(--ink2)}
+.steps button{cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;line-height:1.5}.steps button:hover{border-color:#a9c9ea}
 .steps .on{border-color:var(--blue);color:var(--blue);box-shadow:0 0 0 3px rgba(11,92,173,.10)}.steps .on i{background:var(--blue);color:#fff}.steps .done i{background:var(--ok);color:#fff}
 .steps hr{display:none}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 10px;margin-bottom:12px}
@@ -66,7 +67,13 @@ label.f.e input,label.f.e select,label.f.e textarea{border-color:var(--bad)}
 .drop:hover,.drop.over{border-color:var(--blue);background:var(--sky)}.drop svg{color:var(--blue)}.drop b{color:var(--blue)}
 .pgr{display:flex;align-items:center;gap:14px}.pgr .tx{font-size:12.5px;font-weight:700;color:var(--ink2);white-space:nowrap}
 .pgr .tk{flex:1;height:6px;border-radius:6px;background:var(--line2);overflow:hidden}.pgr .tk i{display:block;height:100%;background:var(--blue);border-radius:6px}
-.pgr .btn{flex:none;min-width:190px}@media (max-width:520px){.pgr{flex-wrap:wrap;gap:10px 12px}.pgr .btn{order:3;flex:1 0 100%;min-width:0}}
+.pgr .bt{display:flex;gap:10px;flex:none}.pgr .bt .btn.pri{min-width:200px}@media (max-width:560px){.pgr{flex-wrap:wrap;gap:10px 12px}.pgr .bt{order:3;flex:1 0 100%}.pgr .bt .btn.pri{flex:1;min-width:0}}
+.bk2{margin:12px 0 6px}.bk2 .bl{font-size:13px;font-weight:700;margin-bottom:6px}.bk2 .files{margin:0 0 8px}
+.drop.sm{min-height:0;flex-direction:row;justify-content:flex-start;text-align:left;gap:12px;padding:12px 14px;font-size:13.5px}.drop.sm small{display:block;font-size:12px;color:var(--mute);margin-top:1px}.bk2.e .drop{border-color:var(--bad);background:#fffafa}
+.bk2 .link{display:inline-flex;align-items:center;gap:6px;margin-top:4px}.bk2 .link svg{width:17px;height:17px}
+.chk{display:flex;align-items:flex-start;gap:10px;margin:12px 0 0;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fbfdff;cursor:pointer;font-size:13.5px;line-height:1.5}
+.chk input{margin:2px 0 0;width:18px;height:18px;accent-color:var(--blue);flex:none}.chk.on{border-color:#a9c9ea;background:var(--sky)}.chk.e{border-color:var(--bad);background:#fffafa}
+.item{background:#fcfdff}.item .top b{font-size:14.5px}
 /* formulir */
 .form{background:#fff;border:1px solid #cfd8e6;border-radius:8px;overflow:hidden;margin-bottom:12px}
 .form .fh{background:var(--navy);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
@@ -93,7 +100,7 @@ label.f.e input,label.f.e select,label.f.e textarea{border-color:var(--bad)}
 .done-hd h2{margin:0;font-size:21px}.done-hd p{margin:4px 0 0;color:var(--ink2);font-size:14px}
 .over{position:fixed;inset:0;background:rgba(14,42,71,.5);display:grid;place-items:center;padding:16px;z-index:20}
 .over .bx{background:#fff;border-radius:16px;padding:18px;max-width:420px;width:100%}.over h3{margin:0 0 6px}.over p{margin:0 0 14px;color:var(--ink2);font-size:14px}
-.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:13.5px;z-index:30;max-width:90vw}
+.toast{position:fixed;left:50%;bottom:180px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:13.5px;z-index:30;max-width:90vw}
 .load{text-align:center;padding:50px 0;color:var(--ink2)}
 .spin{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--blue);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 10px}@keyframes sp{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.spin{animation:none}}
@@ -111,6 +118,7 @@ label.f.e input,label.f.e select,label.f.e textarea{border-color:var(--bad)}
 <input type="file" id="in-gal" accept="image/jpeg,image/png,application/pdf" multiple hidden>
 <script>
 var API = "https://script.google.com/macros/s/AKfycby9hJGo8rN0atk6OguUTA4v4Eq2skh1j3ic-jm1U6Rf-AE_JlHgW9MzPZCrlXHSpW-Y/exec";
+var BAYAR = ["Tunai", "Transfer", "Kartu debit atau kredit pribadi", "Dompet digital"];
 var MAX_MB = 5, MAX_ITEMS = 20, CATS = ["Transportasi", "Parkir dan tol", "Konsumsi", "Material kecil", "Cetak dan ATK", "Langganan aplikasi", "Lainnya"];
 var BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 var Q = new URLSearchParams(location.search), TOK = (Q.get("r") || "").toLowerCase();
@@ -137,15 +145,16 @@ var IC = {
   cam: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
   gal: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 9"/></svg>',
   rcpt: '<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#9db8dd" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>',
+  up: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>',
   x: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
   ok: '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>'
 };
 
 // ---------- status ----------
 var S = store.get("rmb_draft") || {};
-S.d = S.d || rid(12); S.files = (S.files || []).filter(function (f) { return f.id; }); S.items = S.items || []; S.me = S.me || store.get("rmb_me") || {}; S.step = S.step || 1;
+S.d = S.d || rid(12); S.files = (S.files || []).filter(function (f) { return f.id; }); S.items = S.items || []; S.me = S.me || store.get("rmb_me") || {}; if (S.v !== 2) { S.v = 2; S.step = 1; S.max = 1; S.items = (S.items || []).map(function (it) { return Object.assign({ tempat: "", bayar: "", manual: true }, it); }); } S.step = S.step || 1; S.max = S.max || S.step;
 var V = { busy: false, errs: {}, form: "", thumbs: {}, res: null, view: null, picFor: null, confirm: null, pending: 0 };
-var save = function () { if (TOK) return; store.set("rmb_draft", { d: S.d, files: S.files.filter(function (f) { return f.id; }).map(function (f) { return { id: f.id, name: f.name, size: f.size, mime: f.mime }; }), items: S.items, me: S.me, step: S.step }); };
+var save = function () { if (TOK) return; store.set("rmb_draft", { d: S.d, files: S.files.filter(function (f) { return f.id; }).map(function (f) { return { id: f.id, name: f.name, size: f.size, mime: f.mime }; }), items: S.items, me: Object.assign({}, S.me, { setuju: false }), step: S.step, max: S.max, v: 2 }); };
 function fileById(id) { return S.files.filter(function (f) { return f.id === id || f.key === id; })[0]; }
 function syncItems() {   // setiap bukti yang belum dipakai menjadi satu item baru
   var used = {}; S.items.forEach(function (it) { it.files = (it.files || []).filter(function (k) { return fileById(k); }); it.files.forEach(function (k) { used[k] = 1; }); });
@@ -187,7 +196,7 @@ async function upload(f, raw, forItem) {
     if (!r) throw last || new Error("Gagal mengunggah");
     var old = f.key; Object.assign(f, r.file, { up: false, pct: 100, err: "" });
     if (V.thumbs[old]) V.thumbs[f.id] = V.thumbs[old];
-    S.items.forEach(function (it) { it.files = it.files.map(function (k) { return k === old ? f.id : k; }); });
+    S.items.forEach(function (it, i) { it.files = it.files.map(function (k) { return k === old ? f.id : k; }); if (it.files.indexOf(f.id) >= 0) delete V.errs["item" + i + ".files"]; });
   } catch (e) { f.up = false; f.err = /koneksi|fetch|network/i.test(e.message) ? "Koneksi terputus, hapus lalu unggah ulang" : e.message; }
   clearInterval(tm); V.pending--; save(); render();
 }
@@ -199,82 +208,125 @@ function removeFile(k) {
 }
 
 // ---------- tampilan ----------
+var LANGKAH = ["Data Pengaju", "Rincian Biaya", "Rekening Pencairan", "Tinjau dan Kirim"];
 function steps(n) {
-  var L = ["Capture Bukti", "Invoice", "Hasil"], h = "";
-  L.forEach(function (l, i) { var c = i + 1 < n ? "done" : i + 1 === n ? "on" : ""; if (i) h += '<hr class="' + (i < n ? "done" : "") + '">'; h += '<div class="' + c + '"><i>' + (i + 1 < n ? "✓" : i + 1) + "</i>" + l + "</div>"; });
-  return '<div class="steps" aria-label="Langkah ' + n + ' dari 3">' + h + "</div>";
+  var h = "";
+  LANGKAH.forEach(function (l, i) {
+    var s = i + 1, c = s < n ? "done" : s === n ? "on" : "", can = n <= 4 && s !== n && s <= (S.max || 1);
+    h += (can ? '<button type="button" data-a="go" data-s="' + s + '" class="' + c + '">' : '<div class="' + c + '">') + "<i>" + (s < n ? "✓" : s) + "</i>" + l + (can ? "</button>" : "</div>");
+  });
+  return '<nav class="steps" aria-label="Langkah ' + Math.min(n, 4) + ' dari 4">' + h + "</nav>";
 }
+function pgr(n, btns) { return '<div class="pgr"><span class="tx">Langkah ' + n + ' dari 4</span><div class="tk"><i style="width:' + n * 25 + '%"></i></div><div class="bt">' + btns + "</div></div>"; }
 function thumb(f, cls) {
   var k = f.id || f.key, u = V.thumbs[k] || V.thumbs[f.id];
   return '<div class="' + cls + '"' + (u ? ' style="background-image:url(\'' + u + '\')"' : "") + ">" + (u ? "" : /pdf/.test(f.mime || "") ? "PDF" : f.up ? "…" : "Foto") + "</div>";
 }
-function viewCapture() {
-  var h = steps(1) + '<div class="card"><h2>Bukti Biaya</h2><p class="sub">Satu foto atau PDF per nota. Setiap bukti menjadi satu item di invoice.</p>' +
-    '<div class="note"><b>Pastikan nota terbaca.</b> Tanggal dan nominal harus jelas. Pengajuan akan diverifikasi oleh Vendor Management.</div>' +
-    '<div class="drop" id="dz" data-a="gal" role="button" tabindex="0">' + IC.rcpt + '<span><b>Pilih berkas</b> atau tarik ke sini</span><span style="font-size:12px;color:var(--mute)">JPG, PNG, atau PDF</span></div>' +
-    '<div class="btnrow"><button class="btn pri grow" data-a="cam">' + IC.cam + 'Ambil foto</button><button class="btn grow" data-a="gal">' + IC.gal + "Galeri atau PDF</button></div>";
-  if (S.files.length) {
-    h += '<p style="margin:16px 0 0;font-size:13px;font-weight:700;color:var(--ink2)">Bukti terlampir (' + S.files.length + ")</p><div class=\"files\">" + S.files.map(function (f) {
-      var k = f.id || f.key;
-      return '<div class="fc' + (f.err ? " err" : "") + '">' + thumb(f, "th") + '<button class="x" data-a="rm" data-k="' + esc(k) + '" aria-label="Hapus ' + esc(f.name) + '">' + IC.x + "</button>" +
-        (f.up ? '<div class="pg"><i data-pg="' + esc(k) + '" style="width:' + (f.pct || 0) + '%"></i></div>' : "") +
-        '<div class="nm"><b>' + esc(f.name) + "</b><span>" + (f.err ? esc(f.err) : f.up ? "Mengunggah…" : kb(f.size || 0)) + "</span></div></div>";
-    }).join("") + "</div>";
-  }
-  h += '<p style="margin:12px 0 0;font-size:12px;color:var(--mute)">Foto atau PDF, maksimal ' + MAX_MB + " MB per berkas. Foto dikecilkan otomatis.</p></div>";
-  var okN = S.files.filter(function (f) { return f.id && !f.err; }).length;
-  bar('<div class="pgr"><span class="tx">Langkah 1 dari 3</span><div class="tk"><i style="width:33%"></i></div><button class="btn pri" data-a="to2"' + (okN && !V.pending ? "" : " disabled") + ">" + (V.pending ? "Menunggu unggahan…" : "Lanjut ke Invoice") + "</button></div>");
-  return h;
-}
-function fld(key, label, val, attrs, kind) {
+function fld(key, label, val, attrs, kind, opt) {
   var e = V.errs[key], inner;
-  if (kind === "select") inner = '<select data-f="' + key + '"' + (attrs || "") + '><option value="">Pilih kategori</option>' + CATS.map(function (c) { return "<option" + (c === val ? " selected" : "") + ">" + esc(c) + "</option>"; }).join("") + "</select>";
+  if (kind === "select") inner = '<select data-f="' + key + '"' + (attrs || "") + '><option value="">' + esc(opt.ph) + "</option>" + opt.list.map(function (c) { return "<option" + (c === val ? " selected" : "") + ">" + esc(c) + "</option>"; }).join("") + "</select>";
   else if (kind === "area") inner = '<textarea data-f="' + key + '"' + (attrs || "") + ">" + esc(val) + "</textarea>";
-  else inner = '<input data-f="' + key + '" value="' + esc(val) + '"' + (attrs || "") + ">";
+  else inner = '<input data-f="' + key + '" value="' + esc(val == null ? "" : val) + '"' + (attrs || "") + ">";
   return '<label class="f' + (e ? " e" : "") + '">' + label + (/opsional/.test(label) ? "" : '<b class="rq">*</b>') + inner + (e ? '<span class="em">' + esc(e) + "</span>" : "") + "</label>";
 }
 function total() { return S.items.reduce(function (a, it) { return a + num(it.nilai); }, 0); }
-function viewInvoice() {
-  var me = S.me, h = steps(2);
+function formErr() {
+  var h = "";
   if (V.form) h += '<div class="hint bad" role="alert">' + esc(V.form) + "</div>";
   if (TOK && V.view && V.view.note) h += '<div class="hint warn"><div><b>Catatan Vendor Management:</b> ' + esc(V.view.note) + "</div></div>";
-  h += '<div class="card"><h2>Data pengaju</h2><p class="sub">Diingat di perangkat ini untuk pengajuan berikutnya.</p>' +
-    fld("nama", "Nama lengkap", me.nama, ' autocomplete="name"') + '<div class="g2">' + fld("jabatan", "Jabatan", me.jabatan, ' autocomplete="organization-title"') + fld("proyek", "Proyek atau PO", me.proyek) + "</div>" +
-    fld("email", "Email (untuk tautan pantau)", me.email, ' type="email" inputmode="email" autocomplete="email"' + (TOK ? " readonly" : "")) + fld("hp", "WhatsApp (opsional)", me.hp, ' type="tel" inputmode="tel" autocomplete="tel"') + "</div>";
-  h += '<div class="card"><h2>Rincian biaya</h2><p class="sub">Periksa dan lengkapi setiap item sesuai nota.</p>';
+  return h;
+}
+function view1() {
+  var me = S.me, h = steps(1) + formErr();
+  h += '<div class="card"><h2>Data Pengaju</h2><p class="sub">Identitas karyawan yang mengeluarkan biaya. Data diingat di perangkat ini untuk pengajuan berikutnya.</p>' +
+    '<div class="note"><b>Isi dengan benar dan teliti.</b> Pengajuan diverifikasi Vendor Management sebelum dibayarkan oleh Finance. Biaya pribadi tidak dapat diganti.</div>' +
+    fld("nama", "Nama lengkap", me.nama, ' autocomplete="name"') +
+    '<div class="g2">' + fld("jabatan", "Jabatan", me.jabatan, ' autocomplete="organization-title"') + fld("divisi", "Divisi atau unit kerja", me.divisi, ' placeholder="Contoh: Plan dan Roll Out"') + "</div>" +
+    '<div class="g2">' + fld("email", "Email (untuk tautan pantau)", me.email, ' type="email" inputmode="email" autocomplete="email"' + (TOK ? " readonly" : "")) + fld("hp", "Nomor WhatsApp (opsional)", me.hp, ' type="tel" inputmode="tel" autocomplete="tel" placeholder="08xx"') + "</div></div>";
+  h += '<div class="card"><h2>Keperluan</h2><p class="sub">Kegiatan pekerjaan yang menimbulkan biaya.</p>' +
+    fld("keperluan", "Keperluan atau kegiatan", me.keperluan, ' placeholder="Contoh: Survei lokasi dan koordinasi mitra di Karangantu, 10 sampai 12 November 2026"', "area") +
+    fld("proyek", "Proyek atau nomor PO", me.proyek, ' placeholder="Contoh: FTTH Karangantu atau PO-2026-0123"') + "</div>";
+  bar(pgr(1, '<button class="btn pri" data-a="next">Lanjut ke Rincian Biaya</button>'));
+  return h;
+}
+function buktiBox(it, i) {
+  var e = V.errs["item" + i + ".files"], h = '<div class="bk2' + (e ? " e" : "") + '"><div class="bl">Bukti nota atau tanda terima<b class="rq">*</b></div>';
+  if (it.files.length) h += '<div class="files">' + it.files.map(function (k) {
+    var f = fileById(k); if (!f) return "";
+    return '<div class="fc' + (f.err ? " err" : "") + '">' + thumb(f, "th") + '<button class="x" data-a="rm" data-k="' + esc(k) + '" aria-label="Hapus ' + esc(f.name) + '">' + IC.x + "</button>" +
+      (f.up ? '<div class="pg"><i data-pg="' + esc(k) + '" style="width:' + (f.pct || 0) + '%"></i></div>' : "") +
+      '<div class="nm"><b>' + esc(f.name) + "</b><span>" + (f.err ? esc(f.err) : f.up ? "Mengunggah…" : kb(f.size || 0)) + "</span></div></div>";
+  }).join("") + "</div>";
+  h += '<div class="drop sm" data-a="addbk" data-i="' + i + '" data-dz="' + i + '" role="button" tabindex="0">' + IC.up + '<span><b>Pilih berkas</b> atau tarik ke sini<small>JPG, PNG, atau PDF, maksimal ' + MAX_MB + ' MB per berkas</small></span></div>' +
+    '<button class="link" data-a="cambk" data-i="' + i + '">' + IC.cam + " Ambil foto dengan kamera</button>";
+  return h + (e ? '<span class="em">' + esc(e) + "</span>" : "") + "</div>";
+}
+function view2() {
+  var h = steps(2) + formErr();
+  h += '<div class="card"><h2>Rincian Biaya</h2><p class="sub">Satu item untuk setiap nota atau tanda terima. Lampirkan bukti pada item yang sama.</p>';
   S.items.forEach(function (it, i) {
-    var p = "item" + i + ".";
-    h += '<div class="item"><div class="top"><b>Item ' + (i + 1) + '</b><button class="link bad" data-a="rmitem" data-i="' + i + '">Hapus item</button></div>' +
-      '<div class="bk">' + it.files.map(function (k) { var f = fileById(k); return f ? thumb(f, "t") : ""; }).join("") + '<button class="t" data-a="addbk" data-i="' + i + '" aria-label="Tambah bukti untuk item ' + (i + 1) + '">+</button></div>' +
-      (V.errs[p + "files"] ? '<span class="em" style="margin:-4px 0 8px">' + esc(V.errs[p + "files"]) + "</span>" : "") +
-      fld(p + "kat", "Kategori", it.kat, "", "select") + '<div class="g2">' + fld(p + "tgl", "Tanggal biaya", it.tgl, ' type="date" max="' + today() + '"') + fld(p + "nilai", "Nilai (Rp)", it.nilai ? String(num(it.nilai)).replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "", ' inputmode="numeric" placeholder="0"') + "</div>" +
-      (it.kat === "Langganan aplikasi" ? '<div class="hint" style="margin:-2px 0 10px">Tulis nama aplikasi dan periodenya, contoh: Claude Pro, langganan November 2026. Lampirkan invoice atau tanda terima. Bila tagihan dalam dolar, isi nilai rupiah sesuai mutasi kartu atau rekening.</div>' : "") +
-      fld(p + "ket", "Keterangan", it.ket, ' placeholder="' + (it.kat === "Langganan aplikasi" ? "Contoh: Claude Pro, langganan November 2026" : "Contoh: tol Jakarta–Cikampek, kunjungan mitra") + '"') + "</div>";
+    var p = "item" + i + ".", sub = it.kat === "Langganan aplikasi";
+    h += '<div class="item"><div class="top"><b>Item ' + (i + 1) + "</b>" + (S.items.length > 1 ? '<button class="link bad" data-a="rmitem" data-i="' + i + '">Hapus item</button>' : "") + "</div>" +
+      '<div class="g2">' + fld(p + "tgl", "Tanggal nota", it.tgl, ' type="date" max="' + today() + '"') + fld(p + "kat", "Kategori", it.kat, "", "select", { list: CATS, ph: "Pilih kategori" }) + "</div>" +
+      (sub ? '<div class="hint" style="margin:0 0 4px">Tulis nama aplikasi dan periodenya, contoh: Claude Pro, langganan November 2026. Lampirkan invoice atau tanda terima. Bila tagihan dalam dolar, isi nilai rupiah sesuai mutasi kartu atau rekening.</div>' : "") +
+      '<div class="g2">' + fld(p + "tempat", sub ? "Penyedia layanan" : "Tempat atau vendor", it.tempat, ' placeholder="' + (sub ? "Contoh: Anthropic" : "Contoh: SPBU Pertamina Serang") + '"') + fld(p + "bayar", "Metode pembayaran", it.bayar, "", "select", { list: BAYAR, ph: "Pilih metode" }) + "</div>" +
+      fld(p + "ket", "Keterangan", it.ket, ' placeholder="' + (sub ? "Contoh: Claude Pro, langganan November 2026" : "Contoh: tol Jakarta–Cikampek, kunjungan mitra") + '"') +
+      '<div class="g2">' + fld(p + "nilai", "Nilai (Rp)", it.nilai ? String(num(it.nilai)).replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "", ' inputmode="numeric" placeholder="0"') + "<div></div></div>" +
+      buktiBox(it, i) + "</div>";
   });
   if (V.errs._items) h += '<span class="em" style="margin-bottom:8px">' + esc(V.errs._items) + "</span>";
   h += (S.items.length < MAX_ITEMS ? '<button class="dash" data-a="additem">+ Tambah item</button>' : "") + "</div>";
-  h += '<div class="card">' + fld("catatan", "Catatan untuk verifikator (opsional)", me.catatan || "", "", "area") + '</div><div class="trap" aria-hidden="true"><input id="trap" tabindex="-1" autocomplete="off"></div>';
-  bar('<div class="pgr" style="margin-bottom:2px"><span class="tx">Langkah 2 dari 3</span><div class="tk"><i style="width:66%"></i></div></div><div class="tot"><span>Total (' + S.items.length + ' item)</span><b id="tot">' + rp(total()) + '</b></div><div style="display:flex;gap:10px"><button class="btn ghost" data-a="to1">Kembali</button><button class="btn pri grow" data-a="send"' + (V.busy || V.pending ? " disabled" : "") + ">" + (V.busy ? "Mengirim…" : V.pending ? "Menunggu unggahan…" : TOK ? "Kirim perbaikan" : "Kirim pengajuan") + "</button></div>");
+  bar('<div class="tot"><span>Total (' + S.items.length + ' item)</span><b id="tot">' + rp(total()) + "</b></div>" +
+    pgr(2, '<button class="btn ghost" data-a="prev">Kembali</button><button class="btn pri" data-a="next"' + (V.pending ? " disabled" : "") + ">" + (V.pending ? "Menunggu unggahan…" : "Lanjut ke Rekening") + "</button>"));
   return h;
 }
-function statusBadge(st, label) { var c = st === "dibayar" ? "ok" : st === "ditolak" ? "bad" : st === "batal" ? "mute" : st === "siap_bayar" ? "ok" : ""; return '<span class="badge ' + c + '">' + esc(label) + "</span>"; }
-function formView(x, local) {
+function view3() {
+  var me = S.me, h = steps(3) + formErr();
+  h += '<div class="card"><h2>Rekening Pencairan</h2><p class="sub">Penggantian biaya ditransfer ke rekening ini setelah disetujui.</p>' +
+    '<div class="hint" style="margin:6px 0 2px"><div>Gunakan rekening atas nama pengaju. Rekening atas nama orang lain dapat memperlambat verifikasi.</div></div>' +
+    '<div class="g2">' + fld("bank", "Nama bank", me.bank, ' list="dl-bank" autocomplete="off" placeholder="Contoh: BCA"') + fld("norek", "Nomor rekening", me.norek, ' inputmode="numeric" autocomplete="off" placeholder="Hanya angka"') + "</div>" +
+    fld("an", "Nama pemilik rekening", me.an, ' placeholder="Sesuai buku tabungan"') +
+    '<datalist id="dl-bank">' + ["BCA", "BRI", "BNI", "Mandiri", "BSI", "BTN", "CIMB Niaga", "Permata", "Danamon", "OCBC", "Maybank", "Panin", "Bank Jago", "SeaBank", "blu by BCA Digital", "Bank DKI", "Bank BJB"].map(function (b) { return '<option value="' + b + '">'; }).join("") + "</datalist></div>";
+  bar(pgr(3, '<button class="btn ghost" data-a="prev">Kembali</button><button class="btn pri" data-a="next">Lanjut ke Tinjau</button>'));
+  return h;
+}
+function draftObj() {
+  var me = S.me;
+  return { nomor: "Dibuat setelah dikirim", status: "draf", label: "Draf", at: new Date().toISOString(), nama: me.nama, email: me.email, data: me, total: total(), hist: [],
+    items: S.items.map(function (it) { return { kat: it.kat, tgl: it.tgl, tempat: it.tempat, bayar: it.bayar, ket: it.ket, nilai: num(it.nilai), files: it.files.map(function (k) { var f = fileById(k); return f ? { id: f.id || f.key, name: f.name, mime: f.mime } : null; }).filter(Boolean) }; }) };
+}
+function view4() {
+  var me = S.me, e = V.errs.setuju, h = steps(4) + formErr();
+  h += '<div class="card" style="padding-bottom:14px"><h2>Tinjau dan Kirim</h2><p class="sub" style="margin:0">Periksa kembali seluruh isian sebelum mengirim. Klik nama langkah di atas untuk mengubah.</p></div>' + formView(draftObj(), true, true);
+  h += '<div class="card">' + fld("catatan", "Catatan untuk verifikator (opsional)", me.catatan || "", ' placeholder="Contoh: nota parkir hilang, diganti tangkapan layar aplikasi"', "area") +
+    '<label class="chk' + (me.setuju ? " on" : "") + (e ? " e" : "") + '"><input type="checkbox" data-f="setuju"' + (me.setuju ? " checked" : "") + "><span>Saya menyatakan seluruh biaya di atas benar dikeluarkan untuk keperluan pekerjaan, bukti yang dilampirkan asli, dan belum pernah diajukan sebelumnya. Data yang tidak benar dapat membuat pengajuan ditolak.</span></label>" +
+    (e ? '<span class="em">' + esc(e) + "</span>" : "") + '<div style="height:8px"></div></div><div class="trap" aria-hidden="true"><input id="trap" tabindex="-1" autocomplete="off"></div>';
+  bar('<div class="tot"><span>Total (' + S.items.length + ' item)</span><b id="tot">' + rp(total()) + "</b></div>" +
+    pgr(4, '<button class="btn ghost" data-a="prev">Kembali</button><button class="btn pri" data-a="send"' + (V.busy || V.pending ? " disabled" : "") + ">" + (V.busy ? "Mengirim…" : V.pending ? "Menunggu unggahan…" : TOK ? "Kirim perbaikan" : "Kirim pengajuan") + "</button>"));
+  return h;
+}
+function statusBadge(st, label) { var c = st === "dibayar" ? "ok" : st === "ditolak" ? "bad" : st === "batal" ? "mute" : st === "siap_bayar" ? "ok" : st === "draf" ? "mute" : ""; return '<span class="badge ' + c + '">' + esc(label) + "</span>"; }
+function maskRek(v) { v = String(v || ""); return v.length > 4 ? "•••• " + v.slice(-4) : v; }
+function formView(x, local, full) {
   var d = x.data || {}, n = 0, pics = "";
-  x.items.forEach(function (it, i) { (it.files || []).forEach(function (f) { n++; var u = V.thumbs[f.id]; pics += '<figure><div class="im" data-im="' + esc(f.id) + '" data-mime="' + esc(f.mime || "") + '"' + (u ? ' style="background-image:url(\'' + u + '\')"' : "") + ">" + (u ? "" : /pdf/.test(f.mime || "") ? "PDF" : "Memuat…") + "</div><figcaption>Bukti " + n + " · item " + (i + 1) + " · " + esc(f.name) + "</figcaption></figure>"; }); });
+  x.items.forEach(function (it, i) { (it.files || []).forEach(function (f) { n++; var u = V.thumbs[f.id]; pics += '<figure><div class="im" data-im="' + esc(f.id) + '" data-mime="' + esc(f.mime || "") + '"' + (u ? ' style="background-image:url(\'' + u + '\')"' : "") + ">" + (u ? "" : /pdf/.test(f.mime || "") ? "PDF" : x.status === "draf" ? "Foto terlampir" : "Memuat…") + "</div><figcaption>Bukti " + n + " · item " + (i + 1) + " · " + esc(f.name) + "</figcaption></figure>"; }); });
   var hist = x.hist || [], when = function (a) { var h = hist.filter(function (y) { return y.aksi === a; }).pop(); return h ? tgl(h.at) : ""; };
-  var vm = x.status === "siap_bayar" || x.status === "dibayar" ? ["ok", "Disetujui " + when("Disetujui")] : x.status === "ditolak" ? ["bad", "Ditolak"] : x.status === "dikembalikan" ? ["wait", "Dikembalikan"] : x.status === "batal" ? ["off", "Dibatalkan"] : ["wait", "Menunggu"];
+  var vm = x.status === "siap_bayar" || x.status === "dibayar" ? ["ok", "Disetujui " + when("Disetujui")] : x.status === "ditolak" ? ["bad", "Ditolak"] : x.status === "dikembalikan" ? ["wait", "Dikembalikan"] : x.status === "batal" ? ["off", "Dibatalkan"] : x.status === "draf" ? ["off", "Belum"] : ["wait", "Menunggu"];
   var fn = x.status === "dibayar" ? ["ok", "Dibayar " + tgl(x.pay && x.pay.tgl) + (x.pay && x.pay.ref ? " · Ref. " + x.pay.ref : "")] : x.status === "siap_bayar" ? ["wait", "Menunggu"] : ["off", "Belum"];
+  var tgls = x.items.map(function (it) { return it.tgl; }).filter(Boolean).sort(), per = tgls.length ? (tgls[0] === tgls[tgls.length - 1] ? tgl(tgls[0]) : tgl(tgls[0]) + " – " + tgl(tgls[tgls.length - 1])) : "-";
   return '<div class="form"><div class="fh"><div><small>PT INTEGRASI JARINGAN EKOSISTEM</small><h2>Formulir Reimbursement</h2></div>' + statusBadge(x.status, x.label) + "</div>" +
     '<div class="no"><span style="color:var(--ink2)">Nomor</span><b>' + esc(x.nomor) + "</b></div>" +
-    '<div class="sec"><h3>A. Data pengaju</h3><div class="kv"><span>Nama</span><b>' + esc(x.nama) + "</b><span>Jabatan</span><b>" + esc(d.jabatan) + "</b><span>Proyek atau PO</span><b>" + esc(d.proyek) + "</b><span>Email</span><b>" + esc(x.email) + "</b>" + (d.hp ? "<span>WhatsApp</span><b>" + esc(d.hp) + "</b>" : "") + "<span>Tanggal ajuan</span><b>" + esc(tgl(x.at)) + "</b></div></div>" +
-    '<div class="sec"><h3>B. Rincian biaya</h3><table class="tbl"><thead><tr><th style="width:24px">No</th><th>Keterangan</th><th class="r">Nilai (Rp)</th></tr></thead><tbody>' +
-    x.items.map(function (it, i) { return "<tr><td>" + (i + 1) + "</td><td>" + esc(it.kat) + " · " + esc(it.ket) + '<br><span style="color:var(--mute)">' + esc(tgl(it.tgl)) + "</span></td><td class=\"r\">" + rp(it.nilai).replace("Rp ", "") + "</td></tr>"; }).join("") +
+    '<div class="sec"><h3>A. Data pengaju</h3><div class="kv"><span>Nama</span><b>' + esc(x.nama) + "</b><span>Jabatan</span><b>" + esc(d.jabatan) + "</b>" + (d.divisi ? "<span>Divisi</span><b>" + esc(d.divisi) + "</b>" : "") + "<span>Email</span><b>" + esc(x.email) + "</b>" + (d.hp ? "<span>WhatsApp</span><b>" + esc(d.hp) + "</b>" : "") + "<span>Tanggal ajuan</span><b>" + esc(tgl(x.at)) + "</b></div></div>" +
+    '<div class="sec"><h3>B. Keperluan</h3><div class="kv">' + (d.keperluan ? "<span>Keperluan</span><b>" + esc(d.keperluan) + "</b>" : "") + "<span>Proyek atau PO</span><b>" + esc(d.proyek) + "</b><span>Periode biaya</span><b>" + esc(per) + "</b>" + (d.catatan ? "<span>Catatan</span><b>" + esc(d.catatan) + "</b>" : "") + "</div></div>" +
+    '<div class="sec"><h3>C. Rincian biaya</h3><table class="tbl"><thead><tr><th style="width:24px">No</th><th>Uraian</th><th class="r">Nilai (Rp)</th></tr></thead><tbody>' +
+    x.items.map(function (it, i) { return "<tr><td>" + (i + 1) + "</td><td>" + esc(it.kat || "-") + " · " + esc(it.ket || "-") + '<br><span style="color:var(--mute)">' + esc(tgl(it.tgl)) + (it.tempat ? " · " + esc(it.tempat) : "") + (it.bayar ? " · " + esc(it.bayar) : "") + "</span></td><td class=\"r\">" + rp(it.nilai).replace("Rp ", "") + "</td></tr>"; }).join("") +
     '<tr class="t"><td colspan="2">Total</td><td class="r">' + rp(x.total).replace("Rp ", "") + "</td></tr></tbody></table></div>" +
-    '<div class="sec"><h3>C. Lampiran bukti (' + n + ')</h3><div class="pics">' + pics + "</div></div>" +
-    '<div class="sec" style="padding-bottom:14px"><h3>D. Persetujuan</h3><div class="appr"><div class="ok"><span>Diajukan</span><b>' + esc(tgl(x.at)) + '</b></div><div class="' + vm[0] + '"><span>Vendor Management</span><b>' + esc(vm[1]) + '</b></div><div class="' + fn[0] + '"><span>Finance</span><b>' + esc(fn[1]) + "</b></div></div></div></div>";
+    (d.norek ? '<div class="sec"><h3>D. Rekening pencairan</h3><div class="kv"><span>Bank</span><b>' + esc(d.bank) + "</b><span>Nomor rekening</span><b>" + esc(full ? d.norek : maskRek(d.norek)) + "</b><span>Atas nama</span><b>" + esc(d.an) + "</b></div></div>" : "") +
+    '<div class="sec"><h3>E. Lampiran bukti (' + n + ')</h3><div class="pics">' + (pics || '<p style="margin:0;font-size:13px;color:var(--mute)">Belum ada bukti.</p>') + "</div></div>" +
+    '<div class="sec" style="padding-bottom:14px"><h3>F. Persetujuan</h3><div class="appr"><div class="' + (x.status === "draf" ? "off" : "ok") + '"><span>Diajukan</span><b>' + (x.status === "draf" ? "Belum" : esc(tgl(x.at))) + '</b></div><div class="' + vm[0] + '"><span>Vendor Management</span><b>' + esc(vm[1]) + '</b></div><div class="' + fn[0] + '"><span>Finance</span><b>' + esc(fn[1]) + "</b></div></div></div></div>";
 }
 function viewResult() {
-  var x = V.res, h = steps(3) + '<div class="done-hd"><div class="ic">' + IC.ok + "</div><h2>" + (x.revisi ? "Perbaikan terkirim" : "Pengajuan terkirim") + "</h2><p>Nomor <b>" + esc(x.nomor) + "</b>. Tautan pantau dikirim ke " + esc(x.email) + ".</p></div>";
+  var x = V.res, h = steps(5) + '<div class="done-hd"><div class="ic">' + IC.ok + "</div><h2>" + (x.revisi ? "Perbaikan terkirim" : "Pengajuan terkirim") + "</h2><p>Nomor <b>" + esc(x.nomor) + "</b>. Tautan pantau dikirim ke " + esc(x.email) + ".</p></div>";
   h += formView(x.item, true);
   h += '<div class="hint"><div>Simpan tautan halaman ini untuk memantau status. Tautan bersifat pribadi.</div></div>';
   bar('<div style="display:flex;gap:10px"><button class="btn grow" data-a="pdf">Unduh PDF</button><button class="btn pri grow" data-a="new">Pengajuan baru</button></div>');
@@ -296,7 +348,7 @@ function render() {
   var app = $("app"), h;
   if (V.view && !V.editing) h = viewTrack();
   else if (V.res) h = viewResult();
-  else h = S.step === 2 ? viewInvoice() : viewCapture();
+  else h = [view1, view2, view3, view4][Math.min(4, Math.max(1, S.step)) - 1]();
   if (V.confirm) h += '<div class="over" role="dialog" aria-modal="true" aria-labelledby="cf-h"><div class="bx"><h3 id="cf-h">' + esc(V.confirm.t) + "</h3><p>" + esc(V.confirm.m) + '</p><div style="display:flex;gap:10px"><button class="btn ghost grow" data-a="cfno">Kembali</button><button class="btn bad grow" data-a="cfyes">' + esc(V.confirm.y) + "</button></div></div></div>";
   var foc = document.activeElement && document.activeElement.getAttribute("data-f"), pos = foc && document.activeElement.selectionStart;
   app.innerHTML = h;
@@ -318,49 +370,84 @@ async function loadPics() {   // gambar bukti di formulir pantau: diambil lewat 
 // ---------- isian ----------
 document.addEventListener("input", function (ev) {
   var k = ev.target.getAttribute && ev.target.getAttribute("data-f"); if (!k) return;
-  var m = k.match(/^item(\d+)\.(\w+)$/), v = ev.target.value;
+  var m = k.match(/^item(\d+)\.(\w+)$/), v = ev.target.type === "checkbox" ? ev.target.checked : ev.target.value;
   if (m) {
     var it = S.items[+m[1]]; if (!it) return;
     if (m[2] === "nilai") { var n = num(v); it.nilai = n || ""; var f = n ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""; if (ev.target.value !== f) { ev.target.value = f; } var t = $("tot"); if (t) t.textContent = rp(total()); }
     else it[m[2]] = v;
-  } else { S.me[k] = v; }
-  if (V.errs[k]) { delete V.errs[k]; var lb = ev.target.closest("label"); if (lb) { lb.classList.remove("e"); var em = lb.querySelector(".em"); if (em) em.remove(); } }
+  } else if (k === "norek") { var d = String(v).replace(/[^\d]/g, "").slice(0, 20); if (ev.target.value !== d) ev.target.value = d; S.me.norek = d; }
+  else { S.me[k] = v; }
+  if (V.errs[k]) { delete V.errs[k]; var lb = ev.target.closest("label"); if (lb) { lb.classList.remove("e"); var em = lb.querySelector(".em") || (lb.nextElementSibling && lb.nextElementSibling.classList.contains("em") ? lb.nextElementSibling : null); if (em) em.remove(); } }
   save();
 });
-document.addEventListener("change", function (ev) { if (ev.target.tagName === "SELECT" && ev.target.getAttribute("data-f")) { ev.target.dispatchEvent(new Event("input", { bubbles: true })); render(); } });
+document.addEventListener("change", function (ev) { var t = ev.target; if (t.getAttribute && t.getAttribute("data-f") && (t.tagName === "SELECT" || t.type === "checkbox")) { t.dispatchEvent(new Event("input", { bubbles: true })); render(); } });
 $("in-cam").addEventListener("change", function () { addFiles(Array.from(this.files), V.picFor); V.picFor = null; this.value = ""; });
-document.addEventListener("dragover", function (ev) { var d = ev.target.closest && ev.target.closest("#dz"); if (d) { ev.preventDefault(); d.classList.add("over"); } });
-document.addEventListener("dragleave", function (ev) { var d = ev.target.closest && ev.target.closest("#dz"); if (d) d.classList.remove("over"); });
-document.addEventListener("drop", function (ev) { var d = ev.target.closest && ev.target.closest("#dz"); if (d) { ev.preventDefault(); d.classList.remove("over"); addFiles(Array.from(ev.dataTransfer.files || []), null); } });
-document.addEventListener("keydown", function (ev) { if ((ev.key === "Enter" || ev.key === " ") && ev.target.id === "dz") { ev.preventDefault(); V.picFor = null; $("in-gal").click(); } });
 $("in-gal").addEventListener("change", function () { addFiles(Array.from(this.files), V.picFor); V.picFor = null; this.value = ""; });
-function clientCheck() {
+function dzOf(ev) { return ev.target.closest && ev.target.closest("[data-dz]"); }
+document.addEventListener("dragover", function (ev) { var d = dzOf(ev); if (d) { ev.preventDefault(); d.classList.add("over"); } });
+document.addEventListener("dragleave", function (ev) { var d = dzOf(ev); if (d) d.classList.remove("over"); });
+document.addEventListener("drop", function (ev) { var d = dzOf(ev); if (d) { ev.preventDefault(); d.classList.remove("over"); var it = S.items[+d.getAttribute("data-dz")]; if (it) addFiles(Array.from(ev.dataTransfer.files || []), it); } });
+document.addEventListener("keydown", function (ev) { var d = ev.target.getAttribute && ev.target.getAttribute("data-dz"); if (d != null && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); V.picFor = S.items[+d]; $("in-gal").click(); } });
+function newItem() { return { kat: "", tgl: "", tempat: "", bayar: "", ket: "", nilai: "", files: [], manual: true }; }
+function check(step) {
   var e = {}, me = S.me, s = function (v) { return String(v || "").trim(); };
-  if (!s(me.nama)) e.nama = "Wajib diisi."; else if (/\d/.test(me.nama) || s(me.nama).replace(/[^A-Za-z]/g, "").length < 3) e.nama = "Tulis nama lengkap (huruf saja).";
-  if (!s(me.jabatan)) e.jabatan = "Wajib diisi."; if (!s(me.proyek)) e.proyek = "Wajib diisi.";
-  if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(s(me.email))) e.email = "Format email tidak valid.";
-  if (s(me.hp) && !/^(\+?62|0)8\d{8,11}$/.test(s(me.hp).replace(/[\s().-]/g, ""))) e.hp = "Nomor WhatsApp diawali 08 atau +62.";
-  if (!S.items.length) e._items = "Tambahkan minimal satu item biaya.";
-  S.items.forEach(function (it, i) {
-    var p = "item" + i + ".";
-    if (!it.kat) e[p + "kat"] = "Pilih kategori."; if (!it.tgl) e[p + "tgl"] = "Isi tanggal biaya."; else if (it.tgl > today()) e[p + "tgl"] = "Tanggal tidak boleh di masa depan.";
-    if (s(it.ket).length < 3) e[p + "ket"] = "Tulis keterangan biaya."; if (!num(it.nilai)) e[p + "nilai"] = "Isi nilai biaya.";
-    if (!it.files.length) e[p + "files"] = "Lampirkan minimal satu bukti."; else if (it.files.some(function (k) { var f = fileById(k); return !f || !f.id || f.err; })) e[p + "files"] = "Ada bukti yang gagal terunggah. Hapus lalu unggah ulang.";
-  });
+  if (step === 1) {
+    if (!s(me.nama)) e.nama = "Wajib diisi."; else if (/\d/.test(me.nama) || s(me.nama).replace(/[^A-Za-z]/g, "").length < 3) e.nama = "Tulis nama lengkap (huruf saja).";
+    if (!s(me.jabatan)) e.jabatan = "Wajib diisi."; if (!s(me.divisi)) e.divisi = "Wajib diisi.";
+    if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(s(me.email))) e.email = "Format email tidak valid.";
+    if (s(me.hp) && !/^(\+?62|0)8\d{8,11}$/.test(s(me.hp).replace(/[\s().-]/g, ""))) e.hp = "Nomor WhatsApp diawali 08 atau +62.";
+    if (s(me.keperluan).length < 10) e.keperluan = s(me.keperluan) ? "Jelaskan kegiatan yang menimbulkan biaya (minimal 10 karakter)." : "Wajib diisi.";
+    if (!s(me.proyek)) e.proyek = "Wajib diisi.";
+  }
+  if (step === 2) {
+    if (!S.items.length) e._items = "Tambahkan minimal satu item biaya.";
+    S.items.forEach(function (it, i) {
+      var p = "item" + i + ".";
+      if (!it.tgl) e[p + "tgl"] = "Isi tanggal nota."; else if (it.tgl > today()) e[p + "tgl"] = "Tanggal tidak boleh di masa depan.";
+      if (!it.kat) e[p + "kat"] = "Pilih kategori."; if (s(it.tempat).length < 2) e[p + "tempat"] = "Isi tempat atau vendor."; if (!it.bayar) e[p + "bayar"] = "Pilih metode pembayaran.";
+      if (s(it.ket).length < 3) e[p + "ket"] = "Tulis keterangan biaya."; if (!num(it.nilai)) e[p + "nilai"] = "Isi nilai biaya.";
+      if (!it.files.length) e[p + "files"] = "Lampirkan minimal satu bukti."; else if (it.files.some(function (k) { var f = fileById(k); return !f || !f.id || f.err; })) e[p + "files"] = "Ada bukti yang gagal terunggah. Hapus lalu unggah ulang.";
+    });
+  }
+  if (step === 3) {
+    if (!s(me.bank)) e.bank = "Wajib diisi.";
+    var r = s(me.norek); if (!r) e.norek = "Wajib diisi."; else if (r.length < 6 || r.length > 20) e.norek = "Nomor rekening 6 sampai 20 angka.";
+    if (!s(me.an)) e.an = "Wajib diisi."; else if (/\d/.test(me.an)) e.an = "Tulis nama pemilik rekening (huruf saja).";
+  }
+  if (step === 4 && !me.setuju) e.setuju = "Centang pernyataan untuk mengirim pengajuan.";
   return e;
 }
+function stepOf(k) { return /^item|^_items/.test(k) ? 2 : /^(bank|norek|an)$/.test(k) ? 3 : /^(setuju|catatan)$/.test(k) ? 4 : /^_form$/.test(k) ? 0 : 1; }
+function showErrs() { render(); var el = document.querySelector("label.f.e, .bk2.e, .chk.e, .em, .hint.bad"); if (el) el.scrollIntoView({ block: "center", behavior: "smooth" }); }
+function go(n) {
+  if (n === 2 && !S.items.length) S.items.push(newItem());
+  if (n === 3 && !S.me.an && S.me.nama) S.me.an = S.me.nama;
+  S.step = n; S.max = Math.max(S.max || 1, n); V.form = ""; save(); render(); window.scrollTo(0, 0);
+}
+function next() {
+  V.errs = check(S.step);
+  if (Object.keys(V.errs).length) { toast("Periksa isian yang ditandai"); showErrs(); return; }
+  go(S.step + 1);
+}
 async function send() {
-  V.form = ""; V.errs = clientCheck();
-  if (Object.keys(V.errs).length) { render(); var el = document.querySelector(".e, .em"); if (el) el.scrollIntoView({ block: "center", behavior: "smooth" }); toast("Periksa isian yang ditandai"); return; }
+  V.form = ""; V.errs = {};
+  [1, 2, 3, 4].forEach(function (n) { Object.assign(V.errs, check(n)); });
+  var ks = Object.keys(V.errs);
+  if (ks.length) { var st = Math.min.apply(null, ks.map(stepOf).filter(Boolean)); if (st !== S.step) { S.step = st; save(); } toast("Periksa isian yang ditandai"); showErrs(); return; }
   V.busy = true; render();
-  var me = S.me, body = { d: S.d, trap: ($("trap") || {}).value || "", data: { nama: me.nama, jabatan: me.jabatan, email: me.email, hp: me.hp, proyek: me.proyek, catatan: me.catatan || "" },
-    items: S.items.map(function (it) { return { kat: it.kat, tgl: it.tgl, ket: it.ket, nilai: num(it.nilai), files: it.files.map(function (k) { return fileById(k).id; }) }; }) };
+  var me = S.me, body = { d: S.d, trap: ($("trap") || {}).value || "", data: { nama: me.nama, jabatan: me.jabatan, divisi: me.divisi, email: me.email, hp: me.hp, proyek: me.proyek, keperluan: me.keperluan, catatan: me.catatan || "", bank: me.bank, norek: me.norek, an: me.an, setuju: !!me.setuju },
+    items: S.items.map(function (it) { return { kat: it.kat, tgl: it.tgl, tempat: it.tempat, bayar: it.bayar, ket: it.ket, nilai: num(it.nilai), files: it.files.map(function (k) { return fileById(k).id; }) }; }) };
   if (TOK) body.r = TOK;
   try {
     var r = await api("rmb.pub.submit", body);
-    if (r.ok === false) { V.errs = r.errors || {}; V.form = V.errs._form || "Periksa isian yang ditandai."; V.busy = false; render(); var e2 = document.querySelector(".hint.bad, .e"); if (e2) e2.scrollIntoView({ block: "center", behavior: "smooth" }); return; }
-    store.set("rmb_me", { nama: me.nama, jabatan: me.jabatan, email: me.email, hp: me.hp, proyek: me.proyek });
-    var items = S.items.map(function (it) { return { kat: it.kat, tgl: it.tgl, ket: it.ket, nilai: num(it.nilai), files: it.files.map(function (k) { var f = fileById(k); return { id: f.id, name: f.name, mime: f.mime }; }) }; });
+    if (r.ok === false) {
+      V.errs = r.errors || {}; V.busy = false;
+      var st2 = Math.min.apply(null, Object.keys(V.errs).map(stepOf).filter(Boolean).concat([S.step]));
+      V.form = V.errs._form || (st2 !== S.step ? "Ada isian yang perlu diperbaiki di langkah ini." : "Periksa isian yang ditandai.");
+      S.step = st2; save(); showErrs(); return;
+    }
+    store.set("rmb_me", { nama: me.nama, jabatan: me.jabatan, divisi: me.divisi, email: me.email, hp: me.hp, proyek: me.proyek });
+    var items = body.items.map(function (it, i) { return Object.assign({}, it, { files: S.items[i].files.map(function (k) { var f = fileById(k); return { id: f.id, name: f.name, mime: f.mime }; }) }); });
     V.res = { nomor: r.nomor, token: r.token, revisi: r.revisi, email: me.email, item: { nomor: r.nomor, status: "diajukan", label: "Menunggu verifikasi", at: new Date().toISOString(), nama: me.nama, email: me.email, data: body.data, items: items, total: r.total, hist: [] } };
     store.del("rmb_draft");
     try { history.replaceState(null, "", location.pathname + "?r=" + r.token); } catch (e) { }
@@ -382,20 +469,20 @@ async function loadTrack() {
 document.addEventListener("click", async function (ev) {
   var b = ev.target.closest("[data-a]"); if (!b) return;
   var a = b.getAttribute("data-a");
-  if (a === "cam") { V.picFor = null; $("in-cam").click(); }
-  else if (a === "gal") { V.picFor = null; $("in-gal").click(); }
-  else if (a === "rm") removeFile(b.getAttribute("data-k"));
-  else if (a === "to2") { syncItems(); S.step = 2; save(); render(); window.scrollTo(0, 0); }
-  else if (a === "to1") { S.step = 1; save(); render(); window.scrollTo(0, 0); }
-  else if (a === "additem") { S.items.push({ kat: "", tgl: "", ket: "", nilai: "", files: [], manual: true }); save(); render(); }
+  if (a === "rm") removeFile(b.getAttribute("data-k"));
+  else if (a === "next") next();
+  else if (a === "prev") { V.errs = {}; go(Math.max(1, S.step - 1)); }
+  else if (a === "go") { V.errs = {}; go(+b.getAttribute("data-s")); }
+  else if (a === "additem") { S.items.push(newItem()); save(); render(); }
   else if (a === "rmitem") { var it = S.items[+b.getAttribute("data-i")]; if (!it) return; it.files.forEach(function (k) { S.files = S.files.filter(function (f) { return (f.id || f.key) !== k; }); }); S.items.splice(+b.getAttribute("data-i"), 1); V.errs = {}; save(); render(); }
   else if (a === "addbk") { V.picFor = S.items[+b.getAttribute("data-i")]; $("in-gal").click(); }
+  else if (a === "cambk") { V.picFor = S.items[+b.getAttribute("data-i")]; $("in-cam").click(); }
   else if (a === "send") send();
   else if (a === "pdf") downloadPdf(b);
   else if (a === "new") { store.del("rmb_draft"); location.href = location.pathname; }
   else if (a === "fix") {
-    var x = V.view; S = { d: rid(12), step: 2, me: Object.assign({}, x.data, { email: x.email, nama: x.nama }), files: [], items: [] };
-    x.items.forEach(function (it) { var ks = []; (it.files || []).forEach(function (f) { S.files.push({ id: f.id, name: f.name, mime: f.mime, size: f.size }); ks.push(f.id); }); S.items.push({ kat: it.kat, tgl: it.tgl, ket: it.ket, nilai: it.nilai, files: ks, manual: true }); });
+    var x = V.view; S = { v: 2, d: rid(12), step: 4, max: 4, me: Object.assign({}, x.data, { email: x.email, nama: x.nama, setuju: false }), files: [], items: [] };
+    x.items.forEach(function (it) { var ks = []; (it.files || []).forEach(function (f) { S.files.push({ id: f.id, name: f.name, mime: f.mime, size: f.size }); ks.push(f.id); }); S.items.push({ kat: it.kat, tgl: it.tgl, tempat: it.tempat || "", bayar: it.bayar || "", ket: it.ket, nilai: it.nilai, files: ks, manual: true }); });
     V.editing = true; V.errs = {}; V.form = ""; render(); window.scrollTo(0, 0);
   }
   else if (a === "cancel") { V.confirm = { t: "Batalkan pengajuan?", m: "Pengajuan " + V.view.nomor + " akan dibatalkan dan tidak diproses. Tindakan ini tidak dapat diurungkan.", y: "Ya, batalkan" }; render(); }
@@ -406,7 +493,7 @@ document.addEventListener("keydown", function (e) { if (e.key === "Escape" && V.
 window.addEventListener("beforeunload", function (e) { if (V.pending) { e.preventDefault(); e.returnValue = ""; } });
 if (TOK) { if (!/^[a-f0-9]{32}$/.test(TOK)) { $("app").innerHTML = '<div class="card" style="margin-top:14px"><h2>Tautan tidak valid</h2><p class="sub">Periksa kembali tautan dari email Anda.</p></div>'; } else loadTrack(); }
 else render();
-api("rmb.pub.cfg", {}).then(function (c) { if (c && c.cats) { CATS = c.cats; MAX_MB = c.maxMb || MAX_MB; MAX_ITEMS = c.maxItems || MAX_ITEMS; } }).catch(function () { });
+api("rmb.pub.cfg", {}).then(function (c) { if (c && c.cats) { CATS = c.cats; if (c.bayar) BAYAR = c.bayar; MAX_MB = c.maxMb || MAX_MB; MAX_ITEMS = c.maxItems || MAX_ITEMS; } }).catch(function () { });
 </script>
 </body>
 </html>

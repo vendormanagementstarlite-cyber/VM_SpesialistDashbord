@@ -5530,7 +5530,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   function render() {
     var host = g('rmb-host'); if (!host) return;
     var c = counts(), tab = TABS.filter(function (t) { return t[0] === R.tab; })[0], q = R.q.trim().toLowerCase();
-    var rows = R.items.filter(function (x) { return (!tab[2] || tab[2].indexOf(x.status) >= 0) && (!q || [x.nomor, x.nama, x.jabatan, x.proyek, x.email, x.cats].join(' ').toLowerCase().indexOf(q) >= 0); });
+    var rows = R.items.filter(function (x) { return (!tab[2] || tab[2].indexOf(x.status) >= 0) && (!q || [x.nomor, x.nama, x.jabatan, x.divisi, x.proyek, x.keperluan, x.email, x.cats].join(' ').toLowerCase().indexOf(q) >= 0); });
     var h = '<div class="rp"><div class="rhd"><div><h2>Reimbursement</h2><p>Pengajuan masuk lewat link formulir tanpa login. File tersimpan per pengajuan di Drive.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap">' +
       '<button class="rbt" data-r="copy"><i class="fa-solid fa-link"></i>Salin link formulir</button><button class="rbt" data-r="reload"' + (R.busy ? ' disabled' : '') + '><i class="fa-solid fa-rotate' + (R.busy ? ' fa-spin' : '') + '"></i>Muat ulang</button></div></div>' +
       '<div class="rtabs" role="tablist">' + TABS.map(function (t) { return '<button role="tab" aria-selected="' + (t[0] === R.tab) + '" class="' + (t[0] === R.tab ? 'on' : '') + '" data-r="tab" data-t="' + t[0] + '">' + t[1] + '<b>' + c[t[0]] + '</b></button>'; }).join('') + '</div>' +
@@ -5565,9 +5565,10 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     if (x.items.some(function (i) { return i.dup; })) h += '<div class="warn"><b>Nota ganda:</b> ada item dengan kategori, tanggal, dan nilai sama dengan pengajuan lain. Periksa sebelum menyetujui.</div>';
     if (x.items.some(function (i) { return i.late; })) h += '<div class="warn">Ada biaya yang diajukan lebih dari 30 hari setelah tanggal biaya.</div>';
     if (R.limit && x.total > R.limit) h += '<div class="warn">Total di atas ' + rp(R.limit) + ': perlu persetujuan Akun Utama.</div>';
-    h += '<h4>Data pengaju</h4><div class="kv"><span>Nama</span><b>' + E(x.nama) + '</b><span>Jabatan</span><b>' + E(d.jabatan) + '</b><span>Proyek atau PO</span><b>' + E(d.proyek) + '</b><span>Email</span><b>' + E(x.email) + '</b>' + (d.hp ? '<span>WhatsApp</span><b>' + E(d.hp) + '</b>' : '') + '<span>Diajukan</span><b>' + E(jam(x.at)) + (x.rev ? ' · perbaikan ke-' + x.rev : '') + '</b>' + (d.catatan ? '<span>Catatan</span><b>' + E(d.catatan) + '</b>' : '') + '</div>';
+    h += '<h4>Data pengaju</h4><div class="kv"><span>Nama</span><b>' + E(x.nama) + '</b><span>Jabatan</span><b>' + E(d.jabatan) + '</b>' + (d.divisi ? '<span>Divisi</span><b>' + E(d.divisi) + '</b>' : '') + '<span>Proyek atau PO</span><b>' + E(d.proyek) + '</b>' + (d.keperluan ? '<span>Keperluan</span><b>' + E(d.keperluan) + '</b>' : '') + '<span>Email</span><b>' + E(x.email) + '</b>' + (d.hp ? '<span>WhatsApp</span><b>' + E(d.hp) + '</b>' : '') + '<span>Diajukan</span><b>' + E(jam(x.at)) + (x.rev ? ' · perbaikan ke-' + x.rev : '') + '</b>' + (d.catatan ? '<span>Catatan</span><b>' + E(d.catatan) + '</b>' : '') + '</div>';
+    if (d.norek) h += '<h4>Rekening pencairan</h4><div class="kv"><span>Bank</span><b>' + E(d.bank) + '</b><span>Nomor rekening</span><b>' + E(d.norek) + '</b><span>Atas nama</span><b>' + E(d.an) + (d.an && x.nama && String(d.an).toLowerCase().replace(/\s+/g, ' ').trim() !== String(x.nama).toLowerCase().replace(/\s+/g, ' ').trim() ? ' <span class="rfl" style="margin:0">berbeda dengan nama pengaju</span>' : '') + '</b></div>';
     h += '<h4>Rincian biaya</h4><table><thead><tr><th>Tanggal</th><th>Kategori · keterangan</th><th class="r">Nilai</th></tr></thead><tbody>' + x.items.map(function (i) {
-      return '<tr><td>' + E(tgl(i.tgl)) + '</td><td>' + E(i.kat) + ' · ' + E(i.ket) + (i.dup ? '<br><span class="rfl" style="margin:0">sama dengan ' + E(i.dup) + '</span>' : '') + (i.late ? '<br><span class="rfl" style="margin:0">lebih dari 30 hari</span>' : '') +
+      return '<tr><td>' + E(tgl(i.tgl)) + '</td><td>' + E(i.kat) + ' · ' + E(i.ket) + (i.tempat ? '<br><span style="color:#64748b">' + E(i.tempat) + (i.bayar ? ' · ' + E(i.bayar) : '') + '</span>' : '') + (i.dup ? '<br><span class="rfl" style="margin:0">sama dengan ' + E(i.dup) + '</span>' : '') + (i.late ? '<br><span class="rfl" style="margin:0">lebih dari 30 hari</span>' : '') +
         '<br>' + (i.files || []).map(function (f, k) { return '<a href="' + E(f.url) + '" target="_blank" rel="noopener">Bukti ' + (k + 1) + '</a>'; }).join(' · ') + '</td><td class="r">' + rp(i.nilai) + '</td></tr>';
     }).join('') + '<tr><td colspan="2"><b>Total</b></td><td class="r"><b>' + rp(x.total) + '</b></td></tr></tbody></table>';
     h += '<p style="font-size:12.5px;margin:10px 0 0">' + (x.folderUrl ? '<a href="' + E(x.folderUrl) + '" target="_blank" rel="noopener"><i class="fa-brands fa-google-drive"></i> Folder pengajuan</a>' : '') + (x.pdfUrl ? ' · <a href="' + E(x.pdfUrl) + '" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i> Formulir PDF</a>' : '') + (x.pay && x.pay.fileUrl ? ' · <a href="' + E(x.pay.fileUrl) + '" target="_blank" rel="noopener">Bukti transfer</a>' : '') + '</p>';
@@ -5640,6 +5641,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   function poll() { try { if (typeof currentUser !== 'undefined' && currentUser && typeof can === 'function' && can('reimburse')) { callApi('rmb.badge', {}, 30000).then(function (r) { var el = g('sidebar-reimburse-badge'); if (el) el.textContent = r.diajukan ? String(r.diajukan) : '·'; }).catch(function () { }); } } catch (e) { } }
   setTimeout(poll, 8000); setInterval(poll, 180000);
 })();
+
 </script>
 </body>
 </html>
