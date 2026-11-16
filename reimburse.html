@@ -399,7 +399,7 @@ function viewResult() {
     progress(it) + sumRows(it) +
     '<p style="font-size:13px">Salin dan simpan tautan ini. Tautan hanya tampil sekali dan bersifat pribadi.</p>' +
     '<div class="cp"><input id="lk" readonly value="' + esc(link) + '" aria-label="Tautan pantau"><button class="btn pri" data-a="copy">Salin tautan</button></div></section>';
-  bar('<div style="display:flex;gap:10px"><button class="btn grow" data-a="pdf">Unduh PDF</button><button class="btn pri grow" data-a="new">Pengajuan baru</button></div>');
+  bar('<div style="display:flex;gap:10px"><button class="btn pri grow" data-a="new">Pengajuan baru</button></div>');
   return h;
 }
 function viewTrack() {
@@ -408,9 +408,8 @@ function viewTrack() {
   if (x.status === "ditolak") h += '<div class="hint bad" role="alert"><div><b>Pengajuan ditolak.</b> ' + esc(x.note) + "</div></div>";
   h += '<section class="card dn" style="margin-top:12px"><h2>' + esc(x.nama || "Pengajuan") + '</h2>' + progress(x) + sumRows(x) + "</section>";
   h += '<div class="card"><h2>Riwayat</h2><ul class="tl">' + (x.hist || []).slice().reverse().map(function (y) { return "<li><i></i><div>" + esc(y.aksi) + "<small>" + esc(new Date(y.at).toLocaleString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })) + "</small></div></li>"; }).join("") + "</ul></div>";
-  var b = '<button class="btn grow" data-a="pdf"' + (x.pdf ? "" : " disabled") + ">Unduh PDF</button>";
-  if (x.editable) b += '<button class="btn pri grow" data-a="fix">Perbaiki</button>';
-  bar('<div style="display:flex;gap:10px">' + b + "</div>" + (x.cancelable ? '<button class="link bad" data-a="cancel" style="align-self:center">Batalkan pengajuan</button>' : ""));
+  var b = x.editable ? '<button class="btn pri grow" data-a="fix">Perbaiki</button>' : "";
+  bar((b ? '<div style="display:flex;gap:10px">' + b + "</div>" : "") + (x.cancelable ? '<button class="link bad" data-a="cancel" style="align-self:center">Batalkan pengajuan</button>' : ""));
   return h;
 }
 function bar(h) { $("bar").innerHTML = h ? '<div class="bar"><div class="in">' + h + "</div></div>" : ""; }
