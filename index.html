@@ -5491,7 +5491,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   var g = function (i) { return document.getElementById(i); };
   var E = function (v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var toast = function (m, t) { try { showToast(m, t || 'info'); } catch (e) { } };
-  var rp = function (n) { return 'Rp ' + String(Math.round(+n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); };
+  var rp = function (n) { return 'Rp ' + String(Math.round(+n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',00'; };
   var BL = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
   var tgl = function (iso) { var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? (+m[3]) + ' ' + BL[+m[2] - 1] + ' ' + m[1] : ''; };
   var jam = function (iso) { try { return new Date(iso).toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch (e) { return iso; } };

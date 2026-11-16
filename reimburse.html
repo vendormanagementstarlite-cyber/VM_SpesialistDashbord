@@ -128,7 +128,8 @@ var Q = new URLSearchParams(location.search), TOK = (Q.get("r") || "").toLowerCa
 var store = { get: function (k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }, del: function (k) { try { localStorage.removeItem(k); } catch (e) { } } };
 var $ = function (id) { return document.getElementById(id); };
 var esc = function (v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
-var rp = function (n) { return "Rp " + String(Math.round(+n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, "."); };
+var fmt = function (n) { return String(Math.round(+n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ",00"; };   // format akuntansi: titik ribuan, koma desimal
+var rp = function (n) { return "Rp " + fmt(n); };
 var num = function (v) { return Math.round(Number(String(v == null ? "" : v).replace(/[^\d]/g, "")) || 0); };
 var tgl = function (iso) { var m = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? (+m[3]) + " " + BULAN[+m[2] - 1] + " " + m[1] : ""; };
 var today = function () { var d = new Date(Date.now() - new Date().getTimezoneOffset() * 6e4); return d.toISOString().slice(0, 10); };
