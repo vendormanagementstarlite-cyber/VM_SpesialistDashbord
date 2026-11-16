@@ -104,7 +104,7 @@ label.f.e input,label.f.e select,label.f.e textarea{border-color:var(--bad)}
 <input type="file" id="in-gal" accept="image/jpeg,image/png,application/pdf" multiple hidden>
 <script>
 var API = "https://script.google.com/macros/s/AKfycby9hJGo8rN0atk6OguUTA4v4Eq2skh1j3ic-jm1U6Rf-AE_JlHgW9MzPZCrlXHSpW-Y/exec";
-var MAX_MB = 5, MAX_ITEMS = 20, CATS = ["Transportasi", "Parkir dan tol", "Konsumsi", "Material kecil", "Cetak dan ATK", "Lainnya"];
+var MAX_MB = 5, MAX_ITEMS = 20, CATS = ["Transportasi", "Parkir dan tol", "Konsumsi", "Material kecil", "Cetak dan ATK", "Langganan aplikasi", "Lainnya"];
 var BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 var Q = new URLSearchParams(location.search), TOK = (Q.get("r") || "").toLowerCase();
 var store = { get: function (k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }, del: function (k) { try { localStorage.removeItem(k); } catch (e) { } } };
@@ -240,7 +240,8 @@ function viewInvoice() {
       '<div class="bk">' + it.files.map(function (k) { var f = fileById(k); return f ? thumb(f, "t") : ""; }).join("") + '<button class="t" data-a="addbk" data-i="' + i + '" aria-label="Tambah bukti untuk item ' + (i + 1) + '">+</button></div>' +
       (V.errs[p + "files"] ? '<span class="em" style="margin:-4px 0 8px">' + esc(V.errs[p + "files"]) + "</span>" : "") +
       fld(p + "kat", "Kategori", it.kat, "", "select") + '<div class="g2">' + fld(p + "tgl", "Tanggal biaya", it.tgl, ' type="date" max="' + today() + '"') + fld(p + "nilai", "Nilai (Rp)", it.nilai ? String(num(it.nilai)).replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "", ' inputmode="numeric" placeholder="0"') + "</div>" +
-      fld(p + "ket", "Keterangan", it.ket, ' placeholder="Contoh: tol Jakarta–Cikampek, kunjungan mitra"') + "</div>";
+      (it.kat === "Langganan aplikasi" ? '<div class="hint" style="margin:-2px 0 10px">Tulis nama aplikasi dan periodenya, contoh: Claude Pro, langganan November 2026. Lampirkan invoice atau tanda terima. Bila tagihan dalam dolar, isi nilai rupiah sesuai mutasi kartu atau rekening.</div>' : "") +
+      fld(p + "ket", "Keterangan", it.ket, ' placeholder="' + (it.kat === "Langganan aplikasi" ? "Contoh: Claude Pro, langganan November 2026" : "Contoh: tol Jakarta–Cikampek, kunjungan mitra") + '"') + "</div>";
   });
   if (V.errs._items) h += '<span class="em" style="margin-bottom:8px">' + esc(V.errs._items) + "</span>";
   h += (S.items.length < MAX_ITEMS ? '<button class="dash" data-a="additem">+ Tambah item</button>' : "") + "</div>";
@@ -318,7 +319,7 @@ document.addEventListener("input", function (ev) {
   if (V.errs[k]) { delete V.errs[k]; var lb = ev.target.closest("label"); if (lb) { lb.classList.remove("e"); var em = lb.querySelector(".em"); if (em) em.remove(); } }
   save();
 });
-document.addEventListener("change", function (ev) { if (ev.target.tagName === "SELECT" && ev.target.getAttribute("data-f")) { ev.target.dispatchEvent(new Event("input", { bubbles: true })); } });
+document.addEventListener("change", function (ev) { if (ev.target.tagName === "SELECT" && ev.target.getAttribute("data-f")) { ev.target.dispatchEvent(new Event("input", { bubbles: true })); render(); } });
 $("in-cam").addEventListener("change", function () { addFiles(Array.from(this.files), V.picFor); V.picFor = null; this.value = ""; });
 $("in-gal").addEventListener("change", function () { addFiles(Array.from(this.files), V.picFor); V.picFor = null; this.value = ""; });
 function clientCheck() {
