@@ -231,7 +231,7 @@ function removeFile(k) {
 }
 
 // ---------- tampilan ----------
-var LANGKAH = ["Data Pengaju", "Rincian Biaya", "Rekening Pencairan", "Pernyataan dan Tanda Tangan"];
+var LANGKAH = ["Data Pengaju", "Rincian Biaya", "Rekening Pencairan", "Pernyataan"];
 function steps(n) {
   var h = "";
   LANGKAH.forEach(function (l, i) {
@@ -264,11 +264,9 @@ function view1() {
   h += '<div class="card"><h2>Data Pengaju</h2><p class="sub">Identitas karyawan yang mengeluarkan biaya. Data diingat di perangkat ini untuk pengajuan berikutnya.</p>' +
     '<div class="note"><b>Isi dengan benar dan teliti.</b> Pengajuan diverifikasi Vendor Management sebelum dibayarkan oleh Finance. Biaya pribadi tidak dapat diganti.</div>' +
     fld("nama", "Nama lengkap", me.nama, ' autocomplete="name"') +
-    '<div class="g2">' + fld("jabatan", "Jabatan", me.jabatan, ' autocomplete="organization-title"') + fld("divisi", "Divisi atau unit kerja", me.divisi, ' placeholder="Contoh: Plan dan Roll Out"') + "</div>" +
-    '<div class="g2">' + fld("email", "Email (untuk tautan pantau)", me.email, ' type="email" inputmode="email" autocomplete="email"' + (TOK ? " readonly" : "")) + fld("hp", "Nomor WhatsApp (opsional)", me.hp, ' type="tel" inputmode="tel" autocomplete="tel" placeholder="08xx"') + "</div></div>";
+    '<div class="g2">' + fld("divisi", "Divisi atau unit kerja", me.divisi, ' placeholder="Contoh: Plan dan Roll Out"') + fld("hp", "Nomor WhatsApp (opsional)", me.hp, ' type="tel" inputmode="tel" autocomplete="tel" placeholder="08xx"') + "</div></div>";
   h += '<div class="card"><h2>Keperluan</h2><p class="sub">Kegiatan pekerjaan yang menimbulkan biaya.</p>' +
-    fld("keperluan", "Keperluan atau kegiatan", me.keperluan, ' placeholder="Contoh: Survei lokasi dan koordinasi mitra di Karangantu, 10 sampai 12 November 2026"', "area") +
-    fld("proyek", "Proyek atau nomor PO", me.proyek, ' placeholder="Contoh: FTTH Karangantu atau PO-2026-0123"') + "</div>";
+    fld("keperluan", "Keperluan atau kegiatan", me.keperluan, ' placeholder="Contoh: Survei lokasi dan koordinasi mitra di Karangantu, 10 sampai 12 November 2026"', "area") + "</div>";
   bar(pgr(1, '<button class="btn pri" data-a="next">Lanjut ke Rincian Biaya</button>'));
   return h;
 }
@@ -364,19 +362,13 @@ function sigFromPhoto(file) {
   im.src = u;
 }
 function view4() {
-  var me = S.me, e = V.errs.setuju, et = V.errs._ttd, h = steps(4) + formErr();
-  h += '<div class="card"><h2>Pernyataan dan Tanda Tangan</h2><p class="sub">Tombol Kirim aktif setelah pernyataan dicentang dan tanda tangan dibuat.</p>' +
-    '<div class="decl">Saya yang bertanda tangan di bawah ini menyatakan bahwa seluruh data dan bukti dalam pengajuan ini benar dan dapat saya pertanggungjawabkan sepenuhnya. Apabila di kemudian hari ditemukan data yang tidak benar, saya bersedia menerima konsekuensinya, termasuk penolakan pengajuan.</div>' +
+  var me = S.me, e = V.errs.setuju, h = steps(4) + formErr();
+  h += '<div class="card"><h2>Pernyataan</h2><p class="sub">Tombol Kirim aktif setelah pernyataan dicentang.</p>' +
+    '<div class="decl">Saya yang mengajukan ini menyatakan bahwa seluruh data dan bukti dalam pengajuan ini benar dan dapat saya pertanggungjawabkan sepenuhnya. Apabila di kemudian hari ditemukan data yang tidak benar, saya bersedia menerima konsekuensinya, termasuk penolakan pengajuan.</div>' +
     '<div class="hint warn" style="margin:0 0 12px"><div><b>Isi dengan benar dan teliti.</b> Pengajuan diverifikasi Vendor Management lalu dibayar oleh Finance. Data yang tidak benar membuat pengajuan ditolak.</div></div>' +
     '<label class="chk' + (me.setuju ? " on" : "") + (e ? " e" : "") + '"><input type="checkbox" data-f="setuju"' + (me.setuju ? " checked" : "") + "><span>Saya menyatakan bahwa data ini benar dan dapat dipertanggungjawabkan.<b class=\"rq\">*</b></span></label>" +
     (e ? '<span class="em">' + esc(e) + "</span>" : "") +
     '<div style="height:10px"></div>' + fld("catatan", "Catatan untuk verifikator (opsional)", me.catatan || "", ' placeholder="Contoh: nota parkir hilang, diganti tangkapan layar aplikasi"', "area") +
-    '<div class="f"><label class="l" style="display:block;font-weight:700;font-size:13px;margin:6px 0">Tanda tangan<b class="rq">*</b></label>' +
-    '<div class="tip">Tanda tangani di kotak berikut memakai jari atau mouse, atau unggah foto tanda tangan di kertas putih.</div>' +
-    '<div class="sigw' + (et ? " bad" : "") + '"><canvas id="sigc" aria-label="Kotak tanda tangan"></canvas>' + (V.sig ? "" : '<span class="ph">Tanda tangan di sini</span>') + "</div>" +
-    '<div class="sigb"><button class="link" data-a="sigclr">Hapus tanda tangan</button><button class="link" data-a="sigup">Unggah foto tanda tangan</button></div>' +
-    (et ? '<span class="em">' + esc(et) + "</span>" : "") +
-    '<div class="sigl"><b>' + esc(me.nama || "-") + "</b>" + (me.jabatan ? " · " + esc(me.jabatan) : "") + "</div></div>" +
     '<div style="height:8px"></div></div><div class="trap" aria-hidden="true"><input id="trap" tabindex="-1" autocomplete="off"></div>';
   bar('<div class="tot"><span>Total (' + S.items.length + ' item)</span><b id="tot">' + rp(total()) + "</b></div>" +
     pgr(4, '<button class="btn ghost" data-a="prev">Kembali</button><button class="btn pri" data-a="send"' + (V.busy || V.pending ? " disabled" : "") + ">" + (V.busy ? "Mengirim…" : V.pending ? "Menunggu unggahan…" : TOK ? "Kirim perbaikan" : "Kirim pengajuan") + "</button>"));
@@ -403,9 +395,9 @@ function sumRows(x) {
 }
 function viewResult() {
   var x = V.res, it = x.item, link = location.origin + location.pathname + "?r=" + x.token;
-  var h = '<section class="card dn"><div class="ic">' + IC.ok + "</div><h2>" + (x.revisi ? "Perbaikan terkirim" : "Pengajuan terkirim") + "</h2><p>Nomor pengajuan Anda</p><div class=\"no\">" + esc(x.nomor) + "</div>" +
+  var h = '<section class="card dn"><div class="ic">' + IC.ok + "</div><h2>" + (x.revisi ? "Perbaikan terkirim" : "Pengajuan terkirim") + "</h2><p>Pantau progres pengajuan Anda lewat tautan di bawah.</p>" +
     progress(it) + sumRows(it) +
-    '<p style="font-size:13px">Tautan pantau juga dikirim ke ' + esc(x.email) + ". Simpan tautan ini untuk memantau status. Tautan bersifat pribadi.</p>" +
+    '<p style="font-size:13px">Salin dan simpan tautan ini. Tautan hanya tampil sekali dan bersifat pribadi.</p>' +
     '<div class="cp"><input id="lk" readonly value="' + esc(link) + '" aria-label="Tautan pantau"><button class="btn pri" data-a="copy">Salin tautan</button></div></section>';
   bar('<div style="display:flex;gap:10px"><button class="btn grow" data-a="pdf">Unduh PDF</button><button class="btn pri grow" data-a="new">Pengajuan baru</button></div>');
   return h;
@@ -414,7 +406,7 @@ function viewTrack() {
   var x = V.view, h = "";
   if (x.status === "dikembalikan") h += '<div class="hint warn" role="alert"><div><b>Perlu perbaikan.</b> ' + esc(x.note) + "</div></div>";
   if (x.status === "ditolak") h += '<div class="hint bad" role="alert"><div><b>Pengajuan ditolak.</b> ' + esc(x.note) + "</div></div>";
-  h += '<section class="card dn" style="margin-top:12px"><h2>' + esc(x.nama || "Pengajuan") + '</h2><div class="no">' + esc(x.nomor) + "</div>" + progress(x) + sumRows(x) + "</section>";
+  h += '<section class="card dn" style="margin-top:12px"><h2>' + esc(x.nama || "Pengajuan") + '</h2>' + progress(x) + sumRows(x) + "</section>";
   h += '<div class="card"><h2>Riwayat</h2><ul class="tl">' + (x.hist || []).slice().reverse().map(function (y) { return "<li><i></i><div>" + esc(y.aksi) + "<small>" + esc(new Date(y.at).toLocaleString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })) + "</small></div></li>"; }).join("") + "</ul></div>";
   var b = '<button class="btn grow" data-a="pdf"' + (x.pdf ? "" : " disabled") + ">Unduh PDF</button>";
   if (x.editable) b += '<button class="btn pri grow" data-a="fix">Perbaiki</button>';
@@ -475,11 +467,9 @@ function check(step) {
   var e = {}, me = S.me, s = function (v) { return String(v || "").trim(); };
   if (step === 1) {
     if (!s(me.nama)) e.nama = "Wajib diisi."; else if (/\d/.test(me.nama) || s(me.nama).replace(/[^A-Za-z]/g, "").length < 3) e.nama = "Tulis nama lengkap (huruf saja).";
-    if (!s(me.jabatan)) e.jabatan = "Wajib diisi."; if (!s(me.divisi)) e.divisi = "Wajib diisi.";
-    if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(s(me.email))) e.email = "Format email tidak valid.";
+    if (!s(me.divisi)) e.divisi = "Wajib diisi.";
     if (s(me.hp) && !/^(\+?62|0)8\d{8,11}$/.test(s(me.hp).replace(/[\s().-]/g, ""))) e.hp = "Nomor WhatsApp diawali 08 atau +62.";
     if (s(me.keperluan).length < 10) e.keperluan = s(me.keperluan) ? "Jelaskan kegiatan yang menimbulkan biaya (minimal 10 karakter)." : "Wajib diisi.";
-    if (!s(me.proyek)) e.proyek = "Wajib diisi.";
   }
   if (step === 2) {
     if (!S.items.length) e._items = "Tambahkan minimal satu item biaya.";
@@ -503,10 +493,9 @@ function check(step) {
     if (!s(me.an)) e.an = "Wajib diisi."; else if (/\d/.test(me.an)) e.an = "Tulis nama pemilik rekening (huruf saja).";
   }
   if (step === 4 && !me.setuju) e.setuju = "Centang pernyataan untuk mengirim pengajuan.";
-  if (step === 4 && !V.sig) e._ttd = "Tanda tangan wajib diisi.";
   return e;
 }
-function stepOf(k) { return /^item|^_items/.test(k) ? 2 : /^(bank|norek|an)$/.test(k) ? 3 : /^(setuju|catatan|_ttd)$/.test(k) ? 4 : /^_form$/.test(k) ? 0 : 1; }
+function stepOf(k) { return /^item|^_items/.test(k) ? 2 : /^(bank|norek|an)$/.test(k) ? 3 : /^(setuju|catatan)$/.test(k) ? 4 : /^_form$/.test(k) ? 0 : 1; }
 function showErrs() { render(); var el = document.querySelector("label.f.e, .bk2.e, .chk.e, .em, .hint.bad"); if (el) el.scrollIntoView({ block: "center", behavior: "smooth" }); }
 function go(n) {
   if (n === 2 && !S.items.length) S.items.push(newItem());
@@ -524,10 +513,9 @@ async function send() {
   var ks = Object.keys(V.errs);
   if (ks.length) { var st = Math.min.apply(null, ks.map(stepOf).filter(Boolean)); if (st !== S.step) { S.step = st; save(); } toast("Periksa isian yang ditandai"); showErrs(); return; }
   V.busy = true; render();
-  var me = S.me, body = { d: S.d, trap: ($("trap") || {}).value || "", data: { nama: me.nama, jabatan: me.jabatan, divisi: me.divisi, email: me.email, hp: me.hp, proyek: me.proyek, keperluan: me.keperluan, catatan: me.catatan || "", bank: me.bank, norek: me.norek, an: me.an, setuju: !!me.setuju },
+  var me = S.me, body = { d: S.d, trap: ($("trap") || {}).value || "", data: { nama: me.nama, divisi: me.divisi, hp: me.hp, keperluan: me.keperluan, catatan: me.catatan || "", bank: me.bank, norek: me.norek, an: me.an, setuju: !!me.setuju },
     items: S.items.map(function (it) { return { kat: it.kat, tgl: it.tgl, tempat: it.tempat, bayar: it.bayar, ket: it.ket, nilai: num(it.nilai), files: it.files.map(function (k) { return fileById(k).id; }), fj: fjOf(it) }; }) };
   if (TOK) body.r = TOK;
-  body.sign = { img: V.sig };
   try {
     var r = await api("rmb.pub.submit", body);
     if (r.ok === false) {
@@ -536,9 +524,9 @@ async function send() {
       V.form = V.errs._form || (st2 !== S.step ? "Ada isian yang perlu diperbaiki di langkah ini." : "Periksa isian yang ditandai.");
       S.step = st2; save(); showErrs(); return;
     }
-    store.set("rmb_me", { nama: me.nama, jabatan: me.jabatan, divisi: me.divisi, email: me.email, hp: me.hp, proyek: me.proyek });
+    store.set("rmb_me", { nama: me.nama, divisi: me.divisi, hp: me.hp });
     var items = body.items.map(function (it, i) { return Object.assign({}, it, { files: S.items[i].files.map(function (k) { var f = fileById(k); return { id: f.id, name: f.name, mime: f.mime, jenis: f.jenis || "" }; }) }); });
-    V.res = { nomor: r.nomor, token: r.token, revisi: r.revisi, email: me.email, item: { nomor: r.nomor, status: "diajukan", label: "Menunggu verifikasi", at: new Date().toISOString(), nama: me.nama, email: me.email, data: body.data, items: items, total: r.total, hist: [] } };
+    V.res = { token: r.token, revisi: r.revisi, item: { status: "diajukan", label: "Menunggu verifikasi", at: new Date().toISOString(), nama: me.nama, data: body.data, items: items, total: r.total, hist: [] } };
     store.del("rmb_draft");
     try { history.replaceState(null, "", location.pathname + "?r=" + r.token); } catch (e) { }
     TOK = r.token; V.editing = false; V.view = null; V.busy = false; render(); window.scrollTo(0, 0);
@@ -577,11 +565,11 @@ document.addEventListener("click", async function (ev) {
   else if (a === "pdf") downloadPdf(b);
   else if (a === "new") { store.del("rmb_draft"); location.href = location.pathname; }
   else if (a === "fix") {
-    var x = V.view; V.sig = null; SIG.pts = 0; S = { v: 2, d: rid(12), step: 4, max: 4, me: Object.assign({}, x.data, { email: x.email, nama: x.nama, setuju: false }), files: [], items: [] };
+    var x = V.view; V.sig = null; SIG.pts = 0; S = { v: 2, d: rid(12), step: 4, max: 4, me: Object.assign({}, x.data, { nama: x.nama, setuju: false }), files: [], items: [] };
     x.items.forEach(function (it) { var ks = []; (it.files || []).forEach(function (f) { S.files.push({ id: f.id, name: f.name, mime: f.mime, size: f.size, jenis: f.jenis || "" }); ks.push(f.id); }); S.items.push({ kat: it.kat, tgl: it.tgl, tempat: it.tempat || "", bayar: it.bayar || "", ket: it.ket, nilai: it.nilai, files: ks, manual: true }); });
     V.editing = true; V.errs = {}; V.form = ""; render(); window.scrollTo(0, 0);
   }
-  else if (a === "cancel") { V.confirm = { t: "Batalkan pengajuan?", m: "Pengajuan " + V.view.nomor + " akan dibatalkan dan tidak diproses. Tindakan ini tidak dapat diurungkan.", y: "Ya, batalkan" }; render(); }
+  else if (a === "cancel") { V.confirm = { t: "Batalkan pengajuan?", m: "Pengajuan ini akan dibatalkan dan tidak diproses. Tindakan ini tidak dapat diurungkan.", y: "Ya, batalkan" }; render(); }
   else if (a === "cfno") { V.confirm = null; render(); }
   else if (a === "cfyes") { V.confirm = null; try { var r = await api("rmb.pub.cancel", { r: TOK }); V.view = r.item; toast("Pengajuan dibatalkan"); } catch (e) { toast(e.message); } render(); }
 });
