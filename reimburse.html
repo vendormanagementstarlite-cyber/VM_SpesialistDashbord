@@ -390,8 +390,8 @@ function progress(x) {
   return '<ol class="rst">' + stp + '</ol><p><b>' + esc(x.label || "") + "</b>" + (msg ? " · " + esc(msg) : "") + "</p>";
 }
 function sumRows(x) {
-  var n = (x.items || []).length || x.nItems || 0;
-  return '<div class="sum"><span>Pengaju</span><b>' + esc(x.nama || "-") + "</b><span>Diajukan</span><b>" + esc(tgl(x.at)) + "</b><span>Jumlah item</span><b>" + n + "</b><span>Total</span><b>" + rp(x.total) + "</b></div>";
+  var ks = []; (x.items || []).forEach(function (i) { if (i.kat && ks.indexOf(i.kat) < 0) ks.push(i.kat); });
+  return '<div class="sum"><span>Nama</span><b>' + esc(x.nama || "-") + "</b><span>Jenis pengajuan</span><b>" + esc(ks.join(", ") || "-") + "</b><span>Diajukan</span><b>" + esc(tgl(x.at)) + "</b><span>Status</span><b>" + esc(x.label || "-") + "</b></div>";
 }
 function viewResult() {
   var x = V.res, it = x.item, link = location.origin + location.pathname + "?r=" + x.token;

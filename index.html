@@ -5530,17 +5530,17 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   function render() {
     var host = g('rmb-host'); if (!host) return;
     var c = counts(), tab = TABS.filter(function (t) { return t[0] === R.tab; })[0], q = R.q.trim().toLowerCase();
-    var rows = R.items.filter(function (x) { return (!tab[2] || tab[2].indexOf(x.status) >= 0) && (!q || [x.nomor, x.nama, x.jabatan, x.divisi, x.proyek, x.keperluan, x.email, x.cats].join(' ').toLowerCase().indexOf(q) >= 0); });
+    var rows = R.items.filter(function (x) { return (!tab[2] || tab[2].indexOf(x.status) >= 0) && (!q || [x.nama, x.divisi, x.keperluan, x.cats].join(' ').toLowerCase().indexOf(q) >= 0); });
     var h = '<div class="rp"><div class="rhd"><div><h2>Reimbursement</h2><p>Pengajuan masuk lewat link formulir tanpa login. File tersimpan per pengajuan di Drive.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap">' +
       '<button class="rbt" data-r="copy"><i class="fa-solid fa-link"></i>Salin link formulir</button><button class="rbt" data-r="reload"' + (R.busy ? ' disabled' : '') + '><i class="fa-solid fa-rotate' + (R.busy ? ' fa-spin' : '') + '"></i>Muat ulang</button></div></div>' +
       '<div class="rtabs" role="tablist">' + TABS.map(function (t) { return '<button role="tab" aria-selected="' + (t[0] === R.tab) + '" class="' + (t[0] === R.tab ? 'on' : '') + '" data-r="tab" data-t="' + t[0] + '">' + t[1] + '<b>' + c[t[0]] + '</b></button>'; }).join('') + '</div>' +
-      '<input class="rq" id="rmb-q" placeholder="Cari nomor, nama, proyek, kategori" value="' + E(R.q) + '" aria-label="Cari pengajuan">';
+      '<input class="rq" id="rmb-q" placeholder="Cari nama atau jenis pengajuan" value="' + E(R.q) + '" aria-label="Cari pengajuan">';
     if (R.err) h += '<div class="rem" style="color:#dc2626">' + E(R.err) + '</div>';
     else if (!R.loaded) h += '<div class="rem"><i class="fa-solid fa-spinner fa-spin"></i> Memuat pengajuan…</div>';
     else if (!rows.length) h += '<div class="rem">' + (q ? 'Tidak ada pengajuan yang cocok.' : R.tab === 'verif' ? 'Tidak ada pengajuan yang menunggu verifikasi.' : 'Belum ada pengajuan di sini.') + '</div>';
     else h += '<div class="rlist">' + rows.map(function (x) {
-      return '<button class="rrow" data-r="open" data-id="' + E(x.id) + '"><span class="n">' + E(x.nomor) + ' · ' + E(x.nama) + (x.dup ? '<span class="rfl">nota ganda</span>' : '') + (x.late ? '<span class="rfl">&gt;30 hari</span>' : '') + '</span><span class="t">' + rp(x.total) + '</span>' +
-        '<span class="s">' + E(x.proyek) + ' · ' + E(x.periode) + ' · ' + x.nItems + ' item, ' + x.nFiles + ' bukti' + (x.status === 'diajukan' && x.wait ? ' · menunggu ' + x.wait + ' hari' : '') + '</span><span class="rst ' + (CLS[x.status] || 'm') + '">' + E(x.label) + '</span></button>';
+      return '<button class="rrow" data-r="open" data-id="' + E(x.id) + '"><span class="n">' + E(x.nama) + (x.dup ? '<span class="rfl">nota ganda</span>' : '') + (x.late ? '<span class="rfl">&gt;30 hari</span>' : '') + '</span><span class="t">' + E(tgl(x.at)) + '</span>' +
+        '<span class="s">' + E(x.cats) + '</span><span class="rst ' + (CLS[x.status] || 'm') + '">' + E(x.label) + '</span></button>';
     }).join('') + '</div>';
     host.innerHTML = h + '</div>';
     badge();
@@ -5561,11 +5561,11 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     var x = R.det, h = '<div class="rmb-dr" id="rmb-dr">';
     if (!x) { ov.innerHTML = h + '<p><i class="fa-solid fa-spinner fa-spin"></i> Memuat…</p></div>'; return; }
     var d = x.data || {};
-    h += '<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><h3>' + E(x.nomor) + '</h3><span class="rst ' + (CLS[x.status] || 'm') + '">' + E(x.label) + '</span></div><button class="rbt" data-r="close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div>';
+    h += '<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><h3>' + E(x.nama) + '</h3><p style="margin:2px 0 6px;font-size:12.5px;color:#64748b">' + E(x.cats) + ' · diajukan ' + E(tgl(x.at)) + '</p><span class="rst ' + (CLS[x.status] || 'm') + '">' + E(x.label) + '</span></div><button class="rbt" data-r="close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div>';
     if (x.items.some(function (i) { return i.dup; })) h += '<div class="warn"><b>Nota ganda:</b> ada item dengan kategori, tanggal, dan nilai sama dengan pengajuan lain. Periksa sebelum menyetujui.</div>';
     if (x.items.some(function (i) { return i.late; })) h += '<div class="warn">Ada biaya yang diajukan lebih dari 30 hari setelah tanggal biaya.</div>';
     if (R.limit && x.total > R.limit) h += '<div class="warn">Total di atas ' + rp(R.limit) + ': perlu persetujuan Akun Utama.</div>';
-    h += '<h4>Data pengaju</h4><div class="kv"><span>Nama</span><b>' + E(x.nama) + '</b><span>Jabatan</span><b>' + E(d.jabatan) + '</b>' + (d.divisi ? '<span>Divisi</span><b>' + E(d.divisi) + '</b>' : '') + '<span>Proyek atau PO</span><b>' + E(d.proyek) + '</b>' + (d.keperluan ? '<span>Keperluan</span><b>' + E(d.keperluan) + '</b>' : '') + '<span>Email</span><b>' + E(x.email) + '</b>' + (d.hp ? '<span>WhatsApp</span><b>' + E(d.hp) + '</b>' : '') + '<span>Diajukan</span><b>' + E(jam(x.at)) + (x.rev ? ' · perbaikan ke-' + x.rev : '') + '</b>' + (d.catatan ? '<span>Catatan</span><b>' + E(d.catatan) + '</b>' : '') + '</div>';
+    h += '<h4>Data pengaju</h4><div class="kv"><span>Nama</span><b>' + E(x.nama) + '</b>' + (d.divisi ? '<span>Divisi</span><b>' + E(d.divisi) + '</b>' : '') + (d.keperluan ? '<span>Keperluan</span><b>' + E(d.keperluan) + '</b>' : '') + '<span>Email</span><b>' + E(x.email) + '</b>' + (d.hp ? '<span>WhatsApp</span><b>' + E(d.hp) + '</b>' : '') + '<span>Diajukan</span><b>' + E(jam(x.at)) + (x.rev ? ' · perbaikan ke-' + x.rev : '') + '</b>' + (d.catatan ? '<span>Catatan</span><b>' + E(d.catatan) + '</b>' : '') + '</div>';
     if (d.norek) h += '<h4>Rekening pencairan</h4><div class="kv"><span>Bank</span><b>' + E(d.bank) + '</b><span>Nomor rekening</span><b>' + E(d.norek) + '</b><span>Atas nama</span><b>' + E(d.an) + (d.an && x.nama && String(d.an).toLowerCase().replace(/\s+/g, ' ').trim() !== String(x.nama).toLowerCase().replace(/\s+/g, ' ').trim() ? ' <span class="rfl" style="margin:0">berbeda dengan nama pengaju</span>' : '') + '</b></div>';
     h += '<h4>Rincian biaya</h4><table><thead><tr><th>Tanggal</th><th>Kategori · keterangan</th><th class="r">Nilai</th></tr></thead><tbody>' + x.items.map(function (i) {
       return '<tr><td>' + E(tgl(i.tgl)) + '</td><td>' + E(i.kat) + ' · ' + E(i.ket) + (i.tempat ? '<br><span style="color:#64748b">' + E(i.tempat) + (i.bayar ? ' · ' + E(i.bayar) : '') + '</span>' : '') + (i.dup ? '<br><span class="rfl" style="margin:0">sama dengan ' + E(i.dup) + '</span>' : '') + (i.late ? '<br><span class="rfl" style="margin:0">lebih dari 30 hari</span>' : '') +
@@ -5582,7 +5582,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
         h += '<div class="ac">' + (x.status === 'diajukan' ? '<button class="rbt p" data-r="act" data-a="setujui"><i class="fa-solid fa-check"></i>Setujui</button>' : '<button class="rbt p" data-r="act" data-a="bayar"><i class="fa-solid fa-money-bill-transfer"></i>Tandai dibayar</button>') +
           '<button class="rbt" data-r="act" data-a="kembalikan"><i class="fa-solid fa-rotate-left"></i>Kembalikan</button><button class="rbt d" data-r="act" data-a="tolak"><i class="fa-solid fa-ban"></i>Tolak</button></div>';
       } else if (A === 'setujui') {
-        h += '<p style="font-size:13px;margin:8px 0">Setujui ' + E(x.nomor) + ' sebesar <b>' + rp(x.total) + '</b> dan teruskan ke Finance? Pengaju memantau lewat tautan progres.</p><label>Catatan (opsional)<textarea id="rmb-note"></textarea></label>';
+        h += '<p style="font-size:13px;margin:8px 0">Setujui pengajuan ' + E(x.nama) + ' sebesar <b>' + rp(x.total) + '</b> dan teruskan ke Finance? Pengaju memantau lewat tautan progres.</p><label>Catatan (opsional)<textarea id="rmb-note"></textarea></label>';
       } else if (A === 'kembalikan' || A === 'tolak') {
         h += '<label>' + (A === 'tolak' ? 'Alasan penolakan (dikirim ke pengaju)' : 'Catatan perbaikan (tampil di halaman progres pengaju)') + '<textarea id="rmb-note" placeholder="' + (A === 'tolak' ? 'Contoh: biaya di luar penugasan' : 'Contoh: foto nota tol buram, unggah ulang') + '"></textarea></label>';
       } else if (A === 'bayar') {
