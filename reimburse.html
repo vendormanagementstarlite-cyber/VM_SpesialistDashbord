@@ -412,7 +412,6 @@ function viewResult() {
     progress(it) + sumRows(it) +
     '<p style="font-size:13px">Salin dan simpan tautan ini. Tautan hanya tampil sekali dan bersifat pribadi.</p>' +
     '<div class="cp"><input id="lk" readonly value="' + esc(link) + '" aria-label="Tautan pantau"><button class="btn pri" data-a="copy">Salin tautan</button></div></section>'
-  h += formPreview(it);
   bar('<div style="display:flex;gap:10px"><button class="btn pri grow" data-a="new">Pengajuan baru</button></div>');
   return h;
 }
@@ -420,7 +419,7 @@ function viewTrack() {
   var x = V.view, h = "";
   if (x.status === "dikembalikan") h += '<div class="hint warn" role="alert"><div><b>Perlu perbaikan.</b> ' + esc(x.note) + "</div></div>";
   if (x.status === "ditolak") h += '<div class="hint bad" role="alert"><div><b>Pengajuan ditolak.</b> ' + esc(x.note) + "</div></div>";
-  h += '<section class="card dn" style="margin-top:12px"><h2>' + esc(x.nama || "Pengajuan") + '</h2>' + progress(x) + sumRows(x) + "</section>" + formPreview(x);
+  h += '<section class="card dn" style="margin-top:12px"><h2>' + esc(x.nama || "Pengajuan") + '</h2>' + progress(x) + sumRows(x) + "</section>";
   h += '<div class="card"><h2>Riwayat</h2><ul class="tl">' + (x.hist || []).slice().reverse().map(function (y) { return "<li><i></i><div>" + esc(y.aksi) + "<small>" + esc(new Date(y.at).toLocaleString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })) + "</small></div></li>"; }).join("") + "</ul></div>";
   var b = x.editable ? '<button class="btn pri grow" data-a="fix">Perbaiki</button>' : "";
   bar((b ? '<div style="display:flex;gap:10px">' + b + "</div>" : "") + (x.cancelable ? '<button class="link bad" data-a="cancel" style="align-self:center">Batalkan pengajuan</button>' : ""));
