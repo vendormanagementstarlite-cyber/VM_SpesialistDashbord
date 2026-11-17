@@ -533,7 +533,8 @@ async function send() {
     if (r.ok === false) {
       V.errs = r.errors || {}; V.busy = false;
       var st2 = Math.min.apply(null, Object.keys(V.errs).map(stepOf).filter(Boolean).concat([S.step]));
-      V.form = V.errs._form || (st2 !== S.step ? "Ada isian yang perlu diperbaiki di langkah ini." : "Periksa isian yang ditandai.");
+      var ek = Object.keys(V.errs).filter(function (q) { return q !== "_form"; }), em0 = ek.length ? V.errs[ek[0]] : "";
+      V.form = V.errs._form || ((st2 !== S.step ? "Ada isian yang perlu diperbaiki di langkah " + st2 + "." : "Periksa isian yang ditandai.") + (em0 ? " " + em0 : ""));
       S.step = st2; save(); showErrs(); return;
     }
     store.set("rmb_me", { nama: me.nama, divisi: me.divisi, hp: me.hp });
