@@ -73,6 +73,7 @@ label.f.e input,label.f.e select,label.f.e textarea{border-color:var(--bad)}
 .rst{display:flex;list-style:none;margin:16px auto 8px;padding:0;max-width:420px;justify-content:space-between;position:relative}.rst:before{content:"";position:absolute;left:12%;right:12%;top:19px;height:2px;background:var(--line)}
 .rst li{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--ink2)}.rst li i{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--card);border:2px solid var(--line);color:var(--ink2)}
 .rst li.ok i{background:var(--ok);border-color:var(--ok);color:#fff}.rst li.ok{color:var(--ok)}.rst li.act i{border-color:var(--blue);color:var(--blue);box-shadow:0 0 0 4px rgba(11,92,173,.14)}.rst li.act{color:var(--blue)}.rst li.bad i{background:var(--bad);border-color:var(--bad);color:#fff}.rst li.bad{color:var(--bad)}
+.fp{margin-top:12px;padding:0;overflow:hidden}.fp .fh{display:flex;gap:12px;align-items:center;padding:16px 16px 12px;border-bottom:3px solid #0d4f9a}.fp .fh img{width:44px;height:44px;object-fit:contain}.fp .fh h3{margin:0;font-size:16px;color:#0b2447}.fp .fh small{display:block;color:#64748b;font-size:11.5px;margin-top:2px}.fp .sc{margin:14px 12px 0;padding:6px 10px;background:#e8f1fb;border-left:4px solid #0d4f9a;border-radius:3px;font-weight:700;font-size:12.5px;color:#0b2447}.fp dl{margin:2px 12px 0;display:grid;grid-template-columns:128px 1fr;font-size:13px}.fp dt,.fp dd{margin:0;padding:7px 4px;border-bottom:1px solid #eef2f7}.fp dt{color:#64748b}.fp dd{font-weight:600;overflow-wrap:anywhere}.fp .tw{margin:2px 12px 0;overflow-x:auto}.fp table{width:100%;border-collapse:collapse;font-size:12.5px}.fp th{text-align:left;color:#64748b;font-weight:600;padding:6px 4px;border-bottom:1px solid #cbd5e1}.fp td{padding:7px 4px;border-bottom:1px solid #eef2f7;vertical-align:top}.fp .r{text-align:right;white-space:nowrap}.fp .rb{margin:2px 12px 0}.fp .ri{display:flex;justify-content:space-between;gap:12px;padding:8px 4px;border-bottom:1px solid #eef2f7;font-size:13px}.fp .ri b{display:block}.fp .ri span,.fp .ri small{display:block;color:#475569;font-size:12.5px;margin-top:2px}.fp .ri small{color:#64748b;font-size:12px}.fp .ri em{font-style:normal;font-weight:700;white-space:nowrap}.fp .ri.tt{border-bottom:0;font-size:14px}.fp .po{margin:10px 12px 0;font-size:12.5px}.fp .po b{display:block;padding-bottom:3px;border-bottom:1px solid #cbd5e1;margin-bottom:4px}.fp .po span{display:block;color:#475569;padding:1px 0}.fp .ft{margin:14px 12px 14px;color:#94a3b8;font-size:11px}
 .sum{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;margin:14px auto 6px;max-width:420px;padding:12px;border-radius:12px;background:#f6f9fc;font-size:13px;text-align:left}.sum span{color:var(--mute)}.sum b{word-break:break-word}
 .cp{display:flex;gap:6px;max-width:560px;margin:14px auto 0}.cp input{flex:1;min-width:0;font-size:12.5px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#f6f9fc}
 .decl{margin:6px 0 12px;padding:12px 14px;border-left:3px solid var(--blue);background:var(--sky);border-radius:0 10px 10px 0;font-size:13.5px;line-height:1.6}
@@ -393,12 +394,25 @@ function sumRows(x) {
   var ks = []; (x.items || []).forEach(function (i) { if (i.kat && ks.indexOf(i.kat) < 0) ks.push(i.kat); });
   return '<div class="sum"><span>Nama</span><b>' + esc(x.nama || "-") + "</b><span>Jenis pengajuan</span><b>" + esc(ks.join(", ") || "-") + "</b><span>Diajukan</span><b>" + esc(tgl(x.at)) + "</b><span>Status</span><b>" + esc(x.label || "-") + "</b></div>";
 }
+function formPreview(x) {
+  var d = x.data || {}, its = x.items || [], tot = x.total, sec = function (t) { return '<div class="sc">' + t + "</div>"; }, kv = function (r) { return "<dl>" + r.filter(function (y) { return y[1]; }).map(function (y) { return "<dt>" + y[0] + "</dt><dd>" + esc(y[1]) + "</dd>"; }).join("") + "</dl>"; };
+  var h = '<section class="card fp"><div class="fh"><img src="' + ((document.querySelector(".hd img") || {}).src || "") + '" alt=""><div><h3>Formulir Reimbursement</h3><small>Diajukan ' + esc(tgl(x.at)) + " · Status: " + esc(x.label || "-") + "</small></div></div>";
+  h += sec("Data Pengaju") + kv([["Nama", x.nama], ["Divisi atau unit kerja", d.divisi], ["Nomor WhatsApp", d.hp]]);
+  h += sec("Keperluan") + kv([["Keperluan atau kegiatan", d.keperluan]]);
+  h += sec("Rincian Biaya") + '<div class="rb">' + its.map(function (i, k) { return '<div class="ri"><div><b>' + (k + 1) + ". " + esc(i.kat) + "</b><span>" + esc(tgl(i.tgl)) + " · " + esc(i.ket) + "</span>" + (i.tempat ? "<small>" + esc(i.tempat) + (i.bayar ? " · " + esc(i.bayar) : "") + "</small>" : "") + "</div><em>" + rp(i.nilai) + "</em></div>"; }).join("") + '<div class="ri tt"><div><b>Total</b></div><em>' + rp(tot) + "</em></div></div>";
+  if (d.norek) h += sec("Rekening Pencairan") + kv([["Bank", d.bank], ["Nomor rekening", "•••• " + String(d.norek).slice(-4)], ["Atas nama", d.an]]);
+  var nf = 0; its.forEach(function (i) { nf += (i.files || []).length; });
+  h += sec("Lampiran Bukti (" + nf + ")") + its.map(function (i, k) { if (!(i.files || []).length) return ""; return '<div class="po"><b>Poin ' + (k + 1) + ". " + esc(i.kat) + " · " + esc(tgl(i.tgl)) + " · " + esc(i.ket) + "</b>" + i.files.map(function (f, m) { return "<span>" + esc(JT[f.jenis] || "Bukti " + (m + 1)) + " · " + esc(f.name) + "</span>"; }).join("") + "</div>"; }).join("");
+  h += sec("Pernyataan") + kv([["Pernyataan pengaju", "Data dan bukti benar dan dapat dipertanggungjawabkan"]]);
+  return h + '<p class="ft">Tampilan formulir yang tersimpan di Vendor Management.</p></section>';
+}
 function viewResult() {
   var x = V.res, it = x.item, link = location.origin + location.pathname + "?r=" + x.token;
   var h = '<section class="card dn"><div class="ic">' + IC.ok + "</div><h2>" + (x.revisi ? "Perbaikan terkirim" : "Pengajuan terkirim") + "</h2><p>Pantau progres pengajuan Anda lewat tautan di bawah.</p>" +
     progress(it) + sumRows(it) +
     '<p style="font-size:13px">Salin dan simpan tautan ini. Tautan hanya tampil sekali dan bersifat pribadi.</p>' +
-    '<div class="cp"><input id="lk" readonly value="' + esc(link) + '" aria-label="Tautan pantau"><button class="btn pri" data-a="copy">Salin tautan</button></div></section>';
+    '<div class="cp"><input id="lk" readonly value="' + esc(link) + '" aria-label="Tautan pantau"><button class="btn pri" data-a="copy">Salin tautan</button></div></section>'
+  h += formPreview(it);
   bar('<div style="display:flex;gap:10px"><button class="btn pri grow" data-a="new">Pengajuan baru</button></div>');
   return h;
 }
@@ -406,7 +420,7 @@ function viewTrack() {
   var x = V.view, h = "";
   if (x.status === "dikembalikan") h += '<div class="hint warn" role="alert"><div><b>Perlu perbaikan.</b> ' + esc(x.note) + "</div></div>";
   if (x.status === "ditolak") h += '<div class="hint bad" role="alert"><div><b>Pengajuan ditolak.</b> ' + esc(x.note) + "</div></div>";
-  h += '<section class="card dn" style="margin-top:12px"><h2>' + esc(x.nama || "Pengajuan") + '</h2>' + progress(x) + sumRows(x) + "</section>";
+  h += '<section class="card dn" style="margin-top:12px"><h2>' + esc(x.nama || "Pengajuan") + '</h2>' + progress(x) + sumRows(x) + "</section>" + formPreview(x);
   h += '<div class="card"><h2>Riwayat</h2><ul class="tl">' + (x.hist || []).slice().reverse().map(function (y) { return "<li><i></i><div>" + esc(y.aksi) + "<small>" + esc(new Date(y.at).toLocaleString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })) + "</small></div></li>"; }).join("") + "</ul></div>";
   var b = x.editable ? '<button class="btn pri grow" data-a="fix">Perbaiki</button>' : "";
   bar((b ? '<div style="display:flex;gap:10px">' + b + "</div>" : "") + (x.cancelable ? '<button class="link bad" data-a="cancel" style="align-self:center">Batalkan pengajuan</button>' : ""));
