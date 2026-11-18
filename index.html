@@ -1763,7 +1763,6 @@ tr.q-bad > td { background: rgba(244,63,94,.07) !important; }
                     <div id="nav-pks-sub" class="hidden sidebar-text pl-4 space-y-1">
                         <button onclick="window.pksSub&&pksSub('ov')" id="nav-pks-ov" class="nav-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-3 border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-400"><i class="fa-solid fa-gauge-high text-[11px] shrink-0"></i><span class="sidebar-text">Overview</span></button>
                         <button onclick="window.pksSub&&pksSub('list')" id="nav-pks-list" class="nav-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-3 border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-400"><i class="fa-solid fa-list-check text-[11px] shrink-0"></i><span class="sidebar-text">Perjanjian</span></button>
-                        <button onclick="window.pksSub&&pksSub('set')" id="nav-pks-set" class="nav-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-3 border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-400"><i class="fa-solid fa-sliders text-[11px] shrink-0"></i><span class="sidebar-text">Pengaturan</span></button>
                     </div>
                     <button onclick="switchTab('surat')" id="nav-surat" title="Directory Arsip" class="nav-btn w-full px-3.5 py-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-between border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 group text-slate-600 dark:text-slate-400">
                         <div class="flex items-center gap-3">
@@ -5887,14 +5886,14 @@ const TKEY = 'pks_token';
 const tokenGet = () => { try { return sessionStorage.getItem(TKEY) || localStorage.getItem(TKEY); } catch { return null; } };
 const tokenSet = (t, ingat) => { try { sessionStorage.removeItem(TKEY); localStorage.removeItem(TKEY); if (t) (ingat ? localStorage : sessionStorage).setItem(TKEY, t); } catch {} };
 async function api(path, opts = {}) {
-  const t = tokenGet();
-  const headers = { ...(opts.headers || {}), ...(t ? { authorization: `Bearer ${t}` } : {}) };
+  let vm = ''; try { vm = (typeof currentUser !== 'undefined' && currentUser && currentUser.token) || ''; } catch {}
+  const headers = { ...(opts.headers || {}), ...(vm ? { 'x-vm-token': vm } : {}) };
   const r = await pfetch(BASE + path, { credentials: BASE ? 'omit' : 'same-origin', ...opts, headers });
   const ct = r.headers.get('content-type') || '';
   if (r.ok && ct.includes('application/pdf')) return r.blob();
   const j = await r.json().catch(() => ({}));
   if (!r.ok) {
-    if (r.status === 401 && !path.startsWith('/api/login') && S.me) { S.me = null; showLogin('Sesi berakhir, silakan masuk lagi.'); }
+    if (r.status === 401 && !path.startsWith('/api/login') && S.me) { S.me = null; sesiHabis(); }
     throw Object.assign(new Error(j.error || `Permintaan gagal (${r.status})`), { status: r.status });
   }
   return j;
@@ -5980,6 +5979,7 @@ function renderNavLama(active) {
 // ---------- Masuk, keluar, ganti password ----------
 function shell() {}
 
+function sesiHabis(m) { app.innerHTML = `<div class="card" style="max-width:520px;margin:10vh auto"><div class="empty"><b>Sesi dashboard berakhir</b>${esc(m || 'Masuk ulang ke dashboard dengan Akun Utama.')}</div></div>`; }
 function showLogin(pesan = '') {
   shell(false);
   app.innerHTML = `<div class="login"><form class="card login-card" data-login novalidate>
@@ -6058,7 +6058,7 @@ function topbar(title, sub, telat = 0) {
     <div class="greet"><h1>${title}</h1>${sub ? `<p>${sub}</p>` : ''}</div>
     <form class="search" role="search" data-search>${ic('search')}<label class="sr" for="q">Cari perjanjian</label><input id="q" name="q" placeholder="Cari mitra, nomor surat, kode"></form>
     <a class="icon-btn" href="#/pks/perjanjian?status=terlambat" aria-label="${telat} perjanjian terlambat">${ic('bell')}${telat ? `<span class="dot">${telat}</span>` : ''}</a>
-    <div class="who"><div class="avatar">${esc(ini)}</div><div><b>${esc(S.me.nama)}</b><span>${esc(S.me.peran === 'vm' ? 'Vendor Management' : S.me.peran)}</span></div></div><div class="pks-akun"><button class="btn ghost sm" data-ganti type="button">Ganti password</button><button class="btn ghost sm" data-keluar type="button">Keluar</button></div>
+    <div class="who"><div class="avatar">${esc(ini)}</div><div><b>${esc(S.me.nama)}</b><span>${esc(S.me.peran === 'vm' ? 'Vendor Management' : S.me.peran)}</span></div></div><a class="icon-btn" href="#/pks/pengaturan" aria-label="Pengaturan" title="Pengaturan">${ic('gear')}</a>
   </header>`;
 }
 function bindSearch() {
@@ -6578,7 +6578,7 @@ async function mulai() {
   try {
     S.me = await api('/api/me');
   } catch (e) {
-    if (e.status === 401) { showLogin(); return; }
+    if (e.status === 401 || e.status === 403) { sesiHabis(e.message); return; }
     app.innerHTML = `<div class="card" style="max-width:520px;margin:10vh auto"><div class="empty"><b>Tidak dapat memuat Starlite</b>${esc(e.message)}</div></div>`;
     return;
   }
