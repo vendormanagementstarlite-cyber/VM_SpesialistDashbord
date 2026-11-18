@@ -5695,7 +5695,19 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   var LANGKAH = [['Draf', [0]], ['Review mitra', [1, 2]], ['Nomor surat', [3, 4]], ['TTD mitra', [5]], ['TTD PT IJE', [6]], ['Selesai', [7]]];
   var P = { sub: 'ov', d: null, err: '', busy: false, loaded: false, at: 0, jenis: '', kel: '', st: '', q: '', login: { email: 'vendormanagement@pmosurge.co.id', err: '', busy: false }, aksi: '' };
 
+  var nJalan = 0, barT = null;
+  function bar() {
+    var v = g('view-pks'); if (!v) return null;
+    var b = g('pks-bar'); if (!b) { b = document.createElement('div'); b.id = 'pks-bar'; b.className = 'pkbar'; b.innerHTML = '<i></i>'; v.insertBefore(b, v.firstChild); }
+    return b;
+  }
+  function busyOn() { nJalan++; clearTimeout(barT); barT = setTimeout(function () { var b = bar(); if (b && nJalan) b.classList.add('on'); }, 100); }
+  function busyOff() { nJalan = Math.max(0, nJalan - 1); if (!nJalan) { clearTimeout(barT); var b = g('pks-bar'); if (b) b.classList.remove('on'); } }
   async function api(path, opt) {
+    busyOn();
+    try { return await api0(path, opt); } finally { busyOff(); }
+  }
+  async function api0(path, opt) {
     opt = opt || {};
     var t = tokGet();
     var h = Object.assign({}, opt.headers || {}); if (t) h.authorization = 'Bearer ' + t;
@@ -5720,6 +5732,13 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     '.pk .stp{display:flex;gap:3px;align-items:center;min-width:140px}.pk .stp i{flex:1;height:6px;border-radius:3px;background:var(--pl)}.pk .stp i.d{background:var(--pok)}.pk .stp i.c{background:var(--pb)}.pk .stp i.c.z{background:var(--pok)}' +
     '.pk .tw{overflow-x:auto}.pk table{width:100%;border-collapse:collapse;font-size:13px}.pk th{text-align:left;font-size:11.5px;opacity:.7;padding:8px 10px;border-bottom:1px solid var(--pl)}.pk td{padding:9px 10px;border-bottom:1px solid var(--pl);vertical-align:top}.pk td a{color:inherit;font-weight:700;text-decoration:none}.pk td a:hover{text-decoration:underline}.pk small{opacity:.65;font-size:11.5px}' +
     '.pk .lst{display:grid;gap:9px;margin:0;padding:0;list-style:none}.pk .lst li{display:flex;justify-content:space-between;gap:8px;align-items:center}.pk .scr{max-height:270px;overflow:auto}.pk .em{padding:26px;text-align:center;opacity:.75;font-size:13px}.pk .pb{height:8px;border-radius:4px;background:var(--pl);margin:6px 0}.pk .pb>div{height:100%;border-radius:4px;background:var(--pb)}' +
+    '.pkbar{position:sticky;top:0;height:3px;z-index:30;overflow:hidden;opacity:0;transition:opacity .2s;border-radius:3px;margin-bottom:-3px}.pkbar.on{opacity:1}.pkbar i{position:absolute;top:0;bottom:0;width:40%;background:linear-gradient(90deg,transparent,#2F9BEF,#0b5cad);animation:pkgeser 1.1s cubic-bezier(.4,0,.2,1) infinite}@keyframes pkgeser{from{left:-40%}to{left:100%}}' +
+    '.pk .sk{border-radius:16px;background:linear-gradient(90deg,rgba(148,163,184,.16),rgba(148,163,184,.30),rgba(148,163,184,.16));background-size:200% 100%;animation:pksh 1.2s infinite}@keyframes pksh{to{background-position:-200% 0}}' +
+    '.pk .spn{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:pkputar .7s linear infinite;vertical-align:-2px;margin-right:6px}@keyframes pkputar{to{transform:rotate(360deg)}}' +
+    '.pk .prg{height:8px;border-radius:4px;background:var(--pl);overflow:hidden;margin-top:8px}.pk .prg>i{display:block;height:100%;background:var(--pb);border-radius:4px;transition:width .3s ease}.pk .prg.ind>i{width:35%;animation:pkgeser2 1.1s ease-in-out infinite;position:relative}@keyframes pkgeser2{from{margin-left:-35%}to{margin-left:100%}}' +
+    '.pk .prg>i{min-width:4%;background-image:linear-gradient(45deg,rgba(255,255,255,.28) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.28) 50%,rgba(255,255,255,.28) 75%,transparent 75%);background-size:16px 16px;animation:pkbelang .8s linear infinite}@keyframes pkbelang{to{background-position:16px 0}}.pk .prg.ind>i{background-image:none}' +
+    '.pk .ak{border:1px solid var(--pl);border-radius:12px;padding:10px 12px;margin-top:12px;font-size:12.5px;background:rgba(47,155,239,.06)}' +
+    '@media (prefers-reduced-motion: reduce){.pkbar i,.pk .sk,.pk .spn,.pk .prg.ind>i{animation-duration:2.4s}}' +
     '.pk .lg{max-width:420px;margin:6vh auto}.pk .lg .f{width:100%;margin-bottom:10px}.pk .er{color:#dc2626;font-size:12.5px;margin-bottom:8px}';
   document.head.appendChild(css);
 
@@ -5735,7 +5754,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
       (L.err ? '<div class="er">' + E(L.err) + '</div>' : '') +
       '<label for="pks-em">Email</label><input class="f" id="pks-em" type="email" autocomplete="username" value="' + E(L.email) + '">' +
       '<label for="pks-pw">Password</label><input class="f" id="pks-pw" type="password" autocomplete="current-password">' +
-      '<button class="bt p" id="pks-go"' + (L.busy ? ' disabled' : '') + '>' + (L.busy ? 'Masuk…' : 'Masuk') + '</button></div></div>';
+      '<button class="bt p" id="pks-go"' + (L.busy ? ' disabled' : '') + '>' + (L.busy ? '<span class="spn"></span>Memeriksa…' : 'Masuk') + '</button></div></div>';
     var go = async function () {
       L.email = g('pks-em').value.trim(); var pw = g('pks-pw').value;
       if (!L.email || !pw) { L.err = 'Isi email dan password.'; renderLogin(); return; }
@@ -5756,8 +5775,12 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
       '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="bt" href="' + UI + '" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i>Buka detail &amp; pengaturan</a>' +
       '<button class="bt" data-p="reload"' + (P.busy ? ' disabled' : '') + '><i class="fa-solid fa-rotate' + (P.busy ? ' fa-spin' : '') + '"></i>Muat ulang</button>' +
       '<button class="bt" data-p="out"><i class="fa-solid fa-right-from-bracket"></i>Keluar</button></div></div>';
+    var jud = P.sub === 'list' ? ['Perjanjian', 'Daftar semua perjanjian kerja sama beserta progres, nomor surat, dan masa berlakunya.'] : ['Overview', 'Ringkasan semua perjanjian kerja sama, progres tiap langkah, dan masa berlakunya.'];
+    top = top.replace('<h2>Perjanjian</h2><div class="sub">Overview semua perjanjian kerja sama, progres tiap langkah, dan masa berlakunya.</div>', '<h2>' + jud[0] + '</h2><div class="sub">' + jud[1] + '</div>');
     if (P.err) { h.innerHTML = '<div class="pk">' + top + '<div class="cd" style="margin-top:14px"><div class="er">' + E(P.err) + '</div></div></div>'; return; }
-    if (!d) { h.innerHTML = '<div class="pk">' + top + '<div class="em"><i class="fa-solid fa-spinner fa-spin"></i> Memuat perjanjian…</div></div>'; return; }
+    if (!d) { h.innerHTML = '<div class="pk" aria-busy="true">' + top + '<p class="sub" style="margin:14px 0 0"><span class="spn"></span>Memuat data perjanjian…</p>' +
+      '<div class="sk" style="height:78px;margin-top:12px"></div><div class="gr g4" style="margin-top:12px">' + [1, 2, 3, 4, 5, 6].map(function () { return '<div class="sk" style="height:84px"></div>'; }).join('') + '</div>' +
+      '<div class="sk" style="height:120px;margin-top:12px"></div><div class="gr g2" style="margin-top:12px"><div class="sk" style="height:180px"></div><div class="sk" style="height:180px"></div></div></div>'; return; }
     var k = d.kpi, maks = Math.max.apply(null, [1].concat(d.pipeline.map(function (x) { return x.jumlah; })));
     var q = P.q.trim().toLowerCase();
     var semua = d.semua.filter(function (x) { return (!P.kel || (P.kel === 'inner' ? x.inner_city : !x.inner_city)) && (!P.st || x.status === P.st) && (!q || (x.mitra + ' ' + (x.nomor_surat || '') + ' ' + (x.kode || '')).toLowerCase().indexOf(q) >= 0); });
@@ -5773,7 +5796,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
       '<button class="bt" data-p="sinkron"' + (P.aksi ? ' disabled' : '') + '>Cocokkan ulang Inner City</button>' +
       '<button class="bt p" data-p="sekaligus"' + (P.aksi ? ' disabled' : '') + '>Kirim ke semua Inner City yang belum</button>' +
       '<button class="bt" data-p="arsip"' + (P.aksi ? ' disabled' : '') + '>Arsipkan semua yang final</button></div>' +
-      (P.aksi ? '<p class="sub" style="margin:10px 0 0"><i class="fa-solid fa-spinner fa-spin"></i> ' + E(P.aksi) + '</p>' : '') +
+      (P.aksi ? '<div class="ak" role="status" aria-live="polite"><span class="spn"></span>' + E(P.aksi) + (P.prog ? '<div class="prg"><i style="width:' + Math.round(P.prog.done / Math.max(1, P.prog.n) * 100) + '%"></i></div><small>' + P.prog.done + ' dari ' + P.prog.n + ' selesai</small>' : '<div class="prg ind"><i></i></div>') + '</div>' : '') +
       (d.tersinkron ? '' : '<p class="sub" style="margin:10px 0 0">Inner City belum dicocokkan ke info perseroan. Tekan "Cocokkan ulang Inner City".</p>') +
       (P.jenis === 'HOMEPASS' ? '<p class="sub" style="margin:10px 0 0">Template Perjanjian Homepass belum dipasang, jadi belum ada perjanjian jenis ini.</p>' : '') + '</div>';
     var vTiles =       '<div class="gr g4" style="margin-top:12px">' + tiles.map(function (t) { return '<' + (t[2] ? 'a href="#" data-p="st" data-s="' + t[2] + '"' : 'div') + ' class="cd' + (t[2] && P.st === t[2] ? ' on' : '') + '"><div class="num">' + t[1] + '</div><div class="cap">' + E(t[0]) + '</div></' + (t[2] ? 'a' : 'div') + '>'; }).join('') + '</div>';
@@ -5781,7 +5804,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
       LANGKAH.map(function (l) { var j = d.pipeline.filter(function (x) { return l[1].indexOf(x.tahap) >= 0; }).reduce(function (a, x) { return a + x.jumlah; }, 0); return '<div><div class="num" style="font-size:22px">' + j + '</div><div class="pb"><div style="width:' + Math.round(j / maks * 100) + '%;' + (l[0] === 'Selesai' ? 'background:var(--pok)' : '') + '"></div></div><small>' + E(l[0]) + '</small></div>'; }).join('') + '</div></div>';
     var vG2 =       '<div class="gr g2" style="margin-top:12px">' +
       '<div class="cd"><b>Perlu perhatian</b><div style="margin-top:10px">' + (perhatian.length ? '<ul class="lst">' + perhatian.map(function (x) { var s = STATUS[x.status] || STATUS.proses; var late = x.tahap < 7 && x.status !== 'berakhir'; return '<li><a href="' + UI + '#/perjanjian/' + E(x.id) + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:none"><b>' + E(x.mitra) + '</b><br><small>' + E(x.nomor_surat || x.kode) + '</small></a><span class="ch ' + (late ? 'bd' : s[1]) + '">' + (late ? 'Lewat tenggat' : s[0] + ' ' + tgl(x.tgl_berakhir)) + '</span></li>'; }).join('') + '</ul>' : '<div class="em">Tidak ada yang perlu perhatian.</div>') + '</div></div>' +
-      '<div class="cd"><b>Inner City belum berperjanjian</b> <small>' + belum.length + ' dari ' + d.total + '</small><div class="scr" style="margin-top:10px">' + (belum.length ? '<ul class="lst">' + belum.map(function (r) { var tk = r.status === 'tidak_ketemu'; return '<li><span>' + E((r.mitra && r.mitra.nama) || r.acuan) + '</span><span style="display:flex;gap:6px;align-items:center"><span class="ch ' + (tk ? 'bd' : 'id') + '">' + (tk ? 'Tidak di info perseroan' : 'Belum ada') + '</span>' + (!tk && r.mitra ? '<button class="bt" style="min-height:30px;padding:0 9px" data-p="satu" data-r="' + E(r.mitra.row) + '"' + (P.aksi ? ' disabled' : '') + '>Kirim</button>' : '') + '</span></li>'; }).join('') + '</ul>' : '<div class="em">Semua mitra Inner City sudah punya perjanjian.</div>') + '</div></div></div>';
+      '<div class="cd"><b>Inner City belum berperjanjian</b> <small>' + belum.length + ' dari ' + d.total + '</small><div class="scr" style="margin-top:10px">' + (belum.length ? '<ul class="lst">' + belum.map(function (r) { var tk = r.status === 'tidak_ketemu'; return '<li><span>' + E((r.mitra && r.mitra.nama) || r.acuan) + '</span><span style="display:flex;gap:6px;align-items:center"><span class="ch ' + (tk ? 'bd' : 'id') + '">' + (tk ? 'Tidak di info perseroan' : 'Belum ada') + '</span>' + (!tk && r.mitra ? (r.mitra.ada_email === false ? '<span class="ch wr" title="Lengkapi email di info perseroan">Email kosong</span>' : '<button class="bt" style="min-height:30px;padding:0 9px" data-p="satu" data-r="' + E(r.mitra.row) + '"' + (P.aksi ? ' disabled' : '') + '>Kirim</button>') : '') + '</span></li>'; }).join('') + '</ul>' : '<div class="em">Semua mitra Inner City sudah punya perjanjian.</div>') + '</div></div></div>';
     var vTab =       '<div class="cd" style="margin-top:12px"><div class="fl" style="justify-content:space-between"><div><b>Semua perjanjian dan progresnya</b> <small>' + semua.length + ' perjanjian</small></div><input class="q" id="pks-q" placeholder="Cari mitra atau nomor surat" value="' + E(P.q) + '" aria-label="Cari perjanjian"></div>' +
       '<div class="tw" style="margin-top:10px"><table><thead><tr><th>Mitra</th><th>Progres</th><th>Status</th><th>Nomor surat</th><th>Berakhir</th></tr></thead><tbody>' +
       (semua.map(function (x) { var s = STATUS[x.status] || STATUS.proses; return '<tr><td><a href="' + UI + '#/perjanjian/' + E(x.id) + '" target="_blank" rel="noopener">' + E(x.mitra) + '</a>' + (x.inner_city ? '<br><small>Inner City</small>' : '') + '</td><td>' + step(x.tahap) + '</td><td><span class="ch ' + s[1] + '">' + s[0] + '</span></td><td>' + E(x.nomor_surat || '–') + '</td><td>' + (x.tgl_berakhir ? tgl(x.tgl_berakhir) : '–') + '</td></tr>'; }).join('') || '<tr><td colspan="5" class="em">Belum ada perjanjian.</td></tr>') +
@@ -5791,7 +5814,6 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
       '<div><label for="pks-j">Perjanjian</label><select id="pks-j">' + opsi.map(function (o) { return '<option value="' + E(o[0]) + '"' + (o[0] === P.jenis ? ' selected' : '') + '>' + E(o[1]) + '</option>'; }).join('') + '</select></div>' +
       '<div><label for="pks-k">Kelompok mitra</label><select id="pks-k"><option value="">Semua mitra</option><option value="inner"' + (P.kel === 'inner' ? ' selected' : '') + '>Inner City (' + d.total + ')</option><option value="lain"' + (P.kel === 'lain' ? ' selected' : '') + '>Di luar Inner City</option></select></div>' +
       '<div><label for="pks-s">Status</label><select id="pks-s">' + stOpsi.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === P.st ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></div></div></div>';
-    var jud = P.sub === 'list' ? ['Perjanjian', 'Daftar semua perjanjian kerja sama beserta progres, nomor surat, dan masa berlakunya.'] : ['Overview', 'Ringkasan semua perjanjian kerja sama, progres tiap langkah, dan masa berlakunya.'];
     top = top.replace('<h2>Perjanjian</h2><div class="sub">Overview semua perjanjian kerja sama, progres tiap langkah, dan masa berlakunya.</div>', '<h2>' + jud[0] + '</h2><div class="sub">' + jud[1] + '</div>');
     h.innerHTML = '<div class="pk">' + top + (P.sub === 'list' ? vLf + '<div style="margin-top:0">' + vTab.replace('margin-top:12px', 'margin-top:12px') + '</div>' : vFilt + vTiles + vPipe + vG2 + '<div style="margin-top:12px"><button class="bt" data-p="tolist"><i class="fa-solid fa-list"></i>Lihat semua perjanjian</button></div>') + '</div>';
   }
@@ -5812,11 +5834,15 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     P.busy = false; render();
   }
 
-  async function kirim(rows) {
+  async function kirim(rows, n) {
     var ok = 0, gagal = [];
-    for (var n = 0; n < 20; n++) {
-      var r = await post('/api/overview/kirim-sekaligus', { rows: rows, batas: 4 });
+    P.prog = { n: n || 1, done: 0 }; render();
+    var lewati = [];
+    for (var n = 0; n < 60; n++) {
+      var r = await post('/api/overview/kirim-sekaligus', { rows: rows, batas: 4, lewati: lewati });
+      r.hasil.forEach(function (h) { if (!h.ok) lewati.push(h.row); });
       r.hasil.forEach(function (h) { h.ok ? ok++ : gagal.push(h.nama + ': ' + h.galat); });
+      P.prog.done = ok + gagal.length; if (P.prog.done + (r.sisa || 0) > P.prog.n) P.prog.n = P.prog.done + (r.sisa || 0); render();
       if (!r.sisa) break;
       P.aksi = 'Mengirim… ' + ok + ' terkirim, sisa ' + r.sisa; render();
     }
@@ -5826,7 +5852,8 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     if (P.aksi) return;
     P.aksi = label; render();
     try { await fn(); } catch (e) { toast(e.message, 'error'); if (e.status === 401) { tokSet(null); P.d = null; } }
-    P.aksi = ''; await load(true);
+    P.aksi = 'Memperbarui data…'; P.prog = null; await load(true);
+    P.aksi = ''; render();
   }
 
   document.addEventListener('click', function (ev) {
@@ -5838,16 +5865,17 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
     else if (a === 'out') { tokSet(null); P.d = null; P.loaded = false; render(); }
     else if (a === 'sinkron') jalan('Mencocokkan Inner City…', async function () { var r = await post('/api/overview/sinkron', {}); toast(r.cocok + ' dari ' + r.total + ' cocok' + (r.tidak_ketemu.length ? ', ' + r.tidak_ketemu.length + ' tidak ketemu' : '') + (r.ganda.length ? ', ' + r.ganda.length + ' ganda' : ''), 'success'); });
     else if (a === 'sekaligus') {
-      var n = P.d.daftar.filter(function (r) { return r.status === 'belum_ada'; }).length;
-      if (!n) { toast('Tidak ada mitra Inner City yang belum berperjanjian', 'error'); return; }
-      if (!window.confirm('Buat dan kirim perjanjian ke ' + n + ' mitra Inner City sekarang? Email memakai format di Pengaturan aplikasi Perjanjian.')) return;
-      jalan('Mengirim ke ' + n + ' mitra…', function () { return kirim(null); });
+      var n = P.d.daftar.filter(function (r) { return r.status === 'belum_ada' && !(r.mitra && r.mitra.ada_email === false); }).length;
+      var tanpa = P.d.daftar.filter(function (r) { return r.status === 'belum_ada' && r.mitra && r.mitra.ada_email === false; }).length;
+      if (!n) { toast(tanpa ? tanpa + ' mitra belum punya email di info perseroan. Lengkapi dulu.' : 'Tidak ada mitra Inner City yang belum berperjanjian', 'error'); return; }
+      if (!window.confirm('Buat dan kirim perjanjian ke ' + n + ' mitra Inner City sekarang?' + (tanpa ? ' ' + tanpa + ' mitra dilewati karena email kosong.' : '') + ' Email memakai format di Pengaturan aplikasi Perjanjian.')) return;
+      jalan('Membuat dan mengirim perjanjian ke ' + n + ' mitra…', function () { return kirim(null, n); });
     } else if (a === 'satu') {
       if (!window.confirm('Buat dan kirim perjanjian ke mitra ini?')) return;
-      jalan('Mengirim…', function () { return kirim([Number(b.dataset.r)]); });
+      jalan('Mengirim…', function () { return kirim([Number(b.dataset.r)], 1); });
     } else if (a === 'arsip') jalan('Mengarsipkan…', async function () {
       var ok = 0, gagal = 0;
-      for (var n2 = 0; n2 < 30; n2++) { var r = await post('/api/overview/arsip-semua', {}); r.hasil.forEach(function (h) { h.ok ? ok++ : gagal++; }); if (!r.sisa) break; }
+      for (var n2 = 0; n2 < 30; n2++) { var r = await post('/api/overview/arsip-semua', {}); r.hasil.forEach(function (h) { h.ok ? ok++ : gagal++; }); if (!r.sisa) break; P.aksi = 'Mengarsipkan… ' + ok + ' selesai, sisa ' + r.sisa; render(); }
       toast(ok + ' diarsipkan' + (gagal ? ', ' + gagal + ' gagal' : ''), gagal && !ok ? 'error' : 'success');
     });
   });
@@ -5862,10 +5890,10 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   function menuSet() {
     var sm = g('nav-pks-sub'); if (sm) sm.classList.toggle('hidden', !P.menuOpen);
     var ch = g('nav-pks-chev'); if (ch) ch.style.transform = P.menuOpen ? 'rotate(90deg)' : '';
-    ['ov', 'list'].forEach(function (k) { var b = g('nav-pks-' + k); if (b) { b.classList.toggle('bg-cyan-500/20', P.sub === k && P.aktif); b.style.fontWeight = P.sub === k && P.aktif ? '800' : ''; b.style.opacity = P.sub === k && P.aktif ? '1' : '.75'; } });
+    ['ov', 'list'].forEach(function (k) { var b = g('nav-pks-' + k); if (b) { var on = P.sub === k && P.aktif; b.style.background = on ? 'rgba(6,182,212,.14)' : ''; b.style.color = on ? '#0e7490' : ''; b.setAttribute('aria-current', on ? 'page' : 'false'); b.style.fontWeight = P.sub === k && P.aktif ? '800' : ''; b.style.opacity = P.sub === k && P.aktif ? '1' : '.75'; } });
   }
-  window.pksToggle = function () { P.menuOpen = true; P.aktif = true; P.sub = 'ov'; menuSet(); switchTab('pks'); load(false); };
-  window.pksSub = function (k) { P.menuOpen = true; P.aktif = true; P.sub = k; menuSet(); switchTab('pks'); if (P.d || !tokGet()) render(); load(false); };
+  window.pksToggle = function () { P.menuOpen = true; P.aktif = true; P.sub = 'ov'; switchTab('pks'); menuSet(); load(false); };
+  window.pksSub = function (k) { P.menuOpen = true; P.aktif = true; P.sub = k; switchTab('pks'); menuSet(); if (P.d || !tokGet()) render(); load(false); };
   window.pksOpen = function () { load(false); };
   // keluar dari menu ini → submenu ditutup
   try { var sw0 = switchTab; switchTab = window.switchTab = function (t) { var r = sw0.apply(this, arguments); if (t !== 'pks' && P.aktif) { P.aktif = false; P.menuOpen = false; menuSet(); } return r; }; } catch (e) { }
