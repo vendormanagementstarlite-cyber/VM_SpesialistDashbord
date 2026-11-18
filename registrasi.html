@@ -154,7 +154,8 @@ var S = [
     { key: "alamat_perusahaan", label: "Alamat perusahaan", type: "textarea", req: 1, rule: "address", full: 1, ph: "Jalan, nomor, kelurahan, kecamatan, kota/kabupaten" },
     { key: "nama_direktur", label: "Nama direktur", type: "text", req: 1, rule: "person" },
     { key: "nama_pic", label: "Nama PIC", type: "text", req: 1, rule: "person" },
-    { key: "hp_pic", label: "Nomor HP/WhatsApp PIC", type: "text", req: 1, rule: "phone", ph: "0812 3456 7890", im: "tel" }] },
+    { key: "hp_pic", label: "Nomor HP/WhatsApp PIC", type: "text", req: 1, rule: "phone", ph: "0812 3456 7890", im: "tel" },
+    { key: "referensi", label: "Referensi", type: "text", full: 1, ph: "Contoh: Budi Santoso - Andi Wijaya", hint: "Tahu PT IJE atau menerima link ini dari siapa. Lebih dari satu orang, pisahkan dengan tanda -" }] },
   { key: "slik", title: "SLIK OJK", lead: "SLIK direktur dan perusahaan wajib kolektibilitas 1 (lancar) dan tanpa tunggakan.", fields: [
     { key: "slik_pernyataan", label: "Saya menyatakan SLIK perusahaan dan direktur kami bersih (kolektibilitas 1/lancar dan tanpa tunggakan), serta bersedia diperiksa.", type: "check", req: 1, full: 1 },
     { key: "slik_ije", label: "Bersedia pengecekan SLIK oleh PT IJE/Hibank?", type: "radio", req: 1, options: ["Ya", "Tidak"], full: 1 },
