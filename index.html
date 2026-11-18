@@ -1753,6 +1753,17 @@ tr.q-bad > td { background: rgba(244,63,94,.07) !important; }
                         </div>
                         <span id="sidebar-reimburse-badge" class="sidebar-text text-[10px] font-mono px-2 py-0.5 rounded-full bg-teal-500/15 text-teal-700 dark:text-teal-300 font-bold">·</span>
                     </button>
+                    <button onclick="window.pksToggle&&pksToggle()" id="nav-pks" title="Perjanjian" class="nav-btn hidden w-full px-3.5 py-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-between border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 group text-slate-600 dark:text-slate-400">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-file-contract text-sm text-cyan-500 shrink-0 group-hover:scale-110 transition-transform"></i>
+                            <span class="sidebar-text">Perjanjian</span>
+                        </div>
+                        <i id="nav-pks-chev" class="sidebar-text fa-solid fa-chevron-right text-[10px] opacity-60 transition-transform"></i>
+                    </button>
+                    <div id="nav-pks-sub" class="hidden sidebar-text pl-4 space-y-1">
+                        <button onclick="window.pksSub&&pksSub('ov')" id="nav-pks-ov" class="nav-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-3 border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-400"><i class="fa-solid fa-gauge-high text-[11px] shrink-0"></i><span class="sidebar-text">Overview</span></button>
+                        <button onclick="window.pksSub&&pksSub('list')" id="nav-pks-list" class="nav-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-3 border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-400"><i class="fa-solid fa-list-check text-[11px] shrink-0"></i><span class="sidebar-text">Perjanjian</span></button>
+                    </div>
                     <button onclick="switchTab('surat')" id="nav-surat" title="Directory Arsip" class="nav-btn w-full px-3.5 py-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-between border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 group text-slate-600 dark:text-slate-400">
                         <div class="flex items-center gap-3">
                             <i class="fa-solid fa-envelope-open-text text-sm text-amber-500 shrink-0 group-hover:scale-110 transition-transform"></i>
@@ -2152,6 +2163,7 @@ tr.q-bad > td { background: rgba(244,63,94,.07) !important; }
                 </div>
             </section>
             <section id="view-reimburse" class="tab-view hidden space-y-4"><div id="rmb-host"></div></section>
+            <section id="view-pks" class="tab-view hidden space-y-4"><div id="pks-host"></div></section>
 
             <section id="view-sirkulir" class="tab-view hidden space-y-5">
                 <div id="sg-head" class="glass-panel rounded-2xl p-4 flex md:hidden flex-wrap items-center justify-between gap-3">
@@ -5661,6 +5673,206 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
   setTimeout(poll, 8000); setInterval(poll, 180000);
 })();
 
+</script>
+<script>
+/* ===== Perjanjian (PKS) — overview & progres semua perjanjian kerja sama; khusus Akun Utama ===== */
+(function () {
+  'use strict';
+  var API = 'https://starlite.hsans-din.workers.dev';
+  var UI = 'https://vmstarlite-apps.github.io/Perjanjian-kerja-sama/';
+  var TK = 'pks_token';
+  try { if (typeof MENU_TABS !== 'undefined' && MENU_TABS.indexOf('pks') < 0) { var ix = MENU_TABS.indexOf('reimburse'); MENU_TABS.splice(ix >= 0 ? ix + 1 : MENU_TABS.length, 0, 'pks'); } } catch (e) { }
+  var g = function (i) { return document.getElementById(i); };
+  var E = function (v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var toast = function (m, t) { try { showToast(m, t || 'info'); } catch (e) { } };
+  var BL = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  var tgl = function (iso) { var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? (+m[3]) + ' ' + BL[+m[2] - 1] + ' ' + m[1] : '–'; };
+  var utama = function () { try { return !!currentUser && currentUser.role === 'owner' && !!(currentUser.perms || {}).mainOwner; } catch (e) { return false; } };
+  var tokGet = function () { try { return sessionStorage.getItem(TK); } catch (e) { return null; } };
+  var tokSet = function (t) { try { t ? sessionStorage.setItem(TK, t) : sessionStorage.removeItem(TK); } catch (e) { } };
+
+  var STATUS = { aktif: ['Aktif', 'ok'], akan_berakhir: ['Akan berakhir', 'wr'], berakhir: ['Berakhir', 'bd'], proses: ['Dalam proses', 'in'], belum_ada: ['Belum ada perjanjian', 'id'], tidak_ketemu: ['Tidak ada di info perseroan', 'bd'] };
+  var LANGKAH = [['Draf', [0]], ['Review mitra', [1, 2]], ['Nomor surat', [3, 4]], ['TTD mitra', [5]], ['TTD PT IJE', [6]], ['Selesai', [7]]];
+  var P = { sub: 'ov', d: null, err: '', busy: false, loaded: false, at: 0, jenis: '', kel: '', st: '', q: '', login: { email: 'vendormanagement@pmosurge.co.id', err: '', busy: false }, aksi: '' };
+
+  async function api(path, opt) {
+    opt = opt || {};
+    var t = tokGet();
+    var h = Object.assign({}, opt.headers || {}); if (t) h.authorization = 'Bearer ' + t;
+    var r = await fetch(API + path, Object.assign({ credentials: 'omit' }, opt, { headers: h }));
+    var j = await r.json().catch(function () { return {}; });
+    if (!r.ok) { var e = new Error(j.error || ('Permintaan gagal (' + r.status + ')')); e.status = r.status; throw e; }
+    return j;
+  }
+  var post = function (p, b) { return api(p, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b || {}) }); };
+
+  var css = document.createElement('style');
+  css.textContent =
+    '.pk{--pl:#dfe5ee;--pb:#2F9BEF;--pok:#17885A;color:inherit}html.dark .pk{--pl:#273449}' +
+    '.pk .hd{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}.pk h2{margin:0;font-size:20px;font-weight:800}.pk .sub{font-size:12.5px;opacity:.7;margin-top:3px}' +
+    '.pk .bt{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:0 13px;border-radius:10px;border:1px solid #cbd5e1;background:transparent;color:inherit;font-size:12.5px;font-weight:700;cursor:pointer;text-decoration:none}html.dark .pk .bt{border-color:#334155}.pk .bt.p{background:#0b5cad;border-color:#0b5cad;color:#fff}.pk .bt:disabled{opacity:.55;cursor:default}' +
+    '.pk .cd{border:1px solid var(--pl);border-radius:16px;padding:16px;background:rgba(255,255,255,.55);min-width:0}html.dark .pk .cd{background:rgba(15,23,42,.5)}' +
+    '.pk .gr{display:grid;gap:12px}.pk .g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.pk .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));align-items:start}' +
+    '.pk .num{font-size:26px;font-weight:800;line-height:1.1}.pk .cap{font-size:11.5px;opacity:.75;margin-top:4px}.pk a.cd{text-decoration:none;color:inherit;display:block}.pk .on{outline:2px solid var(--pb)}' +
+    '.pk .ch{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700}.pk .ch.ok{background:#dcfce7;color:#166534}.pk .ch.wr{background:#fef3c7;color:#92400e}.pk .ch.bd{background:#fee2e2;color:#991b1b}.pk .ch.in{background:#dbeafe;color:#1e40af}.pk .ch.id{background:#e2e8f0;color:#475569}' +
+    '.pk select,.pk input.q,.pk input.f{min-height:38px;border-radius:10px;border:1px solid #cbd5e1;padding:0 10px;background:transparent;color:inherit;font-size:13px;max-width:100%}html.dark .pk select,html.dark .pk input.q,html.dark .pk input.f{border-color:#334155;background:rgba(15,23,42,.6)}' +
+    '.pk label{display:block;font-size:11.5px;font-weight:700;margin-bottom:4px;opacity:.8}.pk .fl{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}' +
+    '.pk .stp{display:flex;gap:3px;align-items:center;min-width:140px}.pk .stp i{flex:1;height:6px;border-radius:3px;background:var(--pl)}.pk .stp i.d{background:var(--pok)}.pk .stp i.c{background:var(--pb)}.pk .stp i.c.z{background:var(--pok)}' +
+    '.pk .tw{overflow-x:auto}.pk table{width:100%;border-collapse:collapse;font-size:13px}.pk th{text-align:left;font-size:11.5px;opacity:.7;padding:8px 10px;border-bottom:1px solid var(--pl)}.pk td{padding:9px 10px;border-bottom:1px solid var(--pl);vertical-align:top}.pk td a{color:inherit;font-weight:700;text-decoration:none}.pk td a:hover{text-decoration:underline}.pk small{opacity:.65;font-size:11.5px}' +
+    '.pk .lst{display:grid;gap:9px;margin:0;padding:0;list-style:none}.pk .lst li{display:flex;justify-content:space-between;gap:8px;align-items:center}.pk .scr{max-height:270px;overflow:auto}.pk .em{padding:26px;text-align:center;opacity:.75;font-size:13px}.pk .pb{height:8px;border-radius:4px;background:var(--pl);margin:6px 0}.pk .pb>div{height:100%;border-radius:4px;background:var(--pb)}' +
+    '.pk .lg{max-width:420px;margin:6vh auto}.pk .lg .f{width:100%;margin-bottom:10px}.pk .er{color:#dc2626;font-size:12.5px;margin-bottom:8px}';
+  document.head.appendChild(css);
+
+  function step(tahap) {
+    var i = LANGKAH.findIndex(function (l) { return l[1].indexOf(tahap) >= 0; }); if (i < 0) i = 0;
+    return '<div class="stp" title="' + E(LANGKAH[i][0]) + '">' + LANGKAH.map(function (_, k) { return '<i class="' + (k < i ? 'd' : k === i ? ('c' + (i === 5 ? ' z' : '')) : '') + '"></i>'; }).join('') + '</div><small>' + E(LANGKAH[i][0]) + '</small>';
+  }
+  var host = function () { return g('pks-host'); };
+
+  function renderLogin() {
+    var L = P.login;
+    host().innerHTML = '<div class="pk"><div class="cd lg"><h2>Masuk ke Perjanjian</h2><p class="sub" style="margin:6px 0 14px">Gunakan akun Admin aplikasi Perjanjian. Sesi disimpan hanya selama tab ini terbuka.</p>' +
+      (L.err ? '<div class="er">' + E(L.err) + '</div>' : '') +
+      '<label for="pks-em">Email</label><input class="f" id="pks-em" type="email" autocomplete="username" value="' + E(L.email) + '">' +
+      '<label for="pks-pw">Password</label><input class="f" id="pks-pw" type="password" autocomplete="current-password">' +
+      '<button class="bt p" id="pks-go"' + (L.busy ? ' disabled' : '') + '>' + (L.busy ? 'Masuk…' : 'Masuk') + '</button></div></div>';
+    var go = async function () {
+      L.email = g('pks-em').value.trim(); var pw = g('pks-pw').value;
+      if (!L.email || !pw) { L.err = 'Isi email dan password.'; renderLogin(); return; }
+      L.busy = true; L.err = ''; renderLogin();
+      try { var r = await post('/api/login', { email: L.email, password: pw }); tokSet(r.token); L.busy = false; await load(true); }
+      catch (e) { L.busy = false; L.err = e.message; renderLogin(); }
+    };
+    g('pks-go').onclick = go;
+    g('pks-pw').onkeydown = function (e) { if (e.key === 'Enter') go(); };
+  }
+
+  function render() {
+    var h = host(); if (!h) return;
+    if (!utama()) { h.innerHTML = '<div class="pk"><div class="em">Menu Perjanjian hanya untuk Akun Utama.</div></div>'; return; }
+    if (!tokGet()) { renderLogin(); return; }
+    var d = P.d;
+    var top = '<div class="hd"><div><h2>Perjanjian</h2><div class="sub">Overview semua perjanjian kerja sama, progres tiap langkah, dan masa berlakunya.</div></div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="bt" href="' + UI + '" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i>Buka detail &amp; pengaturan</a>' +
+      '<button class="bt" data-p="reload"' + (P.busy ? ' disabled' : '') + '><i class="fa-solid fa-rotate' + (P.busy ? ' fa-spin' : '') + '"></i>Muat ulang</button>' +
+      '<button class="bt" data-p="out"><i class="fa-solid fa-right-from-bracket"></i>Keluar</button></div></div>';
+    if (P.err) { h.innerHTML = '<div class="pk">' + top + '<div class="cd" style="margin-top:14px"><div class="er">' + E(P.err) + '</div></div></div>'; return; }
+    if (!d) { h.innerHTML = '<div class="pk">' + top + '<div class="em"><i class="fa-solid fa-spinner fa-spin"></i> Memuat perjanjian…</div></div>'; return; }
+    var k = d.kpi, maks = Math.max.apply(null, [1].concat(d.pipeline.map(function (x) { return x.jumlah; })));
+    var q = P.q.trim().toLowerCase();
+    var semua = d.semua.filter(function (x) { return (!P.kel || (P.kel === 'inner' ? x.inner_city : !x.inner_city)) && (!P.st || x.status === P.st) && (!q || (x.mitra + ' ' + (x.nomor_surat || '') + ' ' + (x.kode || '')).toLowerCase().indexOf(q) >= 0); });
+    var hariIni = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+    var perhatian = d.semua.filter(function (x) { return x.status === 'akan_berakhir' || x.status === 'berakhir' || (x.tahap < 7 && x.tenggat && x.tenggat < hariIni); }).slice(0, 8);
+    var belum = d.daftar.filter(function (r) { return r.status === 'belum_ada' || r.status === 'tidak_ketemu'; });
+    var adaHp = d.jenis.some(function (j) { return /homepass/i.test(j.nama); });
+    var opsi = [['', 'Semua jenis perjanjian']].concat(d.jenis.map(function (j) { return [j.kode, j.nama]; }), adaHp ? [] : [['HOMEPASS', 'Perjanjian Homepass']]);
+    var tiles = [['Semua perjanjian', k.total, ''], ['Berjalan', k.berjalan, 'proses'], ['Aktif', k.aktif, 'aktif'], ['Akan berakhir (90 hari)', k.akan_berakhir, 'akan_berakhir'], ['Berakhir', k.berakhir, 'berakhir'], ['Lewat tenggat', k.telat, '']];
+    var vFilt =       '<div class="cd" style="margin-top:14px"><div class="fl">' +
+      '<div><label for="pks-j">Perjanjian</label><select id="pks-j">' + opsi.map(function (o) { return '<option value="' + E(o[0]) + '"' + (o[0] === P.jenis ? ' selected' : '') + '>' + E(o[1]) + '</option>'; }).join('') + '</select></div>' +
+      '<div><label for="pks-k">Kelompok mitra</label><select id="pks-k"><option value="">Semua mitra</option><option value="inner"' + (P.kel === 'inner' ? ' selected' : '') + '>Inner City (' + d.total + ')</option><option value="lain"' + (P.kel === 'lain' ? ' selected' : '') + '>Di luar Inner City</option></select></div>' +
+      '<button class="bt" data-p="sinkron"' + (P.aksi ? ' disabled' : '') + '>Cocokkan ulang Inner City</button>' +
+      '<button class="bt p" data-p="sekaligus"' + (P.aksi ? ' disabled' : '') + '>Kirim ke semua Inner City yang belum</button>' +
+      '<button class="bt" data-p="arsip"' + (P.aksi ? ' disabled' : '') + '>Arsipkan semua yang final</button></div>' +
+      (P.aksi ? '<p class="sub" style="margin:10px 0 0"><i class="fa-solid fa-spinner fa-spin"></i> ' + E(P.aksi) + '</p>' : '') +
+      (d.tersinkron ? '' : '<p class="sub" style="margin:10px 0 0">Inner City belum dicocokkan ke info perseroan. Tekan "Cocokkan ulang Inner City".</p>') +
+      (P.jenis === 'HOMEPASS' ? '<p class="sub" style="margin:10px 0 0">Template Perjanjian Homepass belum dipasang, jadi belum ada perjanjian jenis ini.</p>' : '') + '</div>';
+    var vTiles =       '<div class="gr g4" style="margin-top:12px">' + tiles.map(function (t) { return '<' + (t[2] ? 'a href="#" data-p="st" data-s="' + t[2] + '"' : 'div') + ' class="cd' + (t[2] && P.st === t[2] ? ' on' : '') + '"><div class="num">' + t[1] + '</div><div class="cap">' + E(t[0]) + '</div></' + (t[2] ? 'a' : 'div') + '>'; }).join('') + '</div>';
+    var vPipe =       '<div class="cd" style="margin-top:12px"><b>Progres per langkah</b><div class="sub">Jumlah perjanjian di tiap langkah</div><div class="gr" style="grid-template-columns:repeat(auto-fit,minmax(110px,1fr));margin-top:10px">' +
+      LANGKAH.map(function (l) { var j = d.pipeline.filter(function (x) { return l[1].indexOf(x.tahap) >= 0; }).reduce(function (a, x) { return a + x.jumlah; }, 0); return '<div><div class="num" style="font-size:22px">' + j + '</div><div class="pb"><div style="width:' + Math.round(j / maks * 100) + '%;' + (l[0] === 'Selesai' ? 'background:var(--pok)' : '') + '"></div></div><small>' + E(l[0]) + '</small></div>'; }).join('') + '</div></div>';
+    var vG2 =       '<div class="gr g2" style="margin-top:12px">' +
+      '<div class="cd"><b>Perlu perhatian</b><div style="margin-top:10px">' + (perhatian.length ? '<ul class="lst">' + perhatian.map(function (x) { var s = STATUS[x.status] || STATUS.proses; var late = x.tahap < 7 && x.status !== 'berakhir'; return '<li><a href="' + UI + '#/perjanjian/' + E(x.id) + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:none"><b>' + E(x.mitra) + '</b><br><small>' + E(x.nomor_surat || x.kode) + '</small></a><span class="ch ' + (late ? 'bd' : s[1]) + '">' + (late ? 'Lewat tenggat' : s[0] + ' ' + tgl(x.tgl_berakhir)) + '</span></li>'; }).join('') + '</ul>' : '<div class="em">Tidak ada yang perlu perhatian.</div>') + '</div></div>' +
+      '<div class="cd"><b>Inner City belum berperjanjian</b> <small>' + belum.length + ' dari ' + d.total + '</small><div class="scr" style="margin-top:10px">' + (belum.length ? '<ul class="lst">' + belum.map(function (r) { var tk = r.status === 'tidak_ketemu'; return '<li><span>' + E((r.mitra && r.mitra.nama) || r.acuan) + '</span><span style="display:flex;gap:6px;align-items:center"><span class="ch ' + (tk ? 'bd' : 'id') + '">' + (tk ? 'Tidak di info perseroan' : 'Belum ada') + '</span>' + (!tk && r.mitra ? '<button class="bt" style="min-height:30px;padding:0 9px" data-p="satu" data-r="' + E(r.mitra.row) + '"' + (P.aksi ? ' disabled' : '') + '>Kirim</button>' : '') + '</span></li>'; }).join('') + '</ul>' : '<div class="em">Semua mitra Inner City sudah punya perjanjian.</div>') + '</div></div></div>';
+    var vTab =       '<div class="cd" style="margin-top:12px"><div class="fl" style="justify-content:space-between"><div><b>Semua perjanjian dan progresnya</b> <small>' + semua.length + ' perjanjian</small></div><input class="q" id="pks-q" placeholder="Cari mitra atau nomor surat" value="' + E(P.q) + '" aria-label="Cari perjanjian"></div>' +
+      '<div class="tw" style="margin-top:10px"><table><thead><tr><th>Mitra</th><th>Progres</th><th>Status</th><th>Nomor surat</th><th>Berakhir</th></tr></thead><tbody>' +
+      (semua.map(function (x) { var s = STATUS[x.status] || STATUS.proses; return '<tr><td><a href="' + UI + '#/perjanjian/' + E(x.id) + '" target="_blank" rel="noopener">' + E(x.mitra) + '</a>' + (x.inner_city ? '<br><small>Inner City</small>' : '') + '</td><td>' + step(x.tahap) + '</td><td><span class="ch ' + s[1] + '">' + s[0] + '</span></td><td>' + E(x.nomor_surat || '–') + '</td><td>' + (x.tgl_berakhir ? tgl(x.tgl_berakhir) : '–') + '</td></tr>'; }).join('') || '<tr><td colspan="5" class="em">Belum ada perjanjian.</td></tr>') +
+      '</tbody></table></div></div></div>';
+    var stOpsi = [['', 'Semua status'], ['proses', 'Dalam proses'], ['aktif', 'Aktif'], ['akan_berakhir', 'Akan berakhir'], ['berakhir', 'Berakhir']];
+    var vLf = '<div class="cd" style="margin-top:14px"><div class="fl">' +
+      '<div><label for="pks-j">Perjanjian</label><select id="pks-j">' + opsi.map(function (o) { return '<option value="' + E(o[0]) + '"' + (o[0] === P.jenis ? ' selected' : '') + '>' + E(o[1]) + '</option>'; }).join('') + '</select></div>' +
+      '<div><label for="pks-k">Kelompok mitra</label><select id="pks-k"><option value="">Semua mitra</option><option value="inner"' + (P.kel === 'inner' ? ' selected' : '') + '>Inner City (' + d.total + ')</option><option value="lain"' + (P.kel === 'lain' ? ' selected' : '') + '>Di luar Inner City</option></select></div>' +
+      '<div><label for="pks-s">Status</label><select id="pks-s">' + stOpsi.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === P.st ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></div></div></div>';
+    var jud = P.sub === 'list' ? ['Perjanjian', 'Daftar semua perjanjian kerja sama beserta progres, nomor surat, dan masa berlakunya.'] : ['Overview', 'Ringkasan semua perjanjian kerja sama, progres tiap langkah, dan masa berlakunya.'];
+    top = top.replace('<h2>Perjanjian</h2><div class="sub">Overview semua perjanjian kerja sama, progres tiap langkah, dan masa berlakunya.</div>', '<h2>' + jud[0] + '</h2><div class="sub">' + jud[1] + '</div>');
+    h.innerHTML = '<div class="pk">' + top + (P.sub === 'list' ? vLf + '<div style="margin-top:0">' + vTab.replace('margin-top:12px', 'margin-top:12px') + '</div>' : vFilt + vTiles + vPipe + vG2 + '<div style="margin-top:12px"><button class="bt" data-p="tolist"><i class="fa-solid fa-list"></i>Lihat semua perjanjian</button></div>') + '</div>';
+  }
+
+  async function load(force) {
+    if (!utama()) { render(); return; }
+    if (!tokGet()) { render(); return; }
+    if (P.busy || (!force && P.loaded && Date.now() - P.at < 30000)) { render(); return; }
+    P.busy = true; P.err = ''; render();
+    try {
+      var me = await api('/api/me');
+      if (me.peran !== 'admin') throw new Error('Akun ini bukan Admin aplikasi Perjanjian.');
+      P.d = await api('/api/overview' + (P.jenis ? '?jenis=' + encodeURIComponent(P.jenis) : '')); P.loaded = true; P.at = Date.now();
+    } catch (e) {
+      if (e.status === 401) { tokSet(null); P.login.err = 'Sesi berakhir, silakan masuk lagi.'; P.d = null; P.loaded = false; }
+      else P.err = e.message;
+    }
+    P.busy = false; render();
+  }
+
+  async function kirim(rows) {
+    var ok = 0, gagal = [];
+    for (var n = 0; n < 20; n++) {
+      var r = await post('/api/overview/kirim-sekaligus', { rows: rows, batas: 4 });
+      r.hasil.forEach(function (h) { h.ok ? ok++ : gagal.push(h.nama + ': ' + h.galat); });
+      if (!r.sisa) break;
+      P.aksi = 'Mengirim… ' + ok + ' terkirim, sisa ' + r.sisa; render();
+    }
+    toast(ok + ' perjanjian terkirim' + (gagal.length ? ', ' + gagal.length + ' gagal (' + gagal[0] + ')' : ''), gagal.length > 0 && ok === 0 ? 'error' : 'success');
+  }
+  async function jalan(label, fn) {
+    if (P.aksi) return;
+    P.aksi = label; render();
+    try { await fn(); } catch (e) { toast(e.message, 'error'); if (e.status === 401) { tokSet(null); P.d = null; } }
+    P.aksi = ''; await load(true);
+  }
+
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest && ev.target.closest('#pks-host [data-p]'); if (!b) return;
+    var a = b.dataset.p;
+    if (a === 'st') { ev.preventDefault(); P.st = P.st === b.dataset.s ? '' : b.dataset.s; render(); }
+    else if (a === 'reload') load(true);
+    else if (a === 'tolist') { P.sub = 'list'; P.st = ''; menuSet(); render(); }
+    else if (a === 'out') { tokSet(null); P.d = null; P.loaded = false; render(); }
+    else if (a === 'sinkron') jalan('Mencocokkan Inner City…', async function () { var r = await post('/api/overview/sinkron', {}); toast(r.cocok + ' dari ' + r.total + ' cocok' + (r.tidak_ketemu.length ? ', ' + r.tidak_ketemu.length + ' tidak ketemu' : '') + (r.ganda.length ? ', ' + r.ganda.length + ' ganda' : ''), 'success'); });
+    else if (a === 'sekaligus') {
+      var n = P.d.daftar.filter(function (r) { return r.status === 'belum_ada'; }).length;
+      if (!n) { toast('Tidak ada mitra Inner City yang belum berperjanjian', 'error'); return; }
+      if (!window.confirm('Buat dan kirim perjanjian ke ' + n + ' mitra Inner City sekarang? Email memakai format di Pengaturan aplikasi Perjanjian.')) return;
+      jalan('Mengirim ke ' + n + ' mitra…', function () { return kirim(null); });
+    } else if (a === 'satu') {
+      if (!window.confirm('Buat dan kirim perjanjian ke mitra ini?')) return;
+      jalan('Mengirim…', function () { return kirim([Number(b.dataset.r)]); });
+    } else if (a === 'arsip') jalan('Mengarsipkan…', async function () {
+      var ok = 0, gagal = 0;
+      for (var n2 = 0; n2 < 30; n2++) { var r = await post('/api/overview/arsip-semua', {}); r.hasil.forEach(function (h) { h.ok ? ok++ : gagal++; }); if (!r.sisa) break; }
+      toast(ok + ' diarsipkan' + (gagal ? ', ' + gagal + ' gagal' : ''), gagal && !ok ? 'error' : 'success');
+    });
+  });
+  document.addEventListener('change', function (ev) {
+    if (ev.target.id === 'pks-j') { P.jenis = ev.target.value; P.loaded = false; load(true); }
+    else if (ev.target.id === 'pks-k') { P.kel = ev.target.value; render(); }
+    else if (ev.target.id === 'pks-s') { P.st = ev.target.value; render(); }
+  });
+  document.addEventListener('input', function (ev) { if (ev.target.id === 'pks-q') { P.q = ev.target.value; var p = ev.target.selectionStart; render(); var q = g('pks-q'); if (q) { q.focus(); q.setSelectionRange(p, p); } } });
+
+  // submenu sidebar: Perjanjian → Overview, Perjanjian
+  function menuSet() {
+    var sm = g('nav-pks-sub'); if (sm) sm.classList.toggle('hidden', !P.menuOpen);
+    var ch = g('nav-pks-chev'); if (ch) ch.style.transform = P.menuOpen ? 'rotate(90deg)' : '';
+    ['ov', 'list'].forEach(function (k) { var b = g('nav-pks-' + k); if (b) { b.classList.toggle('bg-cyan-500/20', P.sub === k && P.aktif); b.style.fontWeight = P.sub === k && P.aktif ? '800' : ''; b.style.opacity = P.sub === k && P.aktif ? '1' : '.75'; } });
+  }
+  window.pksToggle = function () { P.menuOpen = true; P.aktif = true; P.sub = 'ov'; menuSet(); switchTab('pks'); load(false); };
+  window.pksSub = function (k) { P.menuOpen = true; P.aktif = true; P.sub = k; menuSet(); switchTab('pks'); if (P.d || !tokGet()) render(); load(false); };
+  window.pksOpen = function () { load(false); };
+  // keluar dari menu ini → submenu ditutup
+  try { var sw0 = switchTab; switchTab = window.switchTab = function (t) { var r = sw0.apply(this, arguments); if (t !== 'pks' && P.aktif) { P.aktif = false; P.menuOpen = false; menuSet(); } return r; }; } catch (e) { }
+  // menu hanya tampil untuk Akun Utama (bukan semua owner)
+  try { var ap = applyPermissions; applyPermissions = window.applyPermissions = function () { var r = ap.apply(this, arguments); try { var n = g('nav-pks'); if (n) n.classList.toggle('hidden', !utama()); } catch (e) { } return r; }; } catch (e) { }
+  try { setTimeout(function () { var n = g('nav-pks'); if (n) n.classList.toggle('hidden', !utama()); }, 1500); } catch (e) { }
+})();
 </script>
 </body>
 </html>
