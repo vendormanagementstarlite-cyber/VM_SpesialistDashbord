@@ -6551,58 +6551,30 @@ async function pagePengaturan() {
   const d = await api('/api/admin');
   const k = Object.fromEntries(d.konfig.map((x) => [x.k, x.v]));
   const sla = JSON.parse(k.sla_hari_kerja || '{}');
-  app.innerHTML = `${topbar('Pengaturan', 'Pengguna, tenggat, nomor surat, dan posisi tanda tangan.')}
-    <div class="grid" style="grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start">
-      <div class="card"><div class="card-head"><h2>Pengguna</h2></div>
-        <div class="table-wrap"><table class="t"><thead><tr><th>Nama</th><th>Peran</th><th>Penandatangan</th><th>Status</th></tr></thead><tbody>
-        ${d.pengguna.map((u, i) => `<tr data-u="${i}"><td><div class="cell-main">${esc(u.nama)}</div><div class="cell-sub">${esc(u.email)}</div></td><td style="text-transform:capitalize">${esc(u.peran === 'vm' ? 'Vendor Management' : u.peran)}</td><td>${u.penandatangan ? 'Ya' : '–'}</td><td>${u.aktif ? '<span class="chip c-ok">Aktif</span>' : '<span class="chip c-idle">Nonaktif</span>'}</td></tr>`).join('')}</tbody></table></div>
-        <form data-uf style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line)"><h3 style="margin-bottom:12px">Tambah atau ubah pengguna</h3>
-          <div class="row"><div class="field" style="flex:1"><label for="u-email">Email</label><input class="input" id="u-email" name="email" type="email" required placeholder="nama@pmosurge.co.id"></div><div class="field" style="flex:1"><label for="u-nama">Nama</label><input class="input" id="u-nama" name="nama" required></div></div>
-          <div class="row"><div class="field" style="flex:1"><label for="u-peran">Peran</label><select class="input" id="u-peran" name="peran"><option value="vm">Vendor Management</option><option value="legal">Legal</option><option value="manajemen">Manajemen</option><option value="admin">Admin</option></select></div>
-            <label class="row small"><input type="checkbox" name="penandatangan"> Penandatangan PT IJE</label><label class="row small"><input type="checkbox" name="aktif" checked> Aktif</label></div>
-          <div class="df"><button class="btn">Simpan pengguna</button><button class="btn ghost" type="button" data-reset>Reset password</button></div>
-          <p class="small muted" style="margin-bottom:0">Pengguna baru mendapat password sementara yang tampil sekali.</p></form></div>
-      <div class="stack">
-        <div class="card"><h2 style="margin-bottom:12px">Tenggat per tahap</h2><p class="small muted" style="margin-top:0">Dalam hari kerja (Senin–Jumat).</p>
-          ${[1, 2, 3, 5, 6].map((n) => `<div class="row" style="justify-content:space-between;margin-bottom:8px"><label for="sla${n}">${esc(tahapNama(n))}</label><input class="input num" id="sla${n}" type="number" min="1" max="60" value="${sla[n] ?? ''}" style="width:90px"></div>`).join('')}
-          <div class="field" style="margin-top:14px"><label for="fmt">Pola nomor surat</label><input class="input" id="fmt" value="${esc(k.format_nomor)}"><span class="hint">Ekspresi reguler. Contoh: ^\\d{3}/PKS/IJE/[IVX]+/\\d{4}$</span></div>
-          <div class="field"><label for="tok">Masa berlaku tautan mitra (hari)</label><input class="input" id="tok" type="number" min="1" max="90" value="${esc(k.token_hari)}"></div>
-          <button class="btn" data-k>Simpan pengaturan</button></div>
-        <div class="card"><h2 style="margin-bottom:6px">Format email ke mitra</h2><p class="small muted" style="margin-top:0">Dipakai saat dokumen dikirim ke mitra, satu per satu maupun sekaligus. Bisa diubah kapan saja. Yang tersedia: {nama_mitra} {kode} {judul} {tenggat} {tautan}.</p>
-          <div class="field"><label for="eto">To tambahan</label><input class="input" id="eto" value="${esc(k.email_to_tambahan || '')}" placeholder="Selain email mitra dari info perseroan"></div>
-          <div class="field"><label for="ecc">CC</label><input class="input" id="ecc" value="${esc(k.email_cc || '')}" placeholder="Pisahkan dengan koma"></div>
-          <div class="field"><label for="esub">Subjek</label><input class="input" id="esub" value="${esc(k.email_subjek || EMAIL_BAWAAN.subjek)}"></div>
-          <div class="field"><label for="ebad">Isi email</label><textarea class="input" id="ebad" rows="10">${esc(k.email_badan || EMAIL_BAWAAN.badan)}</textarea></div>
-          <div class="row"><button class="btn" data-e>Simpan format email</button><button class="btn ghost" data-e0 type="button">Kembalikan bawaan</button></div></div>
-        ${d.jenis.map((j, i) => { const pos = JSON.parse(j.posisi_ttd); const f = (pk, nm, lbl) => `<div class="field" style="margin:0"><label for="j${i}${pk}${nm}">${lbl}</label><input class="input num" id="j${i}${pk}${nm}" type="number" value="${pos[pk][nm]}"></div>`; return `
-        <div class="card" data-j="${i}"><h2 style="margin-bottom:6px">${esc(j.nama)}</h2><p class="small muted" style="margin-top:0">Posisi tempel TTD (opsi 1) dalam point PDF dari kiri-bawah. Halaman -1 berarti halaman terakhir.</p>
-          <div class="field"><label for="j${i}masa">Masa berlaku bawaan (bulan)</label><input class="input num" id="j${i}masa" type="number" value="${j.masa_bulan}"></div>
-          ${[['mitra', 'Mitra'], ['ije', 'PT IJE']].map(([pk, lbl]) => `<h3 style="margin:10px 0 8px">${lbl}</h3><div class="grid" style="grid-template-columns:repeat(4,1fr);gap:8px">${f(pk, 'page', 'Halaman')}${f(pk, 'x', 'X')}${f(pk, 'y', 'Y')}${f(pk, 'w', 'Lebar')}</div>`).join('')}
-          <button class="btn" style="margin-top:14px" data-js="${i}">Simpan posisi</button></div>`; }).join('')}
-      </div></div>`;
+  app.innerHTML = `${topbar('Pengaturan', 'Format email ke mitra, tenggat, dan masa berlaku.')}
+    <div class="stack" style="max-width:760px">
+      <div class="card"><h2 style="margin-bottom:6px">Format email ke mitra</h2><p class="small muted" style="margin-top:0">Dipakai saat dokumen dikirim ke mitra. Yang tersedia: {nama_mitra} {kode} {judul} {tenggat} {tautan}.</p>
+        <div class="field"><label for="eto">To tambahan</label><input class="input" id="eto" value="${esc(k.email_to_tambahan || '')}" placeholder="Selain email mitra dari info perseroan"></div>
+        <div class="field"><label for="ecc">CC</label><input class="input" id="ecc" value="${esc(k.email_cc || '')}" placeholder="Pisahkan dengan koma"></div>
+        <div class="field"><label for="esub">Subjek</label><input class="input" id="esub" value="${esc(k.email_subjek || EMAIL_BAWAAN.subjek)}"></div>
+        <div class="field"><label for="ebad">Isi email</label><textarea class="input" id="ebad" rows="10">${esc(k.email_badan || EMAIL_BAWAAN.badan)}</textarea></div>
+        <div class="row"><button class="btn" data-e>Simpan</button><button class="btn ghost" data-e0 type="button">Kembalikan bawaan</button></div></div>
+      <div class="card"><h2 style="margin-bottom:6px">Tenggat dan masa berlaku</h2><p class="small muted" style="margin-top:0">Tenggat dalam hari kerja (Senin–Jumat).</p>
+        ${[1, 2, 3, 5, 6].map((n) => `<div class="row" style="justify-content:space-between;margin-bottom:8px"><label for="sla${n}">${esc(tahapNama(n))}</label><input class="input num" id="sla${n}" type="number" min="1" max="60" value="${sla[n] ?? ''}" style="width:90px"></div>`).join('')}
+        ${d.jenis.map((j, i) => `<div class="row" style="justify-content:space-between;margin-bottom:8px"><label for="j${i}masa">Masa berlaku ${esc(j.nama)} (bulan)</label><input class="input num" id="j${i}masa" type="number" min="1" value="${j.masa_bulan}" style="width:90px"></div>`).join('')}
+        <button class="btn" style="margin-top:8px" data-k>Simpan</button></div>
+    </div>`;
   bindSearch();
-  const uf = $('[data-uf]');
-  $$('tr[data-u]').forEach((tr) => tr.addEventListener('click', () => { const u = d.pengguna[tr.dataset.u]; uf.email.value = u.email; uf.nama.value = u.nama; uf.peran.value = u.peran; uf.penandatangan.checked = !!u.penandatangan; uf.aktif.checked = !!u.aktif; uf.nama.focus(); }));
-  uf.addEventListener('submit', (e) => { e.preventDefault(); busy(e.submitter, async () => { const r = await post('/api/admin/pengguna', { email: uf.email.value, nama: uf.nama.value, peran: uf.peran.value, penandatangan: uf.penandatangan.checked, aktif: uf.aktif.checked }); toast('Pengguna disimpan'); await pagePengaturan(); if (r.password_awal) tampilkanPassword(uf.email.value.trim().toLowerCase(), r.password_awal); }); });
-  $('[data-reset]', uf).addEventListener('click', (e) => {
-    const em = uf.email.value.trim().toLowerCase();
-    if (!d.pengguna.some((u) => u.email === em)) { toast('Pilih pengguna yang sudah ada dari daftar', true); return; }
-    if (!confirm(`Reset password ${em}? Sesi aktifnya akan diakhiri.`)) return;
-    busy(e.currentTarget, async () => { const r = await post('/api/admin/pengguna/reset', { email: em }); tampilkanPassword(em, r.password_awal); });
-  });
   $('[data-k]').addEventListener('click', (e) => busy(e.currentTarget, async () => {
-    const s = {}; [1, 2, 3, 4, 5, 6].forEach((n) => { const v = Number($(`#sla${n}`).value); if (v) s[n] = v; });
-    await post('/api/admin/konfig', { sla_hari_kerja: JSON.stringify(s), format_nomor: $('#fmt').value, token_hari: $('#tok').value }); toast('Pengaturan disimpan');
+    const s = {}; [1, 2, 3, 4, 5, 6].forEach((n) => { const el = $(`#sla${n}`); const v = el ? Number(el.value) : Number(sla[n]); if (v) s[n] = v; });
+    await post('/api/admin/konfig', { sla_hari_kerja: JSON.stringify(s) });
+    for (const [i, j] of d.jenis.entries()) { const v = Number($(`#j${i}masa`).value); if (v && v !== j.masa_bulan) await post('/api/admin/jenis', { kode: j.kode, nama: j.nama, masa_bulan: v, posisi_ttd: JSON.parse(j.posisi_ttd) }); }
+    toast('Disimpan');
   }));
   $('[data-e]').addEventListener('click', (e) => busy(e.currentTarget, async () => {
     await post('/api/admin/konfig', { email_to_tambahan: $('#eto').value, email_cc: $('#ecc').value, email_subjek: $('#esub').value, email_badan: $('#ebad').value }); toast('Format email disimpan');
   }));
   $('[data-e0]').addEventListener('click', () => { $('#eto').value = ''; $('#ecc').value = ''; $('#esub').value = EMAIL_BAWAAN.subjek; $('#ebad').value = EMAIL_BAWAAN.badan; });
-  $$('[data-js]').forEach((b) => b.addEventListener('click', (e) => busy(e.currentTarget, async () => {
-    const i = b.dataset.js, j = d.jenis[i], num = (id) => Number($(`#j${i}${id}`).value);
-    const pos = Object.fromEntries(['mitra', 'ije'].map((pk) => [pk, { page: num(pk + 'page'), x: num(pk + 'x'), y: num(pk + 'y'), w: num(pk + 'w') }]));
-    await post('/api/admin/jenis', { kode: j.kode, nama: j.nama, masa_bulan: num('masa'), posisi_ttd: pos }); toast('Posisi tanda tangan disimpan');
-  })));
 }
 
 // ---------- Router ----------
