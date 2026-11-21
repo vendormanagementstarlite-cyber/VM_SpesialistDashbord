@@ -6658,5 +6658,97 @@ window.pksMount = function (host) {
 
 })();
 </script>
+<script>
+/* ===== Takeover: SPK/BAM di rincian + No SPK/No BA saat integrasi Signing ===== */
+(function () {
+  "use strict";
+  var NO_KIND = { SPK: { col: 13, lbl: "No SPK Take Over", ph: "mis. 601/PRJ/STARLITE/XII/2025" }, BA_CANCEL: { col: 12, lbl: "No BA Cancel", ph: "mis. 13/BA-PO/XII/2025" } };
+  var NO_TAG = " \xB7 No: ";
+  var isUrl = function (s) { return /^https?:\/\//i.test(String(s || "").trim()); };
+  var h = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+
+  // 1) Kartu SPK di rincian: status dari kolom N (lampiran PDF SPK Take Over), bukan No SPK dari All SPK
+  // 2) Kartu Migrasi Akun: tombol Lihat PDF bila BA Migrasi (kolom Z) terlampir
+  window.tkBamUrl = function (b) {
+    var x = (b && b.links && b.links[7]) || "", w = String(((b && b.raw) || [])[37] || "").trim();
+    return x || (isUrl(w) ? w : "");
+  };
+  if (typeof stepper === "function") {
+    var st0 = stepper;
+    window.stepper = stepper = function (b) {
+      var arg = b;
+      try {
+        if (b) {
+          var n = String((b.raw || [])[16] || "").trim(), u = typeof docUrl === "function" ? docUrl(Object.assign({}, b, { att_spk: "" }), "SPK") : "";
+          arg = Object.assign({}, b, { att_spk: u ? (n && !isUrl(n) ? n : "Terlampir") : "" });
+        }
+      } catch (e) { arg = b; }
+      var out = st0.call(this, arg);
+      try {
+        var bam = b ? tkBamUrl(b) : "";
+        if (bam) {
+          var t = document.createElement("template"); t.innerHTML = out;
+          var card = Array.prototype.find.call(t.content.querySelectorAll(".grid > div"), function (d) {
+            var s = d.querySelector("span.uppercase"); return s && /migrasi akun/i.test(s.textContent);
+          });
+          if (card && !card.querySelector("[data-bam]")) {
+            var nm = String((b.raw || [])[37] || "").trim();
+            card.insertAdjacentHTML("beforeend", '<div class="shrink-0 scale-90 origin-left" data-bam="1"><a href="#" onclick="event.preventDefault();sdPreviewUrl(' + jsArg(bam) + ", " + jsArg("BA Migrasi \xB7 PO " + b.po) + ", " + jsArg("BA Migrasi") + ')" title="' + h(nm || "BA Migrasi") + '" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/35 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold hover:bg-emerald-500/20"><i class="fa-solid fa-circle-check"></i>Lihat PDF BAM<i class="fa-solid fa-arrow-up-right-from-square text-[8px] opacity-70"></i></a></div>');
+            out = t.innerHTML;
+          }
+        }
+      } catch (e) { }
+      return out;
+    };
+  }
+
+  // 3) Integrasi Signing: No SPK / No BA Cancel diisi saat memilih tujuan → teks sel kolom N / M, link = PDF final
+  if (typeof sglPickerHtml === "function") {
+    var pk0 = sglPickerHtml;
+    window.sglPickerHtml = sglPickerHtml = function (id, k) {
+      var out = pk0.apply(this, arguments);
+      var f = '<div id="' + id + '-nowrap" class="mt-2 hidden"><label class="ulabel" id="' + id + '-nolbl" for="' + id + '-no">No dokumen</label><input id="' + id + '-no" class="field w-full font-mono" autocomplete="off" maxlength="80"><p class="text-[10.5px] text-slate-500 mt-1" id="' + id + '-nohint"></p></div>';
+      return out.replace(/<\/div>\s*$/, f + "</div>");
+    };
+  }
+  if (typeof sglBind === "function") {
+    var bd0 = sglBind;
+    window.sglBind = sglBind = function (id, k) {
+      var r = bd0.apply(this, arguments);
+      try {
+        var wrap = document.getElementById(id + "-nowrap"), inp = document.getElementById(id + "-no"), sel = document.getElementById(id + "-kind");
+        if (!wrap || !inp || !k) return r;
+        var upd = function () {
+          var cfg = NO_KIND[k.kind];
+          wrap.classList.toggle("hidden", !cfg);
+          if (!cfg) { if (k.refs) k.refs.no = ""; return; }
+          document.getElementById(id + "-nolbl").textContent = cfg.lbl + " (kolom " + (cfg.col === 13 ? "N" : "M") + ")";
+          inp.placeholder = cfg.ph;
+          document.getElementById(id + "-nohint").textContent = "Ditulis sebagai teks sel kolom " + (cfg.col === 13 ? "N" : "M") + " Data Mitra Takeover, dengan link ke PDF final. Kosongkan bila belum ada (teks sel yang sudah ada dipertahankan).";
+          if (k.refs) k.refs.no = inp.value.trim();
+        };
+        inp.value = (k.refs && k.refs.no) || k.no || "";
+        inp.oninput = function () { k.no = inp.value.trim(); if (k.refs) k.refs.no = k.no; };
+        if (sel) { var oc = sel.onchange; sel.onchange = function () { if (oc) oc.apply(this, arguments); upd(); }; }
+        upd();
+      } catch (e) { }
+      return r;
+    };
+  }
+  if (typeof sglLinks === "function") {
+    var lk0 = sglLinks;
+    window.sglLinks = sglLinks = function (kind, refs) {
+      var out = lk0.apply(this, arguments);
+      try {
+        var cfg = NO_KIND[kind], no = refs && refs.no ? String(refs.no).trim().slice(0, 80) : "";
+        if (cfg && no) out.forEach(function (l) {
+          if (l.sheet === "takeover" && +l.col === cfg.col) { l.no = no; l.label = String(l.label || "").slice(0, 110 - no.length) + NO_TAG + no; }
+        });
+      } catch (e) { }
+      return out;
+    };
+  }
+})();
+</script>
 </body>
 </html>
