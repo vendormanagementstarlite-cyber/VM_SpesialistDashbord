@@ -28,6 +28,8 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
 .note{margin:10px 0 4px;padding:10px 12px;border-radius:10px;background:var(--warnbg);color:var(--warn);font-size:13px;font-weight:600}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
 .f{margin:12px 0;min-width:0}.f.full{grid-column:1/-1}
+.refs{display:flex;flex-direction:column;gap:8px}.rfr{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1.3fr) 38px;gap:8px;align-items:center}.rfr select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fbfdff;font:inherit;color:inherit;outline:none}.rfr select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(11,92,173,.12)}.rfr .rx{width:38px;height:38px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--mute);font-size:18px;line-height:1}.rfr .rx:hover{color:var(--bad);border-color:var(--bad)}.radd{align-self:flex-start;padding:8px 14px;border:1px dashed var(--blue);border-radius:10px;background:var(--sky);color:var(--blue);font-weight:700;font-size:13px}.radd[disabled]{opacity:.5;cursor:not-allowed}.rfh{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1.3fr) 38px;gap:8px;font-size:11.5px;font-weight:700;color:var(--mute)}@media(max-width:640px){.rfh{display:none}.rfr{grid-template-columns:minmax(0,1fr) 38px;padding:10px;border:1px solid var(--line2);border-radius:12px}.rfr>*:not(.rx){grid-column:1}.rfr .rx{grid-column:2;grid-row:1}}
+.fbk{margin:14px 0 6px;text-align:left;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fbfdff}.fbk h3{margin:0 0 8px;font-size:14px}.fbk .it{padding:8px 0;border-top:1px solid var(--line2);font-size:13.5px;line-height:1.5}.fbk .it:first-of-type{border-top:0}.fbk small{display:block;color:var(--mute);font-size:12px;margin-bottom:2px}.fbk ul{margin:4px 0 0;padding-left:18px}
 .f>label.l{display:block;margin-bottom:5px;font-size:13px;font-weight:700}
 .f>label.l b{color:var(--bad);margin-left:2px}
 .f .h{margin-top:4px;font-size:12px;color:var(--mute)}
@@ -155,7 +157,7 @@ var S = [
     { key: "nama_direktur", label: "Nama direktur", type: "text", req: 1, rule: "person" },
     { key: "nama_pic", label: "Nama PIC", type: "text", req: 1, rule: "person" },
     { key: "hp_pic", label: "Nomor HP/WhatsApp PIC", type: "text", req: 1, rule: "phone", ph: "0812 3456 7890", im: "tel" },
-    { key: "referensi", label: "Referensi", type: "text", full: 1, ph: "Contoh: Budi Santoso - Andi Wijaya", hint: "Tahu PT IJE atau menerima link ini dari siapa. Lebih dari satu orang, pisahkan dengan tanda -" }] },
+    { key: "referensi", label: "Referensi", type: "refs", req: 1, full: 1, hint: "Siapa yang memberi tahu Anda tentang STARLITE dan/atau yang merekomendasikan perusahaan Anda. Boleh lebih dari satu orang." }] },
   { key: "slik", title: "SLIK OJK", lead: "SLIK direktur dan perusahaan wajib kolektibilitas 1 (lancar) dan tanpa tunggakan.", fields: [
     { key: "slik_pernyataan", label: "Saya menyatakan SLIK perusahaan dan direktur kami bersih (kolektibilitas 1/lancar dan tanpa tunggakan), serta bersedia diperiksa.", type: "check", req: 1, full: 1 },
     { key: "slik_ije", label: "Bersedia pengecekan SLIK oleh PT IJE/Hibank?", type: "radio", req: 1, options: ["Ya", "Tidak"], full: 1 },
@@ -232,6 +234,30 @@ async function api(action, body, tries) {
 
 // ---------- aturan (cermin server; email MX & duplikat dicek server) ----------
 var norm = function (v) { return String(v == null ? "" : v).replace(/\s+/g, " ").trim(); };
+// ---------- referensi: beberapa orang, disimpan sebagai teks per baris "Nama — Peran — Asal" ----------
+var REF_ROLES = ["Memberi informasi tentang STARLITE", "Merekomendasikan", "Memberi informasi dan merekomendasikan"], REF_MAX = 6, REF_SEP = " \u2014 ";
+function refsParse(v) {
+  var t = String(v || "").trim(); if (!t) return [];
+  if (t.indexOf(REF_SEP) < 0 && t.indexOf("\n") < 0) return t.split(/\s+-\s+|,\s*/).map(function (x) { return { nama: x.trim(), peran: "", asal: "" }; }).filter(function (r) { return r.nama; });
+  return t.split(/\n+/).map(function (l) { var p = l.replace(/^\s*\d+\.\s*/, "").split(REF_SEP); return { nama: (p[0] || "").trim(), peran: (p[1] || "").trim(), asal: p.slice(2).join(REF_SEP).trim() }; }).filter(function (r) { return r.nama || r.peran || r.asal; });
+}
+function refsStr(rows) { var n = 0; return rows.filter(function (r) { return norm(r.nama); }).map(function (r) { n++; return n + ". " + [norm(r.nama), norm(r.peran) || "-", norm(r.asal) || "-"].join(REF_SEP); }).join("\n"); }
+function refsRows() { if (!st.refs) { st.refs = refsParse(st.data.referensi); } if (!st.refs.length) st.refs.push({ nama: "", peran: "", asal: "" }); return st.refs; }
+function refsErr(f) {
+  var rows = refsParse(st.data.referensi), filled = rows.filter(function (r) { return norm(r.nama); });
+  if (f.req && !filled.length) return "Isi minimal satu nama referensi.";
+  for (var i = 0; i < filled.length; i++) { var r = filled[i], m = rule("person", r.nama); if (m) return "Referensi " + (i + 1) + ": " + m; if (REF_ROLES.indexOf(r.peran) < 0) return "Referensi " + (i + 1) + ": pilih perannya."; if (norm(r.asal).length < 3) return "Referensi " + (i + 1) + ": isi asal/hubungan (mis. karyawan PT IJE, mitra STARLITE)."; }
+  return "";
+}
+function refsHtml() {
+  var rows = refsRows();
+  return '<div class="refs" id="refs"><div class="rfh"><span>Nama</span><span>Peran</span><span>Asal / hubungan</span><span></span></div>' + rows.map(function (r, i) {
+    return '<div class="rfr"><input type="text" data-rf="nama" data-ri="' + i + '" value="' + esc(r.nama) + '" placeholder="Nama lengkap" aria-label="Nama referensi ' + (i + 1) + '" autocomplete="off">'
+      + '<select data-rf="peran" data-ri="' + i + '" aria-label="Peran referensi ' + (i + 1) + '"><option value="">Pilih peran</option>' + REF_ROLES.map(function (o) { return '<option' + (r.peran === o ? " selected" : "") + ">" + esc(o) + "</option>"; }).join("") + "</select>"
+      + '<input type="text" data-rf="asal" data-ri="' + i + '" value="' + esc(r.asal) + '" placeholder="Contoh: Karyawan PT IJE, Mitra STARLITE (PT ...), rekan" aria-label="Asal referensi ' + (i + 1) + '" autocomplete="off">'
+      + '<button type="button" class="rx" data-rdel="' + i + '" aria-label="Hapus referensi ' + (i + 1) + '" title="Hapus">\u00d7</button></div>';
+  }).join("") + '<button type="button" class="radd" data-radd="1"' + (rows.length >= REF_MAX ? " disabled" : "") + '>+ Tambah orang</button></div>';
+}
 var normCo = function (v) { return String(v || "").toUpperCase().replace(/\b(PT|CV|TBK|UD|PD|KOPERASI)\b\.?/g, " ").replace(/[^A-Z0-9]+/g, " ").trim(); };
 function junk(v) { var s = norm(v).toLowerCase(); if (!s) return false; if (/^[\W_]+$/.test(s)) return true; if (/(.)\1{3,}/.test(s.replace(/\s/g, ""))) return true; if (/\b(asdf|qwer|qwerty|zxcv|lorem|ipsum|tes|test|testing|coba|xxx|dummy|abcd|sdfg)\b/.test(s)) return true; return /^(n\/?a|na|none|nihil|tidak ada|-+)$/.test(s); }
 function rule(r, v) {
@@ -258,6 +284,7 @@ function check(f) {
   if (!visible(f)) return "";
   var v = st.data[f.key], fl = (st.files[f.key] || []);
   if (f.type === "file") { if (fl.some(function (x) { return x.state === "up"; })) return ""; var okf = fl.filter(function (x) { return x.id; }); if (f.req && !okf.length) return "Wajib diunggah."; return okf.length > (f.max || 5) ? "Maksimal " + (f.max || 5) + " file." : ""; }
+  if (f.type === "refs") return refsErr(f);
   if (f.type === "check") return f.req && v !== true ? "Wajib dicentang." : "";
   if (f.type === "radio") return f.req && f.options.indexOf(String(v || "")) < 0 ? "Pilih salah satu." : "";
   if (f.req && !norm(v)) return "Wajib diisi.";
@@ -285,9 +312,10 @@ function fieldHtml(f) {
   var v = st.data[f.key], star = f.req ? "<b>*</b>" : "", id = "i_" + f.key, x = '<div class="f' + (f.full || f.type === "textarea" || f.type === "check" && f.full ? " full" : "") + '" id="f_' + f.key + '">';
   if (f.type === "check") x += '<label class="chk' + (v === true ? " on" : "") + '"><input type="checkbox" id="' + id + '"' + (v === true ? " checked" : "") + "><span>" + esc(f.label) + star + "</span></label>";
   else {
-    x += '<label class="l" ' + (f.type === "radio" || f.type === "file" ? "" : 'for="' + id + '"') + ">" + esc(f.label) + star + "</label>";
+    x += '<label class="l" ' + (f.type === "radio" || f.type === "file" || f.type === "refs" ? "" : 'for="' + id + '"') + ">" + esc(f.label) + star + "</label>";
     if (f.type === "radio") x += '<div class="pills" role="radiogroup" aria-label="' + esc(f.label) + '">' + f.options.map(function (o) { return '<button type="button" role="radio" aria-checked="' + (v === o) + '" data-r="' + f.key + '" data-v="' + esc(o) + '" class="' + (v === o ? "on" : "") + '">' + esc(o) + "</button>"; }).join("") + "</div>";
     else if (f.type === "file") x += '<div class="drop" tabindex="0" role="button" data-drop="' + f.key + '">' + IC_UP + "<span><b>Pilih file</b> atau seret ke sini · PDF/JPG/PNG, maks. " + MAX_MB + " MB" + (f.max ? ", " + f.max + " file" : "") + '</span></div><input type="file" id="' + id + '" multiple accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" hidden><div class="files" id="fl_' + f.key + '">' + fileList(f.key) + "</div>";
+    else if (f.type === "refs") x += refsHtml();
     else if (f.type === "textarea") x += '<textarea id="' + id + '" placeholder="' + esc(f.ph || "") + '">' + esc(v || "") + "</textarea>";
     else x += '<input type="' + (f.type === "number" ? "text" : f.type) + '" id="' + id + '" value="' + esc(v || "") + '" placeholder="' + esc(f.ph || "") + '"' + (f.type === "number" ? ' inputmode="numeric"' : f.im ? ' inputmode="' + f.im + '"' : "") + ' autocomplete="off">';
   }
@@ -336,7 +364,18 @@ function bar() {
 }
 function bindStep() {
   var m = $("main");
-  m.querySelectorAll("input[type=text],input[type=email],textarea").forEach(function (el) {
+  var refSync = function () { st.data.referensi = refsStr(st.refs || []); delete V.errs.referensi; save(); bar(); if (st.seen.referensi) paintErrors(false); };
+  m.querySelectorAll("[data-rf]").forEach(function (el) {
+    var upd = function () { var r = refsRows()[+el.dataset.ri]; if (r) { r[el.dataset.rf] = el.value; refSync(); } };
+    el.addEventListener(el.tagName === "SELECT" ? "change" : "input", upd);
+    el.addEventListener("blur", function () { st.seen.referensi = 1; paintErrors(false); });
+  });
+  m.querySelectorAll("[data-radd],[data-rdel]").forEach(function (b) { b.addEventListener("click", function () {
+    var rows = refsRows(); if (b.dataset.radd) { if (rows.length < REF_MAX) rows.push({ nama: "", peran: "", asal: "" }); } else { rows.splice(+b.dataset.rdel, 1); st.seen.referensi = 1; }
+    refSync(); var y = window.scrollY; captureSig(); render(); window.scrollTo(0, y);
+    if (b.dataset.radd) { var ins = document.querySelectorAll('[data-rf="nama"]'); if (ins.length) ins[ins.length - 1].focus(); }
+  }); });
+  m.querySelectorAll("input[type=text]:not([data-rf]),input[type=email],textarea").forEach(function (el) {
     var k = el.id.slice(2);
     el.addEventListener("input", function () { st.data[k] = el.value; delete V.errs[k]; if (st.seen[k]) paintErrors(false); if (k === "ttd_nama" || k === "nama_direktur") toggleKuasa(); save(); bar(); });
     el.addEventListener("blur", function () { st.seen[k] = 1; if (F[k].type === "number" || k === "npwp" || k === "hp_pic") { el.value = norm(el.value); st.data[k] = el.value; } paintErrors(false); save(); });
@@ -545,12 +584,19 @@ function done(r) {
   $("cpb").onclick = function () { var i = $("lk"); i.select(); try { navigator.clipboard.writeText(i.value); } catch (e) { document.execCommand("copy"); } toast("Tautan disalin"); };
   window.scrollTo(0, 0);
 }
+function fbHtml(fb) {
+  if (!fb || !fb.length) return "";
+  var tgl = function (t) { try { return new Date(t).toLocaleString("id-ID", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } };
+  return '<div class="fbk"><h3>Feedback dari Vendor Management</h3>' + fb.map(function (f) {
+    return '<div class="it"><small>' + esc(tgl(f.at)) + "</small>" + (f.note ? esc(f.note).replace(/\n/g, "<br>") : "") + (f.items && f.items.length ? "<ul>" + f.items.map(function (x) { return "<li><b>" + esc(x.bagian) + ":</b> " + esc(x.isi) + "</li>"; }).join("") + "</ul>" : "") + "</div>";
+  }).join("") + "</div>";
+}
 function statusPage(g) {
   $("bar").remove(); $("rail").remove();
   var msg = { diajukan: "Registrasi Anda sedang diperiksa oleh tim Vendor Management.", ttd: "Registrasi Anda sudah disetujui dan sedang dalam proses tanda tangan.", lengkap: "Registrasi Anda sudah ditandatangani lengkap.", aktif: "Selamat, perusahaan Anda sudah terdaftar sebagai mitra STARLITE.", ditolak: "Registrasi Anda tidak dapat dilanjutkan. Bila ingin mendaftar lagi, isi formulir baru dengan data yang benar.", dikembalikan: "Registrasi Anda sedang diperiksa.", batal: "Registrasi ini dibatalkan." }[g.status] || "";
   var S = g.status, ok = S === "lengkap" || S === "aktif", no = S === "ditolak", cur = S === "diajukan" ? 1 : S === "ttd" ? 2 : 3;
   var stp = [["fa-paper-plane", "Mengajukan", 0], ["fa-magnifying-glass", "Verifikasi", 1], [no ? "fa-circle-xmark" : "fa-circle-check", no ? "Ditolak" : "Disetujui", 2]].map(function (x, i) { var done = i < cur || (i === 2 && ok), act = i === cur && !ok && !no, bad = no && i === 2; if (no && i === 1) done = true; return '<li class="' + (bad ? "bad " : done ? "ok " : act ? "act " : "") + '"><i class="fa-solid ' + x[0] + '"></i><span>' + x[1] + "</span></li>"; }).join("");
-  $("main").innerHTML = '<section class="card done"><h2>' + esc(g.nama || "Registrasi") + '</h2><div class="no">' + esc(g.nomor) + '</div><ol class="rst">' + stp + "</ol><p><b>" + (ok ? '<i class="fa-solid fa-circle-check" style="color:var(--ok)"></i> ' : no ? '<i class="fa-solid fa-circle-xmark" style="color:var(--bad)"></i> ' : "") + esc(ok ? "Disetujui" : no ? "Ditolak" : S === "ttd" ? "Disetujui, proses tanda tangan" : "Verifikasi") + "</b></p><p>" + esc(msg) + "</p>" + (g.note && g.status === "ditolak" ? "<p>Catatan: " + esc(g.note) + "</p>" : "") + "</section>";
+  $("main").innerHTML = '<section class="card done"><h2>' + esc(g.nama || "Registrasi") + '</h2><div class="no">' + esc(g.nomor) + '</div><ol class="rst">' + stp + "</ol><p><b>" + (ok ? '<i class="fa-solid fa-circle-check" style="color:var(--ok)"></i> ' : no ? '<i class="fa-solid fa-circle-xmark" style="color:var(--bad)"></i> ' : "") + esc(ok ? "Disetujui" : no ? "Ditolak" : S === "ttd" ? "Disetujui, proses tanda tangan" : "Verifikasi") + "</b></p><p>" + esc(msg) + "</p>" + (g.ttd && g.ttd.total ? "<p>Tanda tangan: <b>" + g.ttd.done + " dari " + g.ttd.total + "</b> sudah menandatangani.</p>" : "") + (g.note && (g.status === "ditolak" || g.status === "batal") ? '<div class="fbk"><h3>Catatan Vendor Management</h3><div class="it">' + esc(g.note).replace(/\n/g, "<br>") + "</div></div>" : "") + fbHtml(g.fb) + "</section>";
 }
 // ---------- mulai ----------
 async function boot() {
