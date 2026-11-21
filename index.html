@@ -6886,12 +6886,12 @@ window.pksMount = function (host) {
   document.head.appendChild(st);
 
   function block(T) {
-    var id = T.id, s = T.status, url = links[id] || "", h = '<div class="rg-act rgx" data-rgx="' + E(id) + '">';
+    var id = T.id, s = T.status, url = links[id] || T.trackUrl || "", h = '<div class="rg-act rgx" data-rgx="' + E(id) + '">';
     // tautan progres
     h += '<h4>Tautan progres calon mitra</h4>';
     if (url) h += '<div class="rgx-l"><span class="rgx-u" title="' + E(url) + '">' + E(url) + '</span><button class="btn btn-ghost" data-x="cp" title="Salin tautan"><i class="fa-solid fa-copy"></i><span>Salin</span></button><a class="btn btn-ghost" href="' + E(url) + '" target="_blank" rel="noopener" title="Buka halaman progres"><i class="fa-solid fa-arrow-up-right-from-square"></i><span>Buka</span></a><button class="btn btn-ghost" data-x="mail" title="Kirim tautan ke ' + E(T.email || "email mitra") + '"><i class="fa-solid fa-paper-plane"></i><span>Kirim ke email</span></button></div>';
-    else if (T.track) h += '<div class="rgx-l"><button class="btn btn-ghost" data-x="get">' + (busy === "get" ? SY : '<i class="fa-solid fa-link"></i>') + '<span>Tampilkan tautan progres</span></button></div>';
-    else h += '<p class="rg-mute">Registrasi ini dibuat sebelum tautan progres disimpan. Buat tautan baru; tautan lama di email calon mitra tidak berlaku lagi.</p><div class="rgx-l"><button class="btn btn-ghost" data-x="renew">' + (busy === "renew" ? SY : '<i class="fa-solid fa-link"></i>') + '<span>Buat tautan progres</span></button><button class="btn btn-ghost" data-x="renewmail">' + (busy === "renewmail" ? SY : '<i class="fa-solid fa-paper-plane"></i>') + '<span>Buat &amp; kirim ke email</span></button></div>';
+    else if (!T.needRenew) h += '<div class="rgx-l"><button class="btn btn-ghost" data-x="get">' + (busy === "get" ? SY : '<i class="fa-solid fa-link"></i>') + '<span>Tampilkan tautan progres</span></button></div>';
+    else h += '<p class="rg-mute">Tautan progres asli tidak ditemukan di email bukti registrasi yang terkirim. Bila perlu, buat tautan baru; tautan lama tidak berlaku lagi.</p><div class="rgx-l"><button class="btn btn-ghost" data-x="renew">' + (busy === "renew" ? SY : '<i class="fa-solid fa-link"></i>') + '<span>Buat tautan progres</span></button><button class="btn btn-ghost" data-x="renewmail">' + (busy === "renewmail" ? SY : '<i class="fa-solid fa-paper-plane"></i>') + '<span>Buat &amp; kirim ke email</span></button></div>';
     // tarik penolakan
     if (s === "ditolak") h += '<div class="rgx-sub">Status ditolak</div><p>Tarik penolakan untuk mengembalikan registrasi ke verifikasi. Setelah itu lanjutkan seperti biasa sampai disetujui.</p><div class="rgx-l"><button class="btn btn-primary" data-x="undo">' + (busy === "undo" ? SY : '<i class="fa-solid fa-rotate-left"></i>') + '<span>Tarik penolakan</span></button></div>';
     // feedback
@@ -6921,7 +6921,7 @@ window.pksMount = function (host) {
     try {
       if (x === "get" || x === "renew" || x === "renewmail" || x === "mail") {
         var r = await callApi("reg.track", { id: id, renew: x !== "get" && x !== "mail", mail: x === "renewmail" || x === "mail" }, 60000);
-        if (r.need) toast("Tautan belum ada, buat tautan baru", "error");
+        if (r.need) { T.needRenew = true; toast("Tautan progres asli tidak ditemukan. Buat tautan baru bila perlu.", "error"); }
         if (r.url) links[id] = r.url;
         if (x === "renewmail" || x === "mail") toast(r.mailed ? "Tautan progres dikirim ke " + (T.email || "email mitra") : "Email gagal terkirim" + (r.error ? ": " + r.error : ""), r.mailed ? "success" : "error");
         else if (r.url) { try { copyText(r.url, r.renewed ? "Tautan progres baru dibuat dan disalin" : "Tautan progres disalin"); } catch (e) { } }
