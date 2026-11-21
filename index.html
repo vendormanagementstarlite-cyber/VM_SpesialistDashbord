@@ -1662,7 +1662,7 @@ tr.q-bad > td { background: rgba(244,63,94,.07) !important; }
             </div>
             <div class="tb-actions">
                 <button onclick="syncNow()" data-perm="sync" class="tb-btn" title="Sync Live Data" data-global-sync><i data-sync-ic class="fa-solid fa-rotate"></i></button>
-                <button onclick="copyBaganLink()" class="tb-btn" title="Salin link form bagan untuk mitra" aria-label="Salin link form bagan"><i class="fa-solid fa-sitemap"></i></button><button onclick="toggleTheme()" class="tb-btn" title="Mode Gelap / Terang"><i data-theme-ic class="fa-solid fa-sun"></i></button>
+                <button onclick="toggleTheme()" class="tb-btn" title="Mode Gelap / Terang"><i data-theme-ic class="fa-solid fa-sun"></i></button>
                 <span data-notif-slot></span>
                 <button onclick="userMenu(this, event)" class="tb-user" data-me title="Akun saya"></button>
             </div>
@@ -1819,7 +1819,7 @@ tr.q-bad > td { background: rgba(244,63,94,.07) !important; }
                 <div id="desk-top-slot" class="flex-1 min-w-0 flex items-center justify-end"></div>
                 <div class="tb-actions">
                     <button onclick="syncNow()" data-perm="sync" class="tb-sync" title="Sinkronkan seluruh Google Sheets" data-global-sync><i data-sync-ic class="fa-solid fa-rotate"></i><span class="text-left leading-tight"><span class="block text-[11.5px] font-extrabold">Sync Live Data</span><span class="block text-[9.5px] font-medium opacity-75" data-last-sync>Belum sinkron</span></span></button>
-                    <button onclick="copyBaganLink()" class="tb-btn" title="Salin link form bagan untuk mitra" aria-label="Salin link form bagan"><i class="fa-solid fa-sitemap"></i></button><button onclick="toggleTheme()" class="tb-btn" title="Mode Gelap / Terang"><i data-theme-ic class="fa-solid fa-sun"></i></button>
+                    <button onclick="toggleTheme()" class="tb-btn" title="Mode Gelap / Terang"><i data-theme-ic class="fa-solid fa-sun"></i></button>
                     <span data-notif-slot></span>
                     <button onclick="userMenu(this, event)" class="tb-user" data-me title="Akun saya"></button>
                 </div>
@@ -2025,7 +2025,7 @@ tr.q-bad > td { background: rgba(244,63,94,.07) !important; }
                         <option value="kurang">Data Belum Lengkap</option>
                     </select>
                     <button onclick="$('perseroan-all-filter').value='';VS_PS.bagan='';resetPerseroanFilters()" class="btn btn-ghost" title="Reset filter" aria-label="Reset filter"><i class="fa-solid fa-filter-circle-xmark"></i></button>
-                    <div id="ps-toolbar" class="flex items-center gap-2"><button id="perseroan-sync" onclick="sheetSync('perseroan')" class="btn btn-ghost" title="Ambil data terbaru dari sheet Info Perseroan" aria-label="Sync"><i class="fa-solid fa-rotate"></i></button><button type="button" onclick="openBaganWajib()" data-owner class="btn btn-ghost" title="Atur posisi wajib bagan mitra" aria-label="Atur posisi wajib bagan"><i class="fa-solid fa-user-tag text-sky-600"></i></button><button onclick="openRecAdd('perseroan')" data-owner class="btn btn-primary" title="Tambah Data" aria-label="Tambah Data"><i class="fa-solid fa-plus"></i><span>Tambah Data</span></button><button type="button" onclick="copyAll('perseroan')" class="btn btn-ghost" title="Salin Report" aria-label="Salin Report"><i class="fa-solid fa-clipboard-list text-emerald-600"></i><span>Salin Report</span></button><button onclick="exportPerseroanCsv()" data-perm="export" class="btn btn-success" title="Export CSV" aria-label="Export CSV"><i class="fa-solid fa-file-csv"></i></button></div>
+                    <div id="ps-toolbar" class="flex items-center gap-2"><button id="perseroan-sync" onclick="sheetSync('perseroan')" class="btn btn-ghost" title="Ambil data terbaru dari sheet Info Perseroan" aria-label="Sync"><i class="fa-solid fa-rotate"></i></button><button type="button" onclick="openBaganWajib()" data-owner class="btn btn-ghost" title="Atur posisi wajib bagan mitra" aria-label="Atur posisi wajib bagan"><i class="fa-solid fa-user-tag text-sky-600"></i></button><button type="button" onclick="copyBaganLink()" class="btn btn-ghost" title="Salin link form bagan untuk mitra" aria-label="Salin link form bagan"><i class="fa-solid fa-sitemap text-sky-600"></i></button><button onclick="openRecAdd('perseroan')" data-owner class="btn btn-primary" title="Tambah Data" aria-label="Tambah Data"><i class="fa-solid fa-plus"></i><span>Tambah Data</span></button><button type="button" onclick="copyAll('perseroan')" class="btn btn-ghost" title="Salin Report" aria-label="Salin Report"><i class="fa-solid fa-clipboard-list text-emerald-600"></i><span>Salin Report</span></button><button onclick="exportPerseroanCsv()" data-perm="export" class="btn btn-success" title="Export CSV" aria-label="Export CSV"><i class="fa-solid fa-file-csv"></i></button></div>
                     <span id="perseroan-count-badge" class="shrink-0 whitespace-nowrap px-3 py-1 rounded-full bg-emerald-200/80 dark:bg-slate-800 text-emerald-800 dark:text-slate-300 text-[10px] font-mono font-bold">0 Mitra</span>
                 </div>
                         <table class="data-table w-full text-left text-xs whitespace-nowrap">
