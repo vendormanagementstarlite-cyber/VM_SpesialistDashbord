@@ -6750,5 +6750,109 @@ window.pksMount = function (host) {
   }
 })();
 </script>
+<script>
+/* ===== Takeover: cari per kata utuh, toggle Tgl Rilis SPK, filter tanpa PIC + filter tambahan ===== */
+(function () {
+  "use strict";
+  var $i = function (id) { return document.getElementById(id); };
+  var ls = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) { } } };
+
+  // 1) Cari per kata utuh: "banjar" tidak ikut menampilkan "banjaran". Kata yang mengandung angka/simbol (PO, BAP, SPK) tetap cocok sebagian.
+  var reEsc = function (s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); };
+  var wordTerms = function () {
+    var q = String((VS_TO && VS_TO.q) || "").toLowerCase().trim();
+    return q ? q.split(/\s+/).filter(function (t) { return /^[a-zÀ-ɏ]+$/.test(t); }) : [];
+  };
+  if (typeof applyTakeoverFilters === "function" && typeof VS_TO !== "undefined") {
+    var ap0 = applyTakeoverFilters;
+    window.applyTakeoverFilters = applyTakeoverFilters = function () {
+      var r = ap0.apply(this, arguments);
+      try {
+        var ts = wordTerms();
+        if (ts.length && Array.isArray(VS_TO.filtered)) {
+          var res = ts.map(function (t) { return new RegExp("(^|[^a-z0-9À-ɏ])" + reEsc(t) + "(?=$|[^a-z0-9À-ɏ])"); });
+          var n0 = VS_TO.filtered.length;
+          VS_TO.filtered = VS_TO.filtered.filter(function (b) { var q = String(b.q || "").toLowerCase(); return res.every(function (re) { return re.test(q); }); });
+          if (VS_TO.filtered.length !== n0) {
+            if (VS_TO.page > 1 && (VS_TO.page - 1) * VS_TO.size >= VS_TO.filtered.length) VS_TO.page = 1;
+            try { renderTakeoverSummary(); } catch (e) { }
+            renderTakeoverPage();
+          }
+        }
+      } catch (e) { console.warn("cari kata utuh", e); }
+      return r;
+    };
+    var si = $i("takeover-search");
+    if (si) { si.placeholder = "Cari PO, BAP, Stasiun, Mitra, PIC, SPK (kata utuh)"; si.title = "Nama dicari per kata utuh: \"banjar\" tidak menampilkan \"banjaran\". No PO/BAP/SPK boleh sebagian."; }
+  }
+
+  // 2) Filter Tgl Rilis SPK bisa disembunyikan / dimunculkan
+  var spkBox = function () { var f = $i("spk-from"); return f ? f.closest(".flex.flex-wrap.items-center.gap-2") : null; };
+  var KEY = "vm_tk_spkdate_show";
+  var setSpk = function (show) {
+    var bx = spkBox(), bt = $i("spk-toggle"); if (!bx || !bt) return;
+    if (show) bx.style.removeProperty("display"); else bx.style.setProperty("display", "none", "important");
+    var act = !!(($i("spk-from") || {}).value || ($i("spk-to") || {}).value);
+    bt.setAttribute("aria-pressed", show ? "true" : "false");
+    bt.classList.toggle("spk-on", show || act);
+    bt.title = (show ? "Sembunyikan" : "Tampilkan") + " filter Tgl Rilis SPK" + (act ? " (aktif)" : "");
+    var dot = bt.querySelector(".spk-dot"); if (dot) dot.style.display = act && !show ? "" : "none";
+  };
+  (function () {
+    var bx = spkBox(); if (!bx || $i("spk-toggle")) return;
+    var st = document.createElement("style");
+    st.textContent = "#spk-toggle{position:relative}#spk-toggle.spk-on{color:#4f46e5;border-color:rgba(79,70,229,.45);background:rgba(79,70,229,.08)}#spk-toggle .spk-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:#4f46e5}";
+    document.head.appendChild(st);
+    var bt = document.createElement("button");
+    bt.type = "button"; bt.id = "spk-toggle"; bt.className = "btn btn-ghost"; bt.setAttribute("aria-label", "Filter Tgl Rilis SPK");
+    bt.innerHTML = '<i class="fa-regular fa-calendar-days"></i><span class="spk-dot" style="display:none"></span>';
+    bx.parentNode.insertBefore(bt, bx);
+    var show = ls.get(KEY) === "1";
+    bt.onclick = function () { show = bt.getAttribute("aria-pressed") !== "true"; ls.set(KEY, show ? "1" : "0"); setSpk(show); if (show) { var f = $i("spk-from"); f && f.focus(); } };
+    setSpk(show);
+    ["spk-from", "spk-to"].forEach(function (id) { var el = $i(id); el && el.addEventListener("change", function () { setSpk(bt.getAttribute("aria-pressed") === "true"); }); });
+    if (typeof resetTakeoverFilters === "function") {
+      var rs0 = resetTakeoverFilters;
+      window.resetTakeoverFilters = resetTakeoverFilters = function () { var r = rs0.apply(this, arguments); setSpk(bt.getAttribute("aria-pressed") === "true"); return r; };
+    }
+    if (typeof clearSpkDate === "function") {
+      var cl0 = clearSpkDate;
+      window.clearSpkDate = clearSpkDate = function () { var r = cl0.apply(this, arguments); setSpk(bt.getAttribute("aria-pressed") === "true"); return r; };
+    }
+  })();
+
+  // 3) Filter "Semua Status": tanpa PIC, ditambah filter yang belum ada
+  try {
+    var noSpkTk = function (b) { return typeof docUrl === "function" ? !docUrl(Object.assign({}, b, { att_spk: "" }), "SPK") : true; };
+    Object.assign(SPECIAL, {
+      noSpkTk: { label: "PDF SPK Take Over belum ada (kolom N)", fn: function (b) { return "cancel" !== b.st && noSpkTk(b); } },
+      noBam: { label: "BA Migrasi (BAM) belum ada (kolom Z)", fn: function (b) { return "cancel" !== b.st && !(window.tkBamUrl && tkBamUrl(b)) && !String((b.raw || [])[37] || "").trim() && !/^(no need|po clos|hold)/i.test(String(b.m || "").trim()); } }
+    });
+  } catch (e) { }
+  var EXTRA = {
+    Dokumen: [["d:noBaDoc", "BA Cancel belum"], ["d:noBam", "BA Migrasi (BAM) belum"], ["d:docKurang", "Dokumen belum lengkap"]],
+    SPK: [["d:noSpkTk", "PDF SPK Take Over belum ada (kolom N)"]],
+    Lainnya: [["d:unpaidDp", "DP belum diterima (Unpaid)"], ["d:hpGap", "HP Actual < HP PO"], ["d:noProfile", "Mitra After belum ada di Info Perseroan"], ["d:hasSp", "Punya Surat Peringatan"]]
+  };
+  var tidy = function () {
+    var sel = $i("takeover-all-filter"); if (!sel || sel.querySelector("option[data-xf]")) return;
+    var pic = sel.querySelector('optgroup[label="PIC"]'); if (pic) pic.remove();
+    var pf = $i("takeover-pic-filter"); if (pf && pf.value) { pf.value = ""; try { applyTakeoverFilters(true); } catch (e) { } }
+    Object.keys(EXTRA).forEach(function (g) {
+      var og = sel.querySelector('optgroup[label="' + g + '"]');
+      if (!og) { og = document.createElement("optgroup"); og.label = g; sel.appendChild(og); }
+      EXTRA[g].forEach(function (o) {
+        if (!SPECIAL[o[0].slice(2)] || og.querySelector('option[value="' + o[0] + '"]')) return;
+        var op = document.createElement("option"); op.value = o[0]; op.textContent = (VS_TO.special === o[0].slice(2) ? "✓ " : "") + o[1]; op.setAttribute("data-xf", "1"); og.appendChild(op);
+      });
+    });
+    // grup Lainnya ditaruh sebelum Region agar urut: status → dokumen → SPK → material → mitra → lainnya → region
+    var lain = sel.querySelector('optgroup[label="Lainnya"]'), reg = sel.querySelector('optgroup[label="Region"]');
+    if (lain && reg) sel.insertBefore(lain, reg);
+  };
+  var allSel = $i("takeover-all-filter");
+  if (allSel) { new MutationObserver(function () { tidy(); }).observe(allSel, { childList: true, subtree: true, characterData: true }); tidy(); }
+})();
+</script>
 </body>
 </html>
