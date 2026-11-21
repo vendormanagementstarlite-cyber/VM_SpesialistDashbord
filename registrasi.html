@@ -580,7 +580,7 @@ function done(r) {
   $("main").innerHTML = '<section class="card done"><div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h2>Registrasi terkirim</h2>'
     + "<p>Nomor registrasi Anda</p><div class=\"no\">" + esc(r.nomor) + "</div>"
     + "<p>Tim Vendor Management akan memeriksa data dan menghubungi PIC. Pantau status registrasi lewat tautan berikut.</p>"
-    + '<div class="cp"><input id="lk" readonly value="' + esc(link) + '"><button class="btn pri" id="cpb" type="button">Salin tautan</button></div><p style="font-size:12.5px">Simpan nomor dan tautan ini. Tautan hanya menampilkan status, isian tidak bisa diubah.</p></section>';
+    + '<div class="cp"><input id="lk" readonly value="' + esc(link) + '"><button class="btn pri" id="cpb" type="button">Salin tautan</button></div><p style="font-size:12.5px">Tautan ini juga kami kirim ke email perusahaan Anda. Feedback dan pembaruan dari Vendor Management dikirim lewat email dan tampil di tautan ini. Isian tidak bisa diubah.</p></section>';
   $("cpb").onclick = function () { var i = $("lk"); i.select(); try { navigator.clipboard.writeText(i.value); } catch (e) { document.execCommand("copy"); } toast("Tautan disalin"); };
   window.scrollTo(0, 0);
 }

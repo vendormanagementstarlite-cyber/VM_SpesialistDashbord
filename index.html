@@ -6895,7 +6895,7 @@ window.pksMount = function (host) {
     // tarik penolakan
     if (s === "ditolak") h += '<div class="rgx-sub">Status ditolak</div><p>Tarik penolakan untuk mengembalikan registrasi ke verifikasi. Setelah itu lanjutkan seperti biasa sampai disetujui.</p><div class="rgx-l"><button class="btn btn-primary" data-x="undo">' + (busy === "undo" ? SY : '<i class="fa-solid fa-rotate-left"></i>') + '<span>Tarik penolakan</span></button></div>';
     // feedback
-    if (["aktif", "batal"].indexOf(s) < 0) h += '<div class="rgx-sub">Feedback untuk calon mitra</div><p class="rg-mute">Tampil di halaman progres calon mitra. Status registrasi tidak berubah.</p><textarea class="field" data-x="fbt" placeholder="Contoh: Mohon kirim ulang foto gudang yang lebih jelas.">' + E(draft[id] || "") + '</textarea><div class="rgx-l"><button class="btn btn-primary" data-x="fb">' + (busy === "fb" ? SY : '<i class="fa-solid fa-paper-plane"></i>') + '<span>Kirim feedback</span></button></div>';
+    if (["aktif", "batal"].indexOf(s) < 0) h += '<div class="rgx-sub">Feedback untuk calon mitra</div><p class="rg-mute">Dikirim ke email perusahaan calon mitra dan tampil di halaman progresnya. Status registrasi tidak berubah.</p><textarea class="field" data-x="fbt" placeholder="Contoh: Mohon kirim ulang foto gudang yang lebih jelas.">' + E(draft[id] || "") + '</textarea><div class="rgx-l"><button class="btn btn-primary" data-x="fb">' + (busy === "fb" ? SY : '<i class="fa-solid fa-paper-plane"></i>') + '<span>Kirim feedback</span></button></div>';
     var fb = (T.fb || []).slice().reverse();
     if (fb.length) h += '<div class="rgx-sub">Feedback terkirim (' + fb.length + ')</div>' + fb.map(function (f) {
       var it = Object.keys(f.notes || {}); return '<div class="rgx-fb"><small>' + E(whenT(f.at)) + (f.by ? " · " + E(f.by) : "") + '</small>' + (f.note ? E(f.note).replace(/\n/g, "<br>") : "") + (it.length ? "<ul>" + it.map(function (k) { return "<li><b>" + E(k) + ":</b> " + E(f.notes[k]) + "</li>"; }).join("") + "</ul>" : "") + "</div>";
@@ -6929,7 +6929,7 @@ window.pksMount = function (host) {
       } else if (x === "fb") {
         var note = box.querySelector('[data-x="fbt"]').value.trim();
         var r2 = await callApi("reg.feedback", { id: id, note: note }, 60000);
-        T.fb = r2.fb || T.fb; draft[id] = ""; toast("Feedback dikirim. Tampil di halaman progres calon mitra.", "success");
+        T.fb = r2.fb || T.fb; draft[id] = ""; if (r2.mailed === false) toast("Feedback tersimpan dan tampil di halaman progres, tetapi email gagal terkirim" + (r2.mailError ? ": " + r2.mailError : ""), "error"); else toast("Feedback dikirim ke " + (r2.email || T.email || "email calon mitra") + " dan tampil di halaman progres.", "success"); if (r2.mailed) T.track = true;
       } else if (x === "undo") {
         await callApi("reg.decide", { id: id, act: "pulihkan" }, 60000);
         toast("Penolakan ditarik. Registrasi kembali ke verifikasi.", "success"); busy = ""; reopen(id); return;
