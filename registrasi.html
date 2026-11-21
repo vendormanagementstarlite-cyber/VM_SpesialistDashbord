@@ -584,6 +584,12 @@ function done(r) {
   $("cpb").onclick = function () { var i = $("lk"); i.select(); try { navigator.clipboard.writeText(i.value); } catch (e) { document.execCommand("copy"); } toast("Tautan disalin"); };
   window.scrollTo(0, 0);
 }
+function nextHtml(nx) {
+  if (!nx || !nx.length) return "";
+  return '<div class="fbk"><h3>Langkah lanjutan</h3><p style="margin:0 0 6px;font-size:13.5px">Mohon lengkapi dua langkah berikut:</p>' + nx.map(function (x, i) {
+    return '<div class="it"><b>' + (i + 1) + ". " + esc(x.label) + '</b><br><a href="' + esc(x.url) + '" target="_blank" rel="noopener" style="word-break:break-all">' + esc(x.url) + "</a></div>";
+  }).join("") + "</div>";
+}
 function fbHtml(fb) {
   if (!fb || !fb.length) return "";
   var tgl = function (t) { try { return new Date(t).toLocaleString("id-ID", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } };
@@ -596,7 +602,7 @@ function statusPage(g) {
   var msg = { diajukan: "Registrasi Anda sedang diperiksa oleh tim Vendor Management.", ttd: "Registrasi Anda sudah disetujui dan sedang dalam proses tanda tangan.", lengkap: "Registrasi Anda sudah ditandatangani lengkap.", aktif: "Selamat, perusahaan Anda sudah terdaftar sebagai mitra STARLITE.", ditolak: "Registrasi Anda tidak dapat dilanjutkan. Bila ingin mendaftar lagi, isi formulir baru dengan data yang benar.", dikembalikan: "Registrasi Anda sedang diperiksa.", batal: "Registrasi ini dibatalkan." }[g.status] || "";
   var S = g.status, ok = S === "lengkap" || S === "aktif", no = S === "ditolak", cur = S === "diajukan" ? 1 : S === "ttd" ? 2 : 3;
   var stp = [["fa-paper-plane", "Mengajukan", 0], ["fa-magnifying-glass", "Verifikasi", 1], [no ? "fa-circle-xmark" : "fa-circle-check", no ? "Ditolak" : "Disetujui", 2]].map(function (x, i) { var done = i < cur || (i === 2 && ok), act = i === cur && !ok && !no, bad = no && i === 2; if (no && i === 1) done = true; return '<li class="' + (bad ? "bad " : done ? "ok " : act ? "act " : "") + '"><i class="fa-solid ' + x[0] + '"></i><span>' + x[1] + "</span></li>"; }).join("");
-  $("main").innerHTML = '<section class="card done"><h2>' + esc(g.nama || "Registrasi") + '</h2><div class="no">' + esc(g.nomor) + '</div><ol class="rst">' + stp + "</ol><p><b>" + (ok ? '<i class="fa-solid fa-circle-check" style="color:var(--ok)"></i> ' : no ? '<i class="fa-solid fa-circle-xmark" style="color:var(--bad)"></i> ' : "") + esc(ok ? "Disetujui" : no ? "Ditolak" : S === "ttd" ? "Disetujui, proses tanda tangan" : "Verifikasi") + "</b></p><p>" + esc(msg) + "</p>" + (g.ttd && g.ttd.total ? "<p>Tanda tangan: <b>" + g.ttd.done + " dari " + g.ttd.total + "</b> sudah menandatangani.</p>" : "") + (g.note && (g.status === "ditolak" || g.status === "batal") ? '<div class="fbk"><h3>Catatan Vendor Management</h3><div class="it">' + esc(g.note).replace(/\n/g, "<br>") + "</div></div>" : "") + fbHtml(g.fb) + "</section>";
+  $("main").innerHTML = '<section class="card done"><h2>' + esc(g.nama || "Registrasi") + '</h2><div class="no">' + esc(g.nomor) + '</div><ol class="rst">' + stp + "</ol><p><b>" + (ok ? '<i class="fa-solid fa-circle-check" style="color:var(--ok)"></i> ' : no ? '<i class="fa-solid fa-circle-xmark" style="color:var(--bad)"></i> ' : "") + esc(ok ? "Disetujui" : no ? "Ditolak" : S === "ttd" ? "Disetujui, proses tanda tangan" : "Verifikasi") + "</b></p><p>" + esc(msg) + "</p>" + (g.ttd && g.ttd.total ? "<p>Tanda tangan: <b>" + g.ttd.done + " dari " + g.ttd.total + "</b> sudah menandatangani.</p>" : "") + (g.note && (g.status === "ditolak" || g.status === "batal") ? '<div class="fbk"><h3>Catatan Vendor Management</h3><div class="it">' + esc(g.note).replace(/\n/g, "<br>") + "</div></div>" : "") + nextHtml(g.next) + fbHtml(g.fb) + "</section>";
 }
 // ---------- mulai ----------
 async function boot() {
