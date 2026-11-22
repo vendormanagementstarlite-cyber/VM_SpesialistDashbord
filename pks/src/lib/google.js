@@ -100,3 +100,17 @@ export async function gmailThreadReplies(env, threadId, ourAddress) {
   }
   return out;
 }
+
+/** Cek versi jembatan tanpa efek samping: versi baru menolak lembar tak dikenal, versi lama tidak mengenal aksinya. */
+export async function cekJembatan(env) {
+  if (!googleEnabled(env)) return { status: 'nonaktif', pesan: 'APPS_SCRIPT_URL / APPS_SCRIPT_KEY belum diatur di Worker.' };
+  try {
+    await bridge(env, 'sheet_upsert', { sheet: '__cek_versi__', kunci: 'cek' });
+    return { status: 'ok' };
+  } catch (e) {
+    const m = String(e.message || e);
+    if (/tidak diizinkan/.test(m)) return { status: 'ok' };
+    if (/aksi tidak dikenal/.test(m)) return { status: 'lama', pesan: 'Starlite Bridge masih versi lama: deploy versi baru (Terapkan → Kelola deployment → Versi baru).' };
+    return { status: 'gagal', pesan: m.slice(0, 200) };
+  }
+}

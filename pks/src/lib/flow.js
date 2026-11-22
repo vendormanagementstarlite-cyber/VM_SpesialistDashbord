@@ -135,8 +135,11 @@ export async function resolveToken(env, raw) {
 
 async function refreshSnapshot(env, p) {
   const m = await getMitra(env, p.mitra_row);
-  if (!m.emails.length) fail(422, `Email ${m.nama} kosong di info perseroan. Lengkapi dulu di Cloudflare (tabel mitra).`);
-  p.mitra = snapshot(m);
+  const snap = snapshot(m);
+  const manual = p.mitra?.emails_manual;
+  if (manual?.length) { snap.emails = manual; snap.emails_manual = manual; } // email tujuan yang diisi VM di halaman perjanjian
+  if (!snap.emails.length) fail(422, `Email ${m.nama} kosong. Isi email tujuan di halaman perjanjian (Ubah email) atau lengkapi di Info Perseroan.`);
+  p.mitra = snap;
   await env.DB.prepare('UPDATE pks_perjanjian SET snapshot_mitra = ? WHERE id = ?').bind(JSON.stringify(p.mitra), p.id).run();
   return p.mitra;
 }
@@ -250,8 +253,9 @@ export async function keLegal(env, user, id) {
   need(p, 1, 2);
   const kurang = belumLengkap(p.jenis, await isianTerkini(env, id));
   if (kurang.length) fail(422, `Data dokumen belum lengkap: ${kurang.join(', ')}. Lengkapi dulu (oleh mitra lewat tautan atau oleh VM di "Ubah isian").`);
-  const tenggat = await setTahap(env, p, 3, aktor);
   const legal = (await env.DB.prepare("SELECT email FROM pks_pengguna WHERE peran = 'legal' AND aktif = 1").all()).results.map((r) => r.email);
+  if (!legal.length) fail(422, 'Daftar Legal masih kosong. Tambahkan email Legal di Pengaturan → Akses, lalu teruskan lagi.');
+  const tenggat = await setTahap(env, p, 3, aktor);
   if (legal.length) {
     const raw = await issueToken(env, id, 'legal');
     await sendMail(env, { perjanjianId: id, tipe: 'legal', to: legal, ...templates.legal({ p, m: p.mitra, tenggat, url: legalUrl(env, raw) }) }).catch(() => {});
@@ -550,3 +554,80 @@ export function statusTampil(p) {
 }
 
 export const kirimInnerCity = kirimMitra;
+
+
+// ---------------- Email tujuan (disimpan di perjanjian ini saja; Info Perseroan tidak diubah) ----------------
+export async function ubahEmail(env, user, id, teks) {
+  const p = await loadP(env, id);
+  if (p.status === 'batal' || p.tahap >= 7) fail(409, 'Perjanjian sudah selesai atau dibatalkan');
+  const list = parseEmails(String(teks || ''));
+  if (!list.length) fail(400, 'Isi minimal satu email yang valid');
+  if (list.length > 5) fail(400, 'Maksimal 5 email');
+  p.mitra.emails = list; p.mitra.emails_manual = list;
+  await env.DB.prepare('UPDATE pks_perjanjian SET snapshot_mitra = ?, diperbarui_pada = ? WHERE id = ?').bind(JSON.stringify(p.mitra), now(), id).run();
+  await audit(env, aktorDari(user), id, 'email_tujuan_diubah', { emails: list });
+  return { emails: list };
+}
+
+// ---------------- Pengingat manual ----------------
+// Tautan tambahan tanpa mencabut tautan lama (tautan di email sebelumnya tetap berlaku).
+async function tokenTambahan(env, pid, tujuan) {
+  const cfg = await konfig(env);
+  const raw = randomToken();
+  await env.DB.prepare('INSERT INTO pks_token (token_hash, perjanjian_id, tujuan, kedaluwarsa, dibuat_pada) VALUES (?,?,?,?,?)')
+    .bind(await sha256Hex(raw), pid, tujuan, new Date(Date.now() + cfg.tokenHari * 86400_000).toISOString(), now()).run();
+  return raw;
+}
+export const tautanPengingat = async (env, p) => {
+  if ([1, 2].includes(p.tahap)) return portalUrl(env, await tokenTambahan(env, p.id, 'feedback'));
+  if (p.tahap === 5) return portalUrl(env, await tokenTambahan(env, p.id, 'ttd'));
+  if (p.tahap === 3) return legalUrl(env, await tokenTambahan(env, p.id, 'legal'));
+  return null;
+};
+export async function ingatkan(env, user, id) {
+  const aktor = aktorDari(user);
+  const p = await loadP(env, id);
+  if (p.status === 'batal') fail(409, 'Perjanjian sudah dibatalkan');
+  if (![1, 2, 3, 5].includes(p.tahap)) fail(409, 'Pengingat hanya untuk tahap Review mitra, Nomor surat, dan TTD mitra');
+  const last = await env.DB.prepare("SELECT waktu FROM pks_audit WHERE perjanjian_id = ? AND aksi = 'pengingat_manual' ORDER BY id DESC LIMIT 1").bind(id).first();
+  if (last && Date.now() - Date.parse(last.waktu) < 3600_000) fail(429, 'Pengingat baru saja dikirim. Coba lagi 1 jam lagi.');
+  const telat = !!(p.tenggat && p.tenggat < now());
+  const tenggat = p.tenggat || now();
+  let to;
+  if (p.tahap === 3) {
+    to = (await env.DB.prepare("SELECT email FROM pks_pengguna WHERE peran = 'legal' AND aktif = 1").all()).results.map((r) => r.email);
+    if (!to.length) fail(422, 'Daftar Legal masih kosong. Tambahkan di Pengaturan → Akses.');
+    await sendMail(env, { perjanjianId: id, tipe: 'pengingat', to, ...templates.legal({ p, m: p.mitra, tenggat, url: await tautanPengingat(env, p) }) });
+  } else {
+    to = p.mitra.emails || [];
+    if (!to.length) fail(422, 'Email tujuan mitra kosong. Isi lewat "Ubah email" dulu.');
+    await sendMail(env, { perjanjianId: id, tipe: 'pengingat', to, ...templates.pengingat_mitra({ p, m: p.mitra, tenggat, telat, url: await tautanPengingat(env, p) }), threadId: p.gmail_thread_id });
+  }
+  await audit(env, aktor, id, 'pengingat_manual', { tahap: p.tahap, penerima: to });
+  return { penerima: to };
+}
+
+// ---------------- Perpanjangan: draf baru dari perjanjian yang sudah selesai ----------------
+export async function perpanjang(env, user, id) {
+  const p = await loadP(env, id);
+  if (p.tahap !== 7 || p.status === 'batal') fail(409, 'Perpanjangan hanya untuk perjanjian yang sudah selesai');
+  const ada = await env.DB.prepare("SELECT data FROM pks_audit WHERE perjanjian_id = ? AND aksi = 'diperpanjang' ORDER BY id DESC LIMIT 1").bind(id).first();
+  if (ada) {
+    const baru = JSON.parse(ada.data || '{}').baru;
+    const masih = baru && await env.DB.prepare("SELECT kode FROM pks_perjanjian WHERE id = ? AND status != 'batal'").bind(baru).first();
+    if (masih) fail(409, `Sudah ada draf perpanjangan: ${masih.kode}`);
+  }
+  const isian = await isianTerkini(env, id);
+  const hariIni = new Date(Date.now() + 7 * 3600_000).toISOString().slice(0, 10);
+  const isi = { ...isian, tanggal: hariIni, ...(p.jenis === 'MS' ? { tanggal_spk: hariIni } : {}) };
+  delete isi.dd; delete isi.mm;
+  const fd = new FormData();
+  fd.set('mitra_row', String(p.mitra_row)); fd.set('jenis', p.jenis);
+  fd.set('judul', /perpanjangan/i.test(p.judul) ? p.judul : `${p.judul} (perpanjangan)`.slice(0, 200));
+  fd.set('isi', JSON.stringify(isi));
+  const baru = await create(env, user, fd);
+  if (p.mitra.emails_manual?.length) await ubahEmail(env, user, baru, p.mitra.emails_manual.join(', '));
+  await audit(env, aktorDari(user), id, 'diperpanjang', { baru });
+  await audit(env, aktorDari(user), baru, 'perpanjangan_dari', { asal: p.id, kode: p.kode, nomor: p.nomor_surat });
+  return { id: baru };
+}
