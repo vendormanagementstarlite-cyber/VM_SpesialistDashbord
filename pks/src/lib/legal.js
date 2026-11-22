@@ -62,8 +62,8 @@ export async function ringkasan(env, ctx) {
   const { p } = ctx;
   const doc = await F.latestDoc(env, p.id, 'master');
   return {
-    kode: p.kode, judul: p.judul, mitra: p.mitra.nama, tahap: p.tahap, tahap_nama: F.TAHAP[p.tahap].nama,
-    nomor_surat: p.nomor_surat, tenggat: p.tenggat, bisa_nomor: p.tahap === 3 && p.status !== 'batal',
+    kode: p.kode, judul: p.judul, jenis: p.jenis, mitra: p.mitra.nama, tahap: p.tahap, tahap_nama: F.TAHAP[p.tahap].nama,
+    nomor_surat: p.nomor_surat, nomor_spk: p.nomor_spk, tenggat: p.tenggat, bisa_nomor: p.tahap === 3 && p.status !== 'batal',
     dokumen: doc ? { nama: doc.nama, halaman: doc.halaman } : null,
   };
 }
@@ -74,8 +74,10 @@ export async function dokumen(env, ctx) {
   return { bytes: await F.readDoc(env, doc), nama: doc.nama };
 }
 
-export async function terbitkan(env, ctx, nomor) {
+export async function terbitkan(env, ctx, { nomor_surat, nomor_spk, catatan } = {}) {
   const form = new FormData();
-  form.set('nomor_surat', String(nomor || ''));
+  form.set('nomor_surat', String(nomor_surat || ''));
+  form.set('nomor_spk', String(nomor_spk || ''));
+  form.set('catatan', String(catatan || ''));
   return F.terbitNomor(env, { email: ctx.email, peran: 'legal' }, ctx.p.id, form);
 }

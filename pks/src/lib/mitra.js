@@ -51,5 +51,5 @@ export async function getMitra(env, row) {
 }
 
 export function snapshot(m) {
-  return { row: m.row, nama: m.nama, singkat: m.singkat, alamat: m.alamat, direksi: m.direksi, emails: m.emails, diambil_pada: new Date().toISOString() };
+  return { row: m.row, nama: m.nama, singkat: m.singkat, jenis: m.jenis, alamat: m.alamat, direksi: m.direksi, telepon: m.telepon, kontak_lain: m.kontak_lain, emails: m.emails, diambil_pada: new Date().toISOString() };
 }

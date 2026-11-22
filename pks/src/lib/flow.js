@@ -5,7 +5,9 @@ import { putFile, getFile } from './storage.js';
 import { googleEnabled, driveArsip } from './google.js';
 import { pageCount, stampSignature } from './pdf.js';
 import { sendMail, templates, emailKirim } from './mail.js';
-import { buatMaster, cetakNomor, POSISI_TTD, HALAMAN } from './template.js';
+import { POSISI_TTD } from './template.js';
+import { buatDraf, buatBernomor, belumLengkap, cekJenis } from './dokumen.js';
+import { tandaiSheet } from './sheet.js';
 
 // Status internal (tetap 0–7 agar data lama aman). Pengguna melihat 5 langkah sederhana (LANGKAH).
 export const TAHAP = [
@@ -67,11 +69,11 @@ async function setTahap(env, p, tahap, aktor, catatan = null) {
     env.DB.prepare('UPDATE pks_tahap SET selesai = ? WHERE perjanjian_id = ? AND selesai IS NULL').bind(t, p.id),
     env.DB.prepare('INSERT INTO pks_tahap (perjanjian_id, tahap, mulai, tenggat, pic, catatan) VALUES (?,?,?,?,?,?)')
       .bind(p.id, tahap, t, tenggat, tahap === 7 ? null : PIC_TAHAP[tahap] || 'vm', catatan),
-    env.DB.prepare('UPDATE pks_perjanjian SET tahap = ?, status = ?, tenggat = ?, diperbarui_pada = ? WHERE id = ?')
+    env.DB.prepare("UPDATE pks_perjanjian SET tahap = ?, status = ?, tenggat = ?, sub_progres = NULL, sheet_status = 'antre', diperbarui_pada = ? WHERE id = ?")
       .bind(tahap, TAHAP[tahap].key, tenggat, t, p.id),
   ]);
   if (tahap === 7) await env.DB.prepare('UPDATE pks_tahap SET selesai = ? WHERE perjanjian_id = ? AND tahap = 7').bind(t, p.id).run();
-  Object.assign(p, { tahap, status: TAHAP[tahap].key, tenggat });
+  Object.assign(p, { tahap, status: TAHAP[tahap].key, tenggat, sub_progres: null });
   return tenggat;
 }
 
@@ -144,25 +146,31 @@ async function bytesOf(file) { return new Uint8Array(await file.arrayBuffer()); 
 // ---------------- Tahap 0: buat ----------------
 export async function create(env, user, form) {
   const mitraRow = Number(form.get('mitra_row'));
-  const jenis = String(form.get('jenis') || 'PKS');
+  const jenis = cekJenis(String(form.get('jenis') || 'PKS'));
   const judul = String(form.get('judul') || '').trim();
   if (!mitraRow) fail(400, 'Pilih mitra');
   if (judul.length < 3) fail(400, 'Judul perjanjian wajib diisi');
   const j = await env.DB.prepare('SELECT * FROM pks_jenis WHERE kode = ?').bind(jenis).first();
-  if (!j) fail(400, 'Jenis perjanjian tidak dikenal');
+  if (!j) fail(400, 'Jenis perjanjian belum terpasang di database (jalankan migrasi 0006)');
   let isi;
   try { isi = JSON.parse(String(form.get('isi') || '{}')); } catch { fail(400, 'Isian dokumen tidak valid'); }
-  const { bytes: masterBytes, isian } = await buatMaster(isi); // hanya isian kuning; sisanya terkunci pada template
   const m = await getMitra(env, mitraRow);
+  const draf = await buatDraf(env, jenis, isi); // hanya isian; sisa dokumen terkunci pada template
   const t = now();
-  const seq = await env.DB.prepare("SELECT COUNT(*) + 1 AS n FROM pks_perjanjian WHERE substr(dibuat_pada,1,4) = ?").bind(t.slice(0, 4)).first();
-  const kode = `${jenis}-${t.slice(0, 4)}-${String(seq.n).padStart(4, '0')}`;
-  const p = { id: uid('pks_'), kode, mitra_row: mitraRow, mitra: snapshot(m), jenis, judul, pic_vm: user.email };
-  await env.DB.prepare('INSERT INTO pks_perjanjian (id, kode, mitra_row, snapshot_mitra, jenis, judul, tahap, status, pic_vm, dibuat_pada, diperbarui_pada) VALUES (?,?,?,?,?,?,0,?,?,?,?)')
-    .bind(p.id, kode, mitraRow, JSON.stringify(p.mitra), jenis, judul, 'draf', user.email, t, t).run();
+  const p = { id: uid('pks_'), mitra_row: mitraRow, mitra: snapshot(m), jenis, judul, pic_vm: user.email };
+  // Kode unik per jenis per tahun; ulangi bila bentrok (mis. dua pembuatan bersamaan).
+  for (let coba = 0; ; coba++) {
+    const seq = await env.DB.prepare('SELECT COUNT(*) + 1 + ? AS n FROM pks_perjanjian WHERE jenis = ? AND substr(dibuat_pada,1,4) = ?').bind(coba, jenis, t.slice(0, 4)).first();
+    p.kode = `${jenis}-${t.slice(0, 4)}-${String(seq.n).padStart(4, '0')}`;
+    try {
+      await env.DB.prepare("INSERT INTO pks_perjanjian (id, kode, mitra_row, snapshot_mitra, jenis, judul, tahap, status, pic_vm, sheet_status, dibuat_pada, diperbarui_pada) VALUES (?,?,?,?,?,?,0,?,?,'antre',?,?)")
+        .bind(p.id, p.kode, mitraRow, JSON.stringify(p.mitra), jenis, judul, 'draf', user.email, t, t).run();
+      break;
+    } catch (e) { if (coba >= 5 || !/UNIQUE/i.test(String(e.message))) throw e; }
+  }
   await env.DB.prepare('INSERT INTO pks_tahap (perjanjian_id, tahap, mulai, pic) VALUES (?,0,?,?)').bind(p.id, t, 'vm').run();
-  await audit(env, user.email, p.id, 'perjanjian_dibuat', { kode, mitra_row: mitraRow, jenis, isian });
-  await addDoc(env, p, { jenis: 'master', name: `${kode} Master.pdf`, mime: 'application/pdf', bytes: masterBytes, aktor: user.email, halaman: HALAMAN });
+  await audit(env, user.email, p.id, 'perjanjian_dibuat', { kode: p.kode, mitra_row: mitraRow, jenis, isian: draf.isian });
+  await addDoc(env, p, { jenis: 'master', name: `${p.kode} Master.pdf`, mime: 'application/pdf', bytes: draf.bytes, aktor: user.email, halaman: draf.halaman });
   return p.id;
 }
 
@@ -172,18 +180,19 @@ export async function isianTerkini(env, id) {
   const r = await env.DB.prepare("SELECT data FROM pks_audit WHERE perjanjian_id = ? AND aksi IN ('perjanjian_dibuat','isian_diubah') ORDER BY id DESC LIMIT 1").bind(id).first();
   const isian = r ? JSON.parse(r.data || '{}').isian : null;
   if (!isian) fail(404, 'Isian dokumen tidak ditemukan');
-  return { ...isian, tanggal: `2026-${isian.mm}-${isian.dd}` };
+  return isian.tanggal ? isian : { ...isian, tanggal: `2026-${isian.mm}-${isian.dd}` };
 }
 
 /** Buat ulang dokumen master dari template dengan isian baru (versi baru). Hanya sebelum nomor surat terbit. */
 export async function ubahIsian(env, p, isi, aktor, sumber) {
   need(p, 0, 1, 2);
   const lama = await isianTerkini(env, p.id);
-  const { bytes, isian } = await buatMaster(isi);
-  const berubah = Object.keys(isian).filter((k) => isian[k] !== lama[k] && k !== 'tanggal');
+  const { bytes, isian, halaman } = await buatDraf(env, p.jenis, { ...lama, ...isi });
+  const berubah = Object.keys(isian).filter((k) => isian[k] !== lama[k] && (p.jenis === 'MS' || k !== 'tanggal'));
   if (!berubah.length) fail(400, 'Tidak ada isian yang berubah');
-  await addDoc(env, p, { jenis: 'master', name: `${p.kode} Master.pdf`, mime: 'application/pdf', bytes, aktor, halaman: HALAMAN });
+  await addDoc(env, p, { jenis: 'master', name: `${p.kode} Master.pdf`, mime: 'application/pdf', bytes, aktor, halaman });
   await audit(env, aktor, p.id, 'isian_diubah', { isian, berubah, sumber });
+  await env.DB.prepare("UPDATE pks_perjanjian SET sheet_status = 'antre', diperbarui_pada = ? WHERE id = ?").bind(now(), p.id).run();
   if (sumber === 'mitra') {
     const pic = await env.DB.prepare('SELECT email FROM pks_pengguna WHERE email = ? AND aktif = 1').bind(p.pic_vm).first();
     if (pic) await sendMail(env, { perjanjianId: p.id, tipe: 'isian', to: [pic.email], subject: `[Starlite] ${p.mitra.nama} memperbarui isian dokumen`, html: `<p>${escapeHtml(p.mitra.nama)} memperbarui isian dokumen perjanjian ${escapeHtml(p.kode)} melalui aplikasi: ${berubah.map(escapeHtml).join(', ')}. Dokumen master versi baru sudah dibuat. Periksa di: ${escapeHtml(uiUrl(env))}/#/pks/perjanjian/${escapeHtml(p.id)}</p>` }).catch(() => {});
@@ -219,11 +228,17 @@ export async function addFeedback(env, p, { sumber, pengirim, isi, setuju, extId
   need(p, 1, 2);
   isi = String(isi || '').trim();
   if (!setuju && isi.length < 3) fail(400, 'Isi tanggapan wajib diisi');
+  if (setuju) {
+    // Cek kelengkapan sebelum mencatat persetujuan, agar persetujuan yang ditolak tidak meninggalkan jejak/tahap setengah jalan.
+    const kurang = belumLengkap(p.jenis, await isianTerkini(env, p.id));
+    if (kurang.length) fail(422, `Data dokumen belum lengkap: ${kurang.join(', ')}. Lengkapi dulu sebelum menyetujui.`);
+  }
   const fid = uid('fb_');
   await env.DB.prepare('INSERT INTO pks_feedback (id, perjanjian_id, putaran, sumber, pengirim, isi, setuju, ext_id, diterima_pada) VALUES (?,?,?,?,?,?,?,?,?)')
     .bind(fid, p.id, await putaran(env, p.id), sumber, pengirim || null, isi || 'Setuju tanpa catatan', setuju ? 1 : 0, extId, at).run();
   await audit(env, aktor, p.id, 'feedback_diterima', { sumber, setuju: !!setuju });
   if (p.tahap === 1) await setTahap(env, p, 2, aktor, setuju ? 'Mitra setuju tanpa catatan' : 'Feedback diterima');
+  else await tandaiSheet(env, p.id);
   if (setuju) await keLegal(env, aktor, p.id); // mitra setuju: langsung ke Legal
   return fid;
 }
@@ -233,6 +248,8 @@ export async function keLegal(env, user, id) {
   const aktor = aktorDari(user);
   const p = await loadP(env, id);
   need(p, 1, 2);
+  const kurang = belumLengkap(p.jenis, await isianTerkini(env, id));
+  if (kurang.length) fail(422, `Data dokumen belum lengkap: ${kurang.join(', ')}. Lengkapi dulu (oleh mitra lewat tautan atau oleh VM di "Ubah isian").`);
   const tenggat = await setTahap(env, p, 3, aktor);
   const legal = (await env.DB.prepare("SELECT email FROM pks_pengguna WHERE peran = 'legal' AND aktif = 1").all()).results.map((r) => r.email);
   if (legal.length) {
@@ -247,20 +264,31 @@ export async function terbitNomor(env, user, id, form) {
   const p = await loadP(env, id);
   need(p, 3);
   const nomor = String(form.get('nomor_surat') || '').trim();
+  const nomorSpk = String(form.get('nomor_spk') || '').trim();
+  const catatan = String(form.get('catatan') || '').trim().slice(0, 500);
   const cfg = await konfig(env);
-  if (!cfg.formatNomor.test(nomor)) fail(400, 'Format nomor surat tidak sesuai ketentuan Legal');
-  const dup = await env.DB.prepare('SELECT kode FROM pks_perjanjian WHERE nomor_surat = ? AND id != ?').bind(nomor, id).first();
-  if (dup) fail(409, `Nomor surat sudah dipakai perjanjian ${dup.kode}`);
-  // Nomor dicetak otomatis pada kolom "No." di dokumen master; dokumen tidak dapat diganti.
+  const label = p.jenis === 'MS' ? 'Nomor PKS MS' : 'Nomor surat';
+  if (!cfg.formatNomor.test(nomor)) fail(400, `Format ${label.toLowerCase()} tidak sesuai ketentuan Legal`);
+  const dup = await env.DB.prepare('SELECT kode FROM pks_perjanjian WHERE (nomor_surat = ? OR nomor_spk = ?) AND id != ?').bind(nomor, nomor, id).first();
+  if (dup) fail(409, `${label} sudah dipakai perjanjian ${dup.kode}`);
+  if (p.jenis === 'MS') {
+    if (!cfg.formatNomor.test(nomorSpk)) fail(400, 'Nomor SPK MS wajib diisi sesuai ketentuan Legal');
+    if (nomorSpk === nomor) fail(400, 'Nomor SPK MS harus berbeda dari nomor PKS MS');
+    const dup2 = await env.DB.prepare('SELECT kode FROM pks_perjanjian WHERE (nomor_surat = ? OR nomor_spk = ?) AND id != ?').bind(nomorSpk, nomorSpk, id).first();
+    if (dup2) fail(409, `Nomor SPK MS sudah dipakai perjanjian ${dup2.kode}`);
+  }
+  // Nomor dicetak otomatis pada dokumen; dokumen lain tidak berubah.
   const master = await latestDoc(env, id, 'master');
   if (!master) fail(409, 'Dokumen master belum tersedia');
-  const bytes = await cetakNomor(await readDoc(env, master), nomor);
+  const isian = await isianTerkini(env, id);
+  const bytes = await buatBernomor(env, p, isian, await readDoc(env, master), { nomor, nomor_spk: nomorSpk });
   const hal = await pageCount(bytes);
-  await env.DB.prepare('UPDATE pks_perjanjian SET nomor_surat = ?, diperbarui_pada = ? WHERE id = ?').bind(nomor, now(), id).run();
-  p.nomor_surat = nomor;
+  await env.DB.prepare('UPDATE pks_perjanjian SET nomor_surat = ?, nomor_spk = ?, remark_legal = COALESCE(?, remark_legal), diperbarui_pada = ? WHERE id = ?')
+    .bind(nomor, p.jenis === 'MS' ? nomorSpk : null, catatan || null, now(), id).run();
+  Object.assign(p, { nomor_surat: nomor, nomor_spk: p.jenis === 'MS' ? nomorSpk : null, remark_legal: catatan || p.remark_legal });
   await addDoc(env, p, { jenis: 'bernomor', name: `${p.kode} Bernomor.pdf`, mime: 'application/pdf', bytes, aktor: user.email, halaman: hal });
-  await setTahap(env, p, 4, user.email, `Nomor ${nomor}`);
-  await audit(env, user.email, id, 'nomor_terbit', { nomor_surat: nomor });
+  await setTahap(env, p, 4, user.email, p.jenis === 'MS' ? `PKS MS ${nomor}, SPK MS ${nomorSpk}` : `Nomor ${nomor}`);
+  await audit(env, user.email, id, 'nomor_terbit', { nomor_surat: nomor, nomor_spk: p.nomor_spk || undefined });
   const pic = await env.DB.prepare('SELECT email FROM pks_pengguna WHERE email = ?').bind(p.pic_vm).first();
   await kabarLegal(env, p, 'nomor');
   // Langsung dibagikan ke mitra untuk TTD. Bila gagal (mis. email mitra kosong), VM dapat mengirim ulang dari aplikasi.
@@ -285,6 +313,7 @@ export async function bagikan(env, user, id) {
   const res = await sendMail(env, { perjanjianId: id, tipe: 'bagikan', to: m.emails, ...tpl, attachments: [{ name: `Perjanjian ${p.nomor_surat}.pdf`.replace(/[\\/]/g, '-'), mime: 'application/pdf', bytes }], threadId: p.gmail_thread_id });
   await setTahap(env, p, 5, aktor);
   await audit(env, aktor, id, 'dibagikan_ke_mitra', { mode: res.mode });
+  await kabarAdminTtd(env, p, 'siap');
   return { mode: res.mode, portal: env.APP_ENV === 'dev' ? portalUrl(env, raw) : undefined };
 }
 
@@ -307,80 +336,114 @@ export async function tempelTtd(env, p, pihak, file) {
   return { bytes: await stampSignature(await readDoc(env, src), await bytesOf(file), mime, pos), halaman: src.halaman };
 }
 
+/** Scan PDF bertanda tangan basah (atau hasil fitur Signing): semua halaman wajib ada. */
+async function scanTtd(env, p, opsi, file) {
+  if (opsi === '1') fail(400, 'Tanda tangan ditempel tidak dipakai lagi. Unggah scan dokumen yang ditandatangani basah (PDF), atau hasil fitur Signing.');
+  if (opsi !== '2' && opsi !== 'signing') fail(400, 'Pilih cara unggah: scan tanda tangan basah atau hasil fitur Signing');
+  checkFile(file, ['application/pdf']);
+  const bytes = await bytesOf(file);
+  const halaman = await pageCount(bytes);
+  const ref = await latestDoc(env, p.id, 'bernomor');
+  if (ref?.halaman && halaman !== ref.halaman) fail(422, `Jumlah halaman berkas (${halaman}) berbeda dengan dokumen bernomor (${ref.halaman}). Pastikan semua halaman ikut dipindai.`);
+  return { bytes, halaman, penanda: opsi === '2' ? 'scan_asli' : null, label: opsi === 'signing' ? ' (Signing)' : '' };
+}
+
 export async function unggahTtdMitra(env, p, opsi, file, aktor, olehVm) {
   need(p, 5);
-  let bytes, penanda, halaman;
-  if (opsi === '1') {
-    ({ bytes, halaman } = await tempelTtd(env, p, 'mitra', file));
-    penanda = 'hasil_tempel';
-  } else if (opsi === '2') {
-    checkFile(file, ['application/pdf']);
-    bytes = await bytesOf(file);
-    halaman = await pageCount(bytes);
-    const ref = await latestDoc(env, p.id, 'bernomor');
-    if (ref?.halaman && halaman !== ref.halaman) fail(422, `Jumlah halaman scan (${halaman}) berbeda dengan dokumen bernomor (${ref.halaman}). Pastikan semua halaman ikut dipindai.`);
-    penanda = 'scan_asli';
-  } else fail(400, 'Pilih opsi tanda tangan');
+  const s = await scanTtd(env, p, opsi, file);
   await env.DB.prepare("UPDATE pks_dokumen SET status = 'ditolak' WHERE perjanjian_id = ? AND jenis = 'ttd_mitra' AND status = 'menunggu_review'").bind(p.id).run();
-  const doc = await addDoc(env, p, { jenis: 'ttd_mitra', penanda, name: `${p.kode} TTD Mitra.pdf`, mime: 'application/pdf', bytes, aktor, halaman, status: olehVm ? 'aktif' : 'menunggu_review' });
-  if (olehVm) await setTahap(env, p, 6, aktor, 'TTD mitra diunggah VM');
+  const doc = await addDoc(env, p, { jenis: 'ttd_mitra', penanda: s.penanda, name: `${p.kode} TTD Mitra${s.label}.pdf`, mime: 'application/pdf', bytes: s.bytes, aktor, halaman: s.halaman, status: olehVm ? 'aktif' : 'menunggu_review' });
+  if (olehVm) await setTahap(env, p, 6, aktor, opsi === 'signing' ? 'TTD mitra lewat fitur Signing' : 'Scan TTD mitra diunggah internal');
+  else await kabarAdminTtd(env, p, 'masuk');
   return doc.id;
 }
 
 export async function reviewTtdMitra(env, user, id, { setuju, alasan }) {
+  const aktor = aktorDari(user);
   const p = await loadP(env, id);
   need(p, 5);
   const doc = await latestDoc(env, id, 'ttd_mitra', 'menunggu_review');
   if (!doc) fail(409, 'Belum ada unggahan TTD mitra untuk diperiksa');
   if (setuju) {
     await env.DB.prepare("UPDATE pks_dokumen SET status = 'aktif' WHERE id = ?").bind(doc.id).run();
-    await setTahap(env, p, 6, user.email, 'TTD mitra disetujui');
-    await audit(env, user.email, id, 'ttd_mitra_disetujui', { dokumen: doc.id });
+    await setTahap(env, p, 6, aktor, 'TTD mitra disetujui');
+    await audit(env, aktor, id, 'ttd_mitra_disetujui', { dokumen: doc.id });
   } else {
     if (!alasan || alasan.trim().length < 5) fail(400, 'Tuliskan alasan penolakan agar mitra dapat memperbaiki');
     await env.DB.prepare("UPDATE pks_dokumen SET status = 'ditolak' WHERE id = ?").bind(doc.id).run();
     const raw = await issueToken(env, id, 'ttd');
     await sendMail(env, { perjanjianId: id, tipe: 'ttd_ditolak', to: p.mitra.emails, ...templates.ttd_ditolak({ p, m: p.mitra, alasan, url: portalUrl(env, raw) }), threadId: p.gmail_thread_id });
-    await audit(env, user.email, id, 'ttd_mitra_ditolak', { dokumen: doc.id, alasan });
+    await audit(env, aktor, id, 'ttd_mitra_ditolak', { dokumen: doc.id, alasan });
     return { portal: env.APP_ENV === 'dev' ? portalUrl(env, raw) : undefined };
   }
 }
 
-export async function ttdIje(env, user, id, form, ctx) {
-  if (!user.penandatangan && user.peran !== 'admin') fail(403, 'Hanya penandatangan berwenang PT IJE yang dapat mengunggah TTD');
+/** Status rinci tahap 6: dokumen sudah di penandatangan PT IJE (PROGRES "PROSES SIGN IJE"). */
+export async function setSubProgres(env, user, id, nilai) {
+  const aktor = aktorDari(user);
   const p = await loadP(env, id);
   need(p, 6);
+  const v = nilai === 'PROSES SIGN IJE' ? nilai : null;
+  await env.DB.prepare("UPDATE pks_perjanjian SET sub_progres = ?, sheet_status = 'antre', diperbarui_pada = ? WHERE id = ?").bind(v, now(), id).run();
+  await audit(env, aktor, id, 'progres_ttd', { sub_progres: v || 'DONE SIGN MITRA' });
+}
+
+/** Catatan VM (REMARK / REMARK SANS di spreadsheet). */
+export async function catatVm(env, user, id, teks) {
+  const p = await loadP(env, id);
+  const t = String(teks || '').trim().slice(0, 500);
+  await env.DB.prepare("UPDATE pks_perjanjian SET remark_vm = ?, sheet_status = 'antre', diperbarui_pada = ? WHERE id = ?").bind(t || null, now(), p.id).run();
+  await audit(env, aktorDari(user), id, 'catatan_vm', { catatan: t });
+}
+
+/**
+ * Penyelesaian: scan dokumen bertanda tangan kedua pihak (basah) atau hasil fitur Signing.
+ * Dari tahap 6; hasil Signing yang sudah memuat TTD kedua pihak juga boleh dari tahap 5 (`lengkap=1`).
+ */
+export async function ttdIje(env, user, id, form, ctx) {
+  const boleh = user.peran === 'admin' || user.peran === 'admin_ttd' || user.penandatangan;
+  if (!boleh) fail(403, 'Hanya Akun Utama atau Admin TTD yang dapat menyelesaikan penandatanganan');
+  const aktor = aktorDari(user);
+  const p = await loadP(env, id);
   const opsi = String(form.get('opsi'));
-  const file = form.get('berkas');
-  let bytes, penanda, halaman;
-  if (opsi === '1') { ({ bytes, halaman } = await tempelTtd(env, p, 'ije', file)); penanda = 'hasil_tempel'; }
-  else if (opsi === '2') {
-    checkFile(file, ['application/pdf']);
-    bytes = await bytesOf(file);
-    halaman = await pageCount(bytes);
-    const ref = await latestDoc(env, id, 'bernomor');
-    if (ref?.halaman && halaman !== ref.halaman) fail(422, `Jumlah halaman scan (${halaman}) berbeda dengan dokumen bernomor (${ref.halaman})`);
-    penanda = 'scan_asli';
-  } else fail(400, 'Pilih opsi tanda tangan');
+  const lengkap = opsi === 'signing' && String(form.get('lengkap') || '') === '1';
+  need(p, ...(lengkap ? [5, 6] : [6]));
+  const s = await scanTtd(env, p, opsi, form.get('berkas'));
   const efektif = String(form.get('tgl_efektif') || '').trim() || new Date(Date.now() + 7 * 3600_000).toISOString().slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(efektif)) fail(400, 'Tanggal efektif tidak valid');
   const { masa } = await posisi(env, p, 'ije');
   const bulan = Number(form.get('masa_bulan') || masa);
+  if (!(bulan >= 1 && bulan <= 120)) fail(400, 'Masa berlaku 1–120 bulan');
   const berakhir = addMonths(efektif, bulan);
-  const doc = await addDoc(env, p, { jenis: 'final', penanda, name: `${p.kode} Final ${p.nomor_surat}.pdf`.replace(/[\\/]/g, '-'), mime: 'application/pdf', bytes, aktor: user.email, halaman });
+  if (p.tahap === 5) {
+    // Hasil Signing berisi TTD kedua pihak: catat juga sebagai TTD mitra agar riwayat lengkap.
+    await env.DB.prepare("UPDATE pks_dokumen SET status = 'ditolak' WHERE perjanjian_id = ? AND jenis = 'ttd_mitra' AND status = 'menunggu_review'").bind(id).run();
+    await addDoc(env, p, { jenis: 'ttd_mitra', penanda: null, name: `${p.kode} TTD Mitra (Signing).pdf`, mime: 'application/pdf', bytes: s.bytes, aktor, halaman: s.halaman });
+    await setTahap(env, p, 6, aktor, 'TTD kedua pihak lewat fitur Signing');
+  }
+  const doc = await addDoc(env, p, { jenis: 'final', penanda: s.penanda, name: `${p.kode} Final ${p.nomor_surat}${s.label}.pdf`.replace(/[\\/]/g, '-'), mime: 'application/pdf', bytes: s.bytes, aktor, halaman: s.halaman });
   await env.DB.prepare('UPDATE pks_perjanjian SET tgl_efektif = ?, tgl_berakhir = ? WHERE id = ?').bind(efektif, berakhir, id).run();
   Object.assign(p, { tgl_efektif: efektif, tgl_berakhir: berakhir });
-  await setTahap(env, p, 7, user.email, 'Ditandatangani kedua pihak');
+  await setTahap(env, p, 7, aktor, opsi === 'signing' ? 'Ditandatangani kedua pihak (fitur Signing)' : 'Ditandatangani basah kedua pihak');
   await env.DB.prepare('UPDATE pks_token SET dicabut = 1 WHERE perjanjian_id = ?').bind(id).run();
-  await audit(env, user.email, id, 'perjanjian_selesai', { dokumen: doc.id, tgl_efektif: efektif, tgl_berakhir: berakhir });
-  // Arsip Drive dan email ke mitra berjalan di latar belakang agar penandatangan tidak menunggu.
-  const arsip = arsipkan(env, user.email, p, doc, bytes).catch((e) => audit(env, 'sistem', id, 'arsip_gagal', { galat: e.message }));
+  await audit(env, aktor, id, 'perjanjian_selesai', { dokumen: doc.id, tgl_efektif: efektif, tgl_berakhir: berakhir, cara: opsi });
+  // Arsip Drive dan email ke mitra berjalan di latar belakang agar pengguna tidak menunggu.
+  const arsip = arsipkan(env, aktor, p, doc, s.bytes).catch((e) => audit(env, 'sistem', id, 'arsip_gagal', { galat: e.message }));
   if (ctx?.waitUntil) ctx.waitUntil(arsip); else await arsip;
-  const surel = sendMail(env, { perjanjianId: id, tipe: 'final', to: p.mitra.emails, ...templates.final({ p, m: p.mitra }), attachments: [{ name: doc.nama, mime: 'application/pdf', bytes }], threadId: p.gmail_thread_id })
+  const surel = sendMail(env, { perjanjianId: id, tipe: 'final', to: p.mitra.emails, ...templates.final({ p, m: p.mitra }), attachments: [{ name: doc.nama, mime: 'application/pdf', bytes: s.bytes }], threadId: p.gmail_thread_id })
     .catch((e) => audit(env, 'sistem', id, 'email_final_gagal', { galat: e.message }));
   const kabar = arsip.then(() => kabarLegal(env, p, 'final'));
   if (ctx?.waitUntil) { ctx.waitUntil(surel); ctx.waitUntil(kabar); } else { await surel; await kabar; }
   return doc.id;
+}
+
+/** Kabar ke Admin TTD (email). `siap`: dokumen bernomor sudah ke mitra; `masuk`: mitra mengunggah scan. */
+export async function kabarAdminTtd(env, p, kejadian) {
+  const ke = (await env.DB.prepare('SELECT email FROM pks_ttd_admin WHERE aktif = 1').all()).results.map((r) => r.email);
+  const pic = kejadian === 'masuk' ? (await env.DB.prepare('SELECT email FROM pks_pengguna WHERE email = ? AND aktif = 1').bind(p.pic_vm).first())?.email : null;
+  const to = [...new Set([...ke, ...(pic ? [pic] : [])])];
+  if (!to.length) return;
+  await sendMail(env, { perjanjianId: p.id, tipe: 'ttd_admin', to, ...templates.ttd_admin({ p, m: p.mitra, kejadian, url: `${env.APP_URL}/admin-ttd.html` }) }).catch(() => {});
 }
 
 
@@ -390,7 +453,7 @@ export async function arsipkan(env, aktor, p, doc, bytes) {
   if (!googleEnabled(env)) return null;
   const nama = String(doc.nama).replace(/[\\/:*?"<>|]+/g, ' ').trim();
   const r = await driveArsip(env, p.mitra.nama, nama, 'application/pdf', bytes);
-  await env.DB.prepare('UPDATE pks_perjanjian SET arsip_url = ?, arsip_folder_url = ? WHERE id = ?').bind(r.url, r.folderUrl, p.id).run();
+  await env.DB.prepare("UPDATE pks_perjanjian SET arsip_url = ?, arsip_folder_url = ?, sheet_status = 'antre' WHERE id = ?").bind(r.url, r.folderUrl, p.id).run();
   Object.assign(p, { arsip_url: r.url, arsip_folder_url: r.folderUrl });
   await audit(env, aktor, p.id, 'diarsipkan', { berkas: r.id, folder: r.folderId });
   return r;
@@ -416,9 +479,10 @@ export async function arsipUlang(env, user, id) {
 // ---------------- Kirim sekaligus (Inner City) ----------------
 // Membuat draf + mengirim ke mitra memakai format email di Pengaturan. Diproses per kelompok kecil agar tidak melewati batas waktu Worker.
 // Isian yang tidak ada di info perseroan (domisili, jabatan) diisi "-"/"Direktur"; mitra melengkapinya lewat tautan (bagian kuning).
-export async function kirimMitra(env, user, { rows = null, batas = 4, lewati = [] } = {}) {
+export async function kirimMitra(env, user, { rows = null, batas = 4, lewati = [], jenis = 'PKS' } = {}) {
+  jenis = cekJenis(jenis);
   const skip = new Set((Array.isArray(lewati) ? lewati : []).map(Number));
-  const sudah = new Set((await env.DB.prepare("SELECT DISTINCT mitra_row FROM pks_perjanjian WHERE status != 'batal'").all()).results.map((r) => r.mitra_row));
+  const sudah = new Set((await env.DB.prepare("SELECT DISTINCT mitra_row FROM pks_perjanjian WHERE status != 'batal' AND jenis = ?").bind(jenis).all()).results.map((r) => r.mitra_row));
   // Dengan `rows`: mitra mana pun di info perseroan (urutan dipertahankan). Tanpa `rows`: seluruh Inner City.
   const target = Array.isArray(rows)
     ? [...new Set(rows.map(Number).filter(Boolean))].map((r) => ({ source_row: r, nama_acuan: '' })).filter((r) => !sudah.has(r.source_row) && !skip.has(r.source_row))
@@ -434,8 +498,9 @@ export async function kirimMitra(env, user, { rows = null, batas = 4, lewati = [
       nama = m.nama;
       if (!m.emails.length) fail(422, 'Email mitra kosong di info perseroan');
       const form = new FormData();
-      form.set('mitra_row', String(r.source_row)); form.set('jenis', 'PKS'); form.set('judul', `Perjanjian Kerja Sama ${m.nama}`);
-      form.set('isi', JSON.stringify({ tanggal: hari, nama: m.nama, domisili: '-', wakil: m.direksi || '-', jabatan: 'Direktur', alamat: m.alamat || '-', telp: m.telepon || '-', email: m.emails.join('; '), up: m.kontak_lain || '-' }));
+      form.set('mitra_row', String(r.source_row)); form.set('jenis', jenis);
+      form.set('judul', jenis === 'MS' ? `PKS MS & SPK MS ${m.nama}` : `Perjanjian Homepass ${m.nama}`);
+      form.set('isi', JSON.stringify({ tanggal: hari, tanggal_spk: hari, nama: m.nama, domisili: '-', wakil: m.direksi || '-', jabatan: 'Direktur', alamat: m.alamat || '-', telp: m.telepon || '-', email: m.emails.join('; '), up: m.kontak_lain || '-' }));
       id = await create(env, user, form);
       await kirim(env, user, id);
       hasil.push({ row: r.source_row, nama, ok: true, id });
@@ -457,6 +522,7 @@ export async function mundur(env, user, id, { ke, alasan }) {
   if (!(ke >= 0 && ke < p.tahap)) fail(400, 'Tahap tujuan harus sebelum tahap saat ini');
   if (!alasan || alasan.trim().length < 5) fail(400, 'Alasan pengembalian wajib diisi');
   await env.DB.prepare('UPDATE pks_token SET dicabut = 1 WHERE perjanjian_id = ?').bind(id).run();
+  await env.DB.prepare('UPDATE pks_perjanjian SET remark_vm = ? WHERE id = ?').bind(`Dikembalikan: ${alasan.trim()}`.slice(0, 500), id).run();
   await setTahap(env, p, ke, user.email, `Dikembalikan: ${alasan}`);
   await audit(env, user.email, id, 'tahap_dikembalikan', { ke, alasan });
 }
@@ -467,7 +533,7 @@ export async function batal(env, user, id, { alasan }) {
   if (!alasan || alasan.trim().length < 5) fail(400, 'Alasan pembatalan wajib diisi');
   const t = now();
   await env.DB.batch([
-    env.DB.prepare("UPDATE pks_perjanjian SET status = 'batal', alasan_batal = ?, tenggat = NULL, diperbarui_pada = ? WHERE id = ?").bind(alasan, t, id),
+    env.DB.prepare("UPDATE pks_perjanjian SET status = 'batal', alasan_batal = ?, tenggat = NULL, sheet_status = 'antre', diperbarui_pada = ? WHERE id = ?").bind(alasan, t, id),
     env.DB.prepare('UPDATE pks_tahap SET selesai = ? WHERE perjanjian_id = ? AND selesai IS NULL').bind(t, id),
     env.DB.prepare('UPDATE pks_token SET dicabut = 1 WHERE perjanjian_id = ?').bind(id),
   ]);

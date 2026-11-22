@@ -43,6 +43,18 @@ export async function driveDownload(env, fileId) {
   return Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
 }
 
+/** Word (.docx) → PDF lewat Google Drive (berkas sementara dihapus oleh jembatan). */
+export async function docxKePdf(env, name, bytes) {
+  const { b64: data } = await bridge(env, 'docx_pdf', { name, b64: b64(bytes) });
+  return Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
+}
+
+// ---------- Spreadsheet (VM Starlite Sheet) ----------
+/** Tulis satu baris berdasarkan kunci (kolom "NO ID"). Hanya kolom yang dikirim yang diubah. */
+export async function sheetUpsert(env, sheet, key, data) {
+  return bridge(env, 'sheet_upsert', { sheet, kunci: key, kolomKunci: 'NO ID', data }); // 'key' dipakai untuk kunci rahasia jembatan
+}
+
 // ---------- Gmail ----------
 const encWord = (s) => /^[\x20-\x7e]*$/.test(s) ? s : `=?UTF-8?B?${b64(new TextEncoder().encode(s))}?=`;
 const wrap76 = (s) => s.replace(/.{1,76}/g, '$&\r\n');

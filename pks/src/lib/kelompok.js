@@ -88,10 +88,11 @@ export async function overview(env, { jenis = '' } = {}) {
 }
 
 // Seluruh mitra di info perseroan + penanda Inner City + status perjanjian terbarunya (untuk daftar kirim sekaligus).
-export async function daftarMitra(env) {
+export async function daftarMitra(env, { jenis = 'PKS' } = {}) {
   const mitra = await listMitra(env, { limit: 5000 });
   const ic = new Set((await env.DB.prepare("SELECT source_row FROM pks_mitra_kelompok WHERE kelompok = 'inner_city' AND source_row IS NOT NULL").all()).results.map((r) => r.source_row));
-  const rows = (await env.DB.prepare("SELECT id, mitra_row, tahap, tgl_berakhir FROM pks_perjanjian WHERE status != 'batal' ORDER BY dibuat_pada DESC").all()).results;
+  // Status "sudah/belum berperjanjian" dihitung per jenis (Homepass dan PKS MS & SPK MS terpisah).
+  const rows = (await env.DB.prepare("SELECT id, mitra_row, tahap, tgl_berakhir FROM pks_perjanjian WHERE status != 'batal' AND jenis = ? ORDER BY dibuat_pada DESC").bind(jenis).all()).results;
   const today = hariIni();
   return mitra.map((m) => {
     const ps = rows.filter((r) => r.mitra_row === m.row);

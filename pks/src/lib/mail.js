@@ -37,10 +37,18 @@ export const templates = {
     html: layout(`<p>Legal telah menerbitkan nomor <b>${e(p.nomor_surat)}</b> untuk perjanjian dengan <b>${e(m.nama)}</b>. Silakan bagikan kembali ke mitra.</p>`, { url: `${appUrl}/#/pks/perjanjian/${p.id}`, label: 'Bagikan ke mitra' }),
   }),
   bagikan: ({ p, m, tenggat, url }) => ({
-    subject: `Penandatanganan Perjanjian No. ${p.nomor_surat} — ${m.nama}`,
+    subject: `Penandatanganan ${p.jenis === 'MS' ? 'PKS MS & SPK MS' : 'Perjanjian'} No. ${p.nomor_surat} — ${m.nama}`,
     html: layout(`<p>Yth. Direksi ${e(m.nama)},</p>
-<p>Terlampir perjanjian <b>No. ${e(p.nomor_surat)}</b>. Mohon ditandatangani, dibubuhi stempel perusahaan dan meterai, lalu diunggah paling lambat <b>${fmtTgl(tenggat)}</b> dengan salah satu cara:</p>
-<ol style="padding-left:18px"><li>Unggah scan tanda tangan beserta stempel dan meterai; sistem menempelkannya pada dokumen.</li><li>Unggah scan dokumen lengkap yang sudah ditandatangani.</li></ol>`, { url, label: 'Unggah tanda tangan' }),
+<p>Terlampir dokumen <b>${e(p.judul)}</b> No. <b>${e(p.nomor_surat)}</b>${p.nomor_spk ? ` (SPK MS No. <b>${e(p.nomor_spk)}</b>)` : ''}. Mohon:</p>
+<ol style="padding-left:18px"><li>Cetak dan tandatangani basah oleh penandatangan yang tercantum, bubuhkan stempel perusahaan dan meterai.</li><li>Pindai (scan) <b>seluruh halaman</b> menjadi satu berkas PDF.</li><li>Unggah melalui tautan di bawah paling lambat <b>${fmtTgl(tenggat)}</b>.</li></ol>
+<p>Dokumen asli bertanda tangan basah mohon disimpan; tim kami akan menghubungi untuk pengambilan bila diperlukan.</p>`, { url, label: 'Unggah dokumen bertanda tangan' }),
+  }),
+  ttd_admin: ({ p, m, url, kejadian }) => ({
+    subject: `[Starlite] ${kejadian === 'masuk' ? 'TTD mitra masuk' : 'Siap dikejar TTD'} — ${p.nomor_surat || p.kode} ${m.nama}`,
+    html: layout(kejadian === 'masuk'
+      ? `<p>${e(m.nama)} mengunggah dokumen bertanda tangan untuk <b>${e(p.judul)}</b> No. ${e(p.nomor_surat || '-')}. Mohon diperiksa, lalu lanjutkan penandatanganan PT IJE.</p>`
+      : `<p>Dokumen <b>${e(p.judul)}</b> No. <b>${e(p.nomor_surat)}</b>${p.nomor_spk ? ` (SPK MS No. ${e(p.nomor_spk)})` : ''} dengan <b>${e(m.nama)}</b> sudah dikirim ke mitra untuk tanda tangan basah. Mohon dipantau sampai scan bertanda tangan kedua pihak diunggah.</p>`,
+      { url, label: 'Buka halaman Admin TTD' }),
   }),
   ttd_ditolak: ({ p, m, alasan, url }) => ({
     subject: `Mohon unggah ulang tanda tangan — ${p.nomor_surat || p.kode}`,
