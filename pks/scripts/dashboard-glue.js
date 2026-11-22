@@ -1,7 +1,7 @@
 /* ===== Perjanjian — penghubung menu dashboard (khusus Akun Utama) ===== */
 (function () {
   'use strict';
-  try { if (typeof MENU_TABS !== 'undefined' && MENU_TABS.indexOf('pks') < 0) { var ix = MENU_TABS.indexOf('reimburse'); MENU_TABS.splice(ix >= 0 ? ix + 1 : MENU_TABS.length, 0, 'pks'); } } catch (e) { }
+  try { if (typeof MENU_TABS !== 'undefined' && MENU_TABS.indexOf('pks') < 0) { var ix = MENU_TABS.indexOf('perseroan'); MENU_TABS.splice(ix >= 0 ? ix + 1 : MENU_TABS.length, 0, 'pks'); } } catch (e) { }  // menu Perjanjian tepat setelah Info Perseroan
   var g = function (i) { return document.getElementById(i); };
   var utama = function () { try { return !!currentUser && currentUser.role === 'owner' && !!(currentUser.perms || {}).mainOwner; } catch (e) { return false; } };
   var SUB = { overview: 'ov', perjanjian: 'list', pengaturan: 'set' };

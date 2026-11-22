@@ -1,4 +1,4 @@
-// Menyusun antarmuka PKS (public/app.js + ttd.js + app.css) menjadi satu skrip untuk dashboard VM.
+// Menyusun antarmuka PKS (public/app.js + app.css) menjadi satu skrip untuk dashboard VM.
 // Hasil: dist/pks-dashboard.js — dipasang di index.html dashboard; tampil di dalam #pks-host.
 // Jalankan: node scripts/bundle-dashboard.mjs
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -54,9 +54,8 @@ css += `:host{display:block;background:transparent;color:var(--ink,#1D2A3A);font
 `;
 
 // ---------- JS ----------
-const ttd = readFileSync('public/ttd.js', 'utf8').replace(/^export /gm, '');
+// Tanda tangan ditempel (ttd.js) tidak dipakai lagi: TTD basah + scan, atau fitur Signing dashboard.
 let app = readFileSync('public/app.js', 'utf8');
-app = ganti(app, "import { mountTtdWidget } from './ttd.js';\n", '');
 app = ganti(app, "const $ = (s, r = document) => r.querySelector(s);", 'let ROOT = null;\nconst $ = (s, r = ROOT || document) => r.querySelector(s);');
 app = ganti(app, "const $$ = (s, r = document) => [...r.querySelectorAll(s)];", 'const $$ = (s, r = ROOT || document) => [...r.querySelectorAll(s)];');
 app = ganti(app, "const app = $('#app');", 'let app = null;');
@@ -162,11 +161,10 @@ window.pksMount = function (host) {
 `;
 
 const style = `const CSS = ${JSON.stringify(css + "\n" + cssMuat)};\n(function(){if(document.getElementById('pks-css'))return;var s=document.createElement('style');s.id='pks-css';s.textContent=${JSON.stringify(cssMuat)};document.head.appendChild(s);})();`;
-const out = `/* ===== Perjanjian (PKS) — dibangun otomatis dari repo Perjanjian-kerja-sama (scripts/bundle-dashboard.mjs). Jangan diedit langsung. ===== */
+const out = `/* ===== Perjanjian (PKS) — dibangun otomatis dari folder pks/ (scripts/bundle-dashboard.mjs). Jangan diedit langsung. ===== */
 (function () {
 'use strict';
 ${style}
-${ttd}
 ${muat}
 ${app}
 ${pasang}
