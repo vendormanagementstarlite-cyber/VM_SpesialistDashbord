@@ -89,14 +89,14 @@ app = ganti(app, `<button class="btn" style="width:100%;justify-content:center">
 app = ganti(app, 'tokenSet(r.token); }', 'tokenSet(r.token, f.ingat?.checked); }');
 app = ganti(app, '<h1>Masuk ke Starlite</h1><p class="muted">Pemantauan perjanjian kerja sama mitra</p>', '<h1>Masuk ke Perjanjian</h1><p class="muted">Gunakan akun Admin aplikasi Perjanjian.</p>');
 // akun (ganti password/keluar) pindah ke bilah atas
-// bilah atas ringkas (dashboard sudah punya header, pengguna, dan lonceng): hanya judul, pencarian, dan ikon Pengaturan
+// bilah atas ringkas (dashboard sudah punya header, pengguna, dan lonceng): hanya judul dan pencarian
 {
   const a0 = app.indexOf('<a class="icon-btn" href="#/pks/perjanjian?status=terlambat"');
   const a1 = a0 < 0 ? -1 : app.indexOf('</a>', a0) + 4;
   const w0 = app.indexOf('<div class="who">', a1);
   const w1 = app.indexOf('</div></div>', w0) + '</div></div>'.length;
   if (a0 < 0 || w0 < 0) throw new Error('topbar: pola tidak ditemukan');
-  app = app.slice(0, a0) + '<a class="icon-btn" href="#/pks/pengaturan" aria-label="Pengaturan" title="Pengaturan">${ic("gear")}</a>' + app.slice(w1);
+  app = app.slice(0, a0) + app.slice(w1); // Pengaturan kini submenu di sidebar dashboard
 }
 app = ganti(app, "function bindSearch() {", "function bindSearch() {\n  $('[data-keluar]')?.addEventListener('click', keluar);\n  $('[data-ganti]')?.addEventListener('click', () => bukaGanti(false));");
 app = ganti(app, "if (!mulai.terikat) { window.addEventListener('hashchange', () => S.me && route()); mulai.terikat = true; }",
