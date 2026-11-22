@@ -1,0 +1,22 @@
+{
+  "name": "starlite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "test": "node --test test/unit.test.mjs test/bridge.test.mjs",
+    "e2e": "node test/e2e.mjs",
+    "deploy": "wrangler deploy",
+    "migrate:remote": "wrangler d1 migrations apply starlite-pks --remote",
+    "ui": "node test/ui.mjs",
+    "reset:local": "./scripts/reset-local.sh"
+  },
+  "dependencies": {
+    "hono": "^4.13.19",
+    "pdf-lib": "^1.17.1"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.18.1",
+    "wrangler": "^4.164.0"
+  }
+}

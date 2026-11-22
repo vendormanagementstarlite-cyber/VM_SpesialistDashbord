@@ -1,0 +1,3 @@
+APP_ENV=dev
+APP_URL=http://127.0.0.1:8787
+PKS_TERBUKA=1

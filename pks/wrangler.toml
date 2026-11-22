@@ -1,0 +1,38 @@
+name = "starlite"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+# Seluruh data Starlite
+[[d1_databases]]
+binding = "DB"
+database_name = "starlite-pks"
+database_id = "c9eaed65-9531-412b-98fd-24ef6febfbdd"
+migrations_dir = "migrations"
+
+# Info perseroan (HANYA BACA, tabel mitra). Jangan jalankan migrasi ke database ini.
+[[d1_databases]]
+binding = "VM"
+database_name = "starlite-vm"
+database_id = "799b931e-ed15-4aca-960d-a42d7d2ef6c6"
+migrations_dir = "migrations-vm-dilarang"
+
+[triggers]
+crons = ["*/15 * * * *"]
+
+[vars]
+APP_ENV = "production"
+APP_URL = "https://starlite.hsans-din.workers.dev"
+# Satu aplikasi: antarmuka internal ada di dashboard VM (menu Perjanjian). Tautan internal di email mengarah ke sana; portal mitra & Legal tetap di APP_URL.
+UI_URL = "https://vendormanagementstarlite-cyber.github.io/VM_SpesialistDashbord"
+CORS_ORIGIN = "https://vendormanagementstarlite-cyber.github.io"
+DRIVE_ROOT_FOLDER = "1vJu2toTDvc6-ReOtxPgd-RP_ckBUw6dp"
+MAIL_FROM = "vendor.management@weave.co.id"
+# ACCESS_TEAM_DOMAIN = "<tim>.cloudflareaccess.com"
+# ACCESS_AUD = "<audience tag aplikasi Access>"
+# Secret (jangan ditulis di sini): APPS_SCRIPT_URL, APPS_SCRIPT_KEY, ADMIN_PASSWORD_AWAL — diatur di dashboard Worker
