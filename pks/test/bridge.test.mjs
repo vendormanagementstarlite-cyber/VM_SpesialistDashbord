@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
-import { driveArsip, googleEnabled, drivePath, driveUpload, driveDownload, gmailSend, gmailThreadReplies } from '../src/lib/google.js';
+import { driveArsip, googleEnabled, drivePath, driveUpload, driveDownload, gmailSend, gmailThreadReplies, sheetUpsert, docxKePdf } from '../src/lib/google.js';
 
 const ROOT = 'ROOT_ID';
 function makeGoogle() {
@@ -22,17 +22,46 @@ function makeGoogle() {
   });
   const sent = [];
   const threads = {};
+  // Spreadsheet di memori: { nama: { grid: [[...]], valid: {} } }
+  const sheets = {
+    'PKS PJ': { grid: [['TANGGAL', 'NAMA MITRA', 'PROGRES', 'REMARK', 'RUMUS', 'NO ID']] },
+    'PKS MS & SPK MS': { grid: [['NAMA MITRA', 'Nama Pemilik Rekening ', 'PROGRES SPK MS', 'NO REKENING', 'NO ID']] },
+  };
+  const sheetObj = (nm) => {
+    const sh = sheets[nm]; sh.valid ||= {};
+    const cols = () => sh.grid[0].length;
+    const cell = (r, c) => (sh.grid[r - 1] || [])[c - 1] ?? '';
+    return {
+      getLastColumn: () => cols(), getLastRow: () => sh.grid.length, getMaxRows: () => Math.max(sh.grid.length, 1000), insertRowsAfter() {},
+      getRange: (r, c, nr = 1, nc = 1) => ({
+        getValues: () => [...Array(nr)].map((_, i) => [...Array(nc)].map((_, j) => { const v = cell(r + i, c + j); return typeof v === 'string' && v.startsWith('=') ? 'HASIL' : v; })),
+        getDisplayValues() { return this.getValues().map((row) => row.map(String)); },
+        getFormulas: () => [...Array(nr)].map((_, i) => [...Array(nc)].map((_, j) => { const v = cell(r + i, c + j); return typeof v === 'string' && v.startsWith('=') ? v : ''; })),
+        setValues: (vals) => vals.forEach((row, i) => { const rr = r + i - 1; while (sh.grid.length <= rr) sh.grid.push(Array(cols()).fill('')); row.forEach((v, j) => { sh.grid[rr][c + j - 1] = v; }); }),
+        getDataValidation: () => sh.valid[c] || null,
+        setDataValidation: (v) => { sh.valid[c] = v; },
+      }),
+    };
+  };
+  const drive = { uploads: 0, trashed: [] };
   const props = { KEY: 'rahasia' };
   const g = {
     JSON, String, Array, Error, Math,
     PropertiesService: { getScriptProperties: () => ({ getProperty: (k) => props[k] ?? null }) },
     ContentService: { MimeType: { JSON: 'json' }, createTextOutput: (t) => ({ text: t, setMimeType() { return this; } }) },
     Session: { getEffectiveUser: () => ({ getEmail: () => 'vendor.management@weave.co.id' }) },
-    DriveApp: { getFolderById: (id) => wrap(items.get(id)), getFileById: (id) => wrap(items.get(id)) },
+    DriveApp: { getFolderById: (id) => wrap(items.get(id)), getFileById: (id) => (items.get(id) ? wrap(items.get(id)) : { setTrashed: () => drive.trashed.push(id) }) },
+    SpreadsheetApp: {
+      openById: () => ({ getName: () => 'VM Starlite Sheet', getSheetByName: (nm) => (sheets[nm] ? sheetObj(nm) : null) }),
+      flush() {},
+      newDataValidation: () => { const v = { list: null }; const b = { requireValueInList: (l) => { v.list = l; return b; }, setAllowInvalid: () => b, build: () => v }; return b; },
+    },
+    LockService: { getScriptLock: () => ({ waitLock() {}, releaseLock() {} }) },
     Utilities: {
-      newBlob: (bytes, mime, name) => ({ bytes, mime, name }),
+      newBlob: (bytes, mime, name) => ({ bytes, mime, name, getBytes: () => (typeof bytes === 'string' ? [...Buffer.from(bytes)] : bytes) }),
       base64Decode: (s) => [...Buffer.from(s, 'base64')],
       base64Encode: (b) => Buffer.from(b).toString('base64'),
+      getUuid: () => '1234-5678',
     },
     Logger: { log() {} },
     GmailApp: { getAliases: () => [] },
@@ -40,7 +69,11 @@ function makeGoogle() {
     UrlFetchApp: { fetch: (url, opt) => {
       assert.equal(opt.headers.Authorization, 'Bearer tok');
       let code = 200, body;
-      if (url.endsWith('/messages/send') && opt.method === 'post') {
+      if (url.startsWith('https://www.googleapis.com/upload/drive/v3/files')) {
+        drive.uploads++; drive.lastType = opt.contentType; drive.lastBody = Buffer.from(opt.payload).toString('latin1'); body = { id: 'DOC' + drive.uploads };
+      } else if (/\/drive\/v3\/files\/DOC\d+\/export\?mimeType=application\/pdf$/.test(url)) {
+        return { getResponseCode: () => 200, getBlob: () => ({ getBytes: () => [...Buffer.from('%PDF-1.4 hasil')] }) };
+      } else if (url.endsWith('/messages/send') && opt.method === 'post') {
         const res = JSON.parse(opt.payload); const id = 'a' + ++n; const threadId = res.threadId || 'f' + n;
         sent.push({ ...res, id }); body = { id, threadId };
       } else {
@@ -53,7 +86,7 @@ function makeGoogle() {
   vm.runInContext(readFileSync(new URL('../apps-script/Starlite.gs', import.meta.url), 'utf8'), g);
   vm.runInContext("globalThis.__ROOT = DEFAULT_ROOT; globalThis.doPost = doPost; globalThis.doGet = doGet;", g);
   props.DRIVE_ROOT_FOLDER = ROOT;
-  return { g, items, sent, threads, props };
+  return { g, items, sent, threads, props, sheets, drive };
 }
 
 function env(g) {
@@ -176,5 +209,36 @@ test('driveArsip: folder bernama mitra, berkas langsung di dalamnya, tautan memb
     const r3 = await driveArsip(e, 'PT Contoh/Satu', 'PKS-2 Final 002.pdf', 'application/pdf', new Uint8Array([9]));
     assert.equal(r3.folderId, r1.folderId); assert.notEqual(r3.id, r1.id);
     await assert.rejects(driveArsip(e, '', 'x.pdf', 'application/pdf', new Uint8Array([1])), /wajib/);
+  } finally { restore(); }
+});
+
+test('Spreadsheet: baris baru lalu diperbarui berdasarkan NO ID; rumus & kolom lain tetap; dropdown PROGRES dipasang', async () => {
+  const { g, sheets } = makeGoogle(); const restore = installFetch(g); const e = env(g);
+  try {
+    sheets['PKS PJ'].grid.push(['', 'MITRA LAMA', '', 'catatan manual', '=A2', 'PKS-2026-0001']);
+    const r1 = await sheetUpsert(e, 'PKS PJ', 'PKS-2026-0002', { 'TANGGAL': '2026-11-23', 'NAMA MITRA': 'PT BARU', 'PROGRES': 'DRAFT DI BUAT', 'KOLOM ASING': 'x' });
+    assert.equal(r1.row, 3); assert.deepEqual(r1.tidak_ada, ['KOLOM ASING']);
+    const baris = sheets['PKS PJ'].grid[2];
+    assert.ok(baris[0] instanceof Date || Object.prototype.toString.call(baris[0]) === '[object Date]', 'tanggal jadi Date');
+    assert.equal(baris[1], 'PT BARU'); assert.equal(baris[5], 'PKS-2026-0002');
+    assert.ok(sheets['PKS PJ'].valid[3]?.list.includes('DONE'), 'dropdown PROGRES');
+    const r2 = await sheetUpsert(e, 'PKS PJ', 'PKS-2026-0001', { 'PROGRES': 'DONE' });
+    assert.equal(r2.row, 2);
+    assert.deepEqual(sheets['PKS PJ'].grid[1], ['', 'MITRA LAMA', 'DONE', 'catatan manual', '=A2', 'PKS-2026-0001']);
+    // judul kolom berspasi di ujung tetap cocok; nomor rekening sebagai teks
+    await sheetUpsert(e, 'PKS MS & SPK MS', 'MS-2026-0001', { 'NAMA PEMILIK REKENING': 'PT X', 'NO REKENING': "'0012345" });
+    assert.deepEqual(sheets['PKS MS & SPK MS'].grid[1], ['', 'PT X', '', "'0012345", 'MS-2026-0001']);
+    await assert.rejects(sheetUpsert(e, 'Info Perseroan', 'x', {}), /lembar tidak diizinkan/);
+  } finally { restore(); }
+});
+
+test('Word → PDF lewat Drive: konversi, ekspor, berkas sementara dibuang', async () => {
+  const { g, drive } = makeGoogle(); const restore = installFetch(g); const e = env(g);
+  try {
+    const pdf = await docxKePdf(e, 'PKS MS.docx', new Uint8Array([80, 75, 3, 4]));
+    assert.equal(Buffer.from(pdf).toString(), '%PDF-1.4 hasil');
+    assert.match(drive.lastType, /^multipart\/related; boundary=/);
+    assert.match(drive.lastBody, /application\/vnd.google-apps.document/);
+    assert.deepEqual(drive.trashed, ['DOC1']);
   } finally { restore(); }
 });

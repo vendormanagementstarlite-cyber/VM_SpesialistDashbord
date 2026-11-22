@@ -117,3 +117,104 @@ test('kunci aplikasi: hanya admin; /api/me tetap boleh; produksi tidak bisa dibu
   const prod = ctxUji('vm', { PKS_TERBUKA: '1' }); prod.env.APP_ENV = 'production'; prod.req.header = () => 'Bearer x';
   await assert.rejects(() => requireUser(prod), () => true); // produksi: bendera dev diabaikan (tanpa sesi valid tetap ditolak)
 });
+
+// ---------- PKS MS & SPK MS ----------
+import { MS_FIELDS, siapkanIsianMs, kurangMs, nilaiToken, isiDocx, tokenDocx, buatMs } from '../src/lib/ms.js';
+import { PKS_MS_DOCX, SPK_MS_DOCX } from '../src/templates/ms-docx.js';
+import { unzipSync, strFromU8 } from 'fflate';
+import { belumLengkap, buatDraf, fieldsUntuk } from '../src/lib/dokumen.js';
+
+const isiMs = { tanggal: '2026-11-23', nama: 'PT KARYA & MITRA', wakil: 'BUDI SANTOSO', alamat: 'Jl. Melati No. 10, Kebayoran Baru, Jakarta Selatan, DKI Jakarta 12110', telp: '0812', email: 'a@b.id', up: 'Budi', domisili: 'Jakarta Selatan' };
+
+test('MS: template bertanda lengkap dan semua tanda punya nilai', () => {
+  assert.deepEqual(tokenDocx(PKS_MS_DOCX).sort(), ['alamat', 'bulan', 'dd', 'domisili', 'email', 'hari', 'jabatan', 'mm', 'nama', 'nomor', 'penandatangan', 'tahun_kata', 'telp', 'tgl', 'up', 'y1']);
+  assert.deepEqual(tokenDocx(SPK_MS_DOCX).sort(), ['alamat1', 'alamat2', 'atas_nama', 'bank', 'cabang', 'gudang_alamat', 'gudang_kota', 'jabatan', 'lead_ikr', 'nama', 'no_rek', 'nomor', 'nomor_spk', 'penandatangan', 'tgl_pks_teks', 'tgl_spk_teks']);
+  const nilai = nilaiToken(siapkanIsianMs(isiMs));
+  for (const t of [...tokenDocx(PKS_MS_DOCX), ...tokenDocx(SPK_MS_DOCX)]) assert.ok(t in nilai, `nilai untuk ${t}`);
+});
+
+test('MS: isian dinormalisasi, tanggal/angka divalidasi, kekurangan terdeteksi', () => {
+  const v = siapkanIsianMs(isiMs);
+  assert.equal(v.tanggal_spk, '2026-11-23'); assert.equal(v.jabatan, 'Direktur'); assert.equal(v.no_rek, '-');
+  assert.deepEqual(kurangMs(v), ['Nama pemilik rekening', 'Nomor rekening', 'Nama bank', 'Cabang bank', 'Alamat gudang', 'Kota gudang', 'Lead time pemasangan IKR (jam)']);
+  assert.throws(() => siapkanIsianMs({ ...isiMs, tanggal: '2030-01-02' }), /2026–2029/);
+  assert.throws(() => siapkanIsianMs({ ...isiMs, tanggal: '2026-02-30' }), /tidak valid/);
+  assert.throws(() => siapkanIsianMs({ ...isiMs, lead_ikr: '24 jam' }), /angka jam/);
+  assert.throws(() => siapkanIsianMs({ ...isiMs, no_rek: 'abc' }), /angka/);
+  assert.throws(() => siapkanIsianMs({ ...isiMs, nama: '' }), /wajib diisi/);
+  const lengkap = siapkanIsianMs({ ...isiMs, atas_nama: 'PT K', no_rek: '0012 345', bank: 'Mandiri', cabang: 'KCP', gudang_alamat: 'Jl. G', gudang_kota: 'Jakarta', lead_ikr: '24' });
+  assert.deepEqual(kurangMs(lengkap), []);
+  assert.deepEqual(belumLengkap('MS', lengkap), []);
+});
+
+test('MS: nilai tanggal & alamat dua baris; nomor kosong tampil titik-titik', () => {
+  const n = nilaiToken(siapkanIsianMs(isiMs));
+  assert.equal(n.hari, 'Senin'); assert.equal(n.tgl, '23'); assert.equal(n.bulan, 'November'); assert.equal(n.tahun_kata, 'Enam'); assert.equal(n.dd, '23'); assert.equal(n.mm, '11'); assert.equal(n.y1, '6');
+  assert.equal(n.tgl_spk_teks, '23 November 2026');
+  assert.ok(n.alamat1.endsWith(',') && n.alamat2.length > 0, 'alamat panjang dibagi di koma');
+  assert.match(n.nomor, /^…+$/);
+  assert.equal(nilaiToken(siapkanIsianMs(isiMs), { nomor: '01/PKS', nomor_spk: '02/SPK' }).nomor_spk, '02/SPK');
+});
+
+test('MS: isi Word mengganti semua tanda dan meng-escape XML', () => {
+  const n = nilaiToken(siapkanIsianMs(isiMs), { nomor: 'A<1>', nomor_spk: 'B' });
+  for (const tpl of [PKS_MS_DOCX, SPK_MS_DOCX]) {
+    const out = unzipSync(isiDocx(tpl, n));
+    const x = strFromU8(out['word/document.xml']);
+    assert.ok(!/\{\{\w+\}\}/.test(x), 'tidak ada tanda tersisa');
+    assert.ok(x.includes('PT KARYA &amp; MITRA'));
+    if (tpl === PKS_MS_DOCX) assert.ok(x.includes('A&lt;1&gt;'));
+    assert.ok(out['[Content_Types].xml'] && out['word/styles.xml'], 'struktur docx utuh');
+  }
+});
+
+test('MS: PDF gabungan (mode dev tanpa Google) = PKS MS 20 hal + SPK MS 15 hal', async () => {
+  const r = await buatMs({ APP_ENV: 'dev' }, isiMs);
+  assert.equal(r.halaman, 35); assert.equal(r.halPks, 20);
+  await assert.rejects(buatMs({ APP_ENV: 'production' }, isiMs), /Jembatan Google belum aktif/);
+});
+
+test('Homepass: draf dengan isian minimal (sisanya "-" dilengkapi mitra) dan cek kelengkapan', async () => {
+  const d = await buatDraf({}, 'PKS', { tanggal: '2026-11-23', nama: 'PT UJI', wakil: 'BUDI' });
+  assert.equal(d.isian.domisili, '-'); assert.equal(d.isian.jabatan, 'Direktur');
+  assert.deepEqual(belumLengkap('PKS', d.isian), ['Berkedudukan di', 'Alamat korespondensi (Pasal 24)', 'Telepon', 'Email', 'Up. (untuk perhatian)']);
+  assert.ok(fieldsUntuk('PKS').find((f) => f.key === 'domisili').lengkapi);
+  assert.equal(MS_FIELDS.length, 17);
+});
+
+// ---------- Spreadsheet ----------
+import { barisSheet, progresDari, PROGRES } from '../src/lib/sheet.js';
+function dbPalsu(map) {
+  return { prepare: (sql) => ({ bind: () => ({ first: async () => { for (const [k, v] of Object.entries(map)) if (sql.includes(k)) return v; return null; } }) }) };
+}
+test('Spreadsheet: PROGRES per tahap sesuai dropdown', async () => {
+  const env = { DB: dbPalsu({ "jenis = 'master'": { n: 2, akhir: '2026-11-02' }, 'pks_feedback': { akhir: '2026-11-01' } }) };
+  const cek = async (p) => progresDari(env, { id: 'x', ...p });
+  assert.equal(await cek({ tahap: 0 }), 'REVIEW DRAFT');
+  assert.equal(await cek({ tahap: 1 }), 'DONE EMAIL TO MITRA');
+  assert.equal(await cek({ tahap: 2 }), 'REVIEW DRAFT');
+  assert.equal(await cek({ tahap: 3 }), 'REVIEW LEGAL IJE');
+  assert.equal(await cek({ tahap: 4 }), 'NO PKS RILIS');
+  assert.equal(await cek({ tahap: 5 }), 'PROSES SIGN MITRA');
+  assert.equal(await cek({ tahap: 6 }), 'DONE SIGN MITRA');
+  assert.equal(await cek({ tahap: 6, sub_progres: 'PROSES SIGN IJE' }), 'PROSES SIGN IJE');
+  assert.equal(await cek({ tahap: 7 }), 'DONE SIGN IJE');
+  assert.equal(await cek({ tahap: 7, arsip_url: 'https://drive' }), 'DONE');
+  const env2 = { DB: dbPalsu({ "jenis = 'master'": { n: 1, akhir: '2026-11-01' }, 'pks_feedback': { akhir: '2026-11-02' } }) };
+  assert.equal(await progresDari(env2, { id: 'x', tahap: 0 }), 'DRAFT DI BUAT');
+  assert.equal(await progresDari(env2, { id: 'x', tahap: 2 }), 'FEEDBACK MITRA');
+  for (const v of ['DRAFT DI BUAT', 'DONE']) assert.ok(PROGRES.includes(v));
+});
+
+test('Spreadsheet: WAKIL hanya terisi bila penandatangan bukan direktur; kolom MS & Homepass', async () => {
+  const env = { UI_URL: 'https://ui', DB: dbPalsu({ pks_feedback: { isi: 'ok setuju', pengirim: 'x' }, pks_pengguna: { nama: 'Vendor Management' }, "jenis = 'master'": { n: 1, akhir: 'a' } }) };
+  const p = { id: 'p1', kode: 'PKS-2026-0001', jenis: 'PKS', tahap: 4, nomor_surat: '01/PKS', pic_vm: 'vm@x', mitra: { nama: 'PT A', direksi: 'BUDI', alamat: 'Jl. A', emails: ['a@x'] } };
+  let r = await barisSheet(env, p, { tanggal: '2026-11-23', nama: 'PT A', wakil: 'budi', jabatan: 'Direktur Utama', domisili: 'Jakarta', telp: '08', email: 'a@x' });
+  assert.equal(r.WAKIL, ''); assert.equal(r['JABATAN WAKIL'], ''); assert.equal(r.JABATAN, 'Direktur Utama'); assert.equal(r['NAMA DIREKSI'], 'BUDI');
+  assert.equal(r.PROGRES, 'NO PKS RILIS'); assert.equal(r['NO ID'], 'PKS-2026-0001'); assert.equal(r['ATC FINAL DRAF'], 'https://ui/#/pks/perjanjian/p1'); assert.match(r.REMARK, /Mitra: ok setuju/);
+  r = await barisSheet(env, p, { tanggal: '2026-11-23', nama: 'PT A', wakil: 'SITI', jabatan: 'Manajer Operasional' });
+  assert.equal(r.WAKIL, 'SITI'); assert.equal(r['JABATAN WAKIL'], 'Manajer Operasional'); assert.equal(r.JABATAN, 'Direktur');
+  const ms = await barisSheet(env, { ...p, jenis: 'MS', kode: 'MS-2026-0001', nomor_spk: '02/SPK', arsip_url: 'https://drive/f', tahap: 7, remark_legal: 'cek lampiran' }, { ...siapkanIsianMs(isiMs), no_rek: '00123', lead_ikr: '24' });
+  assert.equal(ms['NO REKENING'], "'00123"); assert.equal(ms['LEAD TIME IKR (JAM)'], 24); assert.equal(ms['NO SPK MS'], '02/SPK'); assert.equal(ms['TANGGAL SPK MS'], '2026-11-23');
+  assert.equal(ms['PROGRES PKS MS'], 'DONE'); assert.equal(ms['ATC PKS MS & SPK MS'], 'https://drive/f'); assert.equal(ms['REMARK LEGAL IJE'], 'cek lampiran'); assert.equal(ms['NAMA BANK'], '');
+});
