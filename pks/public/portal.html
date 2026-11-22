@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex">
+  <title>Perjanjian Kerja Sama — Starlite</title>
+  <link rel="icon" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+  <style>
+    .portal { max-width: 720px; margin: 0 auto; padding: 28px 18px 56px; }
+    .portal header { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+    .portal header img { width: 40px; height: 40px; }
+    .portal header b { font-size: 18px; color: var(--navy); font-weight: 800; display: block; }
+    .portal header span { font-size: 12.5px; color: var(--muted); }
+    .step { display: grid; grid-template-columns: 34px 1fr; gap: 14px; margin-top: 16px; }
+    .step .n { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; background: var(--sky); color: var(--blue-d); }
+    .step.done .n { background: var(--ok-bg); color: var(--ok); }
+    .hero { padding: 24px; }
+    .hero h1 { font-size: 22px; margin: 6px 0 4px; }
+  </style>
+</head>
+<body>
+  <div class="portal">
+    <header><img src="/logo.png" alt=""><div><b>Starlite</b><span>Vendor Management, PT Integrasi Jaringan Ekosistem</span></div></header>
+    <main id="p" tabindex="-1"><div class="skeleton"></div></main>
+  </div>
+  <script src="/muat.js"></script>
+  <script type="module" src="/portal.js"></script>
+</body>
+</html>
