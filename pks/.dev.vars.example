@@ -1,3 +1,6 @@
 APP_ENV=dev
 APP_URL=http://127.0.0.1:8787
 PKS_TERBUKA=1
+# Uji dashboard lokal (test/dashboard.mjs): origin dashboard lokal + tiruan verifikasi sesi dashboard
+CORS_ORIGIN=https://vendormanagementstarlite-cyber.github.io,http://localhost:8099
+VM_BACKEND_URL=http://127.0.0.1:8098

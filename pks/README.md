@@ -2,19 +2,32 @@
 
 Aplikasi Vendor Management PT Integrasi Jaringan Ekosistem untuk memantau perjanjian jasa kerja sama dengan mitra, dari pengiriman dokumen sampai arsip final.
 
-## Alur
+## Jenis perjanjian
 
-| Tahap | Proses | Aktor |
-|---|---|---|
-| 0 | Buat perjanjian dari data info perseroan + unggah dokumen (dikunci) | VM |
-| 1 | Kirim email otomatis ke mitra (lampiran + tautan portal) | Sistem |
-| 2 | Tanggapan mitra via portal atau balasan email (ditangkap otomatis) | Mitra |
-| 3 | Serahkan ke Legal | VM |
-| 4 | Legal mengisi nomor surat + unggah PDF bernomor | Legal |
-| 5 | Bagikan kembali ke mitra | Sistem |
-| 6 | TTD mitra: opsi 1 (unggah TTD+stempel+meterai, ditempel otomatis) atau opsi 2 (scan dokumen penuh), diperiksa VM | Mitra / VM |
-| 7 | TTD PT IJE (opsi 1/2), dokumen final dikunci dan dikirim ke mitra | Penandatangan |
-| 8 | Pengingat masa berlaku H-90/60/30 | Sistem |
+| Kode | Nama | Template | Lembar spreadsheet |
+|---|---|---|---|
+| `PKS` | Perjanjian Homepass (PKS PJ) | PDF terkunci (`src/templates/pks-jasa.js`), isian kuning ditimpa | `PKS PJ` |
+| `MS` | PKS MS & SPK MS (satu paket) | Word bertanda `{{kunci}}` (`templates/pks-ms.docx`, `templates/spk-ms.docx`), Word → PDF lewat jembatan Google, digabung jadi satu PDF | `PKS MS & SPK MS` |
+
+## Alur (sama untuk kedua jenis)
+
+| Tahap | Proses | Aktor | PROGRES di spreadsheet |
+|---|---|---|---|
+| 0 | Draf dari data info perseroan (isian lain boleh dilengkapi mitra) | Akun Utama | DRAFT DI BUAT / REVIEW DRAFT |
+| 1 | Email ke mitra (lampiran + tautan) | Sistem | DONE EMAIL TO MITRA |
+| 2 | Mitra melengkapi data (penandatangan: Direktur atau diwakili; MS: rekening, gudang, lead time IKR) dan menyetujui | Mitra | FEEDBACK MITRA / REVIEW DRAFT |
+| 3 | Legal mengisi nomor (MS: nomor PKS MS + nomor SPK MS) lewat tautan + PIN | Legal | REVIEW LEGAL IJE |
+| 4–5 | Nomor dicetak, dokumen bernomor dikirim ke mitra untuk TTD basah | Sistem | NO PKS RILIS → PROSES SIGN MITRA |
+| 6 | Scan TTD basah mitra (diperiksa) atau hasil fitur Signing | Mitra / Admin TTD | DONE SIGN MITRA → PROSES SIGN IJE |
+| 7 | Scan final TTD basah kedua pihak (atau hasil Signing), arsip ke Drive, salinan ke mitra | Admin TTD / Akun Utama | DONE SIGN IJE → DONE |
+
+Menu Perjanjian hanya untuk Akun Utama. Legal dan **Admin TTD** (pengejar tanda tangan, halaman `/admin-ttd.html`) masuk dengan email terdaftar + PIN 4 angka; daftarnya dikelola di Pengaturan.
+
+## Data: spreadsheet + dokumen
+
+- Data setiap perjanjian ditulis ke **VM Starlite Sheet** (lembar di atas, kunci baris kolom `NO ID` = kode perjanjian). Hanya kolom yang diisi aplikasi yang diubah; kolom lain tetap.
+- Setiap perubahan menandai baris "antre", dikirim di latar belakang setelah permintaan selesai, dan dicoba ulang oleh cron 15 menit bila gagal. Status per perjanjian terlihat di halaman detail dan Pengaturan.
+- Dokumen (draf, bernomor, scan) disimpan di Cloudflare; hanya dokumen final yang disalin ke Google Drive.
 
 ## Arsitektur
 
@@ -54,14 +67,15 @@ node test/ui.mjs              # UI di Chrome nyata (27), butuh wrangler dev + Ch
    2. Project Settings → Script properties → tambah `KEY` = kunci acak panjang (mis. 40 karakter).
    3. Deploy → New deployment → Web app: *Execute as* **Me**, *Who has access* **Anyone**. Salin URL `/exec`.
    4. Pastikan akun itu Editor di folder Drive induk (`DRIVE_ROOT_FOLDER`).
-   5. Setiap mengubah kode `.gs`: Deploy → Manage deployments → Edit → Version baru (URL tetap).
+   5. Setiap mengubah kode `.gs`: jalankan `izinkan` sekali (bila ada izin baru, mis. Spreadsheet), lalu Deploy → Manage deployments → Edit → Version baru (URL tetap).
+   6. Akun itu harus Editor di VM Starlite Sheet (properti opsional `SHEET_ID`).
 3. Secret Worker:
    ```bash
    npx wrangler secret put APPS_SCRIPT_URL      # URL /exec
    npx wrangler secret put APPS_SCRIPT_KEY      # sama dengan properti KEY
    npx wrangler secret put ADMIN_PASSWORD_AWAL  # password masuk pertama admin (wajib diganti saat masuk)
    ```
-4. Terapkan migrasi login ke `starlite-pks`: jalankan isi `migrations/0002_login.sql` di Console D1 (0001 sudah diterapkan lewat Console, jadi jangan pakai `migrations apply`).
+4. Migrasi `starlite-pks` dijalankan lewat Console D1 (jangan pakai `migrations apply`): berkas `migrations/000N_*.sql` diterapkan berurutan, **sebelum** kode yang memakainya di-deploy.
 5. Isi `APP_URL` di `wrangler.toml`, lalu `npx wrangler deploy` (atau push ke `main` → Cloudflare Workers Builds: root `pks`, watch path `pks/**`, perintah `npx wrangler deploy`).
 6. Masuk dengan email admin + `ADMIN_PASSWORD_AWAL`, ganti password, lalu tambah pengguna di Pengaturan (password sementara tampil sekali). Disarankan menambah aturan *Rate limiting* Cloudflare untuk `/api/login`.
 
