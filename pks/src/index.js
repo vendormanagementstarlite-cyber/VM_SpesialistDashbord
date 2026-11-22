@@ -6,10 +6,13 @@ import { listMitra, getMitra } from './lib/mitra.js';
 import { googleEnabled, gmailThreadReplies } from './lib/google.js';
 import { sendMail, templates } from './lib/mail.js';
 import * as K from './lib/kelompok.js';
-import { buatMaster } from './lib/template.js';
 import * as F from './lib/flow.js';
 import * as L from './lib/legal.js';
-import { FIELDS, HALAMAN, batasKarakter } from './lib/template.js';
+import { infoTemplate, buatDraf, cekJenis, belumLengkap } from './lib/dokumen.js';
+import { sinkronAntre, sinkronSatu, progresDari, PROGRES, SHEET } from './lib/sheet.js';
+import * as TA from './lib/ttdadmin.js';
+
+const sinkDeps = { isianTerkini: F.isianTerkini, loadP: F.loadP };
 
 const app = new Hono();
 
@@ -23,6 +26,10 @@ app.use('/api/*', async (c, next) => {
   await next();
   c.header('cache-control', 'no-store');
   c.header('x-content-type-options', 'nosniff');
+  // Setiap perubahan data menandai perjanjian "antre"; kirim ke spreadsheet di latar belakang (tidak menunda respons).
+  if (c.req.method !== 'GET' && c.req.method !== 'OPTIONS' && c.res.status < 400) {
+    try { c.executionCtx.waitUntil(sinkronAntre(c.env, sinkDeps, 6).catch((e) => console.error('sinkron sheet', e.message))); } catch {}
+  }
 });
 
 // CORS: frontend boleh dihosting di domain lain (mis. GitHub Pages) hanya bila origin-nya terdaftar di CORS_ORIGIN.
@@ -36,7 +43,7 @@ app.use('/api/*', async (c, next) => {
     c.header('access-control-allow-origin', o);
     c.header('vary', 'Origin');
     c.header('access-control-allow-methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-    c.header('access-control-allow-headers', 'authorization,content-type,x-portal-token,x-legal-sesi,x-vm-token');
+    c.header('access-control-allow-headers', 'authorization,content-type,x-portal-token,x-legal-sesi,x-vm-token,x-ttd-sesi');
     c.header('access-control-max-age', '600');
     return c.body(null, 204);
   }
@@ -103,13 +110,14 @@ app.get('/api/meta', async (c) => {
 // Daftar isian kuning pada template (satu-satunya bagian dokumen yang dapat diisi) dan batas panjangnya.
 app.get('/api/template', async (c) => {
   await user(c);
-  return c.json({ fields: FIELDS, maks: await batasKarakter(), halaman: HALAMAN });
+  return c.json(await infoTemplate(cekJenis(c.req.query('jenis') || 'PKS')));
 });
 
 // Pratinjau dokumen master dari isian kuning (tidak disimpan).
 app.post('/api/pratinjau', async (c) => {
   const u = await user(c); allow(u, 'vm');
-  const { bytes } = await buatMaster((await json(c)).isi || {});
+  const b = await json(c);
+  const { bytes } = await buatDraf(c.env, cekJenis(b.jenis || 'PKS'), b.isi || {});
   return new Response(bytes, { headers: { 'content-type': 'application/pdf', 'content-disposition': 'inline; filename="pratinjau.pdf"', 'cache-control': 'no-store' } });
 });
 
@@ -141,12 +149,13 @@ app.get('/api/mitra/:row', async (c) => {
 // ---------- Perjanjian ----------
 app.get('/api/perjanjian', async (c) => {
   await user(c);
-  const { q = '', tahap = '', status = '' } = c.req.query();
-  let sql = 'SELECT id, kode, mitra_row, snapshot_mitra, jenis, judul, nomor_surat, tahap, status, pic_vm, tenggat, tgl_efektif, tgl_berakhir, dibuat_pada, diperbarui_pada FROM pks_perjanjian WHERE 1=1';
+  const { q = '', tahap = '', status = '', jenis = '' } = c.req.query();
+  let sql = 'SELECT id, kode, mitra_row, snapshot_mitra, jenis, judul, nomor_surat, nomor_spk, tahap, sub_progres, status, pic_vm, tenggat, tgl_efektif, tgl_berakhir, sheet_status, dibuat_pada, diperbarui_pada FROM pks_perjanjian WHERE 1=1';
   const b = [];
-  if (q) { sql += ' AND (upper(snapshot_mitra) LIKE ? OR upper(kode) LIKE ? OR upper(COALESCE(nomor_surat,\'\')) LIKE ? OR upper(judul) LIKE ?)'; const l = `%${q.toUpperCase()}%`; b.push(l, l, l, l); }
+  if (q) { sql += ' AND (upper(snapshot_mitra) LIKE ? OR upper(kode) LIKE ? OR upper(COALESCE(nomor_surat,\'\')) LIKE ? OR upper(COALESCE(nomor_spk,\'\')) LIKE ? OR upper(judul) LIKE ?)'; const l = `%${q.toUpperCase()}%`; b.push(l, l, l, l, l); }
   if (tahap !== '') { const l = F.LANGKAH.find((x) => x.tahap.includes(Number(tahap))); const ts = Number(tahap) === 7 ? [7] : l ? l.tahap : [Number(tahap)]; sql += ` AND tahap IN (${ts.map(() => '?').join(',')}) AND status != 'batal'`; b.push(...ts); }
   if (status === 'batal') sql += " AND status = 'batal'";
+  if (jenis) { sql += ' AND jenis = ?'; b.push(cekJenis(jenis)); }
   sql += ' ORDER BY diperbarui_pada DESC LIMIT 1000';
   const rows = (await c.env.DB.prepare(sql).bind(...b).all()).results;
   let out = rows.map((p) => { const m = JSON.parse(p.snapshot_mitra); delete p.snapshot_mitra; return { ...p, mitra_nama: m.nama, tampil: F.statusTampil(p) }; });
@@ -173,7 +182,7 @@ app.get('/api/perjanjian/:id', async (c) => {
     c.env.DB.prepare('SELECT a.waktu, a.aktor, u.nama aktor_nama, a.aksi, a.data FROM pks_audit a LEFT JOIN pks_pengguna u ON u.email = a.aktor WHERE a.perjanjian_id = ? ORDER BY a.id DESC LIMIT 200').bind(id).all(),
   ]);
   const picNama = (await c.env.DB.prepare('SELECT nama FROM pks_pengguna WHERE email = ?').bind(p.pic_vm).first())?.nama;
-  return c.json({ ...p, pic_nama: picNama || p.pic_vm, tampil: F.statusTampil(p), riwayat: tahap.results, dokumen: dokumen.results, feedback: feedback.results, email: email.results, audit: auditLog.results });
+  return c.json({ ...p, pic_nama: picNama || p.pic_vm, tampil: F.statusTampil(p), progres: await progresDari(c.env, p), sheet: SHEET[p.jenis], riwayat: tahap.results, dokumen: dokumen.results, feedback: feedback.results, email: email.results, audit: auditLog.results });
 });
 
 const act = (roles, fn) => async (c) => {
@@ -199,6 +208,14 @@ app.post('/api/perjanjian/:id/ttd-mitra', act(['vm'], async (c, u, id) => {
 app.post('/api/perjanjian/:id/ttd-mitra/review', act(['vm'], async (c, u, id) => F.reviewTtdMitra(c.env, u, id, await json(c))));
 app.post('/api/perjanjian/:id/ttd-ije', act(['vm'], async (c, u, id) => F.ttdIje(c.env, u, id, await c.req.formData(), c.executionCtx)));
 app.post('/api/perjanjian/:id/arsip', act(['vm'], async (c, u, id) => F.arsipUlang(c.env, u, id)));
+app.post('/api/perjanjian/:id/sub-progres', act(['vm'], async (c, u, id) => F.setSubProgres(c.env, u, id, (await json(c)).nilai)));
+app.post('/api/perjanjian/:id/catatan', act(['vm'], async (c, u, id) => F.catatVm(c.env, u, id, (await json(c)).catatan)));
+app.post('/api/perjanjian/:id/sinkron', act(['vm'], async (c, u, id) => {
+  await F.loadP(c.env, id);
+  const r = await sinkronSatu(c.env, id, sinkDeps);
+  if (!r.ok) fail(502, `Gagal menulis ke spreadsheet: ${r.galat}`);
+  return r;
+}));
 app.post('/api/perjanjian/:id/mundur', act(['vm'], async (c, u, id) => F.mundur(c.env, u, id, await json(c))));
 app.post('/api/perjanjian/:id/batal', act(['vm'], async (c, u, id) => F.batal(c.env, u, id, await json(c))));
 
@@ -281,7 +298,7 @@ app.get('/api/legal/dokumen', async (c) => {
 });
 app.post('/api/legal/nomor', async (c) => {
   const ctx = await legalCtx(c);
-  const r = await L.terbitkan(c.env, ctx, (await json(c)).nomor_surat);
+  const r = await L.terbitkan(c.env, ctx, await json(c));
   return c.json({ ok: true, ...r });
 });
 
@@ -292,13 +309,13 @@ app.get('/api/overview', async (c) => {
   const k = c.req.query('jenis') || '';
   return c.json({ jenis, ...(await K.overview(c.env, { jenis: k })) });
 });
-app.get('/api/overview/mitra', async (c) => { const u = await user(c); allow(u); return c.json(await K.daftarMitra(c.env)); });
+app.get('/api/overview/mitra', async (c) => { const u = await user(c); allow(u); return c.json(await K.daftarMitra(c.env, { jenis: cekJenis(c.req.query('jenis') || 'PKS') })); });
 app.post('/api/overview/kirim-sekaligus', async (c) => {
   const u = await user(c); allow(u);
   const b = await json(c);
   const rows = Array.isArray(b.rows) ? b.rows.map(Number).filter(Boolean).slice(0, 1000) : null;
   const lewati = Array.isArray(b.lewati) ? b.lewati.map(Number).filter(Boolean).slice(0, 500) : [];
-  return c.json({ ok: true, ...(await F.kirimMitra(c.env, u, { rows, batas: Number(b.batas) || 4, lewati })) });
+  return c.json({ ok: true, ...(await F.kirimMitra(c.env, u, { rows, batas: Number(b.batas) || 4, lewati, jenis: b.jenis || 'PKS' })) });
 });
 app.post('/api/overview/arsip-semua', async (c) => {
   const u = await user(c); allow(u);
@@ -313,6 +330,62 @@ app.post('/api/overview/sinkron', async (c) => {
   const r = await K.sinkronInnerCity(c.env);
   await F.audit(c.env, u.email, null, 'kelompok_disinkron', { cocok: r.cocok, tidak_ketemu: r.tidak_ketemu.length, ganda: r.ganda.length });
   return c.json({ ok: true, ...r });
+});
+
+// ---------- Spreadsheet (VM Starlite Sheet) ----------
+app.get('/api/sheet/status', async (c) => {
+  const u = await user(c); allow(u);
+  const rows = (await c.env.DB.prepare("SELECT CASE WHEN sheet_status LIKE 'gagal%' THEN 'gagal' ELSE COALESCE(sheet_status,'belum') END s, COUNT(*) n FROM pks_perjanjian GROUP BY s").all()).results;
+  const gagal = (await c.env.DB.prepare("SELECT id, kode, sheet_status, sheet_waktu FROM pks_perjanjian WHERE sheet_status LIKE 'gagal%' ORDER BY sheet_waktu DESC LIMIT 20").all()).results;
+  return c.json({ ringkas: Object.fromEntries(rows.map((r) => [r.s, r.n])), gagal, sheet: SHEET, progres: PROGRES, aktif: googleEnabled(c.env) });
+});
+app.post('/api/sheet/sinkron', async (c) => {
+  const u = await user(c); allow(u);
+  if (!googleEnabled(c.env)) fail(503, 'Jembatan Google belum aktif');
+  if ((await json(c)).semua) await c.env.DB.prepare("UPDATE pks_perjanjian SET sheet_status = 'antre'").run();
+  const hasil = await sinkronAntre(c.env, sinkDeps, 15);
+  const sisa = (await c.env.DB.prepare("SELECT COUNT(*) n FROM pks_perjanjian WHERE sheet_status = 'antre'").first()).n;
+  await F.audit(c.env, u.email, null, 'sheet_disinkron', { dikirim: hasil.length, gagal: hasil.filter((h) => !h.ok).length });
+  return c.json({ ok: true, hasil, sisa: hasil.some((h) => !h.ok) ? 0 : sisa });
+});
+
+// ---------- Akses Legal & Admin TTD (dikelola Akun Utama) ----------
+const emailValid = (e) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e);
+app.get('/api/admin/akses', async (c) => {
+  const u = await user(c); allow(u);
+  const [legal, ttd] = await Promise.all([
+    c.env.DB.prepare("SELECT p.email, p.nama, p.aktif, CASE WHEN a.email IS NULL THEN 0 ELSE 1 END pin FROM pks_pengguna p LEFT JOIN pks_legal_akses a ON a.email = p.email WHERE p.peran = 'legal' ORDER BY p.aktif DESC, p.nama").all(),
+    c.env.DB.prepare('SELECT email, nama, aktif, CASE WHEN pin_hash IS NULL THEN 0 ELSE 1 END pin FROM pks_ttd_admin ORDER BY aktif DESC, nama').all(),
+  ]);
+  return c.json({ legal: legal.results, admin_ttd: ttd.results, portal_ttd: `${c.env.APP_URL}/admin-ttd.html` });
+});
+app.post('/api/admin/akses', async (c) => {
+  const u = await user(c); allow(u);
+  const b = await json(c);
+  const email = String(b.email || '').trim().toLowerCase();
+  const nama = String(b.nama || '').trim().slice(0, 120) || email;
+  const aktif = b.aktif === false ? 0 : 1;
+  if (!emailValid(email)) fail(400, 'Email tidak valid');
+  if (b.jenis === 'legal') {
+    const ada = await c.env.DB.prepare('SELECT peran FROM pks_pengguna WHERE email = ?').bind(email).first();
+    if (ada && ada.peran !== 'legal') fail(409, `Email ini sudah dipakai dengan peran ${ada.peran}`);
+    await c.env.DB.prepare("INSERT INTO pks_pengguna (email, nama, peran, aktif) VALUES (?,?,'legal',?) ON CONFLICT(email) DO UPDATE SET nama = excluded.nama, aktif = excluded.aktif").bind(email, nama, aktif).run();
+  } else if (b.jenis === 'admin_ttd') {
+    await c.env.DB.prepare('INSERT INTO pks_ttd_admin (email, nama, aktif, dibuat_pada) VALUES (?,?,?,?) ON CONFLICT(email) DO UPDATE SET nama = excluded.nama, aktif = excluded.aktif').bind(email, nama, aktif, now()).run();
+    if (!aktif) await c.env.DB.prepare('DELETE FROM pks_ttd_sesi WHERE email = ?').bind(email).run();
+  } else fail(400, 'Jenis akses tidak dikenal');
+  await F.audit(c.env, u.email, null, 'akses_disimpan', { jenis: b.jenis, email, aktif });
+  return c.json({ ok: true });
+});
+app.post('/api/admin/akses/reset-pin', async (c) => {
+  const u = await user(c); allow(u);
+  const b = await json(c);
+  const email = String(b.email || '').trim().toLowerCase();
+  if (b.jenis === 'legal') { await c.env.DB.prepare('DELETE FROM pks_legal_akses WHERE email = ?').bind(email).run(); await c.env.DB.prepare('DELETE FROM pks_legal_sesi WHERE email = ?').bind(email).run(); }
+  else if (b.jenis === 'admin_ttd') { await c.env.DB.prepare('UPDATE pks_ttd_admin SET pin_hash = NULL, hp = NULL, gagal = 0, terkunci_sampai = NULL WHERE email = ?').bind(email).run(); await c.env.DB.prepare('DELETE FROM pks_ttd_sesi WHERE email = ?').bind(email).run(); }
+  else fail(400, 'Jenis akses tidak dikenal');
+  await F.audit(c.env, u.email, null, 'pin_direset', { jenis: b.jenis, email });
+  return c.json({ ok: true });
 });
 
 app.get('/api/admin', async (c) => {
@@ -389,6 +462,30 @@ app.post('/api/admin/jenis', async (c) => {
   return c.json({ ok: true });
 });
 
+// ---------- Portal Admin TTD (email + PIN, tanpa akun dashboard) ----------
+const ttdSesi = (c) => c.req.header('x-ttd-sesi');
+const ttdUser = (c) => TA.cekSesi(c.env, ttdSesi(c));
+app.post('/api/ttd-admin/cek', async (c) => c.json(await TA.cekEmail(c.env, (await json(c)).email)));
+app.post('/api/ttd-admin/masuk', async (c) => c.json({ ok: true, ...(await TA.masuk(c.env, await json(c))) }));
+app.post('/api/ttd-admin/keluar', async (c) => { await TA.keluar(c.env, ttdSesi(c)); return c.json({ ok: true }); });
+app.get('/api/ttd-admin/daftar', async (c) => { const u = await ttdUser(c); return c.json({ nama: u.nama, daftar: await TA.daftar(c.env) }); });
+app.get('/api/ttd-admin/perjanjian/:id', async (c) => { await ttdUser(c); return c.json(await TA.detail(c.env, c.req.param('id'))); });
+app.get('/api/ttd-admin/perjanjian/:id/dokumen/:doc', async (c) => {
+  const u = await ttdUser(c);
+  const d = await TA.dokumen(c.env, c.req.param('id'), c.req.param('doc'));
+  await F.audit(c.env, u.email, c.req.param('id'), 'dokumen_diunduh', { dokumen: c.req.param('doc') });
+  return new Response(d.bytes, { headers: { 'content-type': 'application/pdf', 'content-disposition': `inline; filename="${encodeURIComponent(d.nama)}"`, 'cache-control': 'no-store' } });
+});
+const ttdAct = (fn) => async (c) => { const u = await ttdUser(c); const id = c.req.param('id'); await TA.pTtd(c.env, id); return c.json({ ok: true, ...((await fn(c, u, id)) || {}) }); };
+app.post('/api/ttd-admin/perjanjian/:id/mitra', ttdAct(async (c, u, id) => {
+  const f = await c.req.formData();
+  const p = await F.loadP(c.env, id);
+  await F.unggahTtdMitra(c.env, p, String(f.get('opsi') || '2'), f.get('berkas'), u.email, true);
+}));
+app.post('/api/ttd-admin/perjanjian/:id/review', ttdAct(async (c, u, id) => F.reviewTtdMitra(c.env, u, id, await json(c))));
+app.post('/api/ttd-admin/perjanjian/:id/sub-progres', ttdAct(async (c, u, id) => F.setSubProgres(c.env, u, id, (await json(c)).nilai)));
+app.post('/api/ttd-admin/perjanjian/:id/final', ttdAct(async (c, u, id) => F.ttdIje(c.env, u, id, await c.req.formData(), c.executionCtx)));
+
 // ---------- Portal mitra (tanpa akun, token di header) ----------
 const portal = async (c) => F.resolveToken(c.env, c.req.header('x-portal-token'));
 
@@ -399,9 +496,19 @@ app.get('/api/portal', async (c) => {
   const review = await F.latestDoc(c.env, p.id, 'ttd_mitra', 'menunggu_review');
   const feedback = (await c.env.DB.prepare('SELECT putaran, isi, setuju, diterima_pada FROM pks_feedback WHERE perjanjian_id = ? ORDER BY diterima_pada').bind(p.id).all()).results;
   const bisaIsian = [1, 2].includes(p.tahap) && token.tujuan === 'feedback';
+  let isian = null;
+  if (bisaIsian) {
+    const nilai = await F.isianTerkini(c.env, p.id);
+    const info = await infoTemplate(p.jenis);
+    // Tanggal diatur VM; penandatangan diisi lewat pilihan "Direktur / Diwakili" (bukan kolom bebas).
+    const fields = info.fields.filter((f) => !['tanggal', 'tanggal_spk', 'wakil', 'jabatan'].includes(f.key));
+    const direksi = p.mitra.direksi || '';
+    const samaDireksi = !!direksi && String(nilai.wakil || '').trim().toUpperCase() === direksi.trim().toUpperCase();
+    isian = { nilai, fields, maks: info.maks, penandatangan: { direksi, mode: samaDireksi || !nilai.wakil || nilai.wakil === '-' ? 'direktur' : 'wakil', wakil: nilai.wakil, jabatan: nilai.jabatan }, kurang: belumLengkap(p.jenis, nilai) };
+  }
   return c.json({
-    isian: bisaIsian ? { nilai: await F.isianTerkini(c.env, p.id), fields: FIELDS, maks: await batasKarakter() } : null,
-    tujuan: token.tujuan, kode: p.kode, judul: p.judul, nomor_surat: p.nomor_surat, tahap: p.tahap, tahap_nama: F.TAHAP[p.tahap].nama,
+    isian, jenis: p.jenis,
+    tujuan: token.tujuan, kode: p.kode, judul: p.judul, nomor_surat: p.nomor_surat, nomor_spk: p.nomor_spk, tahap: p.tahap, tahap_nama: F.TAHAP[p.tahap].nama,
     tenggat: p.tenggat, mitra: { nama: p.mitra.nama }, dokumen: doc ? { id: doc.id, nama: doc.nama, halaman: doc.halaman } : null,
     menunggu_review: !!review, feedback, bisa_feedback: [1, 2].includes(p.tahap) && token.tujuan === 'feedback', bisa_ttd: p.tahap === 5 && token.tujuan === 'ttd',
   });
@@ -410,7 +517,18 @@ app.get('/api/portal', async (c) => {
 app.post('/api/portal/isian', async (c) => {
   const { token, p } = await portal(c);
   if (token.tujuan !== 'feedback') fail(403, 'Tautan ini tidak dapat mengubah isian dokumen');
-  return c.json({ ok: true, ...(await F.ubahIsian(c.env, p, (await json(c)).isi || {}, `mitra:${p.mitra_row}`, 'mitra')) });
+  const b = await json(c);
+  const isi = { ...(b.isi || {}) };
+  for (const k of ['tanggal', 'tanggal_spk']) delete isi[k]; // tanggal tidak diubah mitra
+  if (b.penandatangan === 'direktur') {
+    if (!p.mitra.direksi) fail(400, 'Nama direktur belum ada di info perseroan. Pilih "Diwakili" dan isi nama penandatangan.');
+    isi.wakil = p.mitra.direksi;
+    isi.jabatan = String(isi.jabatan || '').trim() || 'Direktur';
+  } else if (b.penandatangan === 'wakil') {
+    if (String(isi.wakil || '').trim().length < 3) fail(400, 'Nama penandatangan (yang mewakili) wajib diisi');
+    if (String(isi.jabatan || '').trim().length < 2) fail(400, 'Jabatan penandatangan wajib diisi');
+  }
+  return c.json({ ok: true, ...(await F.ubahIsian(c.env, p, isi, `mitra:${p.mitra_row}`, 'mitra')) });
 });
 
 app.get('/api/portal/dokumen', async (c) => {
@@ -442,9 +560,7 @@ app.post('/api/portal/ttd', async (c) => {
   const { token, p } = await portal(c);
   if (token.tujuan !== 'ttd') fail(403, 'Tautan ini bukan untuk penandatanganan');
   const f = await c.req.formData();
-  await F.unggahTtdMitra(c.env, p, String(f.get('opsi')), f.get('berkas'), `mitra:${p.mitra_row}`, false);
-  const pic = await c.env.DB.prepare('SELECT email FROM pks_pengguna WHERE email = ? AND aktif = 1').bind(p.pic_vm).first();
-  if (pic) await sendMail(c.env, { perjanjianId: p.id, tipe: 'ttd_masuk', to: [pic.email], subject: `[Starlite] TTD mitra masuk — ${p.nomor_surat}`, html: `<p>${escapeHtml(p.mitra.nama)} mengunggah tanda tangan untuk perjanjian ${escapeHtml(p.nomor_surat)}. Mohon diperiksa di dashboard Vendor Management, menu Perjanjian: ${escapeHtml(uiUrl(c.env))}/#/pks/perjanjian/${p.id}</p>` }).catch(() => {});
+  await F.unggahTtdMitra(c.env, p, String(f.get('opsi') || '2'), f.get('berkas'), `mitra:${p.mitra_row}`, false);
   return c.json({ ok: true });
 });
 
@@ -492,7 +608,9 @@ export async function scheduled(env) {
       log.push(`pengingat ${jenis} ${p.kode}`);
     } catch (e) { console.error('pengingat', p.id, e.message); }
   }
-  // 3) Masa berlaku H-90/60/30
+  // 3) Antrean spreadsheet (perubahan dari portal/cron, atau yang sebelumnya gagal)
+  try { const r = await sinkronAntre(env, sinkDeps, 30); if (r.length) log.push(`sheet ${r.filter((x) => x.ok).length}/${r.length}`); } catch (e) { console.error('sinkron sheet', e.message); }
+  // 4) Masa berlaku H-90/60/30
   const fin = (await env.DB.prepare("SELECT id FROM pks_perjanjian WHERE tahap = 7 AND status != 'batal' AND tgl_berakhir <= date('now','+90 day') AND tgl_berakhir >= date('now')").all()).results;
   for (const r of fin) {
     const p = await F.loadP(env, r.id);
