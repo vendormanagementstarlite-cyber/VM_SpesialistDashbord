@@ -217,6 +217,8 @@ app.post('/api/perjanjian/:id/sinkron', act(['vm'], async (c, u, id) => {
   return r;
 }));
 app.post('/api/perjanjian/:id/mundur', act(['vm'], async (c, u, id) => F.mundur(c.env, u, id, await json(c))));
+app.post('/api/perjanjian/:id/data', act(['vm'], async (c, u, id) => F.ubahData(c.env, u, id, await json(c))));
+app.post('/api/perjanjian/:id/hapus', async (c) => { const u = await user(c); allow(u); return c.json({ ok: true, ...(await F.hapus(c.env, u, c.req.param('id'), await json(c))) }); });
 app.post('/api/perjanjian/:id/email', act(['vm'], async (c, u, id) => F.ubahEmail(c.env, u, id, (await json(c)).emails)));
 app.post('/api/perjanjian/:id/ingatkan', act(['vm'], async (c, u, id) => F.ingatkan(c.env, u, id)));
 app.post('/api/perjanjian/:id/perpanjang', act(['vm'], async (c, u, id) => F.perpanjang(c.env, u, id)));
@@ -391,6 +393,23 @@ app.post('/api/admin/akses', async (c) => {
   await F.audit(c.env, u.email, null, 'akses_disimpan', { jenis: b.jenis, email, aktif });
   return c.json({ ok: true });
 });
+app.post('/api/admin/akses/hapus', async (c) => {
+  const u = await user(c); allow(u);
+  const b = await json(c);
+  const email = String(b.email || '').trim().toLowerCase();
+  if (b.jenis === 'legal') {
+    const r = await c.env.DB.prepare("DELETE FROM pks_pengguna WHERE email = ? AND peran = 'legal'").bind(email).run();
+    if (!r.meta.changes) fail(404, 'Legal tidak ditemukan');
+    await c.env.DB.prepare('DELETE FROM pks_legal_akses WHERE email = ?').bind(email).run();
+    await c.env.DB.prepare('DELETE FROM pks_legal_sesi WHERE email = ?').bind(email).run();
+  } else if (b.jenis === 'admin_ttd') {
+    const r = await c.env.DB.prepare('DELETE FROM pks_ttd_admin WHERE email = ?').bind(email).run();
+    if (!r.meta.changes) fail(404, 'Admin Follow-up tidak ditemukan');
+    await c.env.DB.prepare('DELETE FROM pks_ttd_sesi WHERE email = ?').bind(email).run();
+  } else fail(400, 'Jenis akses tidak dikenal');
+  await F.audit(c.env, u.email, null, 'akses_dihapus', { jenis: b.jenis, email });
+  return c.json({ ok: true });
+});
 app.post('/api/admin/akses/reset-pin', async (c) => {
   const u = await user(c); allow(u);
   const b = await json(c);
@@ -476,7 +495,7 @@ app.post('/api/admin/jenis', async (c) => {
   return c.json({ ok: true });
 });
 
-// ---------- Portal Admin TTD (email + PIN, tanpa akun dashboard) ----------
+// ---------- Portal Admin Follow-up (dulu Admin TTD; email + PIN, tanpa akun dashboard) ----------
 const ttdSesi = (c) => c.req.header('x-ttd-sesi');
 const ttdUser = (c) => TA.cekSesi(c.env, ttdSesi(c));
 app.post('/api/ttd-admin/cek', async (c) => c.json(await TA.cekEmail(c.env, (await json(c)).email)));
@@ -498,6 +517,7 @@ app.post('/api/ttd-admin/perjanjian/:id/mitra', ttdAct(async (c, u, id) => {
 }));
 app.post('/api/ttd-admin/perjanjian/:id/review', ttdAct(async (c, u, id) => F.reviewTtdMitra(c.env, u, id, await json(c))));
 app.post('/api/ttd-admin/perjanjian/:id/sub-progres', ttdAct(async (c, u, id) => F.setSubProgres(c.env, u, id, (await json(c)).nilai)));
+app.post('/api/ttd-admin/perjanjian/:id/ingatkan', ttdAct(async (c, u, id) => F.ingatkan(c.env, u, id)));
 app.post('/api/ttd-admin/perjanjian/:id/final', ttdAct(async (c, u, id) => F.ttdIje(c.env, u, id, await c.req.formData(), c.executionCtx)));
 
 // ---------- Portal mitra (tanpa akun, token di header) ----------
