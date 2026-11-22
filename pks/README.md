@@ -62,7 +62,7 @@ node test/ui.mjs              # UI di Chrome nyata (27), butuh wrangler dev + Ch
    npx wrangler secret put ADMIN_PASSWORD_AWAL  # password masuk pertama admin (wajib diganti saat masuk)
    ```
 4. Terapkan migrasi login ke `starlite-pks`: jalankan isi `migrations/0002_login.sql` di Console D1 (0001 sudah diterapkan lewat Console, jadi jangan pakai `migrations apply`).
-5. Isi `APP_URL` di `wrangler.toml`, lalu `npx wrangler deploy` (atau push ke `main` → GitHub Actions, butuh secret `CLOUDFLARE_API_TOKEN` dan `CLOUDFLARE_ACCOUNT_ID`).
+5. Isi `APP_URL` di `wrangler.toml`, lalu `npx wrangler deploy` (atau push ke `main` → Cloudflare Workers Builds: root `pks`, watch path `pks/**`, perintah `npx wrangler deploy`).
 6. Masuk dengan email admin + `ADMIN_PASSWORD_AWAL`, ganti password, lalu tambah pengguna di Pengaturan (password sementara tampil sekali). Disarankan menambah aturan *Rate limiting* Cloudflare untuk `/api/login`.
 
 ## Pengguna
