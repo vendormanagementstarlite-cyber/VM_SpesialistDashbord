@@ -1,5 +1,3 @@
-import { mountTtdWidget } from './ttd.js';
-
 const root = document.getElementById('p');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const token = new URLSearchParams(location.hash.slice(1)).get('t') || '';
@@ -30,7 +28,7 @@ async function load() {
   root.innerHTML = `<div class="card hero">
       <div class="chip c-info">${esc(d.tahap_nama)}</div>
       <h1>${esc(d.judul)}</h1>
-      <p class="muted" style="margin:0">${esc(d.mitra.nama)}${d.nomor_surat ? `, No. ${esc(d.nomor_surat)}` : ''}</p>
+      <p class="muted" style="margin:0">${esc(d.mitra.nama)}${d.nomor_surat ? `, No. ${esc(d.nomor_surat)}` : ''}${d.nomor_spk ? `, SPK MS No. ${esc(d.nomor_spk)}` : ''}</p>
       ${d.tenggat && (d.bisa_feedback || d.bisa_ttd) ? `<p style="margin:12px 0 0"><b>Batas waktu: ${tgl(d.tenggat)}</b></p>` : ''}
     </div>
     <div class="card" style="margin-top:16px">
@@ -45,10 +43,25 @@ async function load() {
   });
   const s2 = document.getElementById('s2');
   if (d.bisa_feedback) {
-    const isiHtml = d.isian ? `<details class="more" style="margin-bottom:18px"${''}><summary>Lengkapi atau ubah data (bagian kuning dokumen)</summary><div style="margin-top:12px">
-      <p class="muted small" style="margin:0 0 10px">Hanya bagian berwarna kuning pada dokumen yang dapat diubah. Setelah disimpan, dokumen diperbarui otomatis dan dapat diunduh ulang.</p>
-      ${d.isian.fields.map((f) => `<div class="field"><label for="i-${f.key}">${esc(f.label)}</label><input class="input" id="i-${f.key}" data-isi="${f.key}" ${f.type === 'date' ? 'type="date" min="2026-01-01" max="2026-12-31"' : `type="text" maxlength="${d.isian.maks[f.key] || 120}" autocomplete="off"`} value="${esc(d.isian.nilai[f.key])}">${f.hint ? `<span class="hint">${esc(f.hint)}</span>` : ''}</div>`).join('')}
-      <button class="btn ghost" id="simpan-isi">Simpan perubahan data</button></div></details>` : '';
+    const I = d.isian;
+    const pt = I?.penandatangan;
+    const kolom = (f) => `<div class="field"><label for="i-${f.key}">${esc(f.label)}</label><input class="input" id="i-${f.key}" data-isi="${f.key}" ${f.type === 'number' ? 'type="text" inputmode="numeric"' : 'type="text"'} maxlength="${I.maks[f.key] || 160}" value="${esc(I.nilai[f.key] === '-' ? '' : I.nilai[f.key])}" autocomplete="off">${f.hint ? `<span class="hint">${esc(f.hint)}</span>` : ''}</div>`;
+    const grupLabel = { rekening: 'Rekening pembayaran', gudang: 'Gudang & layanan IKR' };
+    const umum = I ? I.fields.filter((f) => !f.grup) : [];
+    const grup = I ? [...new Set(I.fields.filter((f) => f.grup).map((f) => f.grup))] : [];
+    const isiHtml = I ? `<div class="card" style="margin:0 0 18px;padding:16px">
+      <h2 style="margin-top:0">Lengkapi data dokumen</h2>
+      <p class="muted small" style="margin:0 0 10px">Data ini mengisi bagian dokumen yang dapat diubah. Setelah disimpan, dokumen diperbarui otomatis dan dapat diunduh ulang.</p>
+      ${I.kurang.length ? `<div class="notice small" style="margin-bottom:12px">Belum lengkap: ${I.kurang.map(esc).join(', ')}. Wajib dilengkapi sebelum menyetujui.</div>` : ''}
+      <fieldset class="isian" style="margin:0 0 12px"><legend>Penandatangan dari pihak mitra</legend>
+        <label class="row small" style="margin:4px 0"><input type="radio" name="pt" value="direktur" ${pt.mode === 'direktur' ? 'checked' : ''} ${pt.direksi ? '' : 'disabled'}> Direktur${pt.direksi ? `: <b>${esc(pt.direksi)}</b>` : ' (nama direktur belum tercatat)'}</label>
+        <label class="row small" style="margin:4px 0"><input type="radio" name="pt" value="wakil" ${pt.mode === 'wakil' || !pt.direksi ? 'checked' : ''}> Diwakili orang lain (bukan direktur)</label>
+        <div class="field" id="wk" style="margin-top:8px"><label for="i-wakil">Nama penandatangan</label><input class="input" id="i-wakil" value="${esc(pt.mode === 'wakil' && pt.wakil !== '-' ? pt.wakil : '')}" maxlength="${I.maks.wakil || 80}" autocomplete="off"><span class="hint">Lampirkan surat kuasa dari direktur saat penandatanganan.</span></div>
+        <div class="field"><label for="i-jabatan">Jabatan penandatangan</label><input class="input" id="i-jabatan" value="${esc(pt.jabatan && pt.jabatan !== '-' ? pt.jabatan : 'Direktur')}" maxlength="${I.maks.jabatan || 60}" autocomplete="off"></div>
+      </fieldset>
+      ${umum.map(kolom).join('')}
+      ${grup.map((g) => `<fieldset class="isian" style="margin:0 0 12px"><legend>${esc(grupLabel[g] || g)}</legend>${I.fields.filter((f) => f.grup === g).map(kolom).join('')}</fieldset>`).join('')}
+      <button class="btn ghost" id="simpan-isi" type="button">Simpan data</button></div>` : '';
     s2.innerHTML = isiHtml + `<h2>Sampaikan tanggapan</h2><p class="muted" style="margin:4px 0 12px">Tanggapan dicatat dan ditindaklanjuti tim kami. Bila tidak ada catatan, pilih "Setuju tanpa catatan".</p>
       ${d.feedback.length ? `<div class="notice info small" style="margin-bottom:12px">${d.feedback.length} tanggapan sudah kami terima. Anda masih dapat menambahkan catatan.</div>` : ''}
       <div class="field"><label for="nm">Nama dan jabatan</label><input class="input" id="nm" placeholder="Misal: Budi Santoso, Direktur"></div>
@@ -61,11 +74,16 @@ async function load() {
         message(setuju ? 'Persetujuan diterima' : 'Tanggapan diterima', 'Tim Vendor Management akan menindaklanjuti dan mengirimkan dokumen bernomor melalui email.', true);
       } catch (e) { alert(e.message); btn.disabled = false; }
     };
+    const ptSet = () => { const w = document.querySelector('input[name="pt"]:checked')?.value === 'wakil'; const el = document.getElementById('wk'); if (el) el.hidden = !w; };
+    document.querySelectorAll('input[name="pt"]').forEach((r) => r.addEventListener('change', ptSet)); ptSet();
     document.getElementById('simpan-isi')?.addEventListener('click', async (e) => {
       const b = e.currentTarget; b.disabled = true;
       try {
-        const isi = Object.fromEntries([...document.querySelectorAll('[data-isi]')].map((el) => [el.dataset.isi, el.value]));
-        await api('/api/portal/isian', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ isi }) });
+        const isi = Object.fromEntries([...document.querySelectorAll('[data-isi]')].map((el) => [el.dataset.isi, el.value.trim() || '-']));
+        const mode = document.querySelector('input[name="pt"]:checked')?.value || 'direktur';
+        isi.jabatan = document.getElementById('i-jabatan').value.trim();
+        if (mode === 'wakil') isi.wakil = document.getElementById('i-wakil').value.trim();
+        await api('/api/portal/isian', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ isi, penandatangan: mode }) });
         await load(); alert('Data tersimpan. Dokumen sudah diperbarui; silakan unduh ulang bila perlu.');
       } catch (err) { alert(err.message); b.disabled = false; }
     });
@@ -74,30 +92,17 @@ async function load() {
   } else if (d.bisa_ttd && d.menunggu_review) {
     s2.innerHTML = `<h2>Tanda tangan sedang diperiksa</h2><p class="muted" style="margin:4px 0 0">Kami sudah menerima unggahan Anda. Bila perlu perbaikan, kami kirimkan tautan baru melalui email.</p>`;
   } else if (d.bisa_ttd) {
-    s2.innerHTML = `<h2>Tanda tangani perjanjian</h2><p class="muted" style="margin:4px 0 12px">Tanda tangani dokumen, bubuhkan stempel perusahaan dan meterai, lalu pilih salah satu cara unggah.</p>
-      <div class="seg-toggle" role="group" aria-label="Cara unggah" style="margin-bottom:14px"><button aria-pressed="true" data-o="1">Unggah tanda tangan</button><button aria-pressed="false" data-o="2">Unggah dokumen lengkap</button></div><div id="ob"></div>`;
-    const ob = document.getElementById('ob');
-    const done = () => message('Tanda tangan diterima', 'Terima kasih. Kami akan memeriksa dan mengirimkan salinan final setelah ditandatangani PT Integrasi Jaringan Ekosistem.', true);
-    const show = (o) => {
-      s2.querySelectorAll('[data-o]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.o === o)));
-      if (o === '1') {
-        mountTtdWidget(ob, {
-          confirmLabel: 'Kirim tanda tangan',
-          onPreview: (png) => { const fd = new FormData(); fd.set('berkas', png, 'ttd.png'); return api('/api/portal/pratinjau-ttd', { method: 'POST', body: fd }); },
-          onConfirm: async (png) => { const fd = new FormData(); fd.set('opsi', '1'); fd.set('berkas', png, 'ttd.png'); await api('/api/portal/ttd', { method: 'POST', body: fd }); done(); },
-        });
-      } else {
-        ob.innerHTML = `<div class="field"><label for="full">Scan seluruh halaman yang sudah ditandatangani (PDF)</label><input class="input" id="full" type="file" accept="application/pdf"><span class="hint">${d.dokumen?.halaman ? `Dokumen harus berisi ${d.dokumen.halaman} halaman.` : ''} Maksimal 20 MB.</span></div><button class="btn" id="up">Kirim dokumen</button>`;
-        document.getElementById('up').addEventListener('click', async (e) => {
-          const f = document.getElementById('full').files[0]; if (!f) return alert('Pilih berkas PDF');
-          const b = e.currentTarget; b.disabled = true;
-          try { const fd = new FormData(); fd.set('opsi', '2'); fd.set('berkas', f); await api('/api/portal/ttd', { method: 'POST', body: fd }); done(); }
-          catch (err) { alert(err.message); b.disabled = false; }
-        });
-      }
-    };
-    s2.querySelectorAll('[data-o]').forEach((b) => b.addEventListener('click', () => show(b.dataset.o)));
-    show('1');
+    const hal = d.dokumen?.halaman;
+    s2.innerHTML = `<h2>Tanda tangani perjanjian</h2>
+      <ol class="muted" style="margin:4px 0 14px;padding-left:18px"><li>Cetak dokumen bernomor${hal ? ` (${hal} halaman)` : ''}.</li><li>Tanda tangan basah oleh penandatangan yang tercantum, bubuhkan stempel perusahaan dan meterai.</li><li>Pindai <b>seluruh halaman</b> menjadi satu PDF, lalu unggah di bawah.</li></ol>
+      <div class="field"><label for="full">Scan dokumen bertanda tangan (PDF)</label><input class="input" id="full" type="file" accept="application/pdf"><span class="hint">Jumlah halaman harus sama dengan dokumen bernomor${hal ? ` (${hal} halaman)` : ''}. Maks. 20 MB.</span></div>
+      <button class="btn" id="up" type="button">Unggah scan</button>`;
+    document.getElementById('up').addEventListener('click', async (e) => {
+      const f = document.getElementById('full').files[0]; if (!f) return alert('Pilih berkas PDF');
+      const b = e.currentTarget; b.disabled = true;
+      try { const fd = new FormData(); fd.set('opsi', '2'); fd.set('berkas', f); await api('/api/portal/ttd', { method: 'POST', body: fd }); message('Dokumen diterima', 'Terima kasih. Kami akan memeriksa dan mengirimkan salinan final setelah ditandatangani PT Integrasi Jaringan Ekosistem.', true); }
+      catch (err) { alert(err.message); b.disabled = false; }
+    });
   } else {
     s2.innerHTML = `<h2>Tidak ada tindakan</h2><p class="muted" style="margin:4px 0 0">Perjanjian sedang diproses tim kami. Informasi berikutnya dikirim melalui email.</p>`;
   }

@@ -10,3 +10,6 @@
 /legal.html
   Referrer-Policy: no-referrer
   Cache-Control: no-store
+/admin-ttd.html
+  Referrer-Policy: no-referrer
+  Cache-Control: no-store

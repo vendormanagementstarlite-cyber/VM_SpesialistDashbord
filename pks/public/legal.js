@@ -50,12 +50,14 @@ async function tampil() {
   let d;
   try { d = await api('/api/legal/perjanjian'); } catch (e) { if (e.status === 401) { sesi = ''; return formMasuk(ls.get('legal_email')); } return pesan('Tidak dapat dibuka', esc(e.message)); }
   root.innerHTML = `<div class="card hero"><div class="chip c-info">${esc(d.tahap_nama)}</div><h1>${esc(d.judul)}</h1>
-      <p class="muted" style="margin:0">${esc(d.mitra)}${d.nomor_surat ? `, No. ${esc(d.nomor_surat)}` : ''}</p>
+      <p class="muted" style="margin:0">${esc(d.mitra)}${d.nomor_surat ? `, No. ${esc(d.nomor_surat)}` : ''}${d.nomor_spk ? `, SPK MS No. ${esc(d.nomor_spk)}` : ''}</p>
       ${d.bisa_nomor && d.tenggat ? `<p style="margin:12px 0 0"><b>Batas waktu: ${tgl(d.tenggat)}</b></p>` : ''}</div>
     <div class="card" style="margin-top:16px"><h2 style="margin-top:0">Dokumen</h2><button class="btn ghost" id="dl" type="button">Buka dokumen PDF</button></div>
-    ${d.bisa_nomor ? `<div class="card" style="margin-top:16px"><h2 style="margin-top:0">Nomor surat</h2>
-      <p class="muted" style="margin-top:0">Nomor dicetak otomatis pada kolom "No." dokumen, lalu dokumen diteruskan ke mitra.</p>
-      <div class="field"><label for="no">Nomor surat</label><input class="input" id="no" autocomplete="off"></div>
+    ${d.bisa_nomor ? `<div class="card" style="margin-top:16px"><h2 style="margin-top:0">${d.jenis === 'MS' ? 'Nomor PKS MS & SPK MS' : 'Nomor surat'}</h2>
+      <p class="muted" style="margin-top:0">${d.jenis === 'MS' ? 'Kedua nomor dicetak otomatis pada dokumen PKS MS dan SPK MS (termasuk rujukan nomor PKS di SPK), lalu dokumen diteruskan ke mitra.' : 'Nomor dicetak otomatis pada kolom "No." dokumen, lalu dokumen diteruskan ke mitra.'}</p>
+      <div class="field"><label for="no">${d.jenis === 'MS' ? 'Nomor PKS MS' : 'Nomor surat'}</label><input class="input" id="no" autocomplete="off"></div>
+      ${d.jenis === 'MS' ? '<div class="field"><label for="nospk">Nomor SPK MS</label><input class="input" id="nospk" autocomplete="off"></div>' : ''}
+      <div class="field"><label for="cat">Catatan Legal (opsional)</label><textarea class="input" id="cat" maxlength="500" placeholder="Tercatat di kolom REMARK pada spreadsheet"></textarea></div>
       <p class="muted" id="msg" style="color:var(--late);min-height:18px;margin:0 0 10px"></p><button class="btn" id="kirim" type="button">Terbitkan nomor</button></div>`
       : `<div class="card" style="margin-top:16px"><p class="muted" style="margin:0">${d.nomor_surat ? 'Nomor surat sudah terbit. Kabar perkembangan berikutnya Anda terima lewat email.' : 'Belum waktunya mengisi nomor surat.'}</p></div>`}`;
   root.querySelector('#dl').addEventListener('click', async (e) => {
@@ -65,7 +67,7 @@ async function tampil() {
   const k = root.querySelector('#kirim');
   if (k) k.addEventListener('click', async () => {
     const msg = root.querySelector('#msg'); msg.textContent = ''; k.disabled = true;
-    try { await api('/api/legal/nomor', { method: 'POST', body: JSON.stringify({ nomor_surat: root.querySelector('#no').value }) }); await tampil(); }
+    try { await api('/api/legal/nomor', { method: 'POST', body: JSON.stringify({ nomor_surat: root.querySelector('#no').value, nomor_spk: root.querySelector('#nospk')?.value || '', catatan: root.querySelector('#cat')?.value || '' }) }); await tampil(); }
     catch (ex) { msg.textContent = ex.message; k.disabled = false; }
   });
 }
