@@ -82,7 +82,7 @@ const AKSI = {
   dokumen_diunggah: 'mengunggah dokumen', ttd_mitra_disetujui: 'menyetujui TTD mitra', ttd_mitra_ditolak: 'meminta TTD mitra diunggah ulang',
   perjanjian_selesai: 'menyelesaikan perjanjian', tahap_dikembalikan: 'mengembalikan tahap', perjanjian_dibatalkan: 'membatalkan perjanjian',
   dokumen_diunduh: 'mengunduh dokumen', dokumen_diunduh_mitra: 'mengunduh dokumen', dokumen_tidak_sesuai: 'menandai berkas tidak sesuai',
-  pengguna_disimpan: 'memperbarui pengguna', konfig_diubah: 'mengubah pengaturan', jenis_disimpan: 'mengubah jenis perjanjian', email_final_gagal: 'gagal mengirim salinan final', kirim_sekaligus: 'mengirim perjanjian sekaligus', kelompok_disinkron: 'mencocokkan kelompok mitra', diarsipkan: 'mengarsipkan dokumen final ke Drive', arsip_gagal: 'gagal mengarsipkan ke Drive',
+  pengguna_disimpan: 'memperbarui pengguna', konfig_diubah: 'mengubah pengaturan', jenis_disimpan: 'mengubah jenis perjanjian', email_final_gagal: 'gagal mengirim salinan final', kirim_sekaligus: 'mengirim perjanjian sekaligus', kelompok_disinkron: 'mencocokkan kelompok mitra', data_diubah: 'mengubah data perjanjian', menunggu_legal: 'menunggu Legal ditambahkan', diarsipkan: 'mengarsipkan dokumen final ke Drive', arsip_gagal: 'gagal mengarsipkan ke Drive',
   pengingat_manual: 'mengirim pengingat', email_tujuan_diubah: 'mengubah email tujuan', diperpanjang: 'membuat perpanjangan', perpanjangan_dari: 'membuat draf perpanjangan', isian_diubah: 'mengubah isian dokumen', progres_ttd: 'memperbarui status tanda tangan', catatan_vm: 'menyimpan catatan VM', sheet_disinkron: 'menulis ke spreadsheet', legal_masuk: 'masuk sebagai Legal',
 };
 const JENIS_DOK = { master: 'Master', bernomor: 'Bernomor', ttd_mitra: 'TTD mitra', final: 'Final', lampiran: 'Lampiran' };
@@ -396,7 +396,8 @@ async function pageDetail(id) {
   const fb = p.feedback.length ? p.feedback.map((f) => `<div class="fb ${f.setuju ? 'agree' : ''}"><div class="small"><b>Putaran ${f.putaran}</b> <span class="muted">dari ${esc(f.pengirim || 'mitra')} via ${esc(f.sumber)}, ${jam(f.diterima_pada)}</span></div><p>${esc(f.isi)}</p></div>`).join('') : '<p class="muted small" style="margin:0">Tanggapan mitra muncul di sini begitu mitra membalas lewat tautan atau email.</p>';
   app.innerHTML = `<div class="crumb"><a href="#/perjanjian">Perjanjian</a> / ${esc(p.kode)}</div>
     ${topbar(esc(m.nama), `${esc(p.judul)}`)}
-    <div class="row" style="margin:-8px 0 18px;flex-wrap:wrap">${chipTampil(p.tampil)}<span class="chip c-info">${esc(JENIS_NAMA[p.jenis] || p.jenis)}</span><span class="chip c-idle">${esc(p.kode)}</span>${p.nomor_surat ? `<span class="chip c-info">No. ${esc(p.nomor_surat)}</span>` : ''}${p.nomor_spk ? `<span class="chip c-info">SPK MS No. ${esc(p.nomor_spk)}</span>` : ''}</div>
+    <div class="row" style="margin:-8px 0 18px;flex-wrap:wrap">${chipTampil(p.tampil)}<span class="chip c-info">${esc(JENIS_NAMA[p.jenis] || p.jenis)}</span><span class="chip c-idle">${esc(p.kode)}</span>${p.nomor_surat ? `<span class="chip c-info">No. ${esc(p.nomor_surat)}</span>` : ''}${p.nomor_spk ? `<span class="chip c-info">SPK MS No. ${esc(p.nomor_spk)}</span>` : ''}
+      ${can('vm') && p.status !== 'batal' ? '<span class="detail-alat"><button class="btn ghost sm" data-ubah type="button">Ubah data</button>' + (can() ? '<button class="btn ghost sm hapus" data-hapus type="button">Hapus</button>' : '') + '</span>' : can() ? '<span class="detail-alat"><button class="btn ghost sm hapus" data-hapus type="button">Hapus</button></span>' : ''}</div>
     <div class="detail">
       <aside class="stack lekat">
         <div class="card"><h2 style="margin-bottom:16px">Alur</h2><ol class="timeline">${timeline}</ol></div>
@@ -421,6 +422,55 @@ async function pageDetail(id) {
   renderAction(p);
 }
 
+/** Ubah data perjanjian: judul, nomor surat (setelah terbit), masa berlaku (setelah selesai). Isian dokumen lewat "Ubah isian". */
+function bukaUbahData(p, reload) {
+  const nomorBisa = p.tahap >= 4, masaBisa = p.tahap === 7;
+  const dlg = document.createElement('dialog');
+  dlg.innerHTML = `<form method="dialog" data-f novalidate><div class="dh"><h2>Ubah data perjanjian</h2><button class="icon-btn" value="cancel" aria-label="Tutup" formnovalidate>✕</button></div>
+    <div class="db">
+      <div class="field"><label for="ud-judul">Judul</label><input class="input" id="ud-judul" value="${esc(p.judul)}" maxlength="200" required></div>
+      ${nomorBisa ? `<div class="field"><label for="ud-no">${p.jenis === 'MS' ? 'Nomor PKS MS' : 'Nomor surat'}</label><input class="input" id="ud-no" value="${esc(p.nomor_surat || '')}"></div>
+        ${p.jenis === 'MS' ? `<div class="field"><label for="ud-spk">Nomor SPK MS</label><input class="input" id="ud-spk" value="${esc(p.nomor_spk || '')}"></div>` : ''}
+        <p class="hint" style="margin:-4px 0 12px">Hanya data aplikasi dan spreadsheet yang diperbarui; nomor yang tercetak di dokumen tidak berubah.</p>` : ''}
+      ${masaBisa ? `<div class="row" style="gap:10px;flex-wrap:wrap"><div class="field" style="flex:1 1 160px"><label for="ud-ef">Tanggal efektif</label><input class="input" id="ud-ef" type="date" value="${esc(p.tgl_efektif || '')}"></div><div class="field" style="flex:1 1 160px"><label for="ud-ak">Tanggal berakhir</label><input class="input" id="ud-ak" type="date" value="${esc(p.tgl_berakhir || '')}"></div></div>` : ''}
+      ${p.tahap <= 2 ? '<p class="hint" style="margin:0">Data di dalam dokumen (alamat, penandatangan, dll.) diubah lewat tombol "Ubah isian dokumen".</p>' : ''}
+      ${!nomorBisa ? '<p class="hint" style="margin:6px 0 0">Nomor surat bisa diubah setelah diterbitkan Legal.</p>' : ''}
+    </div>
+    <div class="df"><button class="btn ghost" value="cancel" formnovalidate>Batal</button><button class="btn" data-simpan>Simpan</button></div></form>`;
+  document.body.append(dlg); dlg.showModal();
+  dlg.addEventListener('close', () => dlg.remove());
+  $('[data-simpan]', dlg).addEventListener('click', (e) => {
+    e.preventDefault();
+    const b = { judul: $('#ud-judul', dlg).value };
+    if ($('#ud-no', dlg)) b.nomor_surat = $('#ud-no', dlg).value;
+    if ($('#ud-spk', dlg)) b.nomor_spk = $('#ud-spk', dlg).value;
+    if ($('#ud-ef', dlg)) { b.tgl_efektif = $('#ud-ef', dlg).value; b.tgl_berakhir = $('#ud-ak', dlg).value; }
+    busy(e.currentTarget, async () => { await post(`/api/perjanjian/${p.id}/data`, b); dlg.close(); toast('Data perjanjian diperbarui'); reload(); });
+  });
+}
+
+/** Hapus permanen: konfirmasi dengan mengetik kode perjanjian. */
+function bukaHapus(p) {
+  const dlg = document.createElement('dialog');
+  dlg.innerHTML = `<form method="dialog" data-f novalidate><div class="dh"><h2>Hapus perjanjian</h2><button class="icon-btn" value="cancel" aria-label="Tutup" formnovalidate>✕</button></div>
+    <div class="db"><div class="notice" style="margin-bottom:12px"><b>${esc(p.kode)}</b> — ${esc(p.mitra.nama)} beserta dokumen, riwayat, dan barisnya di spreadsheet akan dihapus permanen dan tidak bisa dikembalikan.${p.arsip_url ? ' Arsip final di Google Drive tidak ikut dihapus.' : ''}</div>
+      <div class="field"><label for="hp-kode">Ketik <b>${esc(p.kode)}</b> untuk mengonfirmasi</label><input class="input" id="hp-kode" autocomplete="off" placeholder="${esc(p.kode)}"></div></div>
+    <div class="df"><button class="btn ghost" value="cancel" formnovalidate>Batal</button><button class="btn danger" data-hapus-ok disabled>Hapus permanen</button></div></form>`;
+  document.body.append(dlg); dlg.showModal();
+  dlg.addEventListener('close', () => dlg.remove());
+  const inp = $('#hp-kode', dlg), ok = $('[data-hapus-ok]', dlg);
+  inp.addEventListener('input', () => { ok.disabled = inp.value.trim() !== p.kode; });
+  ok.addEventListener('click', (e) => {
+    e.preventDefault();
+    busy(ok, async () => {
+      const r = await post(`/api/perjanjian/${p.id}/hapus`, { konfirmasi: inp.value.trim() });
+      dlg.close();
+      toast(String(r.sheet).startsWith('gagal') ? `Perjanjian dihapus. Baris spreadsheet belum terhapus (${r.sheet.slice(7)}).` : 'Perjanjian dihapus', String(r.sheet).startsWith('gagal'));
+      location.hash = '#/perjanjian';
+    });
+  });
+}
+
 /** Email tujuan khusus perjanjian ini (Info Perseroan tidak diubah). */
 function bukaEmail(p, reload) {
   const dlg = document.createElement('dialog');
@@ -437,6 +487,8 @@ function renderAction(p) {
   const m = p.mitra;
   const reload = () => pageDetail(p.id);
   $('[data-isian]')?.addEventListener('click', () => bukaIsian(p, reload));
+  $('[data-ubah]')?.addEventListener('click', () => bukaUbahData(p, reload));
+  $('[data-hapus]')?.addEventListener('click', () => bukaHapus(p));
   $('[data-sinkron]')?.addEventListener('click', (e) => busy(e.currentTarget, async () => { await post(`/api/perjanjian/${p.id}/sinkron`); toast('Tertulis di spreadsheet'); reload(); }));
   $('[data-catat]')?.addEventListener('click', (e) => busy(e.currentTarget, async () => { await post(`/api/perjanjian/${p.id}/catatan`, { catatan: $('#cvm').value }); toast('Catatan disimpan'); reload(); }));
   const doIt = (sel, fn, ok) => box.querySelector(sel)?.addEventListener('click', (e) => busy(e.currentTarget, async () => { const r = await fn(); if (r?.portal) console.info('Tautan portal (mode dev):', r.portal); toast(ok); reload(); }));
@@ -471,7 +523,7 @@ function renderAction(p) {
         <div class="row" style="margin-top:14px"><button class="btn ok" data-a="setujui">${ic('check')}Setujui tanda tangan</button></div>
         <div class="field" style="margin-top:16px"><label for="alasan">Alasan bila diminta unggah ulang</label><textarea class="input" id="alasan" placeholder="Misal: meterai tidak terlihat jelas"></textarea></div><button class="btn danger" data-a="tolak">Minta unggah ulang</button>`;
     } else {
-      html = head('Menunggu mitra', 'Menunggu tanda tangan basah mitra', `Mitra mencetak, menandatangani basah (stempel + meterai), lalu mengunggah scan lewat tautan. Batas ${tgl(p.tenggat)}. Admin TTD ikut memantau.`)
+      html = head('Menunggu mitra', 'Menunggu tanda tangan basah mitra', `Mitra mencetak, menandatangani basah (stempel + meterai), lalu mengunggah scan lewat tautan. Batas ${tgl(p.tenggat)}. Admin Follow-up ikut memantau.`)
         + (can('vm') ? `<div data-ttd="mitra"></div>` : '');
     }
   } else if (p.tahap === 6) {
@@ -480,7 +532,7 @@ function renderAction(p) {
       ? head('Langkah terakhir', diIje ? 'Sedang ditandatangani PT IJE' : 'TTD mitra lengkap — lanjut tanda tangan PT IJE', 'Setelah scan final (TTD basah kedua pihak) diunggah, dokumen dikunci, diarsipkan ke Drive, dan salinannya dikirim ke mitra.')
         + (diIje ? '' : `<button class="btn ghost" data-a="proses-ije" style="margin-bottom:14px">Tandai: dokumen sudah di penandatangan PT IJE</button>`)
         + `<div data-ttd="ije"></div>`
-      : head('Menunggu', 'Menunggu tanda tangan PT IJE', 'Akun Utama atau Admin TTD akan menyelesaikan tahap ini.');
+      : head('Menunggu', 'Menunggu tanda tangan PT IJE', 'Direktur PT IJE menandatangani; Admin Follow-up memantau dan mengunggah scan final.');
   } else if (p.tahap === 7) {
     const fin = p.dokumen.find((d) => d.jenis === 'final');
     html = head('Selesai', 'Perjanjian ditandatangani kedua pihak', `Berlaku ${tgl(p.tgl_efektif)} sampai ${tgl(p.tgl_berakhir)}. Pengingat perpanjangan dikirim H-90, H-60, dan H-30.`)
@@ -583,7 +635,7 @@ const OV_STATUS = { aktif: ['Aktif', 'c-ok'], akan_berakhir: ['Akan berakhir', '
 const OV_LANGKAH = [['Draf', [0]], ['Review mitra', [1, 2]], ['Nomor surat', [3, 4]], ['TTD mitra', [5]], ['TTD PT IJE', [6]], ['Selesai', [7]]];
 const ovStep = (tahap) => { const i = OV_LANGKAH.findIndex(([, t]) => t.includes(tahap)); return `<div class="ov-step" title="${esc(OV_LANGKAH[i][0])}">${OV_LANGKAH.map((_, k) => `<i class="${k < i || i === 5 ? 'done' : k === i ? 'now' : ''}"></i>`).join('')}</div><small class="muted">${esc(OV_LANGKAH[i][0])}</small>`; };
 
-/** Penanda hal yang membuat alur berhenti (jembatan Google, Legal, Admin TTD). Kosong bila semua siap. */
+/** Penanda hal yang membuat alur berhenti (jembatan Google, Legal, Admin Follow-up). Kosong bila semua siap. */
 async function cekKesiapan(el) {
   if (!el) return null;
   try {
@@ -591,7 +643,7 @@ async function cekKesiapan(el) {
     const isu = [];
     if (k.jembatan.status !== 'ok') isu.push(`<b>Jembatan Google belum siap.</b> ${esc(k.jembatan.pesan || '')} Akibatnya PKS MS & SPK MS belum bisa dibuat dan data belum tertulis ke spreadsheet.`);
     if (!k.legal) isu.push('<b>Legal belum ditambahkan.</b> Perjanjian tidak bisa diteruskan ke tahap Nomor surat.');
-    if (!k.admin_ttd) isu.push('<b>Admin TTD belum ditambahkan.</b> Tidak ada yang menerima kabar saat dokumen siap ditandatangani.');
+    if (!k.admin_ttd) isu.push('<b>Admin Follow-up belum ditambahkan.</b> Tidak ada yang mendorong Legal memberi nomor surat dan Direktur PT IJE menandatangani.');
     if (el.isConnected) el.innerHTML = isu.length ? `<div class="banner" role="status"><span class="banner-ic" aria-hidden="true">!</span><div style="min-width:0;flex:1"><b>${isu.length} hal perlu diatur agar alur berjalan penuh</b><ul>${isu.map((x) => `<li>${x}</li>`).join('')}</ul></div>${location.hash.includes('pengaturan') ? '' : '<a class="btn sm" href="#/pengaturan">Atur sekarang</a>'}</div>` : '';
     return k;
   } catch { return null; }
@@ -728,8 +780,8 @@ async function pagePengaturan() {
   const k = Object.fromEntries(d.konfig.map((x) => [x.k, x.v]));
   const sla = JSON.parse(k.sla_hari_kerja || '{}');
   const daftarAkses = (jenis, list) => list.length ? `<ul class="list akses">${list.map((a) => `<li><div style="min-width:0"><div class="t">${esc(a.nama)}${a.aktif ? '' : ' <span class="chip c-idle">Nonaktif</span>'}</div><div class="s">${esc(a.email)}, ${a.pin ? 'PIN sudah dibuat' : 'belum pernah masuk'}</div></div>
-      <span class="row" style="gap:6px;flex-wrap:nowrap">${a.pin ? `<button class="btn ghost sm" type="button" data-pin="${jenis}|${esc(a.email)}">Reset PIN</button>` : ''}<button class="btn ghost sm" type="button" data-akt="${jenis}|${esc(a.email)}|${esc(a.nama)}|${a.aktif ? 0 : 1}">${a.aktif ? 'Nonaktifkan' : 'Aktifkan'}</button></span></li>`).join('')}</ul>`
-    : `<div class="notice small" style="margin-bottom:10px">${jenis === 'legal' ? 'Belum ada Legal. Tanpa Legal, perjanjian berhenti di tahap Nomor surat.' : 'Belum ada Admin TTD. Tambahkan agar ada yang mengejar tanda tangan.'}</div>`;
+      <span class="row" style="gap:6px;flex-wrap:nowrap">${a.pin ? `<button class="btn ghost sm" type="button" data-pin="${jenis}|${esc(a.email)}">Reset PIN</button>` : ''}<button class="btn ghost sm" type="button" data-akt="${jenis}|${esc(a.email)}|${esc(a.nama)}|${a.aktif ? 0 : 1}">${a.aktif ? 'Nonaktifkan' : 'Aktifkan'}</button><button class="btn ghost sm hapus" type="button" data-hapus-akses="${jenis}|${esc(a.email)}" aria-label="Hapus ${esc(a.nama)}">Hapus</button></span></li>`).join('')}</ul>`
+    : `<div class="notice small" style="margin-bottom:10px">${jenis === 'legal' ? 'Belum ada Legal. Tanpa Legal, perjanjian berhenti di tahap Nomor surat.' : 'Belum ada Admin Follow-up. Tambahkan agar ada yang mendorong Legal dan Direktur PT IJE.'}</div>`;
   const formAkses = (jenis) => `<form class="row akses-form" data-tambah="${jenis}"><label class="sr" for="${jenis}-nm">Nama</label><input class="input" id="${jenis}-nm" placeholder="Nama" required><label class="sr" for="${jenis}-em">Email</label><input class="input" id="${jenis}-em" type="email" placeholder="Email" required><button class="btn">Tambah</button></form>`;
   const r = sh.ringkas || {};
   const menunggu = (r.antre || 0) + (r.kirim || 0) + (r.belum || 0);
@@ -737,10 +789,10 @@ async function pagePengaturan() {
     <div data-kesiapan></div>
     <div class="set-grid">
       <div class="stack">
-        <section class="card"><h2>Akses</h2><p class="small muted" style="margin:4px 0 14px">Legal dan Admin TTD masuk dengan email terdaftar + PIN 4 angka (dibuat saat pertama masuk), tanpa akun dashboard.</p>
+        <section class="card"><h2>Akses</h2><p class="small muted" style="margin:4px 0 14px">Legal dan Admin Follow-up masuk dengan email terdaftar + PIN 4 angka (dibuat saat pertama masuk), tanpa akun dashboard.</p>
           <h3>Legal <span class="small muted" style="font-weight:500">mengisi nomor surat</span></h3>${daftarAkses('legal', ak.legal)}${formAkses('legal')}
-          <h3 style="margin-top:20px">Admin TTD <span class="small muted" style="font-weight:500">mengejar tanda tangan</span></h3>${daftarAkses('admin_ttd', ak.admin_ttd)}${formAkses('admin_ttd')}
-          <div class="notice info small" style="margin-top:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="min-width:0;flex:1">Halaman Admin TTD: <code>${esc(ak.portal_ttd)}</code></span><button class="btn ghost sm" type="button" data-salin-ttd>Salin</button></div></section>
+          <h3 style="margin-top:20px">Admin Follow-up <span class="small muted" style="font-weight:500">mendorong Legal (nomor surat) dan Direktur PT IJE (tanda tangan)</span></h3>${daftarAkses('admin_ttd', ak.admin_ttd)}${formAkses('admin_ttd')}
+          <div class="notice info small" style="margin-top:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="min-width:0;flex:1">Halaman Admin Follow-up: <code>${esc(ak.portal_ttd)}</code></span><button class="btn ghost sm" type="button" data-salin-ttd>Salin</button></div></section>
         <section class="card"><div class="card-head"><h2>Spreadsheet</h2><span class="row" style="gap:6px"><span class="chip c-ok">${r.ok || 0} tersimpan</span>${menunggu ? `<span class="chip c-warn">${menunggu} menunggu</span>` : ''}${r.gagal ? `<span class="chip c-late">${r.gagal} gagal</span>` : ''}</span></div>
           <p class="small muted" style="margin:0 0 12px">Ditulis otomatis ke VM Starlite Sheet: lembar <b>${esc(sh.sheet.PKS)}</b> dan <b>${esc(sh.sheet.MS)}</b>, kunci baris kolom NO ID.</p>
           ${sh.aktif ? '' : '<div class="notice small" style="margin-bottom:10px">Jembatan Google belum aktif.</div>'}
@@ -778,12 +830,17 @@ async function pagePengaturan() {
   $$('[data-tambah]').forEach((f) => f.addEventListener('submit', (e) => {
     e.preventDefault();
     const j = f.dataset.tambah;
-    busy(f.querySelector('button'), async () => { await post('/api/admin/akses', { jenis: j, email: $(`#${j}-em`).value, nama: $(`#${j}-nm`).value }); toast(j === 'legal' ? 'Legal ditambahkan' : 'Admin TTD ditambahkan'); route(); });
+    busy(f.querySelector('button'), async () => { await post('/api/admin/akses', { jenis: j, email: $(`#${j}-em`).value, nama: $(`#${j}-nm`).value }); toast(j === 'legal' ? 'Legal ditambahkan' : 'Admin Follow-up ditambahkan'); route(); });
   }));
   $$('[data-akt]').forEach((b) => b.addEventListener('click', () => busy(b, async () => {
     const [jenis, email, nama, aktif] = b.dataset.akt.split('|');
     await post('/api/admin/akses', { jenis, email, nama, aktif: aktif === '1' }); toast('Akses diperbarui'); route();
   })));
+  $$('[data-hapus-akses]').forEach((b) => b.addEventListener('click', () => {
+    const [jenis, email] = b.dataset.hapusAkses.split('|');
+    if (!confirm(`Hapus ${email} dari daftar ${jenis === 'legal' ? 'Legal' : 'Admin Follow-up'}? Ia tidak bisa masuk lagi sampai ditambahkan ulang.`)) return;
+    busy(b, async () => { await post('/api/admin/akses/hapus', { jenis, email }); toast('Akses dihapus'); route(); });
+  }));
   $$('[data-pin]').forEach((b) => b.addEventListener('click', () => {
     const [jenis, email] = b.dataset.pin.split('|');
     if (!confirm(`Reset PIN ${email}? Ia membuat PIN baru (dengan nomor HP) saat masuk berikutnya.`)) return;

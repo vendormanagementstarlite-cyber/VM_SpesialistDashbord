@@ -1,4 +1,4 @@
-// Portal Admin TTD: pengejar tanda tangan. Email terdaftar + PIN 4 angka, tanpa akun dashboard.
+// Portal Admin Follow-up: mendorong Legal (nomor surat) dan Direktur PT IJE (tanda tangan). Email terdaftar + PIN 4 angka, tanpa akun dashboard.
 const root = document.getElementById('p');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -24,7 +24,7 @@ async function api(path, opts = {}) {
 const kotakPesan = (id) => `<p class="muted" id="${id}" role="alert" style="color:var(--late);margin:0 0 10px;font-size:13px"></p>`;
 
 function formMasuk(emailAwal, info = '') {
-  root.innerHTML = `<div class="card hero"><div class="chip c-info">Admin TTD</div><h1>Masuk untuk mengelola tanda tangan perjanjian</h1>
+  root.innerHTML = `<div class="card hero"><div class="chip c-info">Admin Follow-up</div><h1>Masuk untuk memantau nomor surat dan tanda tangan</h1>
     <p class="muted" style="margin:0 0 14px">Tanpa akun dashboard. Masukkan email yang didaftarkan Vendor Management, lalu PIN 4 angka. Pertama kali, isi juga nomor HP dan buat PIN.</p>
     <form id="f" novalidate><div class="field"><label for="em">Email</label><input class="input" id="em" type="email" autocomplete="email" value="${esc(emailAwal)}" required></div>
     <div class="field" id="hpw" hidden><label for="hp">Nomor HP (pendaftaran pertama)</label><input class="input" id="hp" inputmode="tel" autocomplete="tel"></div>
@@ -51,6 +51,7 @@ function formMasuk(emailAwal, info = '') {
 }
 
 const STATUS = (p) => p.menunggu_review ? ['Scan mitra perlu diperiksa', 'c-warn']
+  : p.tahap === 3 ? ['Menunggu nomor dari Legal', 'c-warn']
   : p.tahap === 4 ? ['Belum terkirim ke mitra', 'c-late']
   : p.tahap === 5 ? ['Proses TTD mitra', 'c-info']
   : p.sub_progres === 'PROSES SIGN IJE' ? ['Proses TTD PT IJE', 'c-info'] : ['TTD mitra selesai', 'c-ok'];
@@ -58,12 +59,12 @@ const STATUS = (p) => p.menunggu_review ? ['Scan mitra perlu diperiksa', 'c-warn
 async function daftar() {
   let d;
   try { d = await api('/api/ttd-admin/daftar'); } catch (e) { if (e.status !== 401) root.innerHTML = `<div class="card hero"><h1>Tidak dapat dimuat</h1><p class="muted">${esc(e.message)}</p></div>`; return; }
-  root.innerHTML = `<div class="card hero"><div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap"><div><div class="chip c-info">Admin TTD</div><h1>Perjanjian dalam proses tanda tangan</h1>
-      <p class="muted" style="margin:0">Halo, ${esc(d.nama)}. Pantau sampai scan bertanda tangan basah kedua pihak diunggah.</p></div>
+  root.innerHTML = `<div class="card hero"><div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap"><div><div class="chip c-info">Admin Follow-up</div><h1>Perjanjian yang perlu didorong</h1>
+      <p class="muted" style="margin:0">Halo, ${esc(d.nama)}. Dorong Legal memberi nomor surat dan Direktur PT IJE menandatangani, sampai scan final diunggah.</p></div>
       <button class="btn ghost sm" id="out" type="button">Keluar</button></div></div>
     <div class="card" style="margin-top:16px">${d.daftar.length ? d.daftar.map((p) => { const [l, c] = STATUS(p); return `<div class="baris"><div style="min-width:0"><b>${esc(p.mitra)}</b>
       <small>${esc(p.jenis === 'MS' ? 'PKS MS & SPK MS' : 'Perjanjian Homepass')}, No. ${esc(p.nomor_surat || '-')}${p.nomor_spk ? ` / SPK ${esc(p.nomor_spk)}` : ''}${p.tenggat ? `, batas ${tgl(p.tenggat)}` : ''}</small><br><span class="chip ${c}">${l}</span></div>
-      <button class="btn sm" data-id="${esc(p.id)}" type="button">Buka</button></div>`; }).join('') : '<div class="empty"><b>Tidak ada perjanjian</b>Belum ada perjanjian yang menunggu tanda tangan.</div>'}</div>`;
+      <button class="btn sm" data-id="${esc(p.id)}" type="button">Buka</button></div>`; }).join('') : '<div class="empty"><b>Tidak ada perjanjian</b>Belum ada perjanjian yang menunggu nomor surat atau tanda tangan.</div>'}</div>`;
   root.querySelector('#out').addEventListener('click', async () => { try { await api('/api/ttd-admin/keluar', { method: 'POST', body: '{}' }); } catch {} sesi = ''; ss.set('ttd_sesi', ''); formMasuk(ls.get('ttd_email')); });
   root.querySelectorAll('[data-id]').forEach((b) => b.addEventListener('click', () => buka(b.dataset.id)));
 }
@@ -84,11 +85,13 @@ async function buka(id) {
   const efektif = `<div class="row" style="gap:12px;flex-wrap:wrap"><div class="field" style="margin:0"><label for="ef">Tanggal efektif</label><input class="input" id="ef" type="date" value="${new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10)}"></div>
     <div class="field" style="margin:0"><label for="masa">Masa berlaku (bulan)</label><input class="input" id="masa" type="number" min="1" max="120" value="${p.masa_bulan}"></div></div>`;
   let aksi = '';
+  const tombolIngat = (siapa) => `<button class="btn ghost" id="ingat" type="button">Kirim pengingat ke ${siapa}</button>${p.pengingat_terakhir ? `<span class="small muted" style="margin-left:8px">Terakhir: ${tgl(p.pengingat_terakhir)}</span>` : ''}${kotakPesan('mi')}`;
+  if (p.tahap === 3) aksi = `<section><h3>Menunggu nomor surat dari Legal</h3><p class="muted" style="margin:0 0 10px">Dorong Legal menerbitkan nomor${p.jenis === 'MS' ? ' PKS MS dan SPK MS' : ' surat'}. Begitu nomor terbit, dokumen bernomor otomatis dikirim ke mitra.${p.legal?.length ? `<br>Legal: ${p.legal.map((l) => esc(l.nama) + ' (' + esc(l.email) + ')').join(', ')}` : '<br><b>Daftar Legal masih kosong</b>, hubungi Vendor Management.'}</p>${p.legal?.length ? tombolIngat('Legal') : ''}</section>`;
   if (p.tahap === 4) aksi = `<section><h3>Belum terkirim ke mitra</h3><p class="muted" style="margin:0">Pengiriman otomatis gagal (biasanya email mitra kosong). Minta Vendor Management melengkapi email mitra lalu mengirim ulang.</p></section>`;
   if (p.tahap === 5 && review) aksi = `<section><h3>Periksa scan dari mitra</h3><p class="muted" style="margin:0 0 10px">Pastikan semua halaman ada, tanda tangan basah, stempel, dan meterai terlihat jelas.</p>
       <button class="btn ghost" data-lihat="${esc(review.id)}" type="button">Buka scan mitra</button> <button class="btn ok" id="setuju" type="button">Setujui</button>
       <div class="field" style="margin-top:12px"><label for="alasan">Alasan bila diminta unggah ulang</label><textarea class="input" id="alasan"></textarea></div><button class="btn danger" id="tolak" type="button">Minta unggah ulang</button>${kotakPesan('m0')}</section>`;
-  else if (p.tahap === 5) aksi = `<section><h3>1. Scan TTD basah mitra</h3><p class="muted" style="margin:0 0 10px">Bila mitra menyerahkan dokumen bertanda tangan langsung (bukan lewat tautan), pindai dan unggah di sini.</p>${unggah(1, 'Scan dokumen bertanda tangan mitra (PDF)', 'Unggah scan mitra')}${kotakPesan('m1')}</section>
+  else if (p.tahap === 5) aksi = `<section><h3>Dorong mitra</h3><p class="muted" style="margin:0 0 10px">Mitra menerima pengingat otomatis; kirim pengingat tambahan bila perlu.</p>${tombolIngat('mitra')}</section><section><h3>1. Scan TTD basah mitra</h3><p class="muted" style="margin:0 0 10px">Bila mitra menyerahkan dokumen bertanda tangan langsung (bukan lewat tautan), pindai dan unggah di sini.</p>${unggah(1, 'Scan dokumen bertanda tangan mitra (PDF)', 'Unggah scan mitra')}${kotakPesan('m1')}</section>
       <section><h3>Atau: hasil fitur Signing</h3><p class="muted" style="margin:0 0 10px">Bila penandatanganan memakai fitur Signing di dashboard dan hasilnya sudah memuat TTD kedua pihak, unggah hasilnya untuk langsung menyelesaikan.</p>${efektif}${unggah(2, 'PDF hasil Signing (TTD kedua pihak)', 'Unggah hasil Signing dan selesaikan')}${kotakPesan('m2')}</section>`;
   else if (p.tahap === 6) aksi = `<section><h3>Status penandatanganan PT IJE</h3><p class="muted" style="margin:0 0 10px">${p.sub_progres === 'PROSES SIGN IJE' ? 'Dokumen sedang di penandatangan PT IJE.' : 'TTD mitra sudah lengkap. Tandai bila dokumen sudah diserahkan ke penandatangan PT IJE.'}</p>
       ${p.sub_progres === 'PROSES SIGN IJE' ? '' : '<button class="btn ghost" id="proses" type="button">Tandai: sedang ditandatangani PT IJE</button>'}${kotakPesan('m3')}</section>
@@ -110,6 +113,7 @@ async function buka(id) {
   };
   const kirimFile = (idx, url, extra) => { const f = root.querySelector('#f' + idx).files[0]; if (!f) throw new Error('Pilih berkas PDF'); const fd = new FormData(); fd.set('berkas', f); Object.entries(extra).forEach(([k, v]) => fd.set(k, v)); return api(url, { method: 'POST', body: fd }); };
   const tgls = () => ({ tgl_efektif: root.querySelector('#ef').value, masa_bulan: root.querySelector('#masa').value });
+  root.querySelector('#ingat')?.addEventListener('click', (e) => jalan(e.currentTarget, 'mi', () => api(`/api/ttd-admin/perjanjian/${p.id}/ingatkan`, { method: 'POST', body: '{}' }), 'Pengingat dikirim'));
   root.querySelector('#setuju')?.addEventListener('click', (e) => jalan(e.currentTarget, 'm0', () => api(`/api/ttd-admin/perjanjian/${p.id}/review`, { method: 'POST', body: JSON.stringify({ setuju: true }) }), 'Scan mitra disetujui'));
   root.querySelector('#tolak')?.addEventListener('click', (e) => jalan(e.currentTarget, 'm0', () => api(`/api/ttd-admin/perjanjian/${p.id}/review`, { method: 'POST', body: JSON.stringify({ setuju: false, alasan: root.querySelector('#alasan').value }) }), 'Permintaan unggah ulang dikirim ke mitra'));
   root.querySelector('#proses')?.addEventListener('click', (e) => jalan(e.currentTarget, 'm3', () => api(`/api/ttd-admin/perjanjian/${p.id}/sub-progres`, { method: 'POST', body: JSON.stringify({ nilai: 'PROSES SIGN IJE' }) }), 'Status diperbarui'));
