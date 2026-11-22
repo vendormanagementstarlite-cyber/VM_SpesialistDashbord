@@ -1,5 +1,5 @@
-// Admin TTD: pengejar tanda tangan (bukan akun dashboard). Masuk dengan email terdaftar + PIN 4 angka
-// (pertama kali: email + nomor HP + buat PIN). Hanya melihat perjanjian yang sedang dalam proses tanda tangan.
+// Admin Follow-up (dulu Admin TTD): bukan penanda tangan. Mendorong Legal memberi nomor surat dan Direktur PT IJE
+// menandatangani. Masuk dengan email terdaftar + PIN 4 angka (pertama kali: + nomor HP). Melihat tahap Nomor surat s.d. TTD PT IJE.
 import { hashPassword, verifyPassword } from './password.js';
 import { now, fail, sha256Hex, randomToken } from './util.js';
 import * as F from './flow.js';
@@ -7,11 +7,11 @@ import * as F from './flow.js';
 const MAKS_GAGAL = 5, KUNCI_MENIT = 15, SESI_JAM = 8;
 const normEmail = (s) => String(s || '').trim().toLowerCase();
 const normHp = (s) => String(s || '').replace(/[^\d+]/g, '');
-const TAHAP_TTD = [4, 5, 6];
+const TAHAP_TTD = [3, 4, 5, 6];
 
 async function akun(env, email) {
   const a = await env.DB.prepare('SELECT * FROM pks_ttd_admin WHERE email = ? AND aktif = 1').bind(email).first();
-  if (!a) fail(403, 'Email ini tidak terdaftar sebagai Admin TTD. Hubungi Vendor Management.');
+  if (!a) fail(403, 'Email ini tidak terdaftar sebagai Admin Follow-up. Hubungi Vendor Management.');
   return a;
 }
 
@@ -67,17 +67,19 @@ export async function daftar(env) {
 
 async function pTtd(env, id) {
   const p = await F.loadP(env, id);
-  if (p.status === 'batal' || !TAHAP_TTD.includes(p.tahap)) fail(403, 'Perjanjian ini tidak sedang dalam proses tanda tangan');
+  if (p.status === 'batal' || !TAHAP_TTD.includes(p.tahap)) fail(403, 'Perjanjian ini tidak sedang menunggu nomor surat atau tanda tangan');
   return p;
 }
 
 export async function detail(env, id) {
   const p = await pTtd(env, id);
   const docs = (await env.DB.prepare("SELECT id, jenis, versi, nama, halaman, status, dibuat_pada FROM pks_dokumen WHERE perjanjian_id = ? AND jenis IN ('bernomor','ttd_mitra') ORDER BY dibuat_pada DESC").bind(id).all()).results;
+  const legal = p.tahap === 3 ? (await env.DB.prepare("SELECT nama, email FROM pks_pengguna WHERE peran = 'legal' AND aktif = 1 ORDER BY nama").all()).results : [];
+  const ingat = (await env.DB.prepare("SELECT waktu FROM pks_audit WHERE perjanjian_id = ? AND aksi = 'pengingat_manual' ORDER BY id DESC LIMIT 1").bind(id).first())?.waktu || null;
   const masa = (await env.DB.prepare('SELECT masa_bulan FROM pks_jenis WHERE kode = ?').bind(p.jenis).first())?.masa_bulan || 12;
   return {
     id: p.id, kode: p.kode, jenis: p.jenis, judul: p.judul, mitra: p.mitra.nama, emails: p.mitra.emails, nomor_surat: p.nomor_surat, nomor_spk: p.nomor_spk,
-    tahap: p.tahap, tahap_nama: F.TAHAP[p.tahap].nama, sub_progres: p.sub_progres, tenggat: p.tenggat, masa_bulan: masa, dokumen: docs,
+    tahap: p.tahap, tahap_nama: F.TAHAP[p.tahap].nama, sub_progres: p.sub_progres, tenggat: p.tenggat, masa_bulan: masa, dokumen: docs, legal, pengingat_terakhir: ingat,
   };
 }
 

@@ -44,11 +44,13 @@ export const templates = {
 <p>Dokumen asli bertanda tangan basah mohon disimpan; tim kami akan menghubungi untuk pengambilan bila diperlukan.</p>`, { url, label: 'Unggah dokumen bertanda tangan' }),
   }),
   ttd_admin: ({ p, m, url, kejadian }) => ({
-    subject: `[Starlite] ${kejadian === 'masuk' ? 'TTD mitra masuk' : 'Siap dikejar TTD'} — ${p.nomor_surat || p.kode} ${m.nama}`,
-    html: layout(kejadian === 'masuk'
-      ? `<p>${e(m.nama)} mengunggah dokumen bertanda tangan untuk <b>${e(p.judul)}</b> No. ${e(p.nomor_surat || '-')}. Mohon diperiksa, lalu lanjutkan penandatanganan PT IJE.</p>`
-      : `<p>Dokumen <b>${e(p.judul)}</b> No. <b>${e(p.nomor_surat)}</b>${p.nomor_spk ? ` (SPK MS No. ${e(p.nomor_spk)})` : ''} dengan <b>${e(m.nama)}</b> sudah dikirim ke mitra untuk tanda tangan basah. Mohon dipantau sampai scan bertanda tangan kedua pihak diunggah.</p>`,
-      { url, label: 'Buka halaman Admin TTD' }),
+    subject: `[Starlite] ${kejadian === 'legal' ? 'Kejar nomor surat Legal' : kejadian === 'masuk' ? 'TTD mitra masuk' : 'Kejar tanda tangan'} — ${p.nomor_surat || p.kode} ${m.nama}`,
+    html: layout(kejadian === 'legal'
+      ? `<p>Perjanjian <b>${e(p.judul)}</b> dengan <b>${e(m.nama)}</b> sudah disetujui mitra dan diserahkan ke Legal. Mohon didorong agar Legal segera memberi nomor surat${p.jenis === 'MS' ? ' (PKS MS dan SPK MS)' : ''}.</p>`
+      : kejadian === 'masuk'
+      ? `<p>${e(m.nama)} mengunggah dokumen bertanda tangan untuk <b>${e(p.judul)}</b> No. ${e(p.nomor_surat || '-')}. Mohon diperiksa, lalu dorong penandatanganan oleh Direktur PT IJE.</p>`
+      : `<p>Dokumen <b>${e(p.judul)}</b> No. <b>${e(p.nomor_surat)}</b>${p.nomor_spk ? ` (SPK MS No. ${e(p.nomor_spk)})` : ''} dengan <b>${e(m.nama)}</b> sudah dikirim ke mitra untuk tanda tangan basah. Mohon dipantau sampai mitra dan Direktur PT IJE menandatangani dan scan final diunggah.</p>`,
+      { url, label: 'Buka halaman Admin Follow-up' }),
   }),
   ttd_ditolak: ({ p, m, alasan, url }) => ({
     subject: `Mohon unggah ulang tanda tangan — ${p.nomor_surat || p.kode}`,

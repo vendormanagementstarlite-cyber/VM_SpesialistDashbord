@@ -114,3 +114,8 @@ export async function cekJembatan(env) {
     return { status: 'gagal', pesan: m.slice(0, 200) };
   }
 }
+
+/** Hapus satu baris di lembar data perjanjian berdasarkan kolom NO ID. */
+export async function sheetHapus(env, sheet, kunci) {
+  return bridge(env, 'sheet_hapus', { sheet, kunci });
+}

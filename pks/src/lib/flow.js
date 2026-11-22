@@ -2,12 +2,12 @@
 import { parseEmails, now, uid, sha256Hex, randomToken, addWorkdays, addMonths, fail, uiUrl, escapeHtml } from './util.js';
 import { getMitra, snapshot } from './mitra.js';
 import { putFile, getFile } from './storage.js';
-import { googleEnabled, driveArsip } from './google.js';
+import { googleEnabled, driveArsip, sheetHapus } from './google.js';
 import { pageCount, stampSignature } from './pdf.js';
 import { sendMail, templates, emailKirim } from './mail.js';
 import { POSISI_TTD } from './template.js';
 import { buatDraf, buatBernomor, belumLengkap, cekJenis } from './dokumen.js';
-import { tandaiSheet } from './sheet.js';
+import { tandaiSheet, SHEET } from './sheet.js';
 
 // Status internal (tetap 0–7 agar data lama aman). Pengguna melihat 5 langkah sederhana (LANGKAH).
 export const TAHAP = [
@@ -242,7 +242,10 @@ export async function addFeedback(env, p, { sumber, pengirim, isi, setuju, extId
   await audit(env, aktor, p.id, 'feedback_diterima', { sumber, setuju: !!setuju });
   if (p.tahap === 1) await setTahap(env, p, 2, aktor, setuju ? 'Mitra setuju tanpa catatan' : 'Feedback diterima');
   else await tandaiSheet(env, p.id);
-  if (setuju) await keLegal(env, aktor, p.id); // mitra setuju: langsung ke Legal
+  if (setuju) { // mitra setuju: langsung ke Legal. Bila daftar Legal kosong, persetujuan tetap tercatat dan VM meneruskan nanti.
+    try { await keLegal(env, aktor, p.id); }
+    catch (e) { if (e.status !== 422) throw e; await audit(env, 'sistem', p.id, 'menunggu_legal', { alasan: e.message }); }
+  }
   return fid;
 }
 
@@ -261,6 +264,7 @@ export async function keLegal(env, user, id) {
     await sendMail(env, { perjanjianId: id, tipe: 'legal', to: legal, ...templates.legal({ p, m: p.mitra, tenggat, url: legalUrl(env, raw) }) }).catch(() => {});
   }
   await audit(env, aktor, id, 'diserahkan_ke_legal', { legal });
+  await kabarAdminTtd(env, p, 'legal');
 }
 
 // ---------------- Tahap 4: nomor surat ----------------
@@ -589,7 +593,7 @@ export async function ingatkan(env, user, id) {
   const p = await loadP(env, id);
   if (p.status === 'batal') fail(409, 'Perjanjian sudah dibatalkan');
   if (![1, 2, 3, 5].includes(p.tahap)) fail(409, 'Pengingat hanya untuk tahap Review mitra, Nomor surat, dan TTD mitra');
-  const last = await env.DB.prepare("SELECT waktu FROM pks_audit WHERE perjanjian_id = ? AND aksi = 'pengingat_manual' ORDER BY id DESC LIMIT 1").bind(id).first();
+  const last = await env.DB.prepare("SELECT waktu FROM pks_audit WHERE perjanjian_id = ? AND aksi = 'pengingat_manual' AND json_extract(data, '$.tahap') = ? ORDER BY id DESC LIMIT 1").bind(id, p.tahap).first();
   if (last && Date.now() - Date.parse(last.waktu) < 3600_000) fail(429, 'Pengingat baru saja dikirim. Coba lagi 1 jam lagi.');
   const telat = !!(p.tenggat && p.tenggat < now());
   const tenggat = p.tenggat || now();
@@ -630,4 +634,70 @@ export async function perpanjang(env, user, id) {
   await audit(env, aktorDari(user), id, 'diperpanjang', { baru });
   await audit(env, aktorDari(user), baru, 'perpanjangan_dari', { asal: p.id, kode: p.kode, nomor: p.nomor_surat });
   return { id: baru };
+}
+
+
+// ---------------- Ubah data perjanjian (bukan isian dokumen) ----------------
+const TGL = /^\d{4}-\d{2}-\d{2}$/;
+export async function ubahData(env, user, id, b) {
+  const p = await loadP(env, id);
+  if (p.status === 'batal') fail(409, 'Perjanjian sudah dibatalkan');
+  const ubah = {};
+  if (b.judul !== undefined) {
+    const j = String(b.judul || '').trim();
+    if (j.length < 3 || j.length > 200) fail(400, 'Judul 3–200 karakter');
+    if (j !== p.judul) ubah.judul = j;
+  }
+  const cfg = await konfig(env);
+  for (const k of ['nomor_surat', 'nomor_spk']) {
+    if (b[k] === undefined) continue;
+    const v = String(b[k] || '').trim();
+    if (v === (p[k] || '')) continue;
+    if (p.tahap < 4) fail(409, 'Nomor surat baru bisa diubah setelah diterbitkan Legal');
+    if (k === 'nomor_spk' && p.jenis !== 'MS') continue;
+    if (!cfg.formatNomor.test(v)) fail(400, `Format ${k === 'nomor_spk' ? 'nomor SPK MS' : 'nomor surat'} tidak sesuai`);
+    const dup = await env.DB.prepare('SELECT kode FROM pks_perjanjian WHERE (nomor_surat = ? OR nomor_spk = ?) AND id != ?').bind(v, v, id).first();
+    if (dup) fail(409, `Nomor ${v} sudah dipakai perjanjian ${dup.kode}`);
+    ubah[k] = v;
+  }
+  for (const k of ['tgl_efektif', 'tgl_berakhir']) {
+    if (b[k] === undefined) continue;
+    const v = String(b[k] || '').trim();
+    if (v === (p[k] || '')) continue;
+    if (p.tahap !== 7) fail(409, 'Masa berlaku hanya bisa diubah setelah perjanjian selesai');
+    if (!TGL.test(v)) fail(400, 'Tanggal tidak valid');
+    ubah[k] = v;
+  }
+  const ef = ubah.tgl_efektif || p.tgl_efektif, ak = ubah.tgl_berakhir || p.tgl_berakhir;
+  if (ef && ak && ak < ef) fail(400, 'Tanggal berakhir tidak boleh sebelum tanggal efektif');
+  const keys = Object.keys(ubah);
+  if (!keys.length) fail(400, 'Tidak ada data yang berubah');
+  await env.DB.prepare(`UPDATE pks_perjanjian SET ${keys.map((k) => `${k} = ?`).join(', ')}, sheet_status = 'antre', diperbarui_pada = ? WHERE id = ?`).bind(...keys.map((k) => ubah[k]), now(), id).run();
+  await audit(env, aktorDari(user), id, 'data_diubah', { sebelum: Object.fromEntries(keys.map((k) => [k, p[k] ?? null])), sesudah: ubah });
+  return { berubah: keys };
+}
+
+// ---------------- Hapus permanen (Akun Utama) ----------------
+// Semua jejak perjanjian dihapus, termasuk baris spreadsheet (NO ID). Arsip final di Drive tidak disentuh.
+// Pengaman trigger (dokumen & audit tidak boleh dihapus) dilewati hanya untuk perjanjian yang ditandai di pks_hapus.
+export async function hapus(env, user, id, { konfirmasi } = {}) {
+  const p = await loadP(env, id);
+  if (String(konfirmasi || '').trim() !== p.kode) fail(400, `Ketik kode ${p.kode} untuk mengonfirmasi penghapusan`);
+  const docs = (await env.DB.prepare('SELECT storage, storage_id FROM pks_dokumen WHERE perjanjian_id = ?').bind(id).all()).results;
+  const blob = docs.filter((d) => d.storage === 'd1').map((d) => d.storage_id);
+  const q = (sql, ...a) => env.DB.prepare(sql).bind(...a);
+  await env.DB.batch([
+    q('INSERT OR IGNORE INTO pks_hapus (perjanjian_id) VALUES (?)', id),
+    ...blob.flatMap((b) => [q('DELETE FROM pks_blob_part WHERE id = ?', b), q('DELETE FROM pks_blob WHERE id = ?', b)]),
+    ...['pks_tahap', 'pks_dokumen', 'pks_feedback', 'pks_email_log', 'pks_token', 'pks_pengingat', 'pks_legal_sesi', 'pks_audit'].map((t) => q(`DELETE FROM ${t} WHERE perjanjian_id = ?`, id)),
+    q('DELETE FROM pks_perjanjian WHERE id = ?', id),
+    q('DELETE FROM pks_hapus WHERE perjanjian_id = ?', id),
+  ]);
+  let sheet = 'tidak ada';
+  if (googleEnabled(env)) {
+    try { const r = await sheetHapus(env, SHEET[p.jenis], p.kode); sheet = r?.dihapus ? 'dihapus' : 'tidak ada'; }
+    catch (e) { sheet = 'gagal: ' + String(e.message || e).slice(0, 160); }
+  }
+  await audit(env, aktorDari(user), null, 'perjanjian_dihapus', { kode: p.kode, jenis: p.jenis, mitra: p.mitra.nama, nomor_surat: p.nomor_surat, tahap: p.tahap, sheet });
+  return { sheet };
 }
