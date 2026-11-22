@@ -49,7 +49,7 @@ async function load() {
     const grupLabel = { rekening: 'Rekening pembayaran', gudang: 'Gudang & layanan IKR' };
     const umum = I ? I.fields.filter((f) => !f.grup) : [];
     const grup = I ? [...new Set(I.fields.filter((f) => f.grup).map((f) => f.grup))] : [];
-    const isiHtml = I ? `<div class="card" style="margin:0 0 18px;padding:16px">
+    const isiHtml = I ? `<div style="margin:0 0 6px">
       <h2 style="margin-top:0">Lengkapi data dokumen</h2>
       <p class="muted small" style="margin:0 0 10px">Data ini mengisi bagian dokumen yang dapat diubah. Setelah disimpan, dokumen diperbarui otomatis dan dapat diunduh ulang.</p>
       ${I.kurang.length ? `<div class="notice small" style="margin-bottom:12px">Belum lengkap: ${I.kurang.map(esc).join(', ')}. Wajib dilengkapi sebelum menyetujui.</div>` : ''}
@@ -62,7 +62,10 @@ async function load() {
       ${umum.map(kolom).join('')}
       ${grup.map((g) => `<fieldset class="isian" style="margin:0 0 12px"><legend>${esc(grupLabel[g] || g)}</legend>${I.fields.filter((f) => f.grup === g).map(kolom).join('')}</fieldset>`).join('')}
       <button class="btn ghost" id="simpan-isi" type="button">Simpan data</button></div>` : '';
-    s2.innerHTML = isiHtml + `<h2>Sampaikan tanggapan</h2><p class="muted" style="margin:4px 0 12px">Tanggapan dicatat dan ditindaklanjuti tim kami. Bila tidak ada catatan, pilih "Setuju tanpa catatan".</p>
+    // Langkah 2 (lengkapi data, bila ada) dan langkah berikutnya (tanggapan) diberi nomor masing-masing.
+    if (I) s2.parentElement.insertAdjacentHTML('afterend', `<div class="step"><span class="n">3</span><div id="s3"></div></div>`);
+    if (I) s2.innerHTML = isiHtml;
+    (I ? document.getElementById('s3') : s2).innerHTML = `<h2>Sampaikan tanggapan</h2><p class="muted" style="margin:4px 0 12px">Tanggapan dicatat dan ditindaklanjuti tim kami. Bila tidak ada catatan, pilih "Setuju tanpa catatan".</p>
       ${d.feedback.length ? `<div class="notice info small" style="margin-bottom:12px">${d.feedback.length} tanggapan sudah kami terima. Anda masih dapat menambahkan catatan.</div>` : ''}
       <div class="field"><label for="nm">Nama dan jabatan</label><input class="input" id="nm" placeholder="Misal: Budi Santoso, Direktur"></div>
       <div class="field"><label for="isi">Catatan atas dokumen</label><textarea class="input" id="isi" placeholder="Sebutkan pasal dan catatannya"></textarea></div>

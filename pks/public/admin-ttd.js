@@ -21,7 +21,7 @@ async function api(path, opts = {}) {
   }
   return j;
 }
-const kotakPesan = (id) => `<p class="muted" id="${id}" role="alert" style="color:var(--late);min-height:18px;margin:8px 0"></p>`;
+const kotakPesan = (id) => `<p class="muted" id="${id}" role="alert" style="color:var(--late);margin:0 0 10px;font-size:13px"></p>`;
 
 function formMasuk(emailAwal, info = '') {
   root.innerHTML = `<div class="card hero"><div class="chip c-info">Admin TTD</div><h1>Masuk untuk mengelola tanda tangan perjanjian</h1>
