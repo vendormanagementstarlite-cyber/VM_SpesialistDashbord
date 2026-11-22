@@ -189,6 +189,28 @@ const actions_ = {
     } finally { lock.releaseLock(); }
   },
 
+  // Hapus baris perjanjian (perjanjian dihapus dari aplikasi). Kunci = kolom "NO ID". Tidak ada baris: tidak apa-apa.
+  sheet_hapus(p) {
+    const name = String(p.sheet || '');
+    if (SHEET_BOLEH.indexOf(name) < 0) throw new Error('lembar tidak diizinkan: ' + name);
+    const key = String(p.kunci || '').trim();
+    if (!key) throw new Error('kunci kosong');
+    const lock = LockService.getScriptLock();
+    lock.waitLock(20000);
+    try {
+      const sh = SpreadsheetApp.openById(prop_('SHEET_ID') || DEFAULT_SHEET).getSheetByName(name);
+      if (!sh) throw new Error('lembar "' + name + '" tidak ditemukan');
+      const head = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(normKol_);
+      const kunciCol = head.indexOf('NO ID') + 1;
+      if (!kunciCol) throw new Error('kolom kunci "NO ID" tidak ada di baris judul');
+      const last = sh.getLastRow();
+      if (last < 2) return { dihapus: 0 };
+      const keys = sh.getRange(2, kunciCol, last - 1, 1).getDisplayValues();
+      for (let i = keys.length - 1; i >= 0; i--) if (String(keys[i][0]).trim() === key) { sh.deleteRow(i + 2); SpreadsheetApp.flush(); return { dihapus: 1, row: i + 2 }; }
+      return { dihapus: 0 };
+    } finally { lock.releaseLock(); }
+  },
+
   drive_download(p) {
     const file = DriveApp.getFileById(p.id);
     if (!inRoot_(file)) throw new Error('berkas di luar folder induk');
