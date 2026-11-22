@@ -403,5 +403,53 @@ for (const x of legalAktif) await api('/api/admin/akses', { method: 'POST', body
 const tl = await api(`/api/perjanjian/${ct.id}/legal`, { method: 'POST' });
 ok(tl.status === 422 && /Legal masih kosong/.test(tl.error) && (await api(`/api/perjanjian/${ct.id}`)).tahap === 1, 'tanpa Legal aktif: tidak bisa diteruskan (tahap tidak berubah)', JSON.stringify(tl._json));
 for (const x of legalAktif) await api('/api/admin/akses', { method: 'POST', body: { jenis: 'legal', email: x.email, nama: x.nama, aktif: true } });
+
+console.log('\nAdmin Follow-up, ubah data, hapus');
+// Admin Follow-up: aktifkan lagi, masuk, lihat perjanjian di tahap Nomor surat, kirim pengingat ke Legal
+await api('/api/admin/akses', { method: 'POST', body: { jenis: 'admin_ttd', email: 'admin.ttd@pmosurge.co.id', nama: 'Admin Follow-up Uji', aktif: true } });
+const afs = await tta('/api/ttd-admin/masuk', { method: 'POST', body: { email: 'admin.ttd@pmosurge.co.id', hp: '0812-1111-2222', pin: '4321' } });
+await api(`/api/perjanjian/${ct.id}/legal`, { method: 'POST' });
+const ctl = await api(`/api/perjanjian/${ct.id}`);
+ok(ctl.tahap === 3 && ctl.email.some((e) => e.tipe === 'ttd_admin' && /Kejar nomor surat/.test(e.subjek)), 'masuk Legal: Admin Follow-up diberi kabar untuk mengejar nomor surat');
+const afl = await tta('/api/ttd-admin/daftar', { sesi: afs.sesi });
+ok(afl.daftar.some((x) => x.id === ct.id && x.tahap === 3), 'Admin Follow-up melihat perjanjian yang menunggu nomor surat');
+const afd = await tta(`/api/ttd-admin/perjanjian/${ct.id}`, { sesi: afs.sesi });
+ok(afd.legal.length >= 1 && afd.tahap === 3, 'detail tahap Nomor surat menampilkan Legal yang dikejar');
+const afi = await tta(`/api/ttd-admin/perjanjian/${ct.id}/ingatkan`, { method: 'POST', sesi: afs.sesi });
+ok(afi.ok && afi.penerima.includes(LEGAL), 'Admin Follow-up mengirim pengingat ke Legal', JSON.stringify(afi._json));
+ok((await api(`/api/perjanjian/${ct.id}`)).email.some((e) => e.tipe === 'pengingat' && e.penerima.includes(LEGAL)), 'pengingat Legal tercatat');
+
+// Ubah data
+ok((await api(`/api/perjanjian/${ct.id}/data`, { method: 'POST', body: { judul: 'x' } })).status === 400, 'judul terlalu pendek ditolak');
+ok((await api(`/api/perjanjian/${ct.id}/data`, { method: 'POST', body: { nomor_surat: '099/PKS/IJE/XI/2026' } })).status === 409, 'nomor belum bisa diubah sebelum terbit');
+ok((await api(`/api/perjanjian/${ct.id}/data`, { method: 'POST', user: LEGAL, body: { judul: 'Judul Legal' } })).status === 403, 'Legal tidak bisa mengubah data');
+const ud = await api(`/api/perjanjian/${ct.id}/data`, { method: 'POST', body: { judul: 'PKS Homepass Mitra Tanpa Email (revisi)' } });
+ok(ud.ok && (await api(`/api/perjanjian/${ct.id}`)).judul === 'PKS Homepass Mitra Tanpa Email (revisi)', 'judul diubah');
+const nomorLain = (await api(`/api/perjanjian/${cm.id}`)).nomor_surat;
+ok((await api(`/api/perjanjian/${id}/data`, { method: 'POST', body: { nomor_surat: nomorLain } })).status === 409, 'nomor yang sudah dipakai perjanjian lain ditolak');
+const um = await api(`/api/perjanjian/${id}/data`, { method: 'POST', body: { nomor_surat: '001/PKS/IJE/XI/2026-R', tgl_berakhir: '2027-12-31' } });
+const dum = await api(`/api/perjanjian/${id}`);
+ok(um.ok && dum.nomor_surat === '001/PKS/IJE/XI/2026-R' && dum.tgl_berakhir === '2027-12-31' && dum.sheet_status === 'antre' && dum.audit.some((a) => a.aksi === 'data_diubah'), 'nomor & masa berlaku diubah, ditandai untuk spreadsheet, tercatat audit', JSON.stringify(um._json));
+ok((await api(`/api/perjanjian/${id}/data`, { method: 'POST', body: { tgl_berakhir: '2020-01-01' } })).status === 400, 'tanggal berakhir sebelum efektif ditolak');
+
+// Hapus permanen
+ok((await api(`/api/perjanjian/${ct.id}/hapus`, { method: 'POST', user: LEGAL, body: { konfirmasi: ct.kode } })).status === 403, 'hanya Akun Utama yang bisa menghapus');
+const kodeCt = (await api(`/api/perjanjian/${ct.id}`)).kode;
+ok((await api(`/api/perjanjian/${ct.id}/hapus`, { method: 'POST', body: { konfirmasi: 'salah' } })).status === 400, 'konfirmasi kode salah ditolak');
+const hp = await api(`/api/perjanjian/${ct.id}/hapus`, { method: 'POST', body: { konfirmasi: kodeCt } });
+ok(hp.ok, 'perjanjian dihapus', JSON.stringify(hp._json));
+ok((await api(`/api/perjanjian/${ct.id}`)).status === 404 && !(await api('/api/perjanjian'))._json.some((x) => x.id === ct.id), 'perjanjian hilang dari daftar dan detail');
+const sisaBaris = execSync(`npx wrangler d1 execute starlite-pks --local --json --command "SELECT (SELECT COUNT(*) FROM pks_dokumen WHERE perjanjian_id='${ct.id}') d, (SELECT COUNT(*) FROM pks_tahap WHERE perjanjian_id='${ct.id}') t, (SELECT COUNT(*) FROM pks_audit WHERE perjanjian_id='${ct.id}') a, (SELECT COUNT(*) FROM pks_token WHERE perjanjian_id='${ct.id}') k, (SELECT COUNT(*) FROM pks_hapus) h, (SELECT COUNT(*) FROM pks_audit WHERE aksi='perjanjian_dihapus') g"`, { encoding: 'utf8' });
+const sb = JSON.parse(sisaBaris)[0].results[0];
+ok(sb.d === 0 && sb.t === 0 && sb.a === 0 && sb.k === 0 && sb.h === 0 && sb.g === 1, 'semua data turunan terhapus, penanda bersih, penghapusan tercatat di audit umum', JSON.stringify(sb));
+const tetap = execSync(`npx wrangler d1 execute starlite-pks --local --json --command "DELETE FROM pks_dokumen WHERE perjanjian_id='${id}'" 2>&1 || true`, { encoding: 'utf8' });
+ok(/tidak boleh dihapus/.test(tetap), 'pengaman dokumen tetap aktif untuk perjanjian lain');
+ok((await api('/api/portal', { token: tokenOf(kt.portal) })).status === 401, 'tautan mitra dari perjanjian terhapus tidak berlaku');
+
+// Hapus akses
+await api('/api/admin/akses', { method: 'POST', body: { jenis: 'legal', email: 'legal.hapus@pmosurge.co.id', nama: 'Legal Hapus' } });
+ok((await api('/api/admin/akses/hapus', { method: 'POST', body: { jenis: 'legal', email: 'legal.hapus@pmosurge.co.id' } })).ok && !(await api('/api/admin/akses')).legal.some((x) => x.email === 'legal.hapus@pmosurge.co.id'), 'akses Legal dihapus');
+ok((await api('/api/admin/akses/hapus', { method: 'POST', body: { jenis: 'admin_ttd', email: 'admin.ttd@pmosurge.co.id' } })).ok && (await tta('/api/ttd-admin/daftar', { sesi: afs.sesi })).status === 401, 'Admin Follow-up dihapus, sesinya ikut dicabut');
+ok((await api('/api/admin/akses/hapus', { method: 'POST', user: LEGAL, body: { jenis: 'legal', email: LEGAL } })).status === 403, 'Legal tidak bisa menghapus akses');
 console.log(`\nHasil: ${pass} lulus, ${failN} gagal`);
 process.exit(failN ? 1 : 0);

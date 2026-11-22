@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
-import { cekJembatan, driveArsip, googleEnabled, drivePath, driveUpload, driveDownload, gmailSend, gmailThreadReplies, sheetUpsert, docxKePdf } from '../src/lib/google.js';
+import { cekJembatan, sheetHapus, driveArsip, googleEnabled, drivePath, driveUpload, driveDownload, gmailSend, gmailThreadReplies, sheetUpsert, docxKePdf } from '../src/lib/google.js';
 
 const ROOT = 'ROOT_ID';
 function makeGoogle() {
@@ -32,7 +32,7 @@ function makeGoogle() {
     const cols = () => sh.grid[0].length;
     const cell = (r, c) => (sh.grid[r - 1] || [])[c - 1] ?? '';
     return {
-      getLastColumn: () => cols(), getLastRow: () => sh.grid.length, getMaxRows: () => Math.max(sh.grid.length, 1000), insertRowsAfter() {},
+      getLastColumn: () => cols(), getLastRow: () => sh.grid.length, getMaxRows: () => Math.max(sh.grid.length, 1000), insertRowsAfter() {}, deleteRow: (r) => { sh.grid.splice(r - 1, 1); },
       getRange: (r, c, nr = 1, nc = 1) => ({
         getValues: () => [...Array(nr)].map((_, i) => [...Array(nc)].map((_, j) => { const v = cell(r + i, c + j); return typeof v === 'string' && v.startsWith('=') ? 'HASIL' : v; })),
         getDisplayValues() { return this.getValues().map((row) => row.map(String)); },
@@ -255,4 +255,16 @@ test('cekJembatan: versi baru "ok", versi lama "lama", tanpa URL "nonaktif", tan
   globalThis.fetch = async () => new Response(JSON.stringify({ ok: false, error: 'aksi tidak dikenal' }), { status: 200 });
   try { const r = await cekJembatan(env(null)); assert.equal(r.status, 'lama'); assert.match(r.pesan, /versi baru/); } finally { globalThis.fetch = real; }
   assert.equal((await cekJembatan({})).status, 'nonaktif');
+});
+
+test('Spreadsheet: sheet_hapus menghapus baris berdasarkan NO ID, aman bila tidak ada', async () => {
+  const G = makeGoogle(); const restore = installFetch(G.g); const e = env(G.g);
+  try {
+    G.sheets['PKS PJ'].grid.push(['2026-11-01', 'PT A', 'DONE', '', '', 'PKS-2026-0001'], ['2026-11-02', 'PT B', 'DRAFT DI BUAT', '', '', 'PKS-2026-0002']);
+    const r = await sheetHapus(e, 'PKS PJ', 'PKS-2026-0001');
+    assert.equal(r.dihapus, 1);
+    assert.deepEqual(G.sheets['PKS PJ'].grid.map((x) => x[5]), ['NO ID', 'PKS-2026-0002']);
+    assert.equal((await sheetHapus(e, 'PKS PJ', 'PKS-2026-0099')).dihapus, 0);
+    await assert.rejects(sheetHapus(e, 'Info Perseroan', 'x'), /lembar tidak diizinkan/);
+  } finally { restore(); }
 });
