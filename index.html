@@ -1718,6 +1718,17 @@ tr.q-bad > td { background: rgba(244,63,94,.07) !important; }
                         <span id="sidebar-perseroan-badge" class="sidebar-text text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 dark:bg-slate-800 text-emerald-700 dark:text-emerald-400">0</span>
                     </button>
 
+                    <button onclick="window.pksToggle&&pksToggle()" id="nav-pks" title="Perjanjian" class="nav-btn hidden w-full px-3.5 py-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-between border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 group text-slate-600 dark:text-slate-400">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-file-contract text-sm text-cyan-500 shrink-0 group-hover:scale-110 transition-transform"></i>
+                            <span class="sidebar-text">Perjanjian</span>
+                        </div>
+                        <i id="nav-pks-chev" class="sidebar-text fa-solid fa-chevron-right text-[10px] opacity-60 transition-transform"></i>
+                    </button>
+                    <div id="nav-pks-sub" class="hidden sidebar-text pl-4 space-y-1">
+                        <button onclick="window.pksSub&&pksSub('ov')" id="nav-pks-ov" class="nav-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-3 border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-400"><i class="fa-solid fa-gauge-high text-[11px] shrink-0"></i><span class="sidebar-text">Overview</span></button>
+                        <button onclick="window.pksSub&&pksSub('list')" id="nav-pks-list" class="nav-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-3 border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-400"><i class="fa-solid fa-list-check text-[11px] shrink-0"></i><span class="sidebar-text">Perjanjian</span></button>
+                    </div>
                     <button onclick="switchTab('spk')" id="nav-spk" title="All SPK" class="nav-btn w-full px-3.5 py-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-between border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 group text-slate-600 dark:text-slate-400">
                         <div class="flex items-center gap-3">
                             <i class="fa-solid fa-file-signature text-sm text-indigo-500 shrink-0 group-hover:scale-110 transition-transform"></i>
@@ -1753,17 +1764,6 @@ tr.q-bad > td { background: rgba(244,63,94,.07) !important; }
                         </div>
                         <span id="sidebar-reimburse-badge" class="sidebar-text text-[10px] font-mono px-2 py-0.5 rounded-full bg-teal-500/15 text-teal-700 dark:text-teal-300 font-bold">·</span>
                     </button>
-                    <button onclick="window.pksToggle&&pksToggle()" id="nav-pks" title="Perjanjian" class="nav-btn hidden w-full px-3.5 py-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-between border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 group text-slate-600 dark:text-slate-400">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-file-contract text-sm text-cyan-500 shrink-0 group-hover:scale-110 transition-transform"></i>
-                            <span class="sidebar-text">Perjanjian</span>
-                        </div>
-                        <i id="nav-pks-chev" class="sidebar-text fa-solid fa-chevron-right text-[10px] opacity-60 transition-transform"></i>
-                    </button>
-                    <div id="nav-pks-sub" class="hidden sidebar-text pl-4 space-y-1">
-                        <button onclick="window.pksSub&&pksSub('ov')" id="nav-pks-ov" class="nav-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-3 border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-400"><i class="fa-solid fa-gauge-high text-[11px] shrink-0"></i><span class="sidebar-text">Overview</span></button>
-                        <button onclick="window.pksSub&&pksSub('list')" id="nav-pks-list" class="nav-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-3 border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-400"><i class="fa-solid fa-list-check text-[11px] shrink-0"></i><span class="sidebar-text">Perjanjian</span></button>
-                    </div>
                     <button onclick="switchTab('surat')" id="nav-surat" title="Directory Arsip" class="nav-btn w-full px-3.5 py-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-between border border-transparent hover:bg-emerald-50 dark:hover:bg-slate-800/60 group text-slate-600 dark:text-slate-400">
                         <div class="flex items-center gap-3">
                             <i class="fa-solid fa-envelope-open-text text-sm text-amber-500 shrink-0 group-hover:scale-110 transition-transform"></i>
@@ -5690,7 +5690,7 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
 /* ===== Perjanjian — penghubung menu dashboard (khusus Akun Utama) ===== */
 (function () {
   'use strict';
-  try { if (typeof MENU_TABS !== 'undefined' && MENU_TABS.indexOf('pks') < 0) { var ix = MENU_TABS.indexOf('reimburse'); MENU_TABS.splice(ix >= 0 ? ix + 1 : MENU_TABS.length, 0, 'pks'); } } catch (e) { }
+  try { if (typeof MENU_TABS !== 'undefined' && MENU_TABS.indexOf('pks') < 0) { var ix = MENU_TABS.indexOf('perseroan'); MENU_TABS.splice(ix >= 0 ? ix + 1 : MENU_TABS.length, 0, 'pks'); } } catch (e) { }  // menu Perjanjian tepat setelah Info Perseroan
   var g = function (i) { return document.getElementById(i); };
   var utama = function () { try { return !!currentUser && currentUser.role === 'owner' && !!(currentUser.perms || {}).mainOwner; } catch (e) { return false; } };
   var SUB = { overview: 'ov', perjanjian: 'list', pengaturan: 'set' };
@@ -5737,118 +5737,11 @@ html.dark .sh{color:#67e8f9}html.dark .sh.ok{color:#6ee7b7}html.dark .sh.er{colo
 })();
 </script>
 <script>
-/* ===== Perjanjian (PKS) — dibangun otomatis dari repo Perjanjian-kerja-sama (scripts/bundle-dashboard.mjs). Jangan diedit langsung. ===== */
+/* ===== Perjanjian (PKS) — dibangun otomatis dari folder pks/ (scripts/bundle-dashboard.mjs). Jangan diedit langsung. ===== */
 (function () {
 'use strict';
 const CSS = ":host{\n  --navy: #0B3B75;\n  --navy-2: #24507f;\n  --blue: #2F9BEF;\n  --blue-d: #1C7FD0;\n  --sky: #E6F3FE;\n  --canvas: #F3F5F8;\n  --surface: #FFFFFF;\n  --line: #E3E8EF;\n  --ink: #1D2A3A;\n  --muted: #66768A;\n  --ok: #17885A; --ok-bg: #E2F5EC;\n  --warn: #B86A0B; --warn-bg: #FDF0DC;\n  --late: #C93838; --late-bg: #FCE7E7;\n  --idle: #5B6B80; --idle-bg: #EDF1F6;\n  --r-lg: 20px; --r-md: 14px; --r-sm: 10px;\n  --shadow: 0 1px 2px rgba(11, 59, 117, .05), 0 8px 24px -12px rgba(11, 59, 117, .14);\n  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;\n  color: var(--ink);\n  font-feature-settings: 'tnum' 1, 'cv11' 1;\n}\n*{ box-sizing: border-box; }\n:host, :host{ margin: 0; background: var(--canvas); }\n:host{ font-size: 14px; line-height: 1.5; }\na{ color: var(--blue-d); text-decoration: none; }\na:hover{ text-decoration: underline; }\nbutton, input, select, textarea{ font: inherit; color: inherit; }\n:focus-visible{ outline: 3px solid color-mix(in srgb, var(--blue) 45%, transparent); outline-offset: 2px; border-radius: 8px; }\nh1, h2, h3{ margin: 0; color: var(--navy); letter-spacing: -.01em; }\nh1{ font-size: 26px; font-weight: 800; line-height: 1.2; }\nh2{ font-size: 16px; font-weight: 700; }\nh3{ font-size: 14px; font-weight: 700; }\n.muted{ color: var(--muted); }\n.small{ font-size: 12.5px; }\n.num{ font-variant-numeric: tabular-nums; }\n[hidden]{ display: none !important; }\n.sr{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }\n.shell{ display: grid; grid-template-columns: 244px 1fr; min-height: 100vh; }\n.side{ padding: 22px 16px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 4px; background: var(--surface); border-right: 1px solid var(--line); }\n.brand{ display: flex; align-items: center; gap: 10px; padding: 2px 8px 20px; }\n.brand img{ width: 36px; height: 36px; }\n.brand b{ font-size: 19px; font-weight: 800; color: var(--navy); letter-spacing: -.02em; }\n.brand span{ display: block; font-size: 11.5px; color: var(--muted); font-weight: 500; margin-top: -2px; }\n.nav-group{ font-size: 12px; color: var(--muted); padding: 14px 10px 6px; font-weight: 600; }\n.nav a{ display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: 999px; color: var(--ink); font-weight: 600; text-decoration: none; }\n.nav a svg{ width: 18px; height: 18px; color: var(--muted); flex: none; }\n.nav a:hover{ background: var(--canvas); }\n.nav a[aria-current=\"page\"]{ background: var(--blue); color: #fff; box-shadow: 0 6px 16px -8px var(--blue); }\n.nav a[aria-current=\"page\"] svg{ color: #fff; }\n.side .foot{ margin-top: auto; font-size: 12px; color: var(--muted); padding: 10px; border-radius: var(--r-md); background: var(--canvas); }\n.side .foot b{ color: var(--ink); }\n.main{ padding: 26px 32px 48px; min-width: 0; }\n.top{ display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }\n.top .greet{ flex: 1; min-width: 0; }\n.top .greet p{ margin: 4px 0 0; color: var(--muted); }\n.search{ display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; width: min(320px, 34vw); }\n.search svg{ width: 16px; color: var(--muted); }\n.search input{ border: 0; outline: 0; background: transparent; width: 100%; }\n.icon-btn{ width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); background: var(--surface); cursor: pointer; position: relative; }\n.icon-btn svg{ width: 18px; color: var(--navy); }\n.icon-btn .dot{ position: absolute; top: 7px; right: 8px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--late); color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center; }\n.who{ display: flex; align-items: center; gap: 10px; }\n.avatar{ width: 40px; height: 40px; border-radius: 50%; background: var(--sky); color: var(--navy); display: grid; place-items: center; font-weight: 800; }\n.who b{ display: block; font-size: 13px; }\n.who span{ font-size: 12px; color: var(--muted); text-transform: capitalize; }\n.card{ background: var(--surface); border-radius: var(--r-lg); box-shadow: var(--shadow); padding: 20px; min-width: 0; }\n.card-head{ display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }\n.grid{ display: grid; gap: 18px; }\n.kpis{ grid-template-columns: repeat(4, minmax(0, 1fr)); }\n.dash-2{ grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); margin-top: 18px; align-items: start; }\n.dash-3{ grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 18px; }\n.kpi{ display: flex; flex-direction: column; gap: 14px; color: inherit; text-decoration: none !important; }\n.kpi-h{ display: flex; align-items: center; gap: 12px; }\n.kpi .ic{ width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; flex: none; }\n.kpi .ic svg{ width: 20px; }\n.kpi .lbl{ font-weight: 700; color: var(--navy); line-height: 1.25; }\n.kpi-b{ display: flex; align-items: flex-end; gap: 12px; }\n.kpi-b > div{ display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }\n.kpi .val{ font-size: 34px; font-weight: 800; color: var(--ink); letter-spacing: -.02em; line-height: 1; }\n.kpi .spark{ flex: 1; height: 52px; min-width: 0; }\na.kpi:hover{ box-shadow: 0 1px 2px rgba(11,59,117,.05), 0 14px 30px -14px rgba(11,59,117,.25); }\n.chip{ display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }\n.c-ok{ background: var(--ok-bg); color: var(--ok); }\n.c-warn{ background: var(--warn-bg); color: var(--warn); }\n.c-late{ background: var(--late-bg); color: var(--late); }\n.c-idle{ background: var(--idle-bg); color: var(--idle); }\n.c-info{ background: var(--sky); color: var(--blue-d); }\n.track{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin: 6px 0 4px; }\n.seg{ text-align: center; text-decoration: none !important; color: inherit; }\n.seg .bar{ height: 58px; transform: skewX(-16deg); border-radius: 8px; display: grid; place-items: center; background: #EEF3F9; transition: transform .15s; }\n.seg .bar b{ transform: skewX(16deg); font-size: 22px; font-weight: 800; }\n.seg:hover .bar{ transform: skewX(-16deg) translateY(-2px); }\n.seg .name{ display: block; margin-top: 8px; font-size: 12px; color: var(--ink); font-weight: 600; line-height: 1.3; min-height: 2.6em; }\n.seg .dur{ display: block; margin-top: 2px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }\n.seg.l0 .bar b{ color: #9AA8B8; }\n.seg.l1 .bar{ background: #D6EBFD; }\n.seg.l1 .bar b{ color: var(--navy); }\n.seg.l2 .bar{ background: #A9D5FA; }\n.seg.l2 .bar b{ color: var(--navy); }\n.seg.l3 .bar{ background: var(--blue); }\n.seg.l3 .bar b{ color: #fff; }\n.seg.l4 .bar{ background: var(--navy); }\n.seg.l4 .bar b{ color: #fff; }\n.seg.done .bar{ background: var(--ok-bg); }\n.seg.done .bar b{ color: var(--ok); }\n.track-foot{ display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--line); }\n.meter{ flex: 1; height: 10px; border-radius: 999px; background: #EEF3F9; overflow: hidden; }\n.meter i{ display: block; height: 100%; background: linear-gradient(90deg, var(--blue), var(--navy)); border-radius: 999px; }\n.list{ list-style: none; margin: 0; padding: 0; }\n.list li{ display: grid; grid-template-columns: 10px minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 11px 0; border-top: 1px solid var(--line); }\n.list li:first-child{ border-top: 0; }\n.list .bullet{ width: 9px; height: 9px; border-radius: 50%; background: var(--blue); }\n.list .t{ font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\n.list .s{ font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\n.list .time{ font-size: 13px; font-weight: 600; color: var(--navy-2); }\n.empty{ padding: 26px 8px; text-align: center; color: var(--muted); }\n.empty b{ display: block; color: var(--ink); margin-bottom: 4px; }\n.bars{ display: flex; align-items: flex-end; gap: 10px; height: 170px; padding: 0 2px; }\n.bars .b{ flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }\n.bars .b i{ width: 100%; max-width: 34px; border-radius: 999px; background: linear-gradient(180deg, #7DC0F6, var(--blue)); min-height: 6px; }\n.bars .b span{ font-size: 11px; color: var(--muted); text-align: center; line-height: 1.2; }\n.bars .b em{ font-style: normal; font-size: 12px; font-weight: 700; color: var(--navy); }\n.btn{ display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px; border: 1px solid transparent; font-weight: 700; cursor: pointer; background: var(--blue); color: #fff; text-decoration: none !important; }\n.btn:hover{ background: var(--blue-d); }\n.btn svg{ width: 16px; }\n.btn.ghost{ background: var(--surface); color: var(--navy); border-color: var(--line); }\n.btn.ghost:hover{ background: var(--canvas); }\n.btn.danger{ background: var(--surface); color: var(--late); border-color: #F2C9C9; }\n.btn.ok{ background: var(--ok); }\n.btn.sm{ padding: 6px 12px; font-size: 13px; }\n.btn[disabled]{ opacity: .55; cursor: progress; }\n.field{ display: grid; gap: 6px; margin-bottom: 14px; }\n.field label{ font-weight: 600; font-size: 13px; }\n.field .hint{ font-size: 12px; color: var(--muted); }\n.input, select.input, textarea.input{ width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--r-sm); background: #fff; }\ntextarea.input{ min-height: 96px; resize: vertical; }\n.row{ display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }\n.seg-toggle{ display: inline-flex; background: var(--canvas); border-radius: 999px; padding: 3px; border: 1px solid var(--line); }\n.seg-toggle button{ border: 0; background: transparent; padding: 7px 14px; border-radius: 999px; font-weight: 600; cursor: pointer; color: var(--muted); }\n.seg-toggle button[aria-pressed=\"true\"]{ background: #fff; color: var(--navy); box-shadow: var(--shadow); }\n.tabs{ display: flex; gap: 6px; flex-wrap: wrap; }\n.tabs button{ border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 12px; font-weight: 600; cursor: pointer; color: var(--muted); font-size: 13px; }\n.tabs button[aria-pressed=\"true\"]{ background: var(--navy); color: #fff; border-color: var(--navy); }\n.table-wrap{ overflow-x: auto; }\ntable.t{ width: 100%; border-collapse: collapse; }\ntable.t th{ text-align: left; font-size: 12.5px; color: var(--muted); font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }\ntable.t td.nw{ white-space: nowrap; }\ntable.t td{ padding: 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }\ntable.t tr:last-child td{ border-bottom: 0; }\ntable.t tbody tr{ cursor: pointer; }\ntable.t tbody tr:hover td{ background: #F8FAFC; }\n.cell-main{ font-weight: 700; color: var(--ink); }\n.cell-sub{ font-size: 12.5px; color: var(--muted); }\n.kanban{ display: grid; grid-template-columns: repeat(7, minmax(210px, 1fr)); gap: 12px; overflow-x: auto; padding-bottom: 6px; }\n.lane{ background: #EBEFF4; border-radius: var(--r-md); padding: 10px; min-height: 200px; }\n.lane h3{ font-size: 13px; padding: 4px 4px 10px; display: flex; justify-content: space-between; }\n.kcard{ display: block; background: #fff; border-radius: 12px; padding: 12px; margin-bottom: 8px; box-shadow: var(--shadow); color: inherit; text-decoration: none !important; }\n.kcard b{ display: block; font-size: 13px; line-height: 1.35; }\n.kcard span{ font-size: 12px; color: var(--muted); }\n.detail{ display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 18px; align-items: start; }\n.crumb{ font-size: 13px; color: var(--muted); margin-bottom: 8px; }\n.timeline{ list-style: none; margin: 0; padding: 0; }\n.timeline li{ position: relative; padding: 0 0 18px 34px; }\n.timeline li::before{ content: ''; position: absolute; left: 11px; top: 24px; bottom: 0; width: 2px; background: var(--line); }\n.timeline li:last-child::before{ display: none; }\n.timeline .node{ position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 800; background: #EEF3F9; color: var(--muted); }\n.timeline .done .node{ background: var(--ok-bg); color: var(--ok); }\n.timeline .now .node{ background: var(--blue); color: #fff; box-shadow: 0 0 0 5px var(--sky); }\n.timeline b{ display: block; font-size: 13.5px; }\n.timeline .now b{ color: var(--navy); }\n.timeline span{ display: block; font-size: 12px; color: var(--muted); }\n.action{ border: 1px solid #CFE6FB; background: linear-gradient(180deg, #F5FAFF, #fff 60%); }\n.action .eyebrow{ font-size: 12.5px; font-weight: 700; color: var(--blue-d); }\n.stack{ display: grid; gap: 18px; }\n.docs li{ grid-template-columns: 34px minmax(0, 1fr) auto auto; }\n.docs .fi{ width: 34px; height: 34px; border-radius: 10px; background: var(--sky); color: var(--blue-d); display: grid; place-items: center; }\n.docs .fi svg{ width: 17px; }\n.hash{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--muted); }\n.fb{ border-left: 3px solid var(--blue); padding: 8px 12px; margin: 10px 0; background: #F7FAFD; border-radius: 0 10px 10px 0; }\n.fb.agree{ border-color: var(--ok); }\n.fb p{ margin: 4px 0 0; white-space: pre-wrap; }\ndetails.more summary{ cursor: pointer; font-weight: 700; color: var(--navy); list-style: none; }\ndetails.more summary::-webkit-details-marker{ display: none; }\n.audit li{ grid-template-columns: 140px minmax(0, 1fr); font-size: 13px; }\n.kv{ display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 6px 12px; font-size: 13px; }\n.kv dt{ color: var(--muted); }\n.kv dd{ margin: 0; font-weight: 600; overflow-wrap: anywhere; }\n.detail .kv{ grid-template-columns: 1fr; gap: 2px; }\n.detail .kv dt{ margin-top: 10px; font-size: 12px; }\n.detail .kv dt:first-child{ margin-top: 0; }\n.notice{ padding: 12px 14px; border-radius: var(--r-md); background: var(--warn-bg); color: #6E4206; font-size: 13px; }\n.notice.info{ background: var(--sky); color: var(--navy); }\n.ttd-stage{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }\n.checker{ border-radius: var(--r-md); border: 1px dashed #C4D0DE; min-height: 150px; display: grid; place-items: center; background-color: #fff; background-image: linear-gradient(45deg, #EEF2F7 25%, transparent 25%), linear-gradient(-45deg, #EEF2F7 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #EEF2F7 75%), linear-gradient(-45deg, transparent 75%, #EEF2F7 75%); background-size: 16px 16px; background-position: 0 0, 0 8px, 8px -8px, -8px 0; padding: 10px; }\n.checker canvas{ max-width: 100%; max-height: 180px; }\n.pdf-frame{ width: 100%; height: 460px; border: 1px solid var(--line); border-radius: var(--r-md); background: #fff; }\ninput[type=\"range\"]{ accent-color: var(--blue); width: 100%; }\ndialog{ border: 0; border-radius: var(--r-lg); padding: 0; width: min(560px, 94vw); box-shadow: 0 30px 80px -20px rgba(11, 59, 117, .4); }\ndialog::backdrop{ background: rgba(11, 30, 55, .35); backdrop-filter: blur(2px); }\ndialog .dh{ padding: 20px 22px 6px; display: flex; justify-content: space-between; align-items: center; }\ndialog .db{ padding: 10px 22px 6px; max-height: 70vh; overflow: auto; }\ndialog .df{ padding: 12px 22px 20px; display: flex; justify-content: flex-end; gap: 10px; }\n.picker{ max-height: 220px; overflow: auto; border: 1px solid var(--line); border-radius: var(--r-sm); margin-top: 6px; }\n.picker button{ display: block; width: 100%; text-align: left; border: 0; background: #fff; padding: 9px 12px; cursor: pointer; border-bottom: 1px solid var(--line); }\n.picker button:hover, .picker button[aria-selected=\"true\"]{ background: var(--sky); }\n.picker small{ display: block; color: var(--muted); font-size: 12px; }\n.toast{ position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 12px 18px; border-radius: 999px; font-weight: 600; box-shadow: var(--shadow); z-index: 100; max-width: 90vw; }\n.toast.err{ background: var(--late); }\n.skeleton{ height: 120px; border-radius: var(--r-lg); background: linear-gradient(90deg, #EAEFF5, #F4F7FA, #EAEFF5); background-size: 200% 100%; animation: sh 1.2s infinite; }\n\n@keyframes sh { to { background-position: -200% 0; } }.mode-banner{ background: var(--warn-bg); color: #6E4206; padding: 8px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 600; margin-bottom: 16px; display: inline-block; }\n@media (max-width: 1180px){.kpis{ grid-template-columns: repeat(2, minmax(0, 1fr)); }\n.dash-3{ grid-template-columns: 1fr 1fr; }\n }@media (max-width: 980px){.shell{ grid-template-columns: minmax(0, 1fr); }\n.side{ position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; padding: 12px; border-right: 0; border-bottom: 1px solid var(--line); }\n.brand{ padding: 0 8px 0 0; }\n.nav-group, .side .foot > div:first-child{ display: none; }\n.side .foot{ margin: 0 0 0 auto; padding: 0; background: none; }\n.side .foot .foot-acts{ margin-top: 0; flex-wrap: nowrap; }\n.nav{ display: flex; gap: 4px; overflow-x: auto; order: 3; width: 100%; }\n.main{ padding: 18px 16px 40px; }\n.dash-2, .dash-3, .detail, .ttd-stage{ grid-template-columns: minmax(0, 1fr); }\n.mode-banner{ border-radius: var(--r-md); }\n.top{ flex-wrap: wrap; }\n.search{ width: 100%; order: 3; }\n.track{ grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 14px; }\n\n}@media (max-width: 560px){.kpis{ grid-template-columns: minmax(0, 1fr); }\n.who div{ display: none; }\n.list li{ grid-template-columns: 10px minmax(0, 1fr) auto; }\n.list li .time{ display: none; }\n }.main{ transition: opacity .16s ease; }\n.main.memuat{ opacity: .45; pointer-events: none; }\n.main.masuk{ animation: masuk .26s cubic-bezier(.2, .7, .2, 1) both; }\n\n@keyframes masuk { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }dialog[open]{ animation: dialog-masuk .2s cubic-bezier(.2, .7, .2, 1); }\ndialog[open]::backdrop{ animation: latar .2s ease; }\n\n@keyframes dialog-masuk { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }\n@keyframes latar { from { opacity: 0; } to { opacity: 1; } }.tl li .node, .chip, .btn{ transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .15s ease; }\ndialog{ max-height: 92vh; overflow: hidden; }\ndialog form[data-f]{ display: flex; flex-direction: column; max-height: 92vh; }\ndialog form[data-f] .db{ overflow: auto; }\n.isian{ border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px 4px; margin: 0 0 14px; min-width: 0; }\n.isian legend{ font-weight: 700; padding: 0 6px; }\n@media (prefers-reduced-motion: reduce){*{ transition: none !important; animation: none !important; }\n }.bars.two .pair{ display: flex; gap: 4px; align-items: flex-end; flex: 1; min-height: 0; width: 100%; justify-content: center; }\n.bars.two .pair i{ max-width: 16px; flex: 1; }\n.bars.two .pair i.alt{ background: linear-gradient(180deg, #3D6A9E, var(--navy)); }\n.bars.two .b{ min-width: 0; }\n.bars.two .b > em{ order: 3; font-weight: 600; color: var(--muted); font-size: 11px; }\n.lg{ display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-left: 8px; }\n.login{ min-height: 80vh; display: grid; place-items: center; padding: 24px; }\n.login-card{ width: min(420px, 100%); display: grid; gap: 4px; padding: 32px; }\n.login-card h1{ font-size: 22px; margin: 0; color: var(--navy); }\n.login-card p{ margin: 0 0 12px; }\n.login-logo{ width: 56px; height: 56px; object-fit: contain; margin-bottom: 8px; }\n.login-err{ min-height: 20px; color: var(--late); font-weight: 600; font-size: 14px; margin: 0 0 4px; }\n.foot-acts{ display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }\n.pw{ display: inline-block; padding: 10px 14px; border-radius: 10px; background: var(--canvas); border: 1px dashed var(--line); font-size: 18px; letter-spacing: .04em; user-select: all; }\n.shell.tanpa-menu{ display: block; }\n.shell.tanpa-menu .main{ padding: 0; }\n.login{ width: 100%; }\ndialog.pv{ width: min(1000px, 96vw); height: 92vh; max-height: 92vh; display: none; flex-direction: column; }\ndialog.pv[open]{ display: flex; }\ndialog.pv .pv-isi{ flex: 1; min-height: 0; padding: 0 12px 12px; display: flex; }\ndialog.pv .pv-frame{ flex: 1; width: 100%; border: 1px solid var(--line); border-radius: 12px; background: #fff; }\ndialog.pv .pv-muat{ margin: auto; display: flex; gap: 10px; align-items: center; color: var(--muted, #5b6b7d); }\ndialog.pv .pv-muat .muat-putar{ position: static; display: inline-block; }\n\n:host{display:block;background:transparent;color:var(--ink,#1D2A3A);font-family:inherit;font-size:14px;line-height:1.5;border-radius:0;min-height:0;color-scheme:light}\n.main{padding:0;min-height:60vh;outline:none}.main:focus,.main:focus-visible{outline:none}\n.top{flex-wrap:wrap;row-gap:10px;margin-bottom:16px;gap:10px}.top .greet{flex:1 1 220px}.top .greet h1{font-size:20px;margin:0}.top .search{flex:0 1 320px;width:auto}.login{min-height:60vh}\n@media (max-width:640px){.top .search{flex:1 1 100%}}\n:host(.gelap){color-scheme:dark;--surface:#111c2f;--canvas:#0b1424;--line:#26354d;--ink:#E5ECF6;--muted:#93A4BA;--navy:#A9D1FF;--navy-2:#8dbbf0;--sky:#1b3454;--ok:#4cd39a;--ok-bg:#12372b;--warn:#f0b255;--warn-bg:#3a2b10;--late:#ff8585;--late-bg:#3d1b1d;--idle:#9fb0c6;--idle-bg:#1d2a3f;--shadow:none}\n:host(.gelap) .input,:host(.gelap) input,:host(.gelap) select,:host(.gelap) textarea{background:#0e1829;color:var(--ink);border-color:var(--line)}\n:host(.gelap) .btn.ghost{color:var(--ink)}\n\n/* ---------- Indikator proses (muat.js) ---------- */\n.muat-bar { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 200; overflow: hidden; opacity: 0; transition: opacity .2s ease; pointer-events: none; }\n.muat-bar.on { opacity: 1; }\n.muat-bar i { position: absolute; top: 0; bottom: 0; width: 40%; background: linear-gradient(90deg, transparent, var(--blue, #2F9BEF), #0B5CAD); border-radius: 0 3px 3px 0; animation: muat-geser 1.1s cubic-bezier(.4, 0, .2, 1) infinite; }\n.muat-bar.habis i { animation: none; left: 0; width: 100%; transition: width .25s ease; }\n@keyframes muat-geser { from { left: -40%; } to { left: 100%; } }\n.btn.sibuk, button.sibuk { cursor: progress; }\n.btn.sibuk::before, button.sibuk::before { content: ''; display: inline-block; width: 14px; height: 14px; margin-right: 8px; vertical-align: -2px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: muat-putar .7s linear infinite; flex: none; }\n@keyframes muat-putar { to { transform: rotate(360deg); } }\n.muat-unggah { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); z-index: 210; opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; width: min(420px, calc(100vw - 32px)); }\n.muat-unggah.on { opacity: 1; transform: translate(-50%, 0); }\n.muat-kartu { display: flex; align-items: center; gap: 12px; background: var(--navy, #0B2545); color: #fff; padding: 14px 16px; border-radius: 16px; box-shadow: 0 18px 40px -16px rgba(11, 37, 69, .55); }\n.muat-kartu b { display: block; font-size: 13.5px; }\n.muat-kartu small { display: block; font-size: 11.5px; opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\n.muat-jalur { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .2); margin-top: 8px; overflow: hidden; }\n.muat-jalur i { display: block; height: 100%; width: 0; background: #5EC2FF; border-radius: 3px; transition: width .2s ease; }\n.muat-pct { font-weight: 800; font-size: 14px; min-width: 40px; text-align: right; }\n.muat-putar { width: 20px; height: 20px; border: 2.5px solid rgba(255, 255, 255, .35); border-top-color: #fff; border-radius: 50%; animation: muat-putar .8s linear infinite; flex: none; }\n@media (prefers-reduced-motion: reduce) { .muat-bar i, .muat-putar, .btn.sibuk::before, button.sibuk::before { animation-duration: 2.4s; } }\n";
 (function(){if(document.getElementById('pks-css'))return;var s=document.createElement('style');s.id='pks-css';s.textContent="/* ---------- Indikator proses (muat.js) ---------- */\n.muat-bar { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 200; overflow: hidden; opacity: 0; transition: opacity .2s ease; pointer-events: none; }\n.muat-bar.on { opacity: 1; }\n.muat-bar i { position: absolute; top: 0; bottom: 0; width: 40%; background: linear-gradient(90deg, transparent, var(--blue, #2F9BEF), #0B5CAD); border-radius: 0 3px 3px 0; animation: muat-geser 1.1s cubic-bezier(.4, 0, .2, 1) infinite; }\n.muat-bar.habis i { animation: none; left: 0; width: 100%; transition: width .25s ease; }\n@keyframes muat-geser { from { left: -40%; } to { left: 100%; } }\n.btn.sibuk, button.sibuk { cursor: progress; }\n.btn.sibuk::before, button.sibuk::before { content: ''; display: inline-block; width: 14px; height: 14px; margin-right: 8px; vertical-align: -2px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: muat-putar .7s linear infinite; flex: none; }\n@keyframes muat-putar { to { transform: rotate(360deg); } }\n.muat-unggah { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); z-index: 210; opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; width: min(420px, calc(100vw - 32px)); }\n.muat-unggah.on { opacity: 1; transform: translate(-50%, 0); }\n.muat-kartu { display: flex; align-items: center; gap: 12px; background: var(--navy, #0B2545); color: #fff; padding: 14px 16px; border-radius: 16px; box-shadow: 0 18px 40px -16px rgba(11, 37, 69, .55); }\n.muat-kartu b { display: block; font-size: 13.5px; }\n.muat-kartu small { display: block; font-size: 11.5px; opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\n.muat-jalur { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .2); margin-top: 8px; overflow: hidden; }\n.muat-jalur i { display: block; height: 100%; width: 0; background: #5EC2FF; border-radius: 3px; transition: width .2s ease; }\n.muat-pct { font-weight: 800; font-size: 14px; min-width: 40px; text-align: right; }\n.muat-putar { width: 20px; height: 20px; border: 2.5px solid rgba(255, 255, 255, .35); border-top-color: #fff; border-radius: 50%; animation: muat-putar .8s linear infinite; flex: none; }\n@media (prefers-reduced-motion: reduce) { .muat-bar i, .muat-putar, .btn.sibuk::before, button.sibuk::before { animation-duration: 2.4s; } }\n";document.head.appendChild(s);})();
-// Pengolah gambar TTD (opsi 1): hapus latar kertas, potong otomatis, ekspor PNG transparan.
-// Dipakai aplikasi internal dan portal mitra.
-
-function loadImage(file) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Gambar tidak dapat dibaca. Gunakan PNG atau JPG.')); };
-    img.src = url;
-  });
-}
-
-/**
- * Proses gambar: piksel kertas (kroma rendah & terang) dibuat transparan.
- * Tinta hitam/biru, stempel, dan meterai berwarna tetap dipertahankan.
- * @param {number} sens 0–100, makin tinggi makin banyak latar dihapus.
- */
-function cleanSignature(img, canvas, sens = 50) {
-  const maxSide = 1400;
-  const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
-  const w = Math.round(img.naturalWidth * scale), h = Math.round(img.naturalHeight * scale);
-  const work = document.createElement('canvas');
-  work.width = w; work.height = h;
-  const ctx = work.getContext('2d', { willReadFrequently: true });
-  ctx.drawImage(img, 0, 0, w, h);
-  const data = ctx.getImageData(0, 0, w, h);
-  const px = data.data;
-  const lumMin = 235 - sens * 0.9;      // ambang terang kertas
-  const chromaMax = 18 + sens * 0.35;   // ambang "tidak berwarna"
-  let minX = w, minY = h, maxX = -1, maxY = -1;
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const i = (y * w + x) * 4;
-      const r = px[i], g = px[i + 1], b = px[i + 2];
-      const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-      const chroma = Math.max(r, g, b) - Math.min(r, g, b);
-      if (lum >= lumMin && chroma <= chromaMax) { px[i + 3] = 0; continue; }
-      // tepi lembut untuk piksel peralihan
-      if (lum >= lumMin - 25 && chroma <= chromaMax) px[i + 3] = Math.round(255 * (lumMin - lum + 25) / 25 * 0.9);
-      if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y;
-    }
-  }
-  ctx.putImageData(data, 0, 0);
-  if (maxX < 0) throw new Error('Tanda tangan tidak terdeteksi. Turunkan kepekaan latar atau gunakan scan yang lebih jelas.');
-  const pad = 8;
-  minX = Math.max(0, minX - pad); minY = Math.max(0, minY - pad);
-  maxX = Math.min(w - 1, maxX + pad); maxY = Math.min(h - 1, maxY + pad);
-  canvas.width = maxX - minX + 1; canvas.height = maxY - minY + 1;
-  canvas.getContext('2d').drawImage(work, minX, minY, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-  return canvas;
-}
-
-const canvasToPng = (canvas) => new Promise((res) => canvas.toBlob((b) => res(b), 'image/png'));
-
-/**
- * Pasang widget opsi 1 ke elemen `root`.
- * onPreview(pngBlob) -> Promise<Blob PDF>, onConfirm(pngBlob) -> Promise
- */
-function mountTtdWidget(root, { onPreview, onConfirm, confirmLabel = 'Simpan tanda tangan' }) {
-  root.innerHTML = `
-    <div class="field"><label for="ttd-file">Scan tanda tangan beserta stempel dan meterai</label>
-      <input class="input" id="ttd-file" type="file" accept="image/png,image/jpeg">
-      <span class="hint">Foto atau scan di atas kertas putih. Latar kertas dihapus otomatis.</span></div>
-    <div class="ttd-stage" hidden>
-      <div><div class="checker"><canvas aria-label="Hasil pembersihan tanda tangan"></canvas></div>
-        <div class="field" style="margin-top:10px"><label for="ttd-sens">Kepekaan latar</label><input id="ttd-sens" type="range" min="0" max="100" value="50"></div></div>
-      <div class="notice info small">Pastikan tanda tangan, stempel, dan meterai terlihat utuh. Bila ada noda latar, naikkan kepekaan; bila goresan ikut hilang, turunkan.</div>
-    </div>
-    <div class="row" style="margin-top:6px"><button class="btn ghost" data-act="preview" disabled>Lihat pratinjau di dokumen</button><button class="btn" data-act="confirm" disabled>${confirmLabel}</button></div>
-    <iframe class="pdf-frame" title="Pratinjau dokumen bertanda tangan" hidden></iframe>`;
-  const file = root.querySelector('#ttd-file');
-  const sens = root.querySelector('#ttd-sens');
-  const stage = root.querySelector('.ttd-stage');
-  const canvas = root.querySelector('canvas');
-  const bPrev = root.querySelector('[data-act="preview"]');
-  const bOk = root.querySelector('[data-act="confirm"]');
-  const frame = root.querySelector('iframe');
-  let img = null, previewed = false;
-  const redraw = () => { cleanSignature(img, canvas, Number(sens.value)); previewed = false; bOk.disabled = true; frame.hidden = true; };
-  file.addEventListener('change', async () => {
-    if (!file.files[0]) return;
-    try { img = await loadImage(file.files[0]); stage.hidden = false; redraw(); bPrev.disabled = false; }
-    catch (e) { alertMsg(root, e.message); }
-  });
-  sens.addEventListener('input', () => { try { redraw(); } catch (e) { alertMsg(root, e.message); } });
-  bPrev.addEventListener('click', async () => {
-    bPrev.disabled = true;
-    try {
-      const pdf = await onPreview(await canvasToPng(canvas));
-      frame.src = URL.createObjectURL(pdf) + '#page=999&view=FitH';
-      frame.hidden = false; previewed = true; bOk.disabled = false;
-    } catch (e) { alertMsg(root, e.message); } finally { bPrev.disabled = false; }
-  });
-  bOk.addEventListener('click', async () => {
-    if (!previewed) return;
-    bOk.disabled = true;
-    try { await onConfirm(await canvasToPng(canvas)); } catch (e) { alertMsg(root, e.message); bOk.disabled = false; }
-  });
-}
-
-function alertMsg(root, msg) {
-  let n = root.querySelector('.ttd-err');
-  if (!n) { n = document.createElement('div'); n.className = 'notice ttd-err'; n.style.marginTop = '10px'; root.prepend(n); }
-  n.textContent = msg;
-}
-
 
 // ---------- indikator proses (khusus PKS di dashboard) ----------
 let __jalan = 0, __tunda = null, __bar = null, __panel = null;
@@ -5882,7 +5775,6 @@ function __amatiTombol() {
   new MutationObserver((ms) => ms.forEach((m) => { const b = m.target; if (b.tagName !== 'BUTTON') return; if (b.disabled) { const cek = () => { if (b.disabled && __jalan) b.classList.add('sibuk'); }; cek(); setTimeout(cek, 60); } else b.classList.remove('sibuk'); }))
     .observe(ROOT, { attributes: true, attributeFilter: ['disabled'], subtree: true });
 }
-
 
 let ROOT = null;
 const $ = (s, r = ROOT || document) => r.querySelector(s);
@@ -6143,57 +6035,91 @@ async function pageDashboard() {
 
 // ---------- Daftar perjanjian ----------
 async function pagePerjanjian(params) {
-  const q = params.get('q') || '', tahap = params.get('tahap') ?? '', status = params.get('status') || '';
-  const qs = new URLSearchParams(); if (q) qs.set('q', q); if (tahap !== '') qs.set('tahap', tahap); if (status) qs.set('status', status);
+  const q = params.get('q') || '', tahap = params.get('tahap') ?? '', status = params.get('status') || '', jenis = params.get('jenis') || '';
+  const qs = new URLSearchParams(); if (q) qs.set('q', q); if (tahap !== '') qs.set('tahap', tahap); if (status) qs.set('status', status); if (jenis) qs.set('jenis', jenis);
   const rows = await api('/api/perjanjian?' + qs);
   const filters = [['', '', 'Semua'], ...S.meta.langkah.map((l) => [String(l.tahap[0]), '', l.nama]), ['7', '', 'Selesai'], ['', 'terlambat', 'Terlambat'], ['', 'batal', 'Dibatalkan']];
   const lk = (t) => S.meta.tahap[Number(t)]?.langkah;
   const isOn = (t, s) => (s ? s === status && tahap === '' : t !== '' ? tahap !== '' && !status && lk(t) === lk(tahap) : tahap === '' && !status);
-  const table = rows.length ? `<div class="table-wrap"><table class="t"><thead><tr><th>Mitra</th><th>Perjanjian</th><th>Tahap</th><th>Nomor surat</th><th>Tenggat</th><th>Status</th></tr></thead><tbody>
-    ${rows.map((p) => `<tr data-href="#/pks/perjanjian/${p.id}" tabindex="0"><td><div class="cell-main">${esc(p.mitra_nama)}</div><div class="cell-sub">${esc(p.kode)}</div></td><td>${esc(p.judul)}</td><td>${esc(tahapNama(p.tahap))}</td><td>${esc(p.nomor_surat || '–')}</td><td class="nw">${p.tahap < 7 && p.status !== 'batal' ? (p.tenggat ? `${tgl(p.tenggat)}<div class="cell-sub">${sisa(p.tenggat)?.label}</div>` : '–') : '–'}</td><td>${chipTampil(p.tampil)}</td></tr>`).join('')}
+  const table = rows.length ? `<div class="table-wrap"><table class="t"><thead><tr><th>Mitra</th><th>Perjanjian</th><th>Tahap</th><th>Nomor</th><th>Tenggat</th><th>Status</th></tr></thead><tbody>
+    ${rows.map((p) => `<tr data-href="#/pks/perjanjian/${p.id}" tabindex="0"><td><div class="cell-main">${esc(p.mitra_nama)}</div><div class="cell-sub">${esc(p.kode)}</div></td><td>${esc(p.judul)}<div class="cell-sub">${esc(JENIS_NAMA[p.jenis] || p.jenis)}</div></td><td>${esc(tahapNama(p.tahap))}</td><td>${esc(p.nomor_surat || '–')}${p.nomor_spk ? `<div class="cell-sub">SPK ${esc(p.nomor_spk)}</div>` : ''}</td><td class="nw">${p.tahap < 7 && p.status !== 'batal' ? (p.tenggat ? `${tgl(p.tenggat)}<div class="cell-sub">${sisa(p.tenggat)?.label}</div>` : '–') : '–'}</td><td>${chipTampil(p.tampil)}</td></tr>`).join('')}
     </tbody></table></div>` : `<div class="empty"><b>${q || tahap !== '' || status ? 'Tidak ada perjanjian yang cocok' : 'Belum ada perjanjian'}</b>${can('vm') ? 'Buat perjanjian baru dari data info perseroan.' : ''}</div>`;
   app.innerHTML = `${topbar('Perjanjian', `${rows.length} perjanjian${q ? ` untuk "${esc(q)}"` : ''}`)}
     <div class="card">
       <div class="card-head" style="flex-wrap:wrap"><div class="tabs" role="group" aria-label="Saring tahap">${filters.map(([t, s, l]) => `<button aria-pressed="${isOn(t, s)}" data-t="${t}" data-s="${s}">${esc(l)}</button>`).join('')}</div>
-        <div class="row">${can('vm') ? `<button class="btn" data-new>${ic('plus')}Perjanjian baru</button>` : ''}</div></div>
+        <div class="row"><label class="sr" for="fj">Jenis</label><select class="input" id="fj" style="width:auto"><option value="">Semua jenis</option>${Object.entries(JENIS_NAMA).map(([k, l]) => `<option value="${k}" ${k === jenis ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>${can('vm') ? `<button class="btn" data-new>${ic('plus')}Perjanjian baru</button>` : ''}</div></div>
       ${table}
     </div>`;
   bindSearch();
   if (q) $('#q').value = q;
-  $$('.tabs button').forEach((b) => b.addEventListener('click', () => { const n = new URLSearchParams(); if (q) n.set('q', q); if (b.dataset.t) n.set('tahap', b.dataset.t); if (b.dataset.s) n.set('status', b.dataset.s); location.hash = '#/pks/perjanjian' + (n.toString() ? '?' + n : ''); }));
+  const pergi = (o) => { const n = new URLSearchParams(); const v = { q, tahap, status, jenis, ...o }; Object.entries(v).forEach(([k, x]) => { if (x !== '' && x != null) n.set(k, x); }); location.hash = '#/pks/perjanjian' + (n.toString() ? '?' + n : ''); };
+  $$('.tabs button').forEach((b) => b.addEventListener('click', () => pergi({ tahap: b.dataset.t, status: b.dataset.s })));
+  $('#fj').addEventListener('change', (e) => pergi({ jenis: e.target.value }));
   $$('tr[data-href]').forEach((tr) => {
     tr.addEventListener('click', () => { location.hash = tr.dataset.href; });
     tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') location.hash = tr.dataset.href; });
   });
-  $('[data-new]')?.addEventListener('click', () => openCreate());
+  $('[data-new]')?.addEventListener('click', () => openCreate(null, jenis || 'PKS'));
 }
 
 // ---------- Buat perjanjian ----------
-async function openCreate(preset) {
-  try { S.tpl ||= await api('/api/template'); } catch (e) { return toast(e.message, true); }
+const JENIS_NAMA = { PKS: 'Perjanjian Homepass', MS: 'PKS MS & SPK MS' };
+const sheetChip = (p) => {
+  const st = String(p.sheet_status || '');
+  if (st === 'ok') return `<span class="chip c-ok">Tersimpan di spreadsheet</span><span class="small muted"> ${p.sheet_waktu ? jam(p.sheet_waktu) : ''}</span>`;
+  if (st.startsWith('gagal')) return `<span class="chip c-late" title="${esc(st)}">Gagal menulis ke spreadsheet</span><div class="small muted" style="margin-top:4px">${esc(st.slice(7))}. Dicoba ulang otomatis.</div>`;
+  return '<span class="chip c-warn">Menunggu ditulis ke spreadsheet</span>';
+};
+const tplJenis = async (jenis) => { S.tpls ||= {}; return (S.tpls[jenis] ||= await api(`/api/template?jenis=${jenis}`)); };
+const hariIniWib = () => new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+// Satu isian dokumen. Isian "lengkapi" boleh kosong saat draf (dilengkapi mitra lewat tautan).
+const kolomIsian = (f, maks, nilai, pfx) => {
+  const v = nilai === '-' ? '' : (nilai ?? '');
+  const tgl = f.type === 'date';
+  const batas = tgl ? (f.key === 'tanggal' || f.key === 'tanggal_spk') && maks.__jenis === 'PKS' ? 'min="2026-01-01" max="2026-12-31"' : 'min="2026-01-01" max="2029-12-31"' : '';
+  return `<div class="field"><label for="${pfx}-${f.key}">${esc(f.label)}${f.lengkapi ? ' <span class="muted" style="font-weight:500">(boleh dilengkapi mitra)</span>' : ''}</label>
+    <input class="input" id="${pfx}-${f.key}" data-isi="${f.key}" ${tgl ? `type="date" ${batas}` : `type="text" maxlength="${maks[f.key] || 160}" autocomplete="off"`} value="${esc(v)}" ${f.lengkapi ? '' : 'required'}>${f.hint ? `<span class="hint">${esc(f.hint)}</span>` : ''}</div>`;
+};
+const ambilIsian = (root) => Object.fromEntries($$('[data-isi]', root).map((el) => [el.dataset.isi, el.value.trim()]));
+
+async function openCreate(preset, jenisAwal = 'PKS') {
   const dlg = document.createElement('dialog');
-  dlg.innerHTML = `<form method="dialog" data-f>
+  dlg.innerHTML = `<form method="dialog" data-f novalidate>
     <div class="dh"><h2>Perjanjian baru</h2><button class="icon-btn" value="cancel" aria-label="Tutup" formnovalidate>✕</button></div>
     <div class="db">
+      <div class="field"><span class="label" style="display:block;font-weight:600;margin-bottom:6px">Jenis perjanjian</span>
+        <div class="seg-toggle" role="group" aria-label="Jenis perjanjian">${Object.entries(JENIS_NAMA).map(([k, l]) => `<button type="button" data-jenis="${k}" aria-pressed="${k === jenisAwal}">${esc(l)}</button>`).join('')}</div></div>
       <div class="field"><label for="m-q">Mitra</label><input class="input" id="m-q" placeholder="Ketik nama mitra" autocomplete="off"><div class="picker" role="listbox" aria-label="Pilihan mitra"></div><div class="hint" data-sel>Data diambil dari info perseroan.</div></div>
-      <div class="field"><label for="m-jenis">Jenis perjanjian</label><select class="input" id="m-jenis" name="jenis">${S.meta.jenis.map((j) => `<option value="${esc(j.kode)}">${esc(j.nama)}</option>`).join('')}</select></div>
       <div class="field"><label for="m-judul">Judul</label><input class="input" id="m-judul" name="judul" required minlength="3"></div>
-      <fieldset class="isian"><legend>Isian dokumen</legend><p class="hint" style="margin:0 0 10px">Dokumen memakai format Perjanjian Pengadaan Jasa. Hanya bagian kuning ini yang dapat diisi; isi lainnya terkunci. Nomor surat diterbitkan Legal.</p>
-        ${S.tpl.fields.map((f) => `<div class="field"><label for="i-${f.key}">${esc(f.label)}</label><input class="input" id="i-${f.key}" data-isi="${f.key}" ${f.type === 'date' ? 'type="date" min="2026-01-01" max="2026-12-31"' : `type="text" maxlength="${S.tpl.maks[f.key] || 120}" autocomplete="off"`} required>${f.hint ? `<span class="hint">${esc(f.hint)}</span>` : ''}</div>`).join('')}
-      </fieldset>
+      <div data-isian-box><div class="pv-muat"><span class="muat-putar"></span>Memuat isian…</div></div>
     </div>
-    <div class="df"><button class="btn ghost" value="cancel" formnovalidate>Batal</button><button class="btn ghost" type="button" data-pvisi>Pratinjau dokumen</button><button class="btn" value="ok" data-submit>Buat perjanjian</button></div></form>`;
+    <div class="df"><button class="btn ghost" value="cancel" formnovalidate>Batal</button><button class="btn ghost" type="button" data-pvisi>Pratinjau dokumen</button><button class="btn" value="ok" data-submit>Buat draf</button></div></form>`;
   ROOT.append(dlg); dlg.showModal();
   dlg.addEventListener('close', () => dlg.remove());
-  let chosen = null, timer;
-  const pick = $('.picker', dlg), qi = $('#m-q', dlg), judul = $('#m-judul', dlg);
-  const choose = (m) => {
-    chosen = m; qi.value = m.nama;
-    $('[data-sel]', dlg).innerHTML = m.emails.length ? `Dikirim ke ${m.emails.map(esc).join(', ')}` : `<span style="color:var(--late);font-weight:600">Email mitra kosong di info perseroan. Perjanjian bisa dibuat, tetapi belum bisa dikirim.</span>`;
-    if (!judul.value) judul.value = `${$('#m-jenis', dlg).selectedOptions[0].text} ${m.singkat || m.nama}`;
-    const pre = { nama: m.nama, direksi: m.direksi, alamat: m.alamat, telepon: m.telepon, email: m.emails?.[0], kontak_lain: m.kontak_lain };
-    S.tpl.fields.forEach((f) => { const el = $(`[data-isi="${f.key}"]`, dlg); if (el && f.prefill) el.value = String(pre[f.prefill] || '').slice(0, el.maxLength > 0 ? el.maxLength : 200); });
-    pick.innerHTML = '';
+  let chosen = null, timer, jenis = jenisAwal, judulOtomatis = true;
+  const pick = $('.picker', dlg), qi = $('#m-q', dlg), judul = $('#m-judul', dlg), box = $('[data-isian-box]', dlg);
+  judul.addEventListener('input', () => { judulOtomatis = false; });
+  const pre = () => (chosen ? { nama: chosen.nama, direksi: chosen.direksi, alamat: chosen.alamat, telepon: chosen.telepon, email: chosen.emails?.join('; '), kontak_lain: chosen.kontak_lain } : {});
+  const isiForm = async () => {
+    const t = await tplJenis(jenis); const maks = { ...t.maks, __jenis: jenis };
+    const lama = box.isConnected ? ambilIsian(box) : {};
+    const nilai = (f) => lama[f.key] || (f.prefill ? String(pre()[f.prefill] || '') : '') || (f.type === 'date' ? hariIniWib() : '') || f.bawaan || '';
+    const utama = t.fields.filter((f) => !f.lengkapi), lengkapi = t.fields.filter((f) => f.lengkapi);
+    box.innerHTML = `<fieldset class="isian"><legend>Isian dokumen</legend>
+      <p class="hint" style="margin:0 0 10px">Dokumen memakai template ${esc(JENIS_NAMA[jenis])}; hanya isian ini yang berubah, sisanya terkunci. Data diisi otomatis dari info perseroan. Nomor surat diterbitkan Legal.</p>
+      ${utama.map((f) => kolomIsian(f, maks, nilai(f), 'i')).join('')}
+      <details class="more" ${lengkapi.some((f) => !nilai(f)) ? '' : ''}><summary>Data lain (${lengkapi.length}) — boleh dikosongkan, dilengkapi mitra lewat tautan</summary><div style="margin-top:10px">${lengkapi.map((f) => kolomIsian(f, maks, nilai(f), 'i')).join('')}</div></details></fieldset>`;
+    if (chosen && judulOtomatis) judul.value = `${JENIS_NAMA[jenis]} ${chosen.singkat || chosen.nama}`;
+  };
+  $$('[data-jenis]', dlg).forEach((b) => b.addEventListener('click', async () => {
+    jenis = b.dataset.jenis; $$('[data-jenis]', dlg).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    try { await isiForm(); } catch (e) { toast(e.message, true); }
+  }));
+  const choose = async (m) => {
+    chosen = m; qi.value = m.nama; pick.innerHTML = '';
+    $('[data-sel]', dlg).innerHTML = m.emails.length ? `Dikirim ke ${m.emails.map(esc).join(', ')}${m.direksi ? `. Direktur: ${esc(m.direksi)}` : ''}` : `<span style="color:var(--late);font-weight:600">Email mitra kosong di info perseroan. Draf bisa dibuat, tetapi belum bisa dikirim.</span>`;
+    $$('[data-isi]', box).forEach((el) => { el.value = ''; }); // isian mengikuti mitra yang baru dipilih
+    await isiForm();
   };
   const load = async (q) => {
     const list = await api(q ? `/api/mitra?q=${encodeURIComponent(q)}` : '/api/mitra?batch=1');
@@ -6201,16 +6127,16 @@ async function openCreate(preset) {
     $$('button', pick).forEach((b) => b.addEventListener('click', () => choose(list[b.dataset.i])));
   };
   qi.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => load(qi.value.trim()), 220); });
+  try { await isiForm(); } catch (e) { box.innerHTML = `<div class="notice">${esc(e.message)}</div>`; }
   if (preset) choose(preset); else load('');
-  $('[data-pvisi]', dlg).addEventListener('click', () => { if ($('[data-f]', dlg).reportValidity()) pratinjauIsi(dlg); });
+  const valid = () => { const f = $('[data-f]', dlg); if (!chosen) { toast('Pilih mitra terlebih dahulu', true); return false; } return f.reportValidity(); };
+  $('[data-pvisi]', dlg).addEventListener('click', () => { if (valid()) pratinjau(() => api('/api/pratinjau', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jenis, isi: ambilIsian(box) }) }), `${JENIS_NAMA[jenis]} (belum disimpan)`); });
   $('[data-submit]', dlg).addEventListener('click', async (e) => {
     e.preventDefault();
-    const f = $('[data-f]', dlg);
-    if (!chosen) return toast('Pilih mitra terlebih dahulu', true);
-    if (!f.reportValidity()) return;
-    const fd = new FormData(f); fd.set('mitra_row', chosen.row);
-    fd.set('isi', JSON.stringify(Object.fromEntries($$('[data-isi]', dlg).map((el) => [el.dataset.isi, el.value]))));
-    await busy(e.currentTarget, async () => { const r = await postForm('/api/perjanjian', fd); dlg.close(); toast('Perjanjian dibuat'); location.hash = `#/pks/perjanjian/${r.id}`; });
+    if (!valid()) return;
+    const fd = new FormData(); fd.set('mitra_row', chosen.row); fd.set('jenis', jenis); fd.set('judul', judul.value.trim());
+    fd.set('isi', JSON.stringify(ambilIsian(box)));
+    await busy(e.currentTarget, async () => { const r = await postForm('/api/perjanjian', fd); dlg.close(); toast('Draf dibuat'); location.hash = `#/pks/perjanjian/${r.id}`; });
   });
 }
 
@@ -6230,25 +6156,26 @@ function pratinjau(ambil, judul) {
     } catch (e) { console.error('pratinjau', e); $('.pv-isi', dlg).innerHTML = `<div class="empty">${esc(e.message || 'Pratinjau gagal dimuat')}</div>`; }
   })();
 }
-const pratinjauIsi = (dlg) => pratinjau(() => api('/api/pratinjau', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ isi: Object.fromEntries($$('[data-isi]', dlg).map((el) => [el.dataset.isi, el.value])) }) }), 'dokumen perjanjian (belum disimpan)');
+const pratinjauIsi = (dlg, jenis = 'PKS') => pratinjau(() => api('/api/pratinjau', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jenis, isi: ambilIsian(dlg) }) }), 'dokumen (belum disimpan)');
 
 // ---------- Ubah isian kuning pada dokumen ----------
 async function bukaIsian(p, reload) {
-  let nilai;
-  try { S.tpl ||= await api('/api/template'); nilai = await api(`/api/perjanjian/${p.id}/isian`); } catch (e) { return toast(e.message, true); }
+  let nilai, t;
+  try { t = await tplJenis(p.jenis); nilai = await api(`/api/perjanjian/${p.id}/isian`); } catch (e) { return toast(e.message, true); }
+  const maks = { ...t.maks, __jenis: p.jenis };
   const dlg = document.createElement('dialog');
-  dlg.innerHTML = `<form method="dialog" data-f><div class="dh"><h2>Ubah isian dokumen</h2><button class="icon-btn" value="cancel" aria-label="Tutup" formnovalidate>✕</button></div>
-    <div class="db"><p class="hint" style="margin:0 0 12px">Hanya bagian kuning pada dokumen yang dapat diubah. Menyimpan membuat dokumen master versi baru.</p>
-    ${S.tpl.fields.map((f) => `<div class="field"><label for="u-${f.key}">${esc(f.label)}</label><input class="input" id="u-${f.key}" data-isi="${f.key}" ${f.type === 'date' ? 'type="date" min="2026-01-01" max="2026-12-31"' : `type="text" maxlength="${S.tpl.maks[f.key] || 120}" autocomplete="off"`} value="${esc(nilai[f.key])}" required></div>`).join('')}</div>
+  dlg.innerHTML = `<form method="dialog" data-f novalidate><div class="dh"><h2>Ubah isian dokumen</h2><button class="icon-btn" value="cancel" aria-label="Tutup" formnovalidate>✕</button></div>
+    <div class="db"><p class="hint" style="margin:0 0 12px">Hanya isian dokumen yang dapat diubah. Menyimpan membuat dokumen master versi baru.</p>
+    ${t.fields.map((f) => kolomIsian(f, maks, nilai[f.key], 'u')).join('')}</div>
     <div class="df"><button class="btn ghost" value="cancel" formnovalidate>Batal</button><button class="btn ghost" type="button" data-pvisi>Pratinjau dokumen</button><button class="btn" data-simpan>Simpan isian</button></div></form>`;
   ROOT.append(dlg); dlg.showModal();
   dlg.addEventListener('close', () => dlg.remove());
-  $('[data-pvisi]', dlg).addEventListener('click', () => { if ($('[data-f]', dlg).reportValidity()) pratinjauIsi(dlg); });
+  $('[data-pvisi]', dlg).addEventListener('click', () => { if ($('[data-f]', dlg).reportValidity()) pratinjauIsi(dlg, p.jenis); });
   $('[data-simpan]', dlg).addEventListener('click', (e) => {
     e.preventDefault();
     if (!$('[data-f]', dlg).reportValidity()) return;
     busy(e.currentTarget, async () => {
-      await post(`/api/perjanjian/${p.id}/isian`, { isi: Object.fromEntries($$('[data-isi]', dlg).map((el) => [el.dataset.isi, el.value])) });
+      await post(`/api/perjanjian/${p.id}/isian`, { isi: ambilIsian(dlg) });
       dlg.close(); toast('Isian diperbarui, dokumen versi baru dibuat'); reload();
     });
   });
@@ -6274,7 +6201,7 @@ async function pageDetail(id) {
   const fb = p.feedback.length ? p.feedback.map((f) => `<div class="fb ${f.setuju ? 'agree' : ''}"><div class="small"><b>Putaran ${f.putaran}</b> <span class="muted">dari ${esc(f.pengirim || 'mitra')} via ${esc(f.sumber)}, ${jam(f.diterima_pada)}</span></div><p>${esc(f.isi)}</p></div>`).join('') : '<div class="empty">Belum ada tanggapan mitra</div>';
   app.innerHTML = `<div class="crumb"><a href="#/pks/perjanjian">Perjanjian</a> / ${esc(p.kode)}</div>
     ${topbar(esc(m.nama), `${esc(p.judul)}`)}
-    <div class="row" style="margin:-8px 0 18px">${chipTampil(p.tampil)}<span class="chip c-idle">${esc(p.kode)}</span>${p.nomor_surat ? `<span class="chip c-info">No. ${esc(p.nomor_surat)}</span>` : ''}</div>
+    <div class="row" style="margin:-8px 0 18px;flex-wrap:wrap">${chipTampil(p.tampil)}<span class="chip c-info">${esc(JENIS_NAMA[p.jenis] || p.jenis)}</span><span class="chip c-idle">${esc(p.kode)}</span>${p.nomor_surat ? `<span class="chip c-info">No. ${esc(p.nomor_surat)}</span>` : ''}${p.nomor_spk ? `<span class="chip c-info">SPK MS No. ${esc(p.nomor_spk)}</span>` : ''}<span class="chip c-idle" title="Nilai kolom PROGRES di spreadsheet">PROGRES: ${esc(p.progres)}</span></div>
     <div class="detail">
       <div class="stack">
         <div class="card"><h2 style="margin-bottom:16px">Alur</h2><ol class="timeline">${timeline}</ol></div>
@@ -6283,6 +6210,11 @@ async function pageDetail(id) {
           <dt>Email tujuan</dt><dd>${m.emails.length ? m.emails.map(esc).join('<br>') : '<span style="color:var(--late)">Kosong</span>'}</dd>
           <dt>PIC</dt><dd>${esc(p.pic_nama)}</dd><dt>Berlaku</dt><dd>${p.tgl_efektif ? `${tgl(p.tgl_efektif)} – ${tgl(p.tgl_berakhir)}` : '–'}</dd></dl>
           <p class="small muted" style="margin:12px 0 0">Salinan data per ${tgl(m.diambil_pada)}. Sumber: tabel mitra (info perseroan).</p></div>
+        <div class="card"><h2 style="margin-bottom:8px">Spreadsheet</h2>
+          <p class="small muted" style="margin:0 0 10px">Data perjanjian ini tercatat di VM Starlite Sheet, lembar <b>${esc(p.sheet)}</b> (kolom NO ID = ${esc(p.kode)}). Dokumen tetap disimpan di aplikasi.</p>
+          <div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${sheetChip(p)}</span>${can('vm') ? '<button class="btn ghost sm" data-sinkron type="button">Tulis ulang ke spreadsheet</button>' : ''}</div>
+          ${can('vm') ? `<div class="field" style="margin:14px 0 6px"><label for="cvm">Catatan VM (${p.jenis === 'MS' ? 'REMARK SANS' : 'REMARK'})</label><textarea class="input" id="cvm" maxlength="500" placeholder="Tercatat di spreadsheet">${esc(p.remark_vm || '')}</textarea></div><button class="btn ghost sm" data-catat type="button">Simpan catatan</button>` : ''}
+          ${p.remark_legal ? `<p class="small" style="margin:12px 0 0"><b>Catatan Legal:</b> ${esc(p.remark_legal)}</p>` : ''}</div>
       </div>
       <div class="stack">
         <div class="card action" id="action"></div>
@@ -6302,6 +6234,8 @@ function renderAction(p) {
   const m = p.mitra;
   const reload = () => pageDetail(p.id);
   $('[data-isian]')?.addEventListener('click', () => bukaIsian(p, reload));
+  $('[data-sinkron]')?.addEventListener('click', (e) => busy(e.currentTarget, async () => { await post(`/api/perjanjian/${p.id}/sinkron`); toast('Tertulis di spreadsheet'); reload(); }));
+  $('[data-catat]')?.addEventListener('click', (e) => busy(e.currentTarget, async () => { await post(`/api/perjanjian/${p.id}/catatan`, { catatan: $('#cvm').value }); toast('Catatan disimpan'); reload(); }));
   const doIt = (sel, fn, ok) => box.querySelector(sel)?.addEventListener('click', (e) => busy(e.currentTarget, async () => { const r = await fn(); if (r?.portal) console.info('Tautan portal (mode dev):', r.portal); toast(ok); reload(); }));
   let html = '';
   const head = (eyebrow, title, desc) => `<div class="eyebrow">${eyebrow}</div><h2 style="margin:4px 0 6px">${title}</h2>${desc ? `<p class="muted" style="margin:0 0 14px">${desc}</p>` : ''}`;
@@ -6319,7 +6253,9 @@ function renderAction(p) {
   } else if (p.tahap === 3) {
     html = can('legal')
       ? head('Tugas Legal', 'Terbitkan nomor surat', `Nomor dicetak otomatis di halaman pertama, lalu dokumen langsung dikirim ke mitra untuk TTD. Tenggat ${tgl(p.tenggat)}.`)
-        + `<div class="field"><label for="no">Nomor surat</label><input class="input" id="no" placeholder="Contoh: 001/PKS/IJE/XI/2026"></div><button class="btn" data-a="nomor">Terbitkan nomor</button>`
+        + `<div class="field"><label for="no">${p.jenis === 'MS' ? 'Nomor PKS MS' : 'Nomor surat'}</label><input class="input" id="no" placeholder="Contoh: 001/PKS/LGL/IJE/XI/2026"></div>
+          ${p.jenis === 'MS' ? '<div class="field"><label for="nospk">Nomor SPK MS</label><input class="input" id="nospk"></div>' : ''}
+          <div class="field"><label for="ncat">Catatan Legal (opsional)</label><input class="input" id="ncat" maxlength="500"></div><button class="btn" data-a="nomor">Terbitkan nomor</button>`
       : head('Di Legal', 'Menunggu nomor surat dari Legal', `Tenggat ${tgl(p.tenggat)}.`);
   } else if (p.tahap === 4) {
     html = head('Perlu tindakan', 'Dokumen bernomor belum terkirim ke mitra', `Pengiriman otomatis gagal (biasanya email mitra kosong). Lengkapi email mitra di info perseroan, lalu kirim ulang.`)
@@ -6332,15 +6268,16 @@ function renderAction(p) {
         <div class="row" style="margin-top:14px"><button class="btn ok" data-a="setujui">${ic('check')}Setujui tanda tangan</button></div>
         <div class="field" style="margin-top:16px"><label for="alasan">Alasan bila diminta unggah ulang</label><textarea class="input" id="alasan" placeholder="Misal: meterai tidak terlihat jelas"></textarea></div><button class="btn danger" data-a="tolak">Minta unggah ulang</button>`;
     } else {
-      html = head('Menunggu mitra', 'Menunggu tanda tangan mitra', `Batas unggah ${tgl(p.tenggat)}. Pengingat dikirim otomatis H-3, H-0, dan saat lewat tenggat.`)
-        + (can('vm') ? `<details class="more"><summary>Unggah atas nama mitra</summary><div style="margin-top:12px" data-ttd="mitra"></div></details>` : '');
+      html = head('Menunggu mitra', 'Menunggu tanda tangan basah mitra', `Mitra mencetak, menandatangani basah (stempel + meterai), lalu mengunggah scan lewat tautan. Batas ${tgl(p.tenggat)}. Pengingat dikirim otomatis H-3, H-0, dan saat lewat tenggat. Admin TTD ikut memantau.`)
+        + (can('vm') ? `<div data-ttd="mitra"></div>` : '');
     }
   } else if (p.tahap === 6) {
+    const diIje = p.sub_progres === 'PROSES SIGN IJE';
     html = (S.me.penandatangan || S.me.peran === 'admin')
-      ? head('Langkah terakhir', 'Tanda tangan PT IJE', 'Setelah disimpan, dokumen final dikunci, diarsipkan, dan salinannya dikirim ke mitra.')
-        + `<div class="row" style="margin-bottom:14px"><div class="field" style="margin:0"><label for="ef">Tanggal efektif</label><input class="input" id="ef" type="date" value="${new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10)}"></div>
-          <div class="field" style="margin:0"><label for="masa">Masa berlaku (bulan)</label><input class="input" id="masa" type="number" min="1" max="120" value="${S.meta.jenis.find((j) => j.kode === p.jenis)?.masa_bulan || 12}"></div></div><div data-ttd="ije"></div>`
-      : head('Menunggu', 'Menunggu tanda tangan PT IJE', 'Penandatangan berwenang PT IJE akan menyelesaikan tahap ini.');
+      ? head('Langkah terakhir', diIje ? 'Sedang ditandatangani PT IJE' : 'TTD mitra lengkap — lanjut tanda tangan PT IJE', 'Setelah scan final (TTD basah kedua pihak) diunggah, dokumen dikunci, diarsipkan ke Drive, dan salinannya dikirim ke mitra.')
+        + (diIje ? '' : `<button class="btn ghost" data-a="proses-ije" style="margin-bottom:14px">Tandai: dokumen sudah di penandatangan PT IJE</button>`)
+        + `<div data-ttd="ije"></div>`
+      : head('Menunggu', 'Menunggu tanda tangan PT IJE', 'Akun Utama atau Admin TTD akan menyelesaikan tahap ini.');
   } else if (p.tahap === 7) {
     const fin = p.dokumen.find((d) => d.jenis === 'final');
     html = head('Selesai', 'Perjanjian ditandatangani kedua pihak', `Berlaku ${tgl(p.tgl_efektif)} sampai ${tgl(p.tgl_berakhir)}. Pengingat perpanjangan dikirim H-90, H-60, dan H-30.`)
@@ -6360,41 +6297,75 @@ function renderAction(p) {
   doIt('[data-a="kirim"]', () => post(`/api/perjanjian/${p.id}/kirim`), 'Dokumen dikirim ke mitra');
   doIt('[data-a="legal"]', () => post(`/api/perjanjian/${p.id}/legal`), 'Diteruskan ke Legal');
   doIt('[data-a="fb"]', () => post(`/api/perjanjian/${p.id}/feedback`, { isi: $('#fb-isi').value, setuju: $('#fb-setuju').checked }), 'Tanggapan dicatat');
-  doIt('[data-a="nomor"]', () => { const fd = new FormData(); fd.set('nomor_surat', $('#no').value); return postForm(`/api/perjanjian/${p.id}/nomor`, fd); }, 'Nomor surat terbit dan dokumen dikirim ke mitra untuk TTD');
+  doIt('[data-a="nomor"]', () => { const fd = new FormData(); fd.set('nomor_surat', $('#no').value); fd.set('nomor_spk', $('#nospk')?.value || ''); fd.set('catatan', $('#ncat')?.value || ''); return postForm(`/api/perjanjian/${p.id}/nomor`, fd); }, 'Nomor terbit dan dokumen dikirim ke mitra untuk TTD');
   doIt('[data-a="bagikan"]', () => post(`/api/perjanjian/${p.id}/bagikan`), 'Perjanjian dibagikan ke mitra');
   doIt('[data-a="arsip"]', () => post(`/api/perjanjian/${p.id}/arsip`, {}), 'Diarsipkan ke Drive');
   doIt('[data-a="setujui"]', () => post(`/api/perjanjian/${p.id}/ttd-mitra/review`, { setuju: true }), 'Tanda tangan mitra disetujui');
   doIt('[data-a="tolak"]', () => post(`/api/perjanjian/${p.id}/ttd-mitra/review`, { setuju: false, alasan: $('#alasan').value }), 'Permintaan unggah ulang dikirim');
+  doIt('[data-a="proses-ije"]', () => post(`/api/perjanjian/${p.id}/sub-progres`, { nilai: 'PROSES SIGN IJE' }), 'Status: sedang ditandatangani PT IJE');
   doIt('[data-a="mundur"]', () => post(`/api/perjanjian/${p.id}/mundur`, { ke: $('#ke').value, alasan: $('#kor').value }), 'Tahap dikembalikan');
   doIt('[data-a="batal"]', () => post(`/api/perjanjian/${p.id}/batal`, { alasan: $('#kor').value }), 'Perjanjian dibatalkan');
 
   const ttdBox = box.querySelector('[data-ttd]');
-  if (ttdBox) {
-    const pihak = ttdBox.dataset.ttd;
-    const submitUrl = pihak === 'ije' ? `/api/perjanjian/${p.id}/ttd-ije` : `/api/perjanjian/${p.id}/ttd-mitra`;
-    const extra = (fd) => { if (pihak === 'ije') { fd.set('tgl_efektif', $('#ef').value); fd.set('masa_bulan', $('#masa').value); } return fd; };
-    ttdBox.innerHTML = `<div class="seg-toggle" role="group" aria-label="Opsi tanda tangan" style="margin-bottom:14px"><button aria-pressed="true" data-o="1">Opsi 1: TTD langsung</button><button aria-pressed="false" data-o="2">Opsi 2: Unggah dokumen penuh</button></div><div data-o-body></div>`;
-    const body = $('[data-o-body]', ttdBox);
-    const show = (o) => {
-      $$('[data-o]', ttdBox).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.o === o)));
-      if (o === '1') {
-        mountTtdWidget(body, {
-          confirmLabel: pihak === 'ije' ? 'Tanda tangani dan selesaikan' : 'Simpan tanda tangan mitra',
-          onPreview: (png) => { const fd = new FormData(); fd.set('pihak', pihak); fd.set('berkas', png, 'ttd.png'); return postForm(`/api/perjanjian/${p.id}/pratinjau-ttd`, fd); },
-          onConfirm: async (png) => { const fd = extra(new FormData()); fd.set('opsi', '1'); fd.set('berkas', png, 'ttd.png'); await postForm(submitUrl, fd); toast(pihak === 'ije' ? 'Perjanjian selesai dan diarsipkan' : 'Tanda tangan mitra disimpan'); reload(); },
-        });
-      } else {
-        body.innerHTML = `<div class="field"><label for="full">Scan dokumen lengkap yang sudah ditandatangani (PDF)</label><input class="input" id="full" type="file" accept="application/pdf"><span class="hint">Semua halaman harus ikut dipindai. Jumlah halaman dicocokkan dengan dokumen bernomor.</span></div><button class="btn" data-full>${pihak === 'ije' ? 'Unggah dan selesaikan' : 'Unggah scan mitra'}</button>`;
-        $('[data-full]', body).addEventListener('click', (e) => busy(e.currentTarget, async () => {
-          const f = $('#full', body).files[0]; if (!f) throw new Error('Pilih berkas PDF');
-          const fd = extra(new FormData()); fd.set('opsi', '2'); fd.set('berkas', f);
-          await postForm(submitUrl, fd); toast(pihak === 'ije' ? 'Perjanjian selesai dan diarsipkan' : 'Scan mitra disimpan'); reload();
-        }));
-      }
-    };
-    $$('[data-o]', ttdBox).forEach((b) => b.addEventListener('click', () => show(b.dataset.o)));
-    show('1');
-  }
+  if (ttdBox) panelTtd(ttdBox, p, ttdBox.dataset.ttd, reload);
+}
+
+// Dokumen bernomor (atau TTD mitra terakhir) diserahkan ke fitur Signing di dashboard.
+async function keSigning(p, pihak) {
+  if (typeof window.sgNew !== 'function' || typeof window.sgPickFiles !== 'function') throw new Error('Fitur Signing tidak tersedia di halaman ini. Buka dari dashboard VM.');
+  const sumber = pihak === 'ije' ? p.dokumen.find((d) => d.jenis === 'ttd_mitra' && d.status === 'aktif') : null;
+  const doc = sumber || p.dokumen.find((d) => d.jenis === 'bernomor' && d.status === 'aktif');
+  if (!doc) throw new Error('Dokumen bernomor belum tersedia');
+  const blob = await api(`/api/dokumen/${doc.id}`);
+  const file = new File([blob], `${p.kode} ${p.nomor_surat || ''}.pdf`.replace(/[\\/:*?"<>|]+/g, '-'), { type: 'application/pdf' });
+  window.sgNew();
+  await new Promise((r) => setTimeout(r, 200));
+  window.sgPickFiles([file]);
+  toast('Dokumen dibuka di fitur Signing. Tambahkan penandatangan, lalu unggah hasil akhirnya di sini.');
+}
+
+function panelTtd(el, p, pihak, reload) {
+  const hal = p.dokumen.find((d) => d.jenis === 'bernomor')?.halaman;
+  const masaAwal = S.meta.jenis.find((j) => j.kode === p.jenis)?.masa_bulan || 12;
+  const tglMasa = (pfx) => `<div class="row" style="gap:12px;flex-wrap:wrap;margin-bottom:10px"><div class="field" style="margin:0"><label for="${pfx}ef">Tanggal efektif</label><input class="input" id="${pfx}ef" type="date" value="${hariIniWib()}"></div>
+    <div class="field" style="margin:0"><label for="${pfx}masa">Masa berlaku (bulan)</label><input class="input" id="${pfx}masa" type="number" min="1" max="120" value="${masaAwal}"></div></div>`;
+  const berkas = (id, label) => `<div class="field"><label for="${id}">${label}</label><input class="input" id="${id}" type="file" accept="application/pdf"><span class="hint">PDF seluruh halaman${hal ? ` (${hal} halaman)` : ''}, maks. 20 MB.</span></div>`;
+  el.innerHTML = `<div class="seg-toggle" role="group" aria-label="Cara tanda tangan" style="margin-bottom:14px"><button type="button" aria-pressed="true" data-o="basah">TTD basah (scan)</button><button type="button" aria-pressed="false" data-o="signing">Pakai fitur Signing</button></div><div data-o-body></div>`;
+  const body = $('[data-o-body]', el);
+  const kirim = async (url, fileId, extra) => {
+    const f = $('#' + fileId, body).files[0]; if (!f) throw new Error('Pilih berkas PDF');
+    const fd = new FormData(); fd.set('berkas', f); Object.entries(extra).forEach(([k, v]) => fd.set(k, v));
+    return postForm(url, fd);
+  };
+  const tgls = (pfx) => ({ tgl_efektif: $(`#${pfx}ef`, body).value, masa_bulan: $(`#${pfx}masa`, body).value });
+  const show = (o) => {
+    $$('[data-o]', el).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.o === o)));
+    if (o === 'basah') {
+      body.innerHTML = pihak === 'mitra'
+        ? `<p class="muted" style="margin:0 0 10px">Bila mitra menyerahkan dokumen bertanda tangan basah langsung (tidak lewat tautan), pindai lalu unggah atas nama mitra.</p>${berkas('sm', 'Scan dokumen bertanda tangan mitra')}<button class="btn" data-up>Unggah scan mitra</button>`
+        : `<p class="muted" style="margin:0 0 10px">Setelah PT IJE menandatangani basah, pindai seluruh halaman (TTD kedua pihak).</p>${tglMasa('b')}${berkas('sf', 'Scan final bertanda tangan kedua pihak')}<button class="btn" data-up>Unggah dan selesaikan</button>`;
+      $('[data-up]', body).addEventListener('click', (e) => busy(e.currentTarget, async () => {
+        if (pihak === 'mitra') { await kirim(`/api/perjanjian/${p.id}/ttd-mitra`, 'sm', { opsi: '2' }); toast('Scan mitra disimpan'); }
+        else { await kirim(`/api/perjanjian/${p.id}/ttd-ije`, 'sf', { opsi: '2', ...tgls('b') }); toast('Perjanjian selesai dan diarsipkan'); }
+        reload();
+      }));
+    } else {
+      body.innerHTML = `<p class="muted" style="margin:0 0 10px">Dokumen ${pihak === 'ije' ? 'bertanda tangan mitra' : 'bernomor'} dibuka di fitur Signing dashboard. Atur penandatangan di sana; setelah selesai, unduh hasilnya lalu unggah di bawah.</p>
+        <button class="btn ghost" data-sg type="button">Buka di fitur Signing</button>
+        <div style="margin-top:14px">${pihak === 'mitra' ? '<label class="row small" style="margin-bottom:10px"><input type="checkbox" id="sgl"> Hasil Signing sudah memuat TTD kedua pihak (mitra dan PT IJE)</label>' : ''}
+        <div data-tm ${pihak === 'mitra' ? 'hidden' : ''}>${tglMasa('s')}</div>${berkas('sh', 'PDF hasil Signing')}<button class="btn" data-up>Unggah hasil Signing</button></div>`;
+      $('[data-sg]', body).addEventListener('click', (e) => busy(e.currentTarget, () => keSigning(p, pihak)));
+      $('#sgl', body)?.addEventListener('change', (e) => { $('[data-tm]', body).hidden = !e.target.checked; });
+      $('[data-up]', body).addEventListener('click', (e) => busy(e.currentTarget, async () => {
+        const lengkap = pihak === 'ije' || $('#sgl', body)?.checked;
+        if (lengkap) { await kirim(`/api/perjanjian/${p.id}/ttd-ije`, 'sh', { opsi: 'signing', lengkap: pihak === 'mitra' ? '1' : '', ...tgls('s') }); toast('Perjanjian selesai dan diarsipkan'); }
+        else { await kirim(`/api/perjanjian/${p.id}/ttd-mitra`, 'sh', { opsi: 'signing' }); toast('Hasil Signing (TTD mitra) disimpan'); }
+        reload();
+      }));
+    }
+  };
+  $$('[data-o]', el).forEach((b) => b.addEventListener('click', () => show(b.dataset.o)));
+  show('basah');
 }
 
 // ---------- Mitra ----------
@@ -6477,7 +6448,7 @@ async function pageOverview(params) {
   const jalankan = async (rows, tombol) => {
     let ok = 0; const gagal = []; const lewati = [];
     for (let guard = 0; guard < 60; guard++) {
-      const r = await post('/api/overview/kirim-sekaligus', { rows, batas: 4, lewati });
+      const r = await post('/api/overview/kirim-sekaligus', { rows, batas: OVF.jenis === 'MS' ? 2 : 4, lewati, jenis: OVF.jenis });
       r.hasil.forEach((h) => { if (!h.ok) lewati.push(h.row); });
       r.hasil.forEach((h) => (h.ok ? ok++ : gagal.push(`${h.nama}: ${h.galat}`)));
       if (!r.sisa) break;
@@ -6486,7 +6457,8 @@ async function pageOverview(params) {
     toast(`${ok} perjanjian terkirim${gagal.length ? `, ${gagal.length} gagal (${gagal[0]})` : ''}`, gagal.length > 0 && ok === 0);
     route();
   };
-  api('/api/overview/mitra').then((m) => kirimMitraUI($('#kirimBox'), m, d, jalankan)).catch((ex) => { const kb = $('#kirimBox'); if (kb) kb.innerHTML = `<div class="card-head"><h2>Kirim perjanjian ke mitra</h2></div><div class="empty">${esc(ex.message)}</div>`; });
+  const muatKirim = () => api(`/api/overview/mitra?jenis=${OVF.jenis}`).then((m) => kirimMitraUI($('#kirimBox'), m, d, jalankan, muatKirim)).catch((ex) => { const kb = $('#kirimBox'); if (kb) kb.innerHTML = `<div class="card-head"><h2>Kirim perjanjian ke mitra</h2></div><div class="empty">${esc(ex.message)}</div>`; });
+  muatKirim();
   $('[data-a="arsipsemua"]').addEventListener('click', (e) => busy(e.currentTarget, async () => {
     let ok = 0; let gagal = 0;
     for (let g = 0; g < 30; g++) { const r = await post('/api/overview/arsip-semua', {}); r.hasil.forEach((h) => (h.ok ? ok++ : gagal++)); if (!r.sisa) break; }
@@ -6496,8 +6468,8 @@ async function pageOverview(params) {
 
 
 // ---------- Kirim perjanjian ke mitra (semua mitra di info perseroan, filter Inner City) ----------
-const OVF = { q: '', kel: '', st: '', pj: 'belum', sel: new Set() };
-function kirimMitraUI(kb, mitra, d, jalankan) {
+const OVF = { q: '', kel: '', st: '', pj: 'belum', jenis: 'PKS', sel: new Set() };
+function kirimMitraUI(kb, mitra, d, jalankan, muatKirim) {
   if (!kb || !kb.isConnected) return;
   const F = OVF, MAKS = 300;
   const statusMitra = [...new Set(mitra.map((m) => m.status_mitra))].sort();
@@ -6513,6 +6485,7 @@ function kirimMitraUI(kb, mitra, d, jalankan) {
       <div class="field" style="margin:0;flex:1 1 220px"><label for="kq">Cari mitra</label><input class="input" id="kq" placeholder="Nama mitra" value="${esc(F.q)}" autocomplete="off"></div>
       <div class="field" style="margin:0"><label for="kkel">Kelompok</label><select class="input" id="kkel"><option value="">Semua mitra (${mitra.length})</option><option value="inner" ${F.kel === 'inner' ? 'selected' : ''}>Inner City (${nIC})</option><option value="lain" ${F.kel === 'lain' ? 'selected' : ''}>Bukan Inner City (${mitra.length - nIC})</option></select></div>
       <div class="field" style="margin:0"><label for="kst">Status mitra</label><select class="input" id="kst"><option value="">Semua status</option>${statusMitra.map((x) => `<option value="${esc(x)}" ${F.st === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></div>
+      <div class="field" style="margin:0"><label for="kjn">Jenis yang dikirim</label><select class="input" id="kjn">${Object.entries(JENIS_NAMA).map(([k, l]) => `<option value="${k}" ${OVF.jenis === k ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>
       <div class="field" style="margin:0"><label for="kpj">Perjanjian</label><select class="input" id="kpj"><option value="belum" ${F.pj === 'belum' ? 'selected' : ''}>Belum berperjanjian</option><option value="sudah" ${F.pj === 'sudah' ? 'selected' : ''}>Sudah berperjanjian</option><option value="semua" ${F.pj === 'semua' ? 'selected' : ''}>Semua</option></select></div>
     </div>
     <div class="row" style="gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
@@ -6542,11 +6515,12 @@ function kirimMitraUI(kb, mitra, d, jalankan) {
   $('#kkel', kb).addEventListener('change', (e) => { F.kel = e.target.value; isi(); });
   $('#kst', kb).addEventListener('change', (e) => { F.st = e.target.value; isi(); });
   $('#kpj', kb).addEventListener('change', (e) => { F.pj = e.target.value; isi(); });
+  $('#kjn', kb).addEventListener('change', (e) => { F.jenis = e.target.value; F.sel.clear(); muatKirim(); });
   $('[data-kpilih]', kb).addEventListener('click', () => { saring().filter(layak).forEach((m) => F.sel.add(m.row)); isi(); });
   $('[data-kbersih]', kb).addEventListener('click', () => { F.sel.clear(); isi(); });
   $('[data-kkirim]', kb).addEventListener('click', (e) => {
     const rows = [...F.sel]; if (!rows.length) return;
-    if (!confirm(`Buat dan kirim perjanjian ke ${rows.length} mitra sekarang? Email akan benar-benar terkirim ke mitra, memakai format di Pengaturan.`)) return;
+    if (!confirm(`Buat dan kirim ${JENIS_NAMA[OVF.jenis]} ke ${rows.length} mitra sekarang? Email akan benar-benar terkirim ke mitra, memakai format di Pengaturan.`)) return;
     F.sel.clear();
     busy(e.currentTarget, () => jalankan(rows, e.currentTarget));
   });
@@ -6560,11 +6534,24 @@ const EMAIL_BAWAAN = {
 // ---------- Pengaturan ----------
 async function pagePengaturan() {
   if (!can()) { location.hash = '#/pks/'; return; }
-  const d = await api('/api/admin');
+  const [d, ak, sh] = await Promise.all([api('/api/admin'), api('/api/admin/akses'), api('/api/sheet/status')]);
   const k = Object.fromEntries(d.konfig.map((x) => [x.k, x.v]));
   const sla = JSON.parse(k.sla_hari_kerja || '{}');
-  app.innerHTML = `${topbar('Pengaturan', 'Format email ke mitra, tenggat, dan masa berlaku.')}
+  const daftarAkses = (jenis, list) => list.length ? `<ul class="list" style="margin:0 0 10px">${list.map((a) => `<li style="grid-template-columns:minmax(0,1fr) auto"><div style="min-width:0"><div class="t">${esc(a.nama)}${a.aktif ? '' : ' <span class="chip c-idle">Nonaktif</span>'}</div><div class="s">${esc(a.email)} · ${a.pin ? 'PIN sudah dibuat' : 'belum pernah masuk'}</div></div>
+      <span class="row" style="gap:6px;flex-wrap:nowrap">${a.pin ? `<button class="btn ghost sm" type="button" data-pin="${jenis}|${esc(a.email)}">Reset PIN</button>` : ''}<button class="btn ghost sm" type="button" data-akt="${jenis}|${esc(a.email)}|${esc(a.nama)}|${a.aktif ? 0 : 1}">${a.aktif ? 'Nonaktifkan' : 'Aktifkan'}</button></span></li>`).join('')}</ul>` : '<p class="muted small" style="margin:0 0 10px">Belum ada.</p>';
+  const formAkses = (jenis) => `<div class="row" style="gap:8px;flex-wrap:wrap;align-items:end"><div class="field" style="margin:0;flex:1 1 180px"><label for="${jenis}-nm">Nama</label><input class="input" id="${jenis}-nm"></div><div class="field" style="margin:0;flex:1 1 220px"><label for="${jenis}-em">Email</label><input class="input" id="${jenis}-em" type="email"></div><button class="btn" type="button" data-tambah="${jenis}">Tambah</button></div>`;
+  const r = sh.ringkas || {};
+  app.innerHTML = `${topbar('Pengaturan', 'Akses, spreadsheet, format email, tenggat, dan masa berlaku.')}
     <div class="stack" style="max-width:760px">
+      <div class="card"><h2 style="margin-bottom:6px">Akses Legal & Admin TTD</h2><p class="small muted" style="margin-top:0">Menu Perjanjian hanya untuk Akun Utama. Legal dan Admin TTD tidak memakai akun dashboard: mereka masuk dengan email terdaftar + PIN 4 angka (dibuat saat pertama masuk).</p>
+        <h3 style="margin:14px 0 6px">Legal <span class="small muted" style="font-weight:500">— mengisi nomor surat lewat tautan di email</span></h3>${daftarAkses('legal', ak.legal)}${formAkses('legal')}
+        <h3 style="margin:20px 0 6px">Admin TTD <span class="small muted" style="font-weight:500">— mengejar tanda tangan sampai scan final</span></h3>${daftarAkses('admin_ttd', ak.admin_ttd)}${formAkses('admin_ttd')}
+        <div class="notice info small" style="margin-top:12px">Alamat halaman Admin TTD: <code>${esc(ak.portal_ttd)}</code> <button class="btn ghost sm" type="button" data-salin-ttd>Salin</button><br>Admin TTD juga menerima email setiap ada perjanjian yang siap ditandatangani.</div></div>
+      <div class="card"><h2 style="margin-bottom:6px">Spreadsheet</h2><p class="small muted" style="margin-top:0">Data setiap perjanjian ditulis otomatis ke VM Starlite Sheet: lembar <b>${esc(sh.sheet.PKS)}</b> (Homepass) dan <b>${esc(sh.sheet.MS)}</b> (PKS MS & SPK MS), kunci baris di kolom NO ID. Dokumen tetap di aplikasi; tautan dokumen final (Drive) ikut ditulis.</p>
+        ${sh.aktif ? '' : '<div class="notice small">Jembatan Google belum aktif, data belum bisa ditulis ke spreadsheet.</div>'}
+        <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:10px"><span class="chip c-ok">${r.ok || 0} tersimpan</span><span class="chip c-warn">${(r.antre || 0) + (r.kirim || 0) + (r.belum || 0)} menunggu</span><span class="chip ${r.gagal ? 'c-late' : 'c-idle'}">${r.gagal || 0} gagal</span></div>
+        ${sh.gagal.length ? `<ul class="list" style="margin:0 0 10px">${sh.gagal.map((g) => `<li style="grid-template-columns:minmax(0,1fr)"><div><a href="#/pks/perjanjian/${g.id}">${esc(g.kode)}</a><div class="s">${esc(g.sheet_status)}</div></div></li>`).join('')}</ul>` : ''}
+        <div class="row"><button class="btn" type="button" data-sheet="antre" ${sh.aktif ? '' : 'disabled'}>Kirim yang menunggu</button><button class="btn ghost" type="button" data-sheet="semua" ${sh.aktif ? '' : 'disabled'}>Tulis ulang semua</button></div></div>
       <div class="card"><h2 style="margin-bottom:6px">Format email ke mitra</h2><p class="small muted" style="margin-top:0">Dipakai saat dokumen dikirim ke mitra. Yang tersedia: {nama_mitra} {kode} {judul} {tenggat} {tautan}.</p>
         <div class="field"><label for="eto">To tambahan</label><input class="input" id="eto" value="${esc(k.email_to_tambahan || '')}" placeholder="Selain email mitra dari info perseroan"></div>
         <div class="field"><label for="ecc">CC</label><input class="input" id="ecc" value="${esc(k.email_cc || '')}" placeholder="Pisahkan dengan koma"></div>
@@ -6587,6 +6574,27 @@ async function pagePengaturan() {
     await post('/api/admin/konfig', { email_to_tambahan: $('#eto').value, email_cc: $('#ecc').value, email_subjek: $('#esub').value, email_badan: $('#ebad').value }); toast('Format email disimpan');
   }));
   $('[data-e0]').addEventListener('click', () => { $('#eto').value = ''; $('#ecc').value = ''; $('#esub').value = EMAIL_BAWAAN.subjek; $('#ebad').value = EMAIL_BAWAAN.badan; });
+  $$('[data-tambah]').forEach((b) => b.addEventListener('click', () => busy(b, async () => {
+    const j = b.dataset.tambah;
+    await post('/api/admin/akses', { jenis: j, email: $(`#${j}-em`).value, nama: $(`#${j}-nm`).value });
+    toast(j === 'legal' ? 'Legal ditambahkan' : 'Admin TTD ditambahkan'); route();
+  })));
+  $$('[data-akt]').forEach((b) => b.addEventListener('click', () => busy(b, async () => {
+    const [jenis, email, nama, aktif] = b.dataset.akt.split('|');
+    await post('/api/admin/akses', { jenis, email, nama, aktif: aktif === '1' }); toast('Akses diperbarui'); route();
+  })));
+  $$('[data-pin]').forEach((b) => b.addEventListener('click', () => {
+    const [jenis, email] = b.dataset.pin.split('|');
+    if (!confirm(`Reset PIN ${email}? Ia harus membuat PIN baru (dengan nomor HP) saat masuk berikutnya.`)) return;
+    busy(b, async () => { await post('/api/admin/akses/reset-pin', { jenis, email }); toast('PIN direset'); route(); });
+  }));
+  $('[data-salin-ttd]').addEventListener('click', () => navigator.clipboard?.writeText(ak.portal_ttd).then(() => toast('Alamat disalin'), () => toast(ak.portal_ttd)));
+  $$('[data-sheet]').forEach((b) => b.addEventListener('click', () => busy(b, async () => {
+    let semua = b.dataset.sheet === 'semua', ok = 0, gagal = 0;
+    if (semua && !confirm('Tulis ulang semua perjanjian ke spreadsheet? Kolom yang diisi aplikasi akan diperbarui; kolom lain tidak diubah.')) return;
+    for (let g = 0; g < 40; g++) { const r = await post('/api/sheet/sinkron', { semua }); semua = false; r.hasil.forEach((h) => (h.ok ? ok++ : gagal++)); b.textContent = `Mengirim… ${ok}`; if (!r.sisa) break; }
+    toast(`${ok} baris ditulis${gagal ? `, ${gagal} gagal` : ''}`, gagal > 0 && !ok); route();
+  })));
 }
 
 // ---------- Router ----------
