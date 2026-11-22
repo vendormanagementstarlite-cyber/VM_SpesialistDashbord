@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
-import { driveArsip, googleEnabled, drivePath, driveUpload, driveDownload, gmailSend, gmailThreadReplies, sheetUpsert, docxKePdf } from '../src/lib/google.js';
+import { cekJembatan, driveArsip, googleEnabled, drivePath, driveUpload, driveDownload, gmailSend, gmailThreadReplies, sheetUpsert, docxKePdf } from '../src/lib/google.js';
 
 const ROOT = 'ROOT_ID';
 function makeGoogle() {
@@ -241,4 +241,18 @@ test('Word → PDF lewat Drive: konversi, ekspor, berkas sementara dibuang', asy
     assert.match(drive.lastBody, /application\/vnd.google-apps.document/);
     assert.deepEqual(drive.trashed, ['DOC1']);
   } finally { restore(); }
+});
+
+test('cekJembatan: versi baru "ok", versi lama "lama", tanpa URL "nonaktif", tanpa menulis apa pun', async () => {
+  const G = makeGoogle(); G.props.KEY = 'rahasia';
+  const restore = installFetch(G.g);
+  try {
+    const before = JSON.stringify(G.sheets);
+    assert.equal((await cekJembatan(env(G.g))).status, 'ok');
+    assert.equal(JSON.stringify(G.sheets), before, 'cek versi tidak mengubah spreadsheet');
+  } finally { restore(); }
+  const real = globalThis.fetch;
+  globalThis.fetch = async () => new Response(JSON.stringify({ ok: false, error: 'aksi tidak dikenal' }), { status: 200 });
+  try { const r = await cekJembatan(env(null)); assert.equal(r.status, 'lama'); assert.match(r.pesan, /versi baru/); } finally { globalThis.fetch = real; }
+  assert.equal((await cekJembatan({})).status, 'nonaktif');
 });
