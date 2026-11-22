@@ -3,7 +3,7 @@ import { HttpError, now, fail, escapeHtml, uiUrl } from './lib/util.js';
 import { requireUser, allow, cekLogin, buatSesi, akhiriSesi, cabutSemuaSesi, sesiSaatIni } from './lib/auth.js';
 import { hashPassword, verifyPassword, passwordSementara, passwordValid, POLA_PASSWORD } from './lib/password.js';
 import { listMitra, getMitra } from './lib/mitra.js';
-import { googleEnabled, gmailThreadReplies } from './lib/google.js';
+import { googleEnabled, gmailThreadReplies, cekJembatan } from './lib/google.js';
 import { sendMail, templates } from './lib/mail.js';
 import * as K from './lib/kelompok.js';
 import * as F from './lib/flow.js';
@@ -217,6 +217,9 @@ app.post('/api/perjanjian/:id/sinkron', act(['vm'], async (c, u, id) => {
   return r;
 }));
 app.post('/api/perjanjian/:id/mundur', act(['vm'], async (c, u, id) => F.mundur(c.env, u, id, await json(c))));
+app.post('/api/perjanjian/:id/email', act(['vm'], async (c, u, id) => F.ubahEmail(c.env, u, id, (await json(c)).emails)));
+app.post('/api/perjanjian/:id/ingatkan', act(['vm'], async (c, u, id) => F.ingatkan(c.env, u, id)));
+app.post('/api/perjanjian/:id/perpanjang', act(['vm'], async (c, u, id) => F.perpanjang(c.env, u, id)));
 app.post('/api/perjanjian/:id/batal', act(['vm'], async (c, u, id) => F.batal(c.env, u, id, await json(c))));
 
 // Pratinjau TTD opsi 1 (tidak disimpan)
@@ -347,6 +350,17 @@ app.post('/api/sheet/sinkron', async (c) => {
   const sisa = (await c.env.DB.prepare("SELECT COUNT(*) n FROM pks_perjanjian WHERE sheet_status = 'antre'").first()).n;
   await F.audit(c.env, u.email, null, 'sheet_disinkron', { dikirim: hasil.length, gagal: hasil.filter((h) => !h.ok).length });
   return c.json({ ok: true, hasil, sisa: hasil.some((h) => !h.ok) ? 0 : sisa });
+});
+
+// ---------- Kesiapan: hal yang membuat alur berhenti bila belum diatur ----------
+app.get('/api/kesiapan', async (c) => {
+  const u = await user(c); allow(u);
+  const [legal, ttd, jembatan] = await Promise.all([
+    c.env.DB.prepare("SELECT COUNT(*) n FROM pks_pengguna WHERE peran = 'legal' AND aktif = 1").first(),
+    c.env.DB.prepare('SELECT COUNT(*) n FROM pks_ttd_admin WHERE aktif = 1').first(),
+    cekJembatan(c.env),
+  ]);
+  return c.json({ legal: legal.n, admin_ttd: ttd.n, jembatan });
 });
 
 // ---------- Akses Legal & Admin TTD (dikelola Akun Utama) ----------
@@ -598,12 +612,15 @@ export async function scheduled(env) {
     try {
       const telat = jenis === 'telat';
       if ([1, 5].includes(p.tahap)) {
-        await sendMail(env, { perjanjianId: p.id, tipe: 'pengingat', to: p.mitra.emails, ...templates.pengingat_mitra({ p, m: p.mitra, tenggat: p.tenggat, telat }), threadId: p.gmail_thread_id });
+        await sendMail(env, { perjanjianId: p.id, tipe: 'pengingat', to: p.mitra.emails, ...templates.pengingat_mitra({ p, m: p.mitra, tenggat: p.tenggat, telat, url: await F.tautanPengingat(env, p) }), threadId: p.gmail_thread_id });
       }
-      const ke = p.tahap === 3
-        ? (await env.DB.prepare("SELECT email FROM pks_pengguna WHERE peran='legal' AND aktif=1").all()).results.map((x) => x.email)
-        : [p.pic_vm];
-      if (ke.length) await sendMail(env, { perjanjianId: p.id, tipe: 'pengingat', to: ke, ...templates.pengingat_internal({ p, m: p.mitra, tahapNama: F.TAHAP[p.tahap].nama, tenggat: p.tenggat, telat, appUrl: uiUrl(env) }) });
+      if (p.tahap === 3) {
+        // Legal tidak memakai dashboard: pengingat membawa tautan halaman Legal.
+        const ke = (await env.DB.prepare("SELECT email FROM pks_pengguna WHERE peran='legal' AND aktif=1").all()).results.map((x) => x.email);
+        if (ke.length) await sendMail(env, { perjanjianId: p.id, tipe: 'pengingat', to: ke, ...templates.legal({ p, m: p.mitra, tenggat: p.tenggat, url: await F.tautanPengingat(env, p) }) });
+      } else {
+        await sendMail(env, { perjanjianId: p.id, tipe: 'pengingat', to: [p.pic_vm], ...templates.pengingat_internal({ p, m: p.mitra, tahapNama: F.TAHAP[p.tahap].nama, tenggat: p.tenggat, telat, appUrl: uiUrl(env) }) });
+      }
       await env.DB.prepare('INSERT INTO pks_pengingat (perjanjian_id, tahap, jenis, dikirim_pada) VALUES (?,?,?,?)').bind(p.id, p.tahap, jenis, t).run();
       log.push(`pengingat ${jenis} ${p.kode}`);
     } catch (e) { console.error('pengingat', p.id, e.message); }
